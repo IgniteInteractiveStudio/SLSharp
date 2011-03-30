@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIS.SLSharp.Core", "IIS.SLSharp.Core\IIS.SLSharp.Core.csproj", "{CC851980-C8CC-46EB-8687-869AD8864A95}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIS.SLSharp", "IIS.SLSharp\IIS.SLSharp.csproj", "{ECF58025-4591-4708-8EC9-4B95A5673DDA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIS.SLSharp.Examples.Simple", "IIS.SLSharp.Examples.Simple\IIS.SLSharp.Examples.Simple.csproj", "{2BD44DA8-AEA2-4AC5-AC86-C5047FF28917}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ECF58025-4591-4708-8EC9-4B95A5673DDA} = {ECF58025-4591-4708-8EC9-4B95A5673DDA}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIS.SLSharp.Examples.Complex", "IIS.SLSharp.Examples.Complex\IIS.SLSharp.Examples.Complex.csproj", "{E3DCD10A-993F-431B-9BCA-63997F68F52F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ECF58025-4591-4708-8EC9-4B95A5673DDA} = {ECF58025-4591-4708-8EC9-4B95A5673DDA}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EBFF71A0-5184-4565-B0F0-EBAEF6DEF90B}"
+	ProjectSection(SolutionItems) = preProject
+		SolutionInfo.cs = SolutionInfo.cs
+	EndProjectSection
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "IIS.SLSharp.Installer", "IIS.SLSharp.Installer\IIS.SLSharp.Installer.vdproj", "{1ABDCA37-7F6E-49DF-BAD3-15CF134ADA79}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CC851980-C8CC-46EB-8687-869AD8864A95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC851980-C8CC-46EB-8687-869AD8864A95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC851980-C8CC-46EB-8687-869AD8864A95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC851980-C8CC-46EB-8687-869AD8864A95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECF58025-4591-4708-8EC9-4B95A5673DDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECF58025-4591-4708-8EC9-4B95A5673DDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECF58025-4591-4708-8EC9-4B95A5673DDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECF58025-4591-4708-8EC9-4B95A5673DDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BD44DA8-AEA2-4AC5-AC86-C5047FF28917}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BD44DA8-AEA2-4AC5-AC86-C5047FF28917}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BD44DA8-AEA2-4AC5-AC86-C5047FF28917}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BD44DA8-AEA2-4AC5-AC86-C5047FF28917}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3DCD10A-993F-431B-9BCA-63997F68F52F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3DCD10A-993F-431B-9BCA-63997F68F52F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3DCD10A-993F-431B-9BCA-63997F68F52F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3DCD10A-993F-431B-9BCA-63997F68F52F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ABDCA37-7F6E-49DF-BAD3-15CF134ADA79}.Debug|Any CPU.ActiveCfg = Debug
+		{1ABDCA37-7F6E-49DF-BAD3-15CF134ADA79}.Release|Any CPU.ActiveCfg = Release
+		{1ABDCA37-7F6E-49DF-BAD3-15CF134ADA79}.Release|Any CPU.Build.0 = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

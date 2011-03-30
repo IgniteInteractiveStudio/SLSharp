@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{ECF58025-4591-4708-8EC9-4B95A5673DDA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IIS.SLSharp</RootNamespace>
+    <AssemblyName>IIS.SLSharp</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\bin\Debug\IIS.SLSharp.xml</DocumentationFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>1591</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>..\bin\Release\IIS.SLSharp.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
+    <Compile Include="Annotations\FragmentShaderAttribute.cs" />
+    <Compile Include="Annotations\VertexInAttribute.cs" />
+    <Compile Include="Annotations\IShaderAttribute.cs" />
+    <Compile Include="Annotations\FragmentOutAttribute.cs" />
+    <Compile Include="Annotations\UniformAttribute.cs" />
+    <Compile Include="Annotations\VaryingAttribute.cs" />
+    <Compile Include="Annotations\VertexShaderAttribute.cs" />
+    <Compile Include="Shader.cs" />
+    <Compile Include="Diagnostics\ShaderDebugger.cs" />
+    <Compile Include="ShaderDefinition.Common.cs" />
+    <Compile Include="ShaderDefinition.cs" />
+    <Compile Include="Annotations\ShaderVariableAttribute.cs" />
+    <Compile Include="ShaderDefinition.Derivative.cs" />
+    <Compile Include="ShaderDefinition.DoubleVector.cs" />
+    <Compile Include="ShaderDefinition.Exponential.cs" />
+    <Compile Include="ShaderDefinition.Geometric.cs" />
+    <Compile Include="ShaderDefinition.Interpolation.cs" />
+    <Compile Include="ShaderDefinition.Matrix.cs" />
+    <Compile Include="ShaderDefinition.Noise.cs" />
+    <Compile Include="ShaderDefinition.Sampler.cs" />
+    <Compile Include="ShaderDefinition.Texture.cs" />
+    <Compile Include="ShaderDefinition.Trigonometry.cs" />
+    <Compile Include="ShaderDefinition.Vector.cs" />
+    <Compile Include="Textures\BaseTexture.cs" />
+    <Compile Include="Textures\Externals\LoaderDDS.cs" />
+    <Compile Include="Textures\Externals\LoaderStatics.cs" />
+    <Compile Include="Textures\FramebufferObject.cs" />
+    <Compile Include="Textures\ITexture.cs" />
+    <Compile Include="Textures\RenderbufferObject.cs" />
+    <Compile Include="Textures\RenderToTexture.cs" />
+    <Compile Include="Textures\Texture1D.cs" />
+    <Compile Include="Textures\Texture2D.cs" />
+    <Compile Include="Textures\TextureCube.cs" />
+    <Compile Include="Translation\DebugTranslatorAttribute.cs" />
+    <Compile Include="Translation\GlslTransform.cs" />
+    <Compile Include="Translation\GlslVisitor.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IIS.SLSharp.Core\IIS.SLSharp.Core.csproj">
+      <Project>{CC851980-C8CC-46EB-8687-869AD8864A95}</Project>
+      <Name>IIS.SLSharp.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Mono.Reflection">
+      <HintPath>..\Dependencies\Mono.Reflection.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK">
+      <HintPath>..\Dependencies\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
