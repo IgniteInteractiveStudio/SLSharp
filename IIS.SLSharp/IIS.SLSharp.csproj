@@ -59,6 +59,7 @@
     <Compile Include="ShaderDefinition.Geometric.cs" />
     <Compile Include="ShaderDefinition.Interpolation.cs" />
     <Compile Include="ShaderDefinition.Matrix.cs" />
+    <Compile Include="ShaderDefinition.MatrixFunctions.cs" />
     <Compile Include="ShaderDefinition.Noise.cs" />
     <Compile Include="ShaderDefinition.Sampler.cs" />
     <Compile Include="ShaderDefinition.Texture.cs" />
