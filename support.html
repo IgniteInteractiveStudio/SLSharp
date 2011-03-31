@@ -1,0 +1,786 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>SL# IL support</title>
+  <style type="text/css">
+table
+{
+  border-width: 0px;
+  border-spacing: 2px;
+  border-style: outset;
+  border-collapse: collapse;
+  font-family: Consolas, "Lucida Console", monospace;
+}
+td 
+{
+  border-width: 1px;
+  padding: 1px;
+  border-style: inset;
+}
+.support
+{
+  background-color: #84E8A2;
+}
+  </style>
+</head>
+<body>
+
+<p />1 Byte Opcodes
+<table>
+  <tr>
+    <th scope="col"></th>
+    <th scope="col">x0</th>
+    <th scope="col">x1</th>
+    <th scope="col">x2</th>
+    <th scope="col">x3</th>
+    <th scope="col">x4</th>
+    <th scope="col">x5</th>
+    <th scope="col">x6</th>
+    <th scope="col">x7</th>
+  </tr>
+  <tr>
+    <th scope="row">0x</th>
+    <td class="support">nop</td>
+    <td>break</td>
+    <td class="support">ldarg.0</td>
+    <td class="support">ldarg.1</td>
+    <td class="support">ldarg.2</td>
+    <td class="support">ldarg.3</td>
+    <td class="support">ldloc.0</td>
+    <td class="support">ldloc.1</td>
+  </tr>
+  <tr>
+    <th scope="row">1x</th>
+    <td class="support">starg.s</td>
+    <td class="support">ldloc.s</td>
+    <td>ldloca.s</td>
+    <td class="support">stloc.s</td>
+    <td>ldnull</td>
+    <td>ldc.i4.m1</td>
+    <td class="support">ldc.i4.0</td>
+    <td class="support">ldc.i4.1</td>
+  </tr>
+  <tr>
+    <th scope="row">2x</th>
+    <td class="support">ldc.i4</td>
+    <td>ldc.i8</td>
+    <td class="support">ldc.r4</td>
+    <td class="support">ldc.r8</td>
+    <td></td>
+    <td class="support">dup</td>
+    <td>pop</td>
+    <td>jmp</td>
+  </tr>
+  <tr>
+    <th scope="row">3x</th>
+    <td class="support">bgt.s</td>
+    <td>ble.s</td>
+    <td class="support">blt.s</td>
+    <td>bne.un.s</td>
+    <td>bge.un.s</td>
+    <td>bgt.un.s</td>
+    <td class="support">ble.un.s</td>
+    <td>blt.un.s</td>
+  </tr>
+  <tr>
+    <th scope="row">4x</th>
+    <td>bne.un</td>
+    <td>bge.un</td>
+    <td>bgt.un</td>
+    <td class="support">ble.un</td>
+    <td>blt.un</td>
+    <td>switch</td>
+    <td>ldind.i1</td>
+    <td>ldind.u1</td>
+  </tr>
+  <tr>
+    <th scope="row">5x</th>
+    <td>ldind.ref</td>
+    <td>stind.ref</td>
+    <td>stind.i1</td>
+    <td>stind.i2</td>
+    <td>stind.i4</td>
+    <td>stind.i8</td>
+    <td>stind.r4</td>
+    <td>stind.r8</td>
+  </tr>
+  <tr>
+    <th scope="row">6x</th>
+    <td>or</td>
+    <td>xor</td>
+    <td>shl</td>
+    <td>shr</td>
+    <td>shr.un</td>
+    <td class="support">neg</td>
+    <td>not</td>
+    <td>conv.i1</td>
+  </tr>
+  <tr>
+    <th scope="row">7x</th>
+    <td>cpobj</td>
+    <td>ldobj</td>
+    <td>ldstr</td>
+    <td class="support">newobj</td>
+    <td>castclass</td>
+    <td>isinst</td>
+    <td>conv.r.un</td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">8x</th>
+    <td class="support">stsfld</td>
+    <td>stobj</td>
+    <td>conv.ovf.i1.un</td>
+    <td>conv.ovf.i2.un</td>
+    <td>conv.ovf.i4.un</td>
+    <td>conv.ovf.i8.un</td>
+    <td>conv.ovf.u1.un</td>
+    <td>conv.ovf.u2.un</td>
+  </tr>
+  <tr>
+    <th scope="row">9x</th>
+    <td>ldelem.i1</td>
+    <td>ldelem.u1</td>
+    <td>ldelem.i2</td>
+    <td>ldelem.u2</td>
+    <td>ldelem.i4</td>
+    <td>ldelem.u4</td>
+    <td>ldelem.i8</td>
+    <td>ldelem.i</td>
+  </tr>
+  <tr>
+    <th scope="row">Ax</th>
+    <td>stelem.r4</td>
+    <td>stelem.r8</td>
+    <td>stelem.ref</td>
+    <td>ldelem</td>
+    <td>stelem</td>
+    <td>unbox.any</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">Bx</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td>conv.ovf.i1</td>
+    <td>conv.ovf.u1</td>
+    <td>conv.ovf.i2</td>
+    <td>conv.ovf.u2</td>
+    <td>conv.ovf.i4</td>
+  </tr>
+  <tr>
+    <th scope="row">Cx</th>
+    <td></td>
+    <td></td>
+    <td>refanyval</td>
+    <td>ckfinite</td>
+    <td></td>
+    <td></td>
+    <td>mkrefany</td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">Dx</th>
+    <td>ldtoken</td>
+    <td>conv.u2</td>
+    <td>conv.u1</td>
+    <td>conv.i</td>
+    <td>conv.ovf.i</td>
+    <td>conv.ovf.u</td>
+    <td>add.ovf</td>
+    <td>add.ovf.un</td>
+  </tr>
+  <tr>
+    <th scope="row">Ex</th>
+    <td>conv.u</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">Fx</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="col"></th>
+    <th scope="col">x8</th>
+    <th scope="col">x9</th>
+    <th scope="col">xA</th>
+    <th scope="col">xB</th>
+    <th scope="col">xC</th>
+    <th scope="col">xD</th>
+    <th scope="col">xE</th>
+    <th scope="col">xF</th>
+  </tr>
+  <tr>
+    <th scope="row">0x</th>
+    <td class="support">ldloc.2</td>
+    <td class="support">ldloc.3</td>
+    <td class="support">stloc.0</td>
+    <td class="support">stloc.1</td>
+    <td class="support">stloc.2</td>
+    <td class="support">stloc.3</td>
+    <td class="support">ldarg.s</td>
+    <td>ldarga.s</td>
+  </tr>
+  <tr>
+    <th scope="row">1x</th>
+    <td class="support">ldc.i4.2</td>
+    <td class="support">ldc.i4.3</td>
+    <td class="support">ldc.i4.4</td>
+    <td class="support">ldc.i4.5</td>
+    <td class="support">ldc.i4.6</td>
+    <td class="support">ldc.i4.7</td>
+    <td class="support">ldc.i4.8</td>
+    <td class="support">ldc.i4.s</td>
+  </tr>
+  <tr>
+    <th scope="row">2x</th>
+    <td class="support">call</td>
+    <td>calli</td>
+    <td class="support">ret</td>
+    <td class="support">br.s</td>
+    <td>brfalse.s</td>
+    <td class="support">brtrue.s</td>
+    <td>beq.s</td>
+    <td>bge.s</td>
+  </tr>
+  <tr>
+    <th scope="row">3x</th>
+    <td class="support">br</td>
+    <td>brfalse</td>
+    <td class="support">brtrue</td>
+    <td>beq</td>
+    <td>bge</td>
+    <td class="support">bgt</td>
+    <td>ble</td>
+    <td class="support">blt</td>
+  </tr>
+  <tr>
+    <th scope="row">4x</th>
+    <td>ldind.i2</td>
+    <td>ldind.u2</td>
+    <td>ldind.i4</td>
+    <td>ldind.u4</td>
+    <td>ldind.i8</td>
+    <td>ldind.i</td>
+    <td>ldind.r4</td>
+    <td>ldind.r8</td>
+  </tr>
+  <tr>
+    <th scope="row">5x</th>
+    <td class="support">add</td>
+    <td class="support">sub</td>
+    <td class="support">mul</td>
+    <td class="support">div</td>
+    <td>div.un</td>
+    <td>rem</td>
+    <td>rem.un</td>
+    <td>and</td>
+  </tr>
+  <tr>
+    <th scope="row">6x</th>
+    <td>conv.i2</td>
+    <td>conv.i4</td>
+    <td>conv.i8</td>
+    <td class="support">conv.r4</td>
+    <td class="support">conv.r8</td>
+    <td>conv.u4</td>
+    <td>conv.u8</td>
+    <td class="support">callvirt</td>
+  </tr>
+  <tr>
+    <th scope="row">7x</th>
+    <td></td>
+    <td>unbox</td>
+    <td>throw</td>
+    <td class="support">ldfld</td>
+    <td>ldflda</td>
+    <td class="support">stfld</td>
+    <td>ldsfld</td>
+    <td>ldsflda</td>
+  </tr>
+  <tr>
+    <th scope="row">8x</th>
+    <td>conv.ovf.u4.un</td>
+    <td>conv.ovf.u8.un</td>
+    <td>conv.ovf.i.un</td>
+    <td>conv.ovf.u.un</td>
+    <td>box</td>
+    <td>newarr</td>
+    <td>ldlen</td>
+    <td>ldelema</td>
+  </tr>
+  <tr>
+    <th scope="row">9x</th>
+    <td>ldelem.r4</td>
+    <td>ldelem.r8</td>
+    <td class="support">ldelem.ref</td>
+    <td>stelem.i</td>
+    <td>stelem.i1</td>
+    <td>stelem.i2</td>
+    <td>stelem.i4</td>
+    <td>stelem.i8</td>
+  </tr>
+  <tr>
+    <th scope="row">Ax</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">Bx</th>
+    <td>conv.ovf.u4</td>
+    <td>conv.ovf.i8</td>
+    <td>conv.ovf.u8</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">Cx</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">Dx</th>
+    <td>mul.ovf</td>
+    <td>mul.ovf.un</td>
+    <td>sub.ovf</td>
+    <td>sub.ovf.un</td>
+    <td>endfinally</td>
+    <td>leave</td>
+    <td>leave.s</td>
+    <td>stind.i</td>
+  </tr>
+  <tr>
+    <th scope="row">Ex</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">Fx</th>
+    <td>prefix7</td>
+    <td>prefix6</td>
+    <td>prefix5</td>
+    <td>prefix4</td>
+    <td>prefix3</td>
+    <td>prefix2</td>
+    <td>prefix1</td>
+    <td>prefixref</td>
+  </tr>
+</table>
+<p />FE xx Opcodes
+<table>
+  <tr>
+    <th scope="col"></th>
+    <th scope="col">x0</th>
+    <th scope="col">x1</th>
+    <th scope="col">x2</th>
+    <th scope="col">x3</th>
+    <th scope="col">x4</th>
+    <th scope="col">x5</th>
+    <th scope="col">x6</th>
+    <th scope="col">x7</th>
+  </tr>
+  <tr>
+    <th scope="row">0x</th>
+    <td>arglist</td>
+    <td class="support">ceq</td>
+    <td class="support">cgt</td>
+    <td>cgt.un</td>
+    <td class="support">clt</td>
+    <td>clt.un</td>
+    <td>ldftn</td>
+    <td>ldvirtftn</td>
+  </tr>
+  <tr>
+    <th scope="row">1x</th>
+    <td></td>
+    <td>endfilter</td>
+    <td>unaligned.</td>
+    <td>volatile.</td>
+    <td>tail.</td>
+    <td>initobj</td>
+    <td>constrained.</td>
+    <td>cpblk</td>
+  </tr>
+  <tr>
+    <th scope="row">2x</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">3x</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">4x</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">5x</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">6x</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">7x</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">8x</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">9x</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">Ax</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">Bx</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">Cx</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">Dx</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">Ex</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">Fx</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="col"></th>
+    <th scope="col">x8</th>
+    <th scope="col">x9</th>
+    <th scope="col">xA</th>
+    <th scope="col">xB</th>
+    <th scope="col">xC</th>
+    <th scope="col">xD</th>
+    <th scope="col">xE</th>
+    <th scope="col">xF</th>
+  </tr>
+  <tr>
+    <th scope="row">0x</th>
+    <td></td>
+    <td>ldarg</td>
+    <td>ldarga</td>
+    <td>starg</td>
+    <td>ldloc</td>
+    <td>ldloca</td>
+    <td>stloc</td>
+    <td>localloc</td>
+  </tr>
+  <tr>
+    <th scope="row">1x</th>
+    <td>initblk</td>
+    <td></td>
+    <td>rethrow</td>
+    <td></td>
+    <td>sizeof</td>
+    <td>refanytype</td>
+    <td>readonly.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">2x</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">3x</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">4x</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">5x</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">6x</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">7x</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">8x</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">9x</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">Ax</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">Bx</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">Cx</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">Dx</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">Ex</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <th scope="row">Fx</th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+
+</body>
+</html>

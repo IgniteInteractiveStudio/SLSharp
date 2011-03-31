@@ -1,0 +1,129 @@
+#feature_wrap {
+	display: block;
+	float: left;
+	height: 428px;
+	width: 578px;
+	position: relative;
+	background-image: url(../images/slider_bg.png);
+	background-repeat: no-repeat;
+	background-position: top;
+	margin: 24px 20px 0 20px;
+}
+
+#logo {
+	display: block;
+	height: 112px;
+	width: 316px;
+	left: 640px;
+	top: 20px;
+	position: absolute;
+	background-image: url(../images/slider_bg_tiny.png);
+	background-repeat: no-repeat;
+	background-position: top;
+	margin: 24px 20px 0 20px;
+}
+
+a#previous, a#next {
+	cursor: pointer;
+	display: block;
+	width: 48px;
+	height: 48px;
+	text-indent: -9999px;
+	z-index: 1;
+	position: absolute;
+	border: none;
+	overflow: hidden;
+	left: 7px;
+}
+
+a#previous, a#previous:visited {
+	float: left;
+	margin: 179px 0 0 0;
+	background-color: transparent;
+	background-image: url(../images/previous.png);
+	background-repeat: no-repeat;
+	background-position: left top;
+}	
+
+a#next, a#next:visited {
+	float: right;
+	margin: 179px 0 0 518px;
+	background-color: transparent;
+	background-image: url(../images/next.png);
+	background-repeat: no-repeat;
+	background-position: left top;
+}
+
+.slider_images {
+	overflow: hidden; 
+	float: left;
+	width: 516px;
+}
+
+.slider_images .desc {
+	display: none;
+}
+
+#slider_wrap {
+	background: #0f1a21;
+	width: 516px;
+	display: block;
+	z-index: -1200;
+	height: 344px;
+	max-height: 344px;
+	overflow: hidden;
+	margin: 31px 0 0 31px;
+}
+
+#slider_wrap div div { 
+	overflow: hidden;
+	height:	344px;
+	z-index: -1200; 
+}
+
+#slider_wrap div div a{
+	border: none;
+}
+
+ul#buttons{
+	width: 130px;
+	height:	27px;
+	margin: 0 0 0 433px;
+	padding: 5px 0 0 0;
+}
+
+ul#buttons li{
+	display: block;
+	float: left;
+	text-align: center;
+	color: #22b6f3;
+	font-size: 15px;
+	font-weight: bold;
+	cursor: pointer;
+	width: 20px;
+	height: 17px;
+	margin: 0 4px 0 0;
+	padding: 0 0 5px 0;
+}
+
+
+
+ul#buttons li:hover {
+	background-position: center left; 
+	color: #1e1e1e;	
+}
+
+
+
+ul#buttons li.active {
+	background-position: bottom left;
+	color: #BBB;
+}
+
+#wp_page_numbers ul li.active_page a{
+}
+
+a#previous:hover, a#next:hover{
+	background-position: top right;
+	border:	none;
+}
