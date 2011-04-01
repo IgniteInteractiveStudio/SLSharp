@@ -29,7 +29,8 @@
     			},
 			onFailure: function()
 			{
-        			$(element).innerHTML = "// oops something went wrong";
+        			$(element).innerHTML = "// oops something went wrong when fetching\n" + 
+					'http://github.com/IgniteInteractiveStudio/SLSharp/raw/master/' + src;
 				SyntaxHighlighter.highlight({}, $(element));
    			}
 		}); 
