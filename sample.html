@@ -5,6 +5,43 @@
 	<title>SL#</title>
 	<link href="stylesheets/main.css" rel="stylesheet" type="text/css" />
 	<link href="stylesheets/csharp.css" rel="stylesheet" type="text/css" />
+
+	<script type="text/javascript" src="scripts/mootools-1.2.3.js"></script>
+	<script type="text/javascript" src="scripts/moo.flXHRproxy.js"></script>
+	<script type="text/javascript" src="scripts/flXHR.js"></script>
+
+	<script type="text/javascript" src="syntax/scripts/shCore.js"></script>
+	<script type="text/javascript" src="syntax/scripts/shBrushCSharp.js"></script>
+	<link type="text/css" rel="stylesheet" href="syntax/styles/shCoreDefault.css"/>
+	<script type="text/javascript">
+
+	Request.flXHRproxy.registerOptions("http://github.com/IgniteInteractiveStudio",{instancePooling:true,autoUpdatePlayer:true,xmlResponseText:false,loadPolicyURL:"policy.xml"});
+
+	function LoadSource(src, element)
+	{
+		var myRequest = new Request({
+			method: 'get', 
+			url: 'https://github.com/IgniteInteractiveStudio/SLSharp/raw/master/' + src,
+			onSuccess: function(responseText)
+			{
+        			$(element).innerHTML = responseText;
+				SyntaxHighlighter.highlight({}, $(element));
+    			},
+			onFailure: function()
+			{
+        			$(element).innerHTML = "// oops something went wrong";
+				SyntaxHighlighter.highlight({}, $(element));
+   			}
+		}); 
+		myRequest.send('');	
+	}
+
+	LoadSource('IIS.SLSharp.Examples.Simple/Shaders/MyShader.cs', 'myElement');
+
+
+	
+
+	</script>
 </head>
 <body>
 
@@ -39,61 +76,20 @@
 
 <h2>SL# Demo shader</h2>
 
-<a href="Demo.cs">Demo.cs</a>
-<pre class="csharpcode">
-<span class="kwrd">using</span> System;
-<span class="kwrd">using</span> OpenTK;
-<span class="kwrd">using</span> OpenTK.Graphics.OpenGL;
+<a href="http://github.com/IgniteInteractiveStudio/SLSharp/raw/master/IIS.SLSharp.Examples.Simple/Shaders/MyShader.cs">MyShader.cs</a>
 
-<span class="kwrd">namespace</span> GeoClip.ShaderlibDemo
-{
-    <span class="kwrd">class</span> Window: GameWindow
-    {
-        <span class="kwrd">private</span> MyShader _myShader;
 
-        <span class="kwrd">protected</span> <span class="kwrd">override</span> <span class="kwrd">void</span> OnLoad(EventArgs e)
-        {
-            _myShader = Shader.Shader.CreateSharedShader&lt;MyShader&gt;();
-        }
 
-        <span class="kwrd">protected</span> <span class="kwrd">override</span> <span class="kwrd">void</span> OnUnload(EventArgs e)
-        {
-            _myShader.Dispose();
-        }
+MyE
+<div id="myElement2">
+</div>
 
-        <span class="kwrd">protected</span> <span class="kwrd">override</span> <span class="kwrd">void</span> OnResize(EventArgs e)
-        {
-            GL.Viewport(ClientRectangle);
-        }
-
-        <span class="kwrd">protected</span> <span class="kwrd">override</span> <span class="kwrd">void</span> OnRenderFrame(FrameEventArgs e)
-        {
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.Disable(EnableCap.CullFace);
-
-            _myShader.Begin();
-            _myShader.Blue = 0.5f;
-            _myShader.Invert.Channels = <span class="kwrd">new</span> Vector4(0.0f, 1.0f, 0.0f, 0.0f);
-            GL.Rect(-1, -1, 1, 1);
-            _myShader.End();
-
-            SwapBuffers();
-        }
-    }
-
-    <span class="kwrd">class</span> Demo
-    {
-        <span class="kwrd">static</span> <span class="kwrd">void</span> Main()
-        {
-            <span class="kwrd">using</span> (var win = <span class="kwrd">new</span> Window())
-            {
-                win.Title = <span class="str">"Shaderlib test"</span>;
-                win.Run(0.0);
-            }
-        }
-    }
-}
+<pre class="brush: csharp;" id="myElement">
 </pre>
+MyE
+
+
+
 
 <a href="MyShader.cs">MyShader.cs</a>
 <pre class="csharpcode">
@@ -187,4 +183,5 @@ The resulting application:
 </div>
 
 </body>
+
 </html>
