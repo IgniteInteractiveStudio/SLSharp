@@ -15,13 +15,23 @@
 	<link type="text/css" rel="stylesheet" href="syntax/styles/shCoreDefault.css"/>
 	<script type="text/javascript">
 
-	Request.flXHRproxy.registerOptions("http://github.com/IgniteInteractiveStudio",{instancePooling:true,autoUpdatePlayer:true,xmlResponseText:false,loadPolicyURL:"http://igniteinteractivestudio.github.com/SLSharp/policy.xml"});
+	Request.flXHRproxy.registerOptions(
+		"https://github.com/IgniteInteractiveStudio/SLSharp",
+		{
+			instancePooling:true,
+			autoUpdatePlayer:true,
+			xmlResponseText:false,
+			onerror: function(err)
+			{
+				alert('x');
+			}
+		});
 
 	function LoadSource(src, element)
 	{
 		var myRequest = new Request({
 			method: 'get', 
-			url: 'http://github.com/IgniteInteractiveStudio/SLSharp/raw/master/' + src,
+			url: 'https://github.com/IgniteInteractiveStudio/SLSharp/raw/master/' + src,
 			onSuccess: function(responseText)
 			{
         			$(element).innerHTML = responseText;
@@ -30,7 +40,7 @@
 			onFailure: function()
 			{
         			$(element).innerHTML = "// oops something went wrong when fetching\n" + 
-					'http://github.com/IgniteInteractiveStudio/SLSharp/raw/master/' + src;
+					'https://github.com/IgniteInteractiveStudio/SLSharp/raw/master/' + src;
 				SyntaxHighlighter.highlight({}, $(element));
    			}
 		}); 
