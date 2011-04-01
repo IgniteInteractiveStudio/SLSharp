@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE cross-domain-policy SYSTEM "http://www.macromedia.com/xml/dtds/cross-domain-policy.dtd">
-<cross-domain-policy>
-	<allow-access-from domain="github.com" secure="false" />
-	<allow-http-request-headers-from domain="github.com" headers="*" />
-	<allow-access-from domain="igniteinteractivestudio.github.com" secure="false" />
-	<allow-http-request-headers-from domain="igniteinteractivestudio.github.com" headers="*" />
-</cross-domain-policy>
