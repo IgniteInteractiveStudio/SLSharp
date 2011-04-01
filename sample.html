@@ -6,87 +6,67 @@
 	<link href="stylesheets/main.css" rel="stylesheet" type="text/css" />
 	<link href="stylesheets/csharp.css" rel="stylesheet" type="text/css" />
 
-	<script type="text/javascript" src="scripts/mootools-1.2.3.js"></script>
-	<script type="text/javascript" src="scripts/moo.flXHRproxy.js"></script>
-	<script type="text/javascript" src="scripts/flXHR.js"></script>
-
+	<script type="text/javascript" src="scripts/mootools-core-1.3.1-full-compat-yc.js"></script>
+	<script type="text/javascript" src="scripts/mootools-more-1.3.1.1.js"></script>
 	<script type="text/javascript" src="syntax/scripts/shCore.js"></script>
 	<script type="text/javascript" src="syntax/scripts/shBrushCSharp.js"></script>
 	<link type="text/css" rel="stylesheet" href="syntax/styles/shCoreDefault.css"/>
 	<script type="text/javascript">
+			
+		String.prototype.startsWith = function(str) {return (this.match("^"+str)==str)}
 
-	function objectToString(o)
-	{
-		var parse = function(_o)
+		function loadSourceTree(tree)
 		{
-			var a = [], t;
-			for(var p in _o)
-			{
+			var mye = $('shaders');
 
-				if(_o.hasOwnProperty(p))
+			var JSONP2 = new Request.JSONP(
+			{
+			url: 'http://github.com/api/v2/json/blob/all/IgniteInteractiveStudio/SLSharp/master',
+			onComplete: function(data)
+			{
+				// the request was completed.
+				for (f in data.blobs)
 				{
-					t = _o[p];
-					if(t && typeof t == "object")
+					if (f.startsWith('IIS.SLSharp.Examples.Simple/Shaders/'))
 					{
-						a[a.length]= p + ":{ " + arguments.callee(t).join(", ") + "}";
-					} else 
-					{
-						if(typeof t == "string")
+						var JSONP3 = new Request.JSONP(
 						{
-							a[a.length] = [ p+ ": \"" + t.toString() + "\"" ];
-						} else
-						{
-							a[a.length] = [ p+ ": " + t.toString()];
-						}
+							url: 'http://github.com/api/v2/json/blob/show/IgniteInteractiveStudio/SLSharp/' + tree + '/'+ f,
+							onComplete: function(data)
+							{ 
+								var sha = data.blob.sha;
+								var div  = new Element('div');
+								var ref = new Element('a', 
+								{
+									href: 'https://github.com/IgniteInteractiveStudio/SLSharp/tree/master/' + f,
+									html: f
+								});
+								var pre = new Element('pre', {html: sha, class: 'brush: csharp;'});
+								ref.inject(div);
+								pre.inject(div);
+								div.inject(mye);
+								pre.set('text', data.blob.data);
+								SyntaxHighlighter.highlight({}, pre);
+							},
+						}).send();
+						
 					}
 				}
 			}
-			return a;
+			}).send();
 		}
-    		return "{" + parse(o).join(", ") + "}";
-	}
 
-
-	Request.flXHRproxy.registerOptions(
-		"https://github.com",
+		function loadSource()
 		{
-			instancePooling:true,
-			autoUpdatePlayer:true,
-			xmlResponseText:false,
-			onerror: function(err)
+			var JSONP = new Request.JSONP(
 			{
-				alert(objectToString(err));
-			}
-		});
-
-	function LoadSource(src, element)
-	{
-		var myRequest = new Request({
-			method: 'get', 
-			url: 'https://github.com/IgniteInteractiveStudio/SLSharp/raw/master/' + src,
-			onSuccess: function(responseText)
-			{
-        			$(element).innerHTML = responseText;
-				SyntaxHighlighter.highlight({}, $(element));
-    			},
-			onFailure: function()
-			{
-        			$(element).innerHTML = "// oops something went wrong when fetching\n" + 
-					'https://github.com/IgniteInteractiveStudio/SLSharp/raw/master/' + src;
-				SyntaxHighlighter.highlight({}, $(element));
-   			}
-		}); 
-		myRequest.send('');	
-	}
-
-	LoadSource('IIS.SLSharp.Examples.Simple/Shaders/MyShader.cs', 'myElement');
-
-
-	
-
+			url: 'http://github.com/api/v2/json/commits/list/IgniteInteractiveStudio/SLSharp/master',
+			onComplete: function(data) { loadSourceTree(data.commits[0].tree); }
+			}).send();
+		}
 	</script>
 </head>
-<body>
+<body onLoad="loadSource();">
 
 	
 
@@ -96,7 +76,7 @@
 		<ul class="nav">
 		<li><a href="index.html" class="navfirst">Home</a></li>
 		<li><a href="download.html">Download</a></li>
-		<li><a href="sample.html" class="current">Sample</a></li>
+		<li><a href="sample.html">Sample</a></li>
 		<li><a href="internals.html">Internals</a></li>
 		<li><a href="links.html">Links</a></li>
 		</ul>
@@ -106,115 +86,17 @@
 	        src="http://www.w3.org/Icons/valid-xhtml10"
        	 	alt="Valid XHTML 1.0 Transitional" height="31" width="88" /></a>
 		</div>
-		<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-		<input type="hidden" name="cmd" value="_s-xclick" />
-		<input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
-" />
-		<input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donateCC_LG.gif" style="border-style:none;" name="submit" alt="PayPal - The safer, easier way to pay online!" />
-		<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-		</form>
-
 	</div>
 	<div id="content">
 
-<h2>SL# Demo shader</h2>
-
-<a href="http://github.com/IgniteInteractiveStudio/SLSharp/raw/master/IIS.SLSharp.Examples.Simple/Shaders/MyShader.cs">MyShader.cs</a>
-
-
-
-MyE
-<div id="myElement2">
+<div id="shaders">
 </div>
-
-<pre class="brush: csharp;" id="myElement">
-</pre>
-MyE
-
-
-
-
-<a href="MyShader.cs">MyShader.cs</a>
-<pre class="csharpcode">
-<span class="kwrd">using</span> GeoClip.Shader;
-
-<span class="kwrd">namespace</span> GeoClip.ShaderlibDemo
-{
-    <span class="kwrd">public</span> <span class="kwrd">abstract</span> <span class="kwrd">class</span> MyShader: Shader.Shader
-    {
-        <span class="rem">// expose a simple uniform (this can be directly accessed from clientcode)</span>
-        [Uniform] <span class="kwrd">public</span> <span class="kwrd">abstract</span> <span class="kwrd">float</span> Blue { set; get; }
-
-        [Varying] <span class="kwrd">private</span> vec2 _uv;
-
-        <span class="rem">// demonstrate using a shared library</span>
-        <span class="kwrd">public</span> <span class="kwrd">readonly</span> InvertShader Invert = CreateSharedShader&lt;InvertShader&gt;();
-
-        [FragmentShader(<span class="kwrd">true</span>)]
-        <span class="kwrd">protected</span> <span class="kwrd">void</span> FragmentMain()
-        {
-            gl_FragColor = Invert.Invert(<span class="kwrd">new</span> vec4(_uv, Blue, 1.0f));
-        }
-
-        [VertexShader(<span class="kwrd">true</span>)]
-        <span class="kwrd">public</span> <span class="kwrd">void</span> VertexMain()
-        {
-            _uv = (gl_Vertex.xy + <span class="kwrd">new</span> vec2(1.0f)) * 0.5f;
-            gl_Position = gl_Vertex;
-        }
-
-        <span class="rem">// resource setup code</span>
-        <span class="kwrd">protected</span> MyShader()
-        {
-            Link(<span class="kwrd">new</span> []{Invert});
-        }
-
-        <span class="kwrd">public</span> <span class="kwrd">override</span> <span class="kwrd">void</span> Dispose()
-        {
-            Invert.Dispose();
-            <span class="kwrd">base</span>.Dispose();
-        }
-
-        <span class="kwrd">public</span> <span class="kwrd">override</span> <span class="kwrd">void</span> Begin()
-        {
-            Invert.BeginLib(<span class="kwrd">this</span>);
-            <span class="kwrd">base</span>.Begin();
-        }
-    }
-}
-</pre>
-
-<a href="InvertShader.cs">InvertShader.cs</a>
-<pre class="csharpcode">
-<span class="kwrd">using</span> GeoClip.Shader;
-
-<span class="rem">// Tiny GLSL# Library demo</span>
-<span class="kwrd">namespace</span> GeoClip.ShaderlibDemo
-{
-    <span class="kwrd">public</span> <span class="kwrd">abstract</span> <span class="kwrd">class</span> InvertShader : Shader.Shader
-    {
-        [Uniform] <span class="kwrd">public</span> <span class="kwrd">abstract</span> vec4 Channels { get; set; }
-
-        [VertexShader][FragmentShader]
-        <span class="rem">// this library function is callable from both fragment and vertex shaders</span>
-        <span class="rem">// if inverts the colors which are set to 1.0 in the Channels uniform</span>
-        <span class="rem">// and leaves the colors which are set to 0.0 in the Channels uniform</span>
-        <span class="kwrd">public</span> vec4 Invert(vec4 v)
-        {
-            <span class="kwrd">return</span> Channels - Channels * v +
-                (<span class="kwrd">new</span> vec4(1.0f) - Channels) * v;
-        }
-    }
-}
-</pre>
-
 <div style="text-align:center;">
 The resulting application:
 </div>
 <div style="text-align:center;">
 <img src="images/demo.png" alt="sample application" />
 </div>
-
 
 
 
@@ -226,5 +108,4 @@ The resulting application:
 </div>
 
 </body>
-
 </html>
