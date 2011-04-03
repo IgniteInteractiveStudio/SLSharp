@@ -357,15 +357,27 @@ namespace IIS.SLSharp.Core.Reflection
 
             _handlers[OpCodes.Blt] = InstBlt;
 
+            _handlers[OpCodes.Blt_Un] = InstBlt;
+
             _handlers[OpCodes.Blt_S] = InstBlt;
+
+            _handlers[OpCodes.Blt_Un_S] = InstBlt;
 
             _handlers[OpCodes.Bgt] = InstBgt;
 
+            _handlers[OpCodes.Bgt_Un] = InstBgt;
+
             _handlers[OpCodes.Bgt_S] = InstBgt;
 
-            _handlers[OpCodes.Ble_Un] = InstBleun;
+            _handlers[OpCodes.Bgt_Un_S] = InstBgt;
 
-            _handlers[OpCodes.Ble_Un_S] = InstBleun;
+            _handlers[OpCodes.Ble] = InstBle;
+
+            _handlers[OpCodes.Ble_Un] = InstBle;
+
+            _handlers[OpCodes.Ble_S] = InstBle;
+
+            _handlers[OpCodes.Ble_Un_S] = InstBle;
 
             _handlers[OpCodes.Brtrue] = InstBrtrue;
 
@@ -779,7 +791,7 @@ namespace IIS.SLSharp.Core.Reflection
             HandleConditionalBranch(inst, target, conditional);
         }
 
-        private void InstBleun(Instruction inst)
+        private void InstBle(Instruction inst)
         {
             var target = GetTarget(inst);
             var v2 = Pop();
