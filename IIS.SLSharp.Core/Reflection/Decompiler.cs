@@ -73,10 +73,6 @@ namespace IIS.SLSharp.Core.Reflection
 
         private void SetupHandlers()
         {
-            _handlers[OpCodes.Nop] = _ =>
-            {
-            };
-
             _handlers[OpCodes.Ldarg_0] = _ =>
             {
                 Push(_args[0]);
@@ -115,10 +111,7 @@ namespace IIS.SLSharp.Core.Reflection
 
             _handlers[OpCodes.Call] = InstCall;
 
-            _handlers[OpCodes.Callvirt] = i =>
-            {
-                InstCall(i);
-            };
+            _handlers[OpCodes.Callvirt] = InstCall;
 
             _handlers[OpCodes.Conv_R4] = _ =>
             {
@@ -278,12 +271,9 @@ namespace IIS.SLSharp.Core.Reflection
                 Push(Expression.Multiply(b, a));
             };
 
-            _handlers[OpCodes.Div] = _ =>
-            {
-                var a = Pop();
-                var b = Pop();
-                Push(Expression.Divide(b, a));
-            };
+            _handlers[OpCodes.Div] = InstDiv;
+
+            _handlers[OpCodes.Div_Un] = InstDiv;
 
             _handlers[OpCodes.Sub] = _ =>
             {
@@ -362,11 +352,6 @@ namespace IIS.SLSharp.Core.Reflection
                 PushStatement(Expression.Assign(_args[pos], Pop()));
             };
 
-            _handlers[OpCodes.Ret] = _ =>
-            {
-                /*Push(Expression.Return(Expression.Label(), Pop())); */
-            };
-
             _handlers[OpCodes.Br] = InstBr;
 
             _handlers[OpCodes.Br_S] = InstBr;
@@ -416,23 +401,70 @@ namespace IIS.SLSharp.Core.Reflection
                 Push(Expression.Equal(v1, v2));
             };
 
+            _handlers[OpCodes.Pop] = _ =>
+            {
+                Pop();
+            };
+
+            // opcodes that don't have any real meaning to us; we just ignore them
+            AddNopOpCodes(OpCodes.Prefix1, OpCodes.Prefix2, OpCodes.Prefix3, OpCodes.Prefix4, OpCodes.Prefix5, OpCodes.Prefix6, OpCodes.Prefix7,
+                OpCodes.Prefixref, OpCodes.Nop, OpCodes.Break, OpCodes.Ret, OpCodes.Tailcall, OpCodes.Volatile, OpCodes.Unaligned, OpCodes.Readonly,
+                OpCodes.Initobj);
+
             // these are opcodes that we can't sensibly translate to GLSL
 
             // overflow-checked opcodes
             AddIllegalOpCodes(OpCodes.Add_Ovf, OpCodes.Add_Ovf_Un, OpCodes.Mul_Ovf, OpCodes.Mul_Ovf_Un, OpCodes.Sub_Ovf, OpCodes.Sub_Ovf_Un,
                 OpCodes.Conv_Ovf_I, OpCodes.Conv_Ovf_I_Un, OpCodes.Conv_Ovf_I1, OpCodes.Conv_Ovf_I1_Un, OpCodes.Conv_Ovf_I2, OpCodes.Conv_Ovf_I2_Un,
                 OpCodes.Conv_Ovf_I4, OpCodes.Conv_Ovf_I4_Un, OpCodes.Conv_Ovf_U, OpCodes.Conv_Ovf_U_Un, OpCodes.Conv_Ovf_U1, OpCodes.Conv_Ovf_U1_Un,
-                OpCodes.Conv_Ovf_U2, OpCodes.Conv_Ovf_U2_Un, OpCodes.Conv_Ovf_U4, OpCodes.Conv_Ovf_U4_Un);
+                OpCodes.Conv_Ovf_U2, OpCodes.Conv_Ovf_U2_Un, OpCodes.Conv_Ovf_U4, OpCodes.Conv_Ovf_U4_Un, OpCodes.Ckfinite);
 
             // 64-bit integer opcodes
             AddIllegalOpCodes(OpCodes.Ldc_I8, OpCodes.Ldelem_I8, OpCodes.Ldind_I8, OpCodes.Stelem_I8, OpCodes.Stind_I8, OpCodes.Conv_U8,
                 OpCodes.Conv_Ovf_I8, OpCodes.Conv_Ovf_I8_Un, OpCodes.Conv_Ovf_U8, OpCodes.Conv_Ovf_U8_Un);
+
+            // typed references (see C#'s __arglist, __makeref, __reftype, __refvalue (undocumenteded keywords in MS C#))
+            AddIllegalOpCodes(OpCodes.Arglist, OpCodes.Mkrefany, OpCodes.Refanytype, OpCodes.Refanyval);
+
+            // exception handling
+            AddIllegalOpCodes(OpCodes.Leave, OpCodes.Leave_S, OpCodes.Endfilter, OpCodes.Endfinally, OpCodes.Throw, OpCodes.Rethrow);
+
+            // reflection and types
+            AddIllegalOpCodes(OpCodes.Isinst, OpCodes.Castclass, OpCodes.Ldtoken, OpCodes.Box, OpCodes.Unbox, OpCodes.Unbox_Any, OpCodes.Sizeof,
+                OpCodes.Constrained);
+
+            // unmanaged/native operations
+            AddIllegalOpCodes(OpCodes.Initblk, OpCodes.Cpblk, OpCodes.Ldftn, OpCodes.Ldvirtftn, OpCodes.Ldind_I);
+
+            // other unsupported opcodes
+            AddIllegalOpCodes(OpCodes.Ldnull, OpCodes.Ldstr);
+
+            // TODO: these are not actually restricted, but need further investigation for a proper implementation; if you
+            // run into an exception with one of these, then please report it with some source code we can reproduce it with!
+            AddToDoOpCodes(OpCodes.Calli);
+        }
+
+        private void AddNopOpCodes(params OpCode[] opCodes)
+        {
+            foreach (var opCode in opCodes)
+                _handlers[opCode] = InstNop;
         }
 
         private void AddIllegalOpCodes(params OpCode[] opCodes)
         {
             foreach (var opCode in opCodes)
                 _handlers[opCode] = null;
+        }
+
+        private void AddToDoOpCodes(params OpCode[] opCodes)
+        {
+            foreach (var opCode in opCodes)
+            {
+                _handlers[opCode] = i =>
+                {
+                    throw new NotSupportedException("Encountered TODO opcode " + i);
+                };
+            }
         }
 
         private Decompiler(MethodInfo m)
@@ -717,6 +749,10 @@ namespace IIS.SLSharp.Core.Reflection
             PushStatement(Expression.Label(label.Label));
         }
 
+        private void InstNop(Instruction inst)
+        {
+        }
+
         private void InstBlt(Instruction inst)
         {
             var target = GetTarget(inst);
@@ -799,6 +835,13 @@ namespace IIS.SLSharp.Core.Reflection
             var a = Pop();
             var b = Pop();
             Push(Expression.RightShift(b, a));
+        }
+
+        private void InstDiv(Instruction inst)
+        {
+            var a = Pop();
+            var b = Pop();
+            Push(Expression.Divide(b, a));
         }
     }
 }
