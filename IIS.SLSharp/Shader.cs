@@ -336,7 +336,15 @@ namespace IIS.SLSharp
             {typeof (vec2), new PropInfo("vec2", GetHandler(ReflectionToken.ShaderVec2Helper))},
             {typeof (vec3), new PropInfo("vec3", GetHandler(ReflectionToken.ShaderVec3Helper))},
             {typeof (vec4), new PropInfo("vec4", GetHandler(ReflectionToken.ShaderVec4Helper))},
-            {typeof (mat4), new PropInfo("mat4", GetHandler(ReflectionToken.ShaderUniformMatrix4Helper))},
+            {typeof (mat2), new PropInfo("mat2", GetHandler(ReflectionToken.ShaderUniformMatrix2X2Helper))},
+            {typeof (mat2x3), new PropInfo("mat2x3", GetHandler(ReflectionToken.ShaderUniformMatrix2X3Helper))},
+            {typeof (mat2x4), new PropInfo("mat2x4", GetHandler(ReflectionToken.ShaderUniformMatrix2X4Helper))},
+            {typeof (mat3x2), new PropInfo("mat3x2", GetHandler(ReflectionToken.ShaderUniformMatrix3X2Helper))},
+            {typeof (mat3), new PropInfo("mat3", GetHandler(ReflectionToken.ShaderUniformMatrix3X3Helper))},
+            {typeof (mat3x4), new PropInfo("mat3x4", GetHandler(ReflectionToken.ShaderUniformMatrix3X4Helper))},
+            {typeof (mat4x2), new PropInfo("mat4x2", GetHandler(ReflectionToken.ShaderUniformMatrix4X2Helper))},
+            {typeof (mat4x3), new PropInfo("mat4x3", GetHandler(ReflectionToken.ShaderUniformMatrix4X3Helper))},
+            {typeof (mat4), new PropInfo("mat4", GetHandler(ReflectionToken.ShaderUniformMatrix4X4Helper))},
             {typeof (Sampler1D), new PropInfo("sampler1D", GetHandler(ReflectionToken.ShaderSamplerHelper))},
             {typeof (Sampler2D), new PropInfo("sampler2D", GetHandler(ReflectionToken.ShaderSamplerHelper))},
             {typeof (int), new PropInfo("int", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(int)}))}
@@ -605,7 +613,56 @@ namespace IIS.SLSharp
             GL.Uniform4(location, vec4.value);
         }
 
-        [ReflectionMarker(ReflectionToken.ShaderUniformMatrix4Helper)]
+
+        [ReflectionMarker(ReflectionToken.ShaderUniformMatrix2X2Helper)]
+        public static void UniformMatrix2Helper(int location)
+        {
+            GL.UniformMatrix2(location, 1, false, mat2.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUniformMatrix2X3Helper)]
+        public static void UniformMatrix2X3Helper(int location)
+        {
+            GL.UniformMatrix2x3(location, 1, false, mat2x3.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUniformMatrix2X4Helper)]
+        public static void UniformMatrix2X4Helper(int location)
+        {
+            GL.UniformMatrix2x4(location, 1, false, mat2x4.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUniformMatrix3X2Helper)]
+        public static void UniformMatrix3X2Helper(int location)
+        {
+            GL.UniformMatrix3x2(location, 1, false, mat3x2.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUniformMatrix3X3Helper)]
+        public static void UniformMatrix3Helper(int location)
+        {
+            GL.UniformMatrix3(location, 1, false, mat3.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUniformMatrix3X4Helper)]
+        public static void UniformMatrix3X4Helper(int location)
+        {
+            GL.UniformMatrix3x4(location, 1, false, mat3x4.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUniformMatrix4X2Helper)]
+        public static void UniformMatrix4X2Helper(int location)
+        {
+            GL.UniformMatrix4x2(location, 1, false, mat4x2.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUniformMatrix4X3Helper)]
+        public static void UniformMatrix4X3Helper(int location)
+        {
+            GL.UniformMatrix4x3(location, 1, false, mat4x3.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUniformMatrix4X4Helper)]
         public static void UniformMatrix4Helper(int location)
         {
             GL.UniformMatrix4(location, false, ref mat4.value);

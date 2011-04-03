@@ -55,9 +55,9 @@
     <Compile Include="GpuStopwatch.cs" />
     <Compile Include="Reflection\Decompiler.cs" />
     <Compile Include="Expressions\LoopReducer.cs" />
+    <Compile Include="Expressions\WhileExpression.cs" />
     <Compile Include="Reflection\ReflectionMarkerAttribute.cs" />
     <Compile Include="Reflection\ReflectionToken.cs" />
-    <Compile Include="Expressions\WhileExpression.cs" />
     <Compile Include="Runtime\ResourceHelper.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>

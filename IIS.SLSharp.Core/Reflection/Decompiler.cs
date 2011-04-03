@@ -517,6 +517,8 @@ namespace IIS.SLSharp.Core.Reflection
                 throw new Exception("Failed to place all labels");
 
             var reduced = LoopReducer.Reduce(_statements, _locs);
+            if (reduced.Count() == 0)
+                reduced = new []{Expression.Block(m.ReturnType, _locs.Values, Expression.Default(m.ReturnType))};
 
             _block = Expression.Block(m.ReturnType, _locs.Values, reduced.ToArray());
         }
