@@ -420,7 +420,7 @@ namespace IIS.SLSharp.Core.Reflection
             AddIllegalOpCodes(OpCodes.Add_Ovf, OpCodes.Add_Ovf_Un, OpCodes.Mul_Ovf, OpCodes.Mul_Ovf_Un, OpCodes.Sub_Ovf, OpCodes.Sub_Ovf_Un,
                 OpCodes.Conv_Ovf_I, OpCodes.Conv_Ovf_I_Un, OpCodes.Conv_Ovf_I1, OpCodes.Conv_Ovf_I1_Un, OpCodes.Conv_Ovf_I2, OpCodes.Conv_Ovf_I2_Un,
                 OpCodes.Conv_Ovf_I4, OpCodes.Conv_Ovf_I4_Un, OpCodes.Conv_Ovf_U, OpCodes.Conv_Ovf_U_Un, OpCodes.Conv_Ovf_U1, OpCodes.Conv_Ovf_U1_Un,
-                OpCodes.Conv_Ovf_U2, OpCodes.Conv_Ovf_U2_Un, OpCodes.Conv_Ovf_U4, OpCodes.Conv_Ovf_U4_Un);
+                OpCodes.Conv_Ovf_U2, OpCodes.Conv_Ovf_U2_Un, OpCodes.Conv_Ovf_U4, OpCodes.Conv_Ovf_U4_Un, OpCodes.Ckfinite);
 
             // 64-bit integer opcodes
             AddIllegalOpCodes(OpCodes.Ldc_I8, OpCodes.Ldelem_I8, OpCodes.Ldind_I8, OpCodes.Stelem_I8, OpCodes.Stind_I8, OpCodes.Conv_U8,
