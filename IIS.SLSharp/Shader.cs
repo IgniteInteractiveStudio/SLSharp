@@ -180,7 +180,9 @@ namespace IIS.SLSharp
             GL.GetShaderInfoLog(shader, out info);
 
 #if DEBUG
+
             Dump(type, src);
+
 #endif
 
             if (compileResult != 1)
@@ -249,6 +251,7 @@ namespace IIS.SLSharp
         private static readonly Dictionary<string, string> _globalNames = new Dictionary<string, string>();
 
 #endif
+
         private static readonly ITexture[] _textures = new ITexture[32];
 
         private static int _currentTextureUnit;
@@ -332,22 +335,24 @@ namespace IIS.SLSharp
         /// </summary>
         private static readonly Dictionary<Type, PropInfo> _typeMap = new Dictionary<Type, PropInfo>
         {
-            {typeof (float), new PropInfo("float", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(float)}))},
-            {typeof (vec2), new PropInfo("vec2", GetHandler(ReflectionToken.ShaderVec2Helper))},
-            {typeof (vec3), new PropInfo("vec3", GetHandler(ReflectionToken.ShaderVec3Helper))},
-            {typeof (vec4), new PropInfo("vec4", GetHandler(ReflectionToken.ShaderVec4Helper))},
-            {typeof (mat2), new PropInfo("mat2", GetHandler(ReflectionToken.ShaderUniformMatrix2X2Helper))},
-            {typeof (mat2x3), new PropInfo("mat2x3", GetHandler(ReflectionToken.ShaderUniformMatrix2X3Helper))},
-            {typeof (mat2x4), new PropInfo("mat2x4", GetHandler(ReflectionToken.ShaderUniformMatrix2X4Helper))},
-            {typeof (mat3x2), new PropInfo("mat3x2", GetHandler(ReflectionToken.ShaderUniformMatrix3X2Helper))},
-            {typeof (mat3), new PropInfo("mat3", GetHandler(ReflectionToken.ShaderUniformMatrix3X3Helper))},
-            {typeof (mat3x4), new PropInfo("mat3x4", GetHandler(ReflectionToken.ShaderUniformMatrix3X4Helper))},
-            {typeof (mat4x2), new PropInfo("mat4x2", GetHandler(ReflectionToken.ShaderUniformMatrix4X2Helper))},
-            {typeof (mat4x3), new PropInfo("mat4x3", GetHandler(ReflectionToken.ShaderUniformMatrix4X3Helper))},
-            {typeof (mat4), new PropInfo("mat4", GetHandler(ReflectionToken.ShaderUniformMatrix4X4Helper))},
-            {typeof (Sampler1D), new PropInfo("sampler1D", GetHandler(ReflectionToken.ShaderSamplerHelper))},
-            {typeof (Sampler2D), new PropInfo("sampler2D", GetHandler(ReflectionToken.ShaderSamplerHelper))},
-            {typeof (int), new PropInfo("int", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(int)}))}
+            {typeof(float), new PropInfo("float", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(float)}))},
+            // TODO: what do we do for double? ...
+            {typeof(vec2), new PropInfo("vec2", GetHandler(ReflectionToken.ShaderVec2Helper))},
+            {typeof(vec3), new PropInfo("vec3", GetHandler(ReflectionToken.ShaderVec3Helper))},
+            {typeof(vec4), new PropInfo("vec4", GetHandler(ReflectionToken.ShaderVec4Helper))},
+            {typeof(mat2), new PropInfo("mat2", GetHandler(ReflectionToken.ShaderUniformMatrix2X2Helper))},
+            {typeof(mat2x3), new PropInfo("mat2x3", GetHandler(ReflectionToken.ShaderUniformMatrix2X3Helper))},
+            {typeof(mat2x4), new PropInfo("mat2x4", GetHandler(ReflectionToken.ShaderUniformMatrix2X4Helper))},
+            {typeof(mat3x2), new PropInfo("mat3x2", GetHandler(ReflectionToken.ShaderUniformMatrix3X2Helper))},
+            {typeof(mat3), new PropInfo("mat3", GetHandler(ReflectionToken.ShaderUniformMatrix3X3Helper))},
+            {typeof(mat3x4), new PropInfo("mat3x4", GetHandler(ReflectionToken.ShaderUniformMatrix3X4Helper))},
+            {typeof(mat4x2), new PropInfo("mat4x2", GetHandler(ReflectionToken.ShaderUniformMatrix4X2Helper))},
+            {typeof(mat4x3), new PropInfo("mat4x3", GetHandler(ReflectionToken.ShaderUniformMatrix4X3Helper))},
+            {typeof(mat4), new PropInfo("mat4", GetHandler(ReflectionToken.ShaderUniformMatrix4X4Helper))},
+            {typeof(Sampler1D), new PropInfo("sampler1D", GetHandler(ReflectionToken.ShaderSamplerHelper))},
+            {typeof(Sampler2D), new PropInfo("sampler2D", GetHandler(ReflectionToken.ShaderSamplerHelper))},
+            {typeof(int), new PropInfo("int", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(int)}))},
+            {typeof(uint), new PropInfo("uint", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(uint)}))},
         };
 
         /// <summary>
@@ -425,7 +430,6 @@ namespace IIS.SLSharp
 
 #endif
         }
-
 
         public static string GetUniformName(PropertyInfo prop)
         {
@@ -522,7 +526,6 @@ namespace IIS.SLSharp
                         current + (glslVar + Environment.NewLine));
         }
 
-       
         protected Shader()
         {
             RefShaders();
@@ -579,6 +582,7 @@ namespace IIS.SLSharp
 
             UnbindTextures();
             GL.UseProgram(0);
+
             if (DebugMode)
                 _debugger.EndDebug();
         }
@@ -850,19 +854,15 @@ namespace IIS.SLSharp
             var prop = t.GetProperty(name, BindingFlagsAny);
             var field = t.GetField(name, BindingFlagsAny);
 
-            if (prop != null && prop.GetCustomAttributes(typeof(UniformAttribute), false).Length != 0)
+            if (prop != null &&
+                (prop.GetCustomAttributes(typeof(UniformAttribute), false).Length != 0 ||
+                prop.GetCustomAttributes(typeof(VertexInAttribute), false).Length != 0))
                 return GetUniformName(prop);
 
-            if (prop != null && prop.GetCustomAttributes(typeof(VertexInAttribute), false).Length != 0)
-                return GetUniformName(prop);
-
-            if (field != null && field.GetCustomAttributes(typeof(VaryingAttribute), false).Length != 0)
-                return GetVaryingName(field);
-
-            if (field != null && field.GetCustomAttributes(typeof(VertexInAttribute), false).Length != 0)
-                return GetVaryingName(field);
-
-            if (field != null && field.GetCustomAttributes(typeof(FragmentOutAttribute), false).Length != 0)
+            if (field != null &&
+                (field.GetCustomAttributes(typeof(VaryingAttribute), false).Length != 0 ||
+                field.GetCustomAttributes(typeof(VertexInAttribute), false).Length != 0 ||
+                field.GetCustomAttributes(typeof(FragmentOutAttribute), false).Length != 0))
                 return GetVaryingName(field);
 
             return name;
@@ -873,13 +873,9 @@ namespace IIS.SLSharp
             if (member.MemberType == MemberTypes.Method)
                 return GetMethodName(member as MethodInfo);
             
-            if (member.GetCustomAttributes(typeof(VaryingAttribute), false).Count() != 0)
-                return GetVaryingName(member as FieldInfo);
-
-            if (member.GetCustomAttributes(typeof(VertexInAttribute), false).Count() != 0)
-                return GetVaryingName(member as FieldInfo);
-
-            if (member.GetCustomAttributes(typeof(FragmentOutAttribute), false).Count() != 0)
+            if (member.GetCustomAttributes(typeof(VaryingAttribute), false).Length != 0 ||
+                member.GetCustomAttributes(typeof(VertexInAttribute), false).Length != 0 ||
+                member.GetCustomAttributes(typeof(FragmentOutAttribute), false).Length != 0)
                 return GetVaryingName(member as FieldInfo);
 
             return member.Name;
@@ -899,6 +895,7 @@ namespace IIS.SLSharp
         {
             if (_refcount == 0)
                 StaticInit();
+
             _refcount++;
         }
 
