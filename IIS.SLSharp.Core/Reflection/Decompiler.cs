@@ -406,7 +406,7 @@ namespace IIS.SLSharp.Core.Reflection
                 Pop();
             };
 
-            // opcodes that don't have any real meaning to us, we just ignore them
+            // opcodes that don't have any real meaning to us; we just ignore them
             AddNopOpCodes(OpCodes.Prefix1, OpCodes.Prefix2, OpCodes.Prefix3, OpCodes.Prefix4, OpCodes.Prefix5, OpCodes.Prefix6, OpCodes.Prefix7,
                 OpCodes.Prefixref, OpCodes.Nop, OpCodes.Break, OpCodes.Ret, OpCodes.Tailcall, OpCodes.Volatile, OpCodes.Unaligned, OpCodes.Readonly,
                 OpCodes.Initobj);
@@ -430,10 +430,18 @@ namespace IIS.SLSharp.Core.Reflection
             AddIllegalOpCodes(OpCodes.Leave, OpCodes.Leave_S, OpCodes.Endfilter, OpCodes.Endfinally, OpCodes.Throw, OpCodes.Rethrow);
 
             // reflection and types
-            AddIllegalOpCodes(OpCodes.Isinst, OpCodes.Castclass, OpCodes.Ldtoken, OpCodes.Box, OpCodes.Unbox, OpCodes.Unbox_Any, OpCodes.Sizeof);
+            AddIllegalOpCodes(OpCodes.Isinst, OpCodes.Castclass, OpCodes.Ldtoken, OpCodes.Box, OpCodes.Unbox, OpCodes.Unbox_Any, OpCodes.Sizeof,
+                OpCodes.Constrained);
+
+            // unmanaged/native operations
+            AddIllegalOpCodes(OpCodes.Initblk, OpCodes.Cpblk, OpCodes.Ldftn, OpCodes.Ldvirtftn);
 
             // other unsupported opcodes
             AddIllegalOpCodes(OpCodes.Ldnull, OpCodes.Ldstr);
+
+            // TODO: these are not actually restricted, but need further investigation for a proper implementation; if you
+            // run into an exception with one of these, then please report it with some source code we can reproduce it with!
+            AddToDoOpCodes(OpCodes.Calli);
         }
 
         private void AddNopOpCodes(params OpCode[] opCodes)
@@ -446,6 +454,17 @@ namespace IIS.SLSharp.Core.Reflection
         {
             foreach (var opCode in opCodes)
                 _handlers[opCode] = null;
+        }
+
+        private void AddToDoOpCodes(params OpCode[] opCodes)
+        {
+            foreach (var opCode in opCodes)
+            {
+                _handlers[opCode] = i =>
+                {
+                    throw new NotSupportedException("Encountered TODO opcode " + i);
+                };
+            }
         }
 
         private Decompiler(MethodInfo m)
