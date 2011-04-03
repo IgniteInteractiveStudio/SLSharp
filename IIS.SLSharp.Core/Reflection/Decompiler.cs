@@ -412,7 +412,7 @@ namespace IIS.SLSharp.Core.Reflection
             // opcodes that don't have any real meaning to us, we just ignore them
 
             AddNopOpCodes(OpCodes.Prefix1, OpCodes.Prefix2, OpCodes.Prefix3, OpCodes.Prefix4, OpCodes.Prefix5, OpCodes.Prefix6, OpCodes.Prefix7,
-                OpCodes.Prefixref, OpCodes.Nop, OpCodes.Break, OpCodes.Ret, OpCodes.Tailcall);
+                OpCodes.Prefixref, OpCodes.Nop, OpCodes.Break, OpCodes.Ret, OpCodes.Tailcall, OpCodes.Volatile);
 
             // these are opcodes that we can't sensibly translate to GLSL
 
@@ -427,10 +427,16 @@ namespace IIS.SLSharp.Core.Reflection
                 OpCodes.Conv_Ovf_I8, OpCodes.Conv_Ovf_I8_Un, OpCodes.Conv_Ovf_U8, OpCodes.Conv_Ovf_U8_Un);
 
             // typed references (see C#'s __arglist, __makeref, __reftype, __refvalue (undocumenteded keywords in MS C#))
-            AddIllegalOpCodes(OpCodes.Mkrefany, OpCodes.Refanytype, OpCodes.Refanyval);
+            AddIllegalOpCodes(OpCodes.Arglist, OpCodes.Mkrefany, OpCodes.Refanytype, OpCodes.Refanyval);
+
+            // exception handling
+            AddIllegalOpCodes(OpCodes.Leave, OpCodes.Leave_S, OpCodes.Endfilter, OpCodes.Endfinally, OpCodes.Throw, OpCodes.Rethrow);
+
+            // reflection and types
+            AddIllegalOpCodes(OpCodes.Isinst, OpCodes.Castclass, OpCodes.Ldtoken, OpCodes.Box, OpCodes.Unbox, OpCodes.Unbox_Any);
 
             // other unsupported opcodes
-            AddIllegalOpCodes(OpCodes.Ldnull, OpCodes.Box, OpCodes.Unbox, OpCodes.Unbox_Any);
+            AddIllegalOpCodes(OpCodes.Ldnull, OpCodes.Ldstr);
         }
 
         private void AddNopOpCodes(params OpCode[] opCodes)
