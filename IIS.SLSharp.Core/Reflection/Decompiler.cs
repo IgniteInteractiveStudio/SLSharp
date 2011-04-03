@@ -427,7 +427,7 @@ namespace IIS.SLSharp.Core.Reflection
                 OpCodes.Conv_Ovf_I8, OpCodes.Conv_Ovf_I8_Un, OpCodes.Conv_Ovf_U8, OpCodes.Conv_Ovf_U8_Un);
 
             // other unsupported opcodes
-            AddIllegalOpCodes(OpCodes.Ldnull);
+            AddIllegalOpCodes(OpCodes.Ldnull, OpCodes.Box, OpCodes.Unbox, OpCodes.Unbox_Any);
         }
 
         private void AddNopOpCodes(params OpCode[] opCodes)
