@@ -69,7 +69,7 @@ namespace IIS.SLSharp.Core.Reflection
 
             if (lhs.Type == typeof(bool) && rhs.Type == typeof(int))
             {
-                lhs = Expression.Convert(lhs, typeof (int));
+                lhs = Expression.Convert(lhs, typeof(int));
                 return true;
             }
 
@@ -214,9 +214,13 @@ namespace IIS.SLSharp.Core.Reflection
                 Push(Expression.New(ctor, Pop(args)));
             };
 
-            // opcodes that we can just treat as loading a (non-macro) constant value onto the stack
-            AddConstantOpCodes(OpCodes.Ldc_R4, OpCodes.Ldc_R8, OpCodes.Ldc_I4, OpCodes.Ldc_I4_S, OpCodes.Ldind_I1, OpCodes.Ldind_I2, OpCodes.Ldind_I4,
-                OpCodes.Ldind_U1, OpCodes.Ldind_U2, OpCodes.Ldind_U4);
+            _handlers[OpCodes.Ldc_R4] = InstLdc;
+
+            _handlers[OpCodes.Ldc_R8] = InstLdc;
+
+            _handlers[OpCodes.Ldc_I4] = InstLdc;
+
+            _handlers[OpCodes.Ldc_I4_S] = InstLdc;
 
             _handlers[OpCodes.Ldc_I4_0] = _ =>
             {
@@ -430,6 +434,9 @@ namespace IIS.SLSharp.Core.Reflection
             // unsupported conversions
             AddIllegalOpCodes(OpCodes.Conv_I1, OpCodes.Conv_I2, OpCodes.Conv_U1, OpCodes.Conv_U2);
 
+            // address opcodes
+            AddIllegalOpCodes(OpCodes.Ldind_I1, OpCodes.Ldind_I2, OpCodes.Ldind_I4, OpCodes.Ldind_U1, OpCodes.Ldind_U2, OpCodes.Ldind_U4);
+
             // typed references (see C#'s __arglist, __makeref, __reftype, __refvalue (undocumenteded keywords in MS C#))
             AddIllegalOpCodes(OpCodes.Arglist, OpCodes.Mkrefany, OpCodes.Refanytype, OpCodes.Refanyval);
 
@@ -449,12 +456,6 @@ namespace IIS.SLSharp.Core.Reflection
             // TODO: these are not actually restricted, but need further investigation for a proper implementation; if you
             // run into an exception with one of these, then please report it with some source code we can reproduce it with!
             AddToDoOpCodes(OpCodes.Calli);
-        }
-
-        private void AddConstantOpCodes(params OpCode[] opCodes)
-        {
-            foreach (var opCode in opCodes)
-                _handlers[opCode] = InstNonMacroLdc;
         }
 
         private void AddNopOpCodes(params OpCode[] opCodes)
@@ -595,7 +596,7 @@ namespace IIS.SLSharp.Core.Reflection
             Push(Expression.Divide(b, a));
         }
 
-        private void InstNonMacroLdc(Instruction inst)
+        private void InstLdc(Instruction inst)
         {
             Push(Expression.Constant(inst.Operand));
         }
