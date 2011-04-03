@@ -188,7 +188,7 @@ namespace IIS.SLSharp.Core.Reflection
             _handlers[OpCodes.Newobj] = i =>
             {
                 var ctor = (ConstructorInfo)i.Operand;
-                var args = ctor.GetParameters().Count();
+                var args = ctor.GetParameters().Length;
                 Push(Expression.New(ctor, Pop(args)));
             };
 
@@ -530,19 +530,19 @@ namespace IIS.SLSharp.Core.Reflection
 
             switch (_stack.Count)
             {
-                case 0: break;
+                case 0:
+                    break;
                 case 1:
                     PushStatement(Pop());
                     //PushStatement(Expression.Return(Expression.Label("ret"), Pop()));
                     //PushStatement(Expression.Default(m.ReturnType));
                     break;
                 default:
-                    {
-                        Console.WriteLine("Stack mismatch in:");
-                        foreach (var iinner in m.GetInstructions())
-                            Console.WriteLine("{2}: {0} {1}", iinner, iinner.Operand, iinner.Offset);
-                        throw new NotImplementedException();
-                    }
+                    Console.WriteLine("Stack mismatch in:");
+                    foreach (var iinner in m.GetInstructions())
+                        Console.WriteLine("{2}: {0} {1}", iinner, iinner.Operand, iinner.Offset);
+
+                    throw new NotImplementedException();
             }
 
             if (_labelsEmmited != _labels.Count)
@@ -550,14 +550,14 @@ namespace IIS.SLSharp.Core.Reflection
 
             var reduced = LoopReducer.Reduce(_statements, _locs);
             if (reduced.Count() == 0)
-                reduced = new []{Expression.Block(m.ReturnType, _locs.Values, Expression.Default(m.ReturnType))};
+                reduced = new[] { Expression.Block(m.ReturnType, _locs.Values, Expression.Default(m.ReturnType)) };
 
             _block = Expression.Block(m.ReturnType, _locs.Values, reduced.ToArray());
         }
 
         private static int GetTarget(Instruction inst)
         {
-            return ((Instruction) inst.Operand).Offset;
+            return ((Instruction)inst.Operand).Offset;
         }
 
         private void CollectBranches(IEnumerable<Instruction> instructions)
@@ -730,7 +730,7 @@ namespace IIS.SLSharp.Core.Reflection
                     var block = PopStatement(count - 1);
                     var cond = (DualLogicalExpression)PopStatement();
                     
-                    //var expr = block.Count() > 1 ? Expression.Block(block) : block[0];
+                    //var expr = block.Length > 1 ? Expression.Block(block) : block[0];
                     var expr = Expression.Block(block); // simpler to handle in visitor
                     PushStatement(Expression.IfThen(cond.Dual, expr));
 
@@ -807,7 +807,7 @@ namespace IIS.SLSharp.Core.Reflection
         private void InstCall(Instruction inst)
         {
             var m = (MethodInfo) inst.Operand;
-            var args = m.GetParameters().Count();
+            var args = m.GetParameters().Length;
 
             if (HasThis(m))
             {

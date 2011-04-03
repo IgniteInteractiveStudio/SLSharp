@@ -438,12 +438,14 @@ namespace IIS.SLSharp.Translation
         public static string GetParameterString(MethodInfo m)
         {
             var sig = string.Empty;
-            var args = m.GetParameters();
+            var parameters = m.GetParameters();
 
-            if (args.Count() > 0)
+            if (parameters.Length > 0)
             {
-                sig = args.Take(args.Count() - 1).Aggregate(sig, (current, v) => current + ToGlslType(v.ParameterType) + " " + v.Name + ",");
-                var l = args.Last();
+                sig = parameters.Take(parameters.Length - 1).Aggregate(sig, (current, v) =>
+                    current + ToGlslType(v.ParameterType) + " " + v.Name + ",");
+
+                var l = parameters.Last();
                 sig += ToGlslType(l.ParameterType) + " " + l.Name;
             }
 

@@ -200,7 +200,7 @@ namespace IIS.SLSharp
 
         private bool HasType(Type t)
         {
-            return GetType().GetMethods(BindingFlagsAny).Any(m => m.GetCustomAttributes(t, false).Count() != 0);
+            return GetType().GetMethods(BindingFlagsAny).Any(m => m.GetCustomAttributes(t, false).Length != 0);
         }
 
         /// <summary>
@@ -391,7 +391,7 @@ namespace IIS.SLSharp
                     if (hasEntry)
                         throw new Exception("Shader cannot have two entry points.");
 
-                    if (m.GetParameters().Count() != 0)
+                    if (m.GetParameters().Length != 0)
                         throw new Exception("Entry point must not have parameters.");
 
                     hasEntry = true;
@@ -772,7 +772,7 @@ namespace IIS.SLSharp
                 ilg.Emit(OpCodes.Ldarg, 0);
                 ilg.Emit(OpCodes.Ldfld, f);
 
-                if (uniformCall.GetParameters().Count() == 2)
+                if (uniformCall.GetParameters().Length == 2)
                     ilg.Emit(OpCodes.Ldarg, 1);
 
                 ilg.Emit(OpCodes.Call, uniformCall);
