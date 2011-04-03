@@ -426,6 +426,9 @@ namespace IIS.SLSharp.Core.Reflection
             AddIllegalOpCodes(OpCodes.Ldc_I8, OpCodes.Ldelem_I8, OpCodes.Ldind_I8, OpCodes.Stelem_I8, OpCodes.Stind_I8, OpCodes.Conv_U8,
                 OpCodes.Conv_Ovf_I8, OpCodes.Conv_Ovf_I8_Un, OpCodes.Conv_Ovf_U8, OpCodes.Conv_Ovf_U8_Un);
 
+            // typed references (see C#'s __arglist, __makeref, __reftype, __refvalue (undocumenteded keywords in MS C#))
+            AddIllegalOpCodes(OpCodes.Mkrefany, OpCodes.Refanytype, OpCodes.Refanyval);
+
             // other unsupported opcodes
             AddIllegalOpCodes(OpCodes.Ldnull, OpCodes.Box, OpCodes.Unbox, OpCodes.Unbox_Any);
         }
