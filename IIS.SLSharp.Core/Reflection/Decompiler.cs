@@ -134,15 +134,14 @@ namespace IIS.SLSharp.Core.Reflection
 
             _handlers[OpCodes.Callvirt] = InstCall;
 
-            _handlers[OpCodes.Conv_R4] = _ =>
-            {
-                Push(Expression.Convert(Pop(), typeof(float)));
-            };
+            _handlers[OpCodes.Conv_R4] = InstConvr;
 
             _handlers[OpCodes.Conv_R8] = _ =>
             {
                 Push(Expression.Convert(Pop(), typeof(double)));
             };
+
+            _handlers[OpCodes.Conv_R_Un] = InstConvr;
 
             _handlers[OpCodes.Conv_I4] = _ =>
             {
@@ -437,7 +436,7 @@ namespace IIS.SLSharp.Core.Reflection
             // address opcodes
             AddIllegalOpCodes(OpCodes.Ldind_I1, OpCodes.Ldind_I2, OpCodes.Ldind_I4, OpCodes.Ldind_U1, OpCodes.Ldind_U2, OpCodes.Ldind_U4);
 
-            // typed references (see C#'s __arglist, __makeref, __reftype, __refvalue (undocumenteded keywords in MS C#))
+            // typed references (see C#'s __arglist, __makeref, __reftype, __refvalue (undocumenteded keywords in MS csc.exe))
             AddIllegalOpCodes(OpCodes.Arglist, OpCodes.Mkrefany, OpCodes.Refanytype, OpCodes.Refanyval);
 
             // exception handling
@@ -503,6 +502,11 @@ namespace IIS.SLSharp.Core.Reflection
                 pos++;
 
             Push(_args[pos]);
+        }
+
+        private void InstConvr(Instruction inst)
+        {
+            Push(Expression.Convert(Pop(), typeof(float)));
         }
 
         private void InstBlt(Instruction inst)
