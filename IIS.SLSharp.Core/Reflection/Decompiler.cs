@@ -271,12 +271,9 @@ namespace IIS.SLSharp.Core.Reflection
                 Push(Expression.Multiply(b, a));
             };
 
-            _handlers[OpCodes.Div] = _ =>
-            {
-                var a = Pop();
-                var b = Pop();
-                Push(Expression.Divide(b, a));
-            };
+            _handlers[OpCodes.Div] = InstDiv;
+
+            _handlers[OpCodes.Div_Un] = InstDiv;
 
             _handlers[OpCodes.Sub] = _ =>
             {
@@ -819,6 +816,13 @@ namespace IIS.SLSharp.Core.Reflection
             var a = Pop();
             var b = Pop();
             Push(Expression.RightShift(b, a));
+        }
+
+        private void InstDiv(Instruction inst)
+        {
+            var a = Pop();
+            var b = Pop();
+            Push(Expression.Divide(b, a));
         }
     }
 }
