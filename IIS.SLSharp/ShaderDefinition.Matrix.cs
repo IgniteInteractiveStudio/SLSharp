@@ -513,7 +513,7 @@ namespace IIS.SLSharp
             public static implicit operator mat4(Matrix4 v)
             { value = v; return null; }
 
-                        #region .ctor
+            #region .ctor
 
             /// <summary>  Initialized all diogonal entries to scale </summary>
             public mat4(float scale) { throw _invalidAccess; }
