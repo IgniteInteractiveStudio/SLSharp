@@ -13,9 +13,14 @@ namespace IIS.SLSharp.Core.Reflection
     {
         private class LabelInformation
         {
-            public readonly List<Tuple<int,Instruction>> CrossRefs = new List<Tuple<int,Instruction>>();
+            private readonly List<Tuple<int, Instruction>> _crossRefs = new List<Tuple<int, Instruction>>();
 
             public LabelTarget Label { get; private set; }
+
+            public List<Tuple<int, Instruction>> CrossRefs
+            {
+                get { return _crossRefs; }
+            }
 
             public LabelInformation(LabelTarget target)
             {

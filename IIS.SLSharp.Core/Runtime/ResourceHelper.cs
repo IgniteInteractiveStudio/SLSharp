@@ -20,7 +20,7 @@ namespace IIS.SLSharp.Core.Runtime
 
             public object[] Types { get; set; }
 
-            public int Refcount { get; set; }
+            public int RefCount { get; set; }
         }
 
         internal sealed class AllocationKeyComparer : IEqualityComparer<AllocationKey>
@@ -58,10 +58,10 @@ namespace IIS.SLSharp.Core.Runtime
 
             public Type Implementation { get; set; }
 
-            public Dictionary<AllocationKey, object> Instances { get; set; }
+            public Dictionary<AllocationKey, object> Instances { get; private set; }
         }
 
-        private static readonly Dictionary<Type, ResourceRecord> Impls = new Dictionary<Type, ResourceRecord>();
+        private static readonly Dictionary<Type, ResourceRecord> _impls = new Dictionary<Type, ResourceRecord>();
 
         [ReflectionMarker(ReflectionToken.ResourceHelperRelease)]
         public static void Release(object instance)
@@ -72,8 +72,8 @@ namespace IIS.SLSharp.Core.Runtime
 
             lock (rec.Instances)
             {
-                key.Refcount--;
-                if (key.Refcount != 0)
+                key.RefCount--;
+                if (key.RefCount != 0)
                     return;
 
                 rec.Instances.Remove(key);
@@ -85,7 +85,7 @@ namespace IIS.SLSharp.Core.Runtime
         private static ResourceRecord GetResource(Type typ)
         {
             ResourceRecord result;
-            if (Impls.TryGetValue(typ, out result))
+            if (_impls.TryGetValue(typ, out result))
                 return result;
 
             var assemblyName = new AssemblyName { Name = "tmp_" + typ.Name };
@@ -97,8 +97,8 @@ namespace IIS.SLSharp.Core.Runtime
             if (baseDispose.IsFinal)
                 throw new Exception(typ.Name + ".Dispose() is final");
 
-            var disposeFun = typeBuilder.DefineMethod("Dispose",  MethodAttributes.Virtual | MethodAttributes.Public, typeof(void), new Type[0]);
-            var disposeBaseFun = typeBuilder.DefineMethod("DisposeBase", MethodAttributes.Public, typeof(void), new Type[0]);
+            var disposeFun = typeBuilder.DefineMethod("Dispose", MethodAttributes.Virtual | MethodAttributes.Public, typeof(void), Type.EmptyTypes);
+            var disposeBaseFun = typeBuilder.DefineMethod("DisposeBase", MethodAttributes.Public, typeof(void), Type.EmptyTypes);
             typeBuilder.DefineField("key", typeof(AllocationKey), FieldAttributes.Public);
 
             var ilDispose = disposeFun.GetILGenerator();
@@ -135,8 +135,11 @@ namespace IIS.SLSharp.Core.Runtime
                 cil.Emit(OpCodes.Ret);
             }
 
-            result = new ResourceRecord {Implementation = typeBuilder.CreateType()};
-            Impls[typ] = result;
+            result = new ResourceRecord
+            {
+                Implementation = typeBuilder.CreateType()
+            };
+            _impls[typ] = result;
 
             return result;
         }
@@ -144,21 +147,27 @@ namespace IIS.SLSharp.Core.Runtime
         public static object Instance(Type t, object []args, Type[] types)
         {
             var res = GetResource(t);
+
             if (types == null)
                 types = Type.EmptyTypes;
 
             if (args == null)
-                args = new object[] {};
+                args = new object[0];
 
-            var k = new AllocationKey{Args = args, Types = types};
+            var k = new AllocationKey
+            {
+                Args = args,
+                Types = types
+            };
+
             object instance;
 
             lock (res.Instances)
             {
                 if (res.Instances.TryGetValue(k, out instance))
                 {
-                    k = (AllocationKey) instance.GetType().GetField("key").GetValue(instance);
-                    k.Refcount++;
+                    k = (AllocationKey)instance.GetType().GetField("key").GetValue(instance);
+                    k.RefCount++;
                     return instance;
                 }
             }
@@ -183,7 +192,7 @@ namespace IIS.SLSharp.Core.Runtime
 
                 lock (res.Instances)
                 {
-                    k.Refcount = 1;
+                    k.RefCount = 1;
                     res.Instances[k] = instance;
                 }
 
@@ -195,9 +204,9 @@ namespace IIS.SLSharp.Core.Runtime
             }
         }
 
-        public static T Instance<T>(object []args, Type[] types)
+        public static T Instance<T>(object[] args, Type[] types)
         {
-            return (T)Instance(typeof (T), args, types);
+            return (T)Instance(typeof(T), args, types);
         }
 
         public static T Instance<T>()
@@ -206,18 +215,18 @@ namespace IIS.SLSharp.Core.Runtime
             return Instance<T>(null, Type.EmptyTypes);
         }
 
-        public static T Instance<T,T1>(T1 t1)
+        public static T Instance<T, T1>(T1 t1)
             where T : IDisposable
         {
-            var args = new object[] {t1};
-            var types = new[] {typeof (T1)};
+            var args = new[] { t1 };
+            var types = new[] { typeof(T1) };
             return Instance<T>(args, types);
         }
 
         public static T Instance<T>(object t1)
             where T: IDisposable
         {
-            var args = new [] { t1 };
+            var args = new[] { t1 };
             var types = new[] { t1.GetType() };
             return Instance<T>(args, types);
         }
