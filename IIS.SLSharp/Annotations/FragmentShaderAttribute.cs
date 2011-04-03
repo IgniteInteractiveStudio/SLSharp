@@ -13,10 +13,10 @@ namespace IIS.SLSharp.Annotations
         /// <summary>
         /// Flags a method to be compiled as fragment routine.
         /// </summary>
-        /// <param name="entrypoint">Set to true for the function that serves as fragment entrypoint (main)</param>
-        public FragmentShaderAttribute(bool entrypoint = false)
+        /// <param name="entryPoint">Set to true for the function that serves as fragment entrypoint (main)</param>
+        public FragmentShaderAttribute(bool entryPoint = false)
         {
-            EntryPoint = entrypoint;
+            EntryPoint = entryPoint;
         }
     }
 }

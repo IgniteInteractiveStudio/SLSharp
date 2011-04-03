@@ -13,10 +13,10 @@ namespace IIS.SLSharp.Annotations
         /// <summary>
         /// Flags a method to be compiled as vertex routine.
         /// </summary>
-        /// <param name="entrypoint">Set to true for the function that serves as vertex entrypoint (main)</param>
-        public VertexShaderAttribute(bool entrypoint = false)
+        /// <param name="entryPoint">Set to true for the function that serves as vertex entrypoint (main)</param>
+        public VertexShaderAttribute(bool entryPoint = false)
         {
-            EntryPoint = entrypoint;
+            EntryPoint = entryPoint;
         }
     }
 }
