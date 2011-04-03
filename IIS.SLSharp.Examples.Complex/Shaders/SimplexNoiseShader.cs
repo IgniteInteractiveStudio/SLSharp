@@ -62,7 +62,7 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
             var i = byte.MaxValue + 1;
             var perm2 = new byte[i, i, 4];
 
-            for (var y = 0; y < i + 1; y++)
+            for (var y = 0; y < i; y++)
             {
                 for (var x = 0; x < i; x++)
                 {

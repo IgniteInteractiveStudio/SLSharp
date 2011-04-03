@@ -144,7 +144,7 @@ namespace IIS.SLSharp.Core.Runtime
             return result;
         }
 
-        public static object Instance(Type t, object []args, Type[] types)
+        public static object Instance(Type t, object[] args, Type[] types)
         {
             var res = GetResource(t);
 
@@ -173,35 +173,29 @@ namespace IIS.SLSharp.Core.Runtime
             }
 
             var ctor = res.Implementation.GetConstructor(types);
-            // ReSharper sucks.
-// ReSharper disable ConditionIsAlwaysTrueOrFalse
-// ReSharper disable HeuristicUnreachableCode
+
+            // ReSharper disable ConditionIsAlwaysTrueOrFalse
+            // ReSharper disable HeuristicUnreachableCode
             if (ctor == null)
             {
                 var s = types.Aggregate(string.Empty, (acc, current) => acc += current.ToString() + ", ").TrimEnd(new[] { ' ', ',' });
-                throw new ArgumentException(t.Name + "." + t.Name+ "(" +s + ") is not defined");
+                throw new ArgumentException(t.Name + "." + t.Name + "(" + s + ") is not defined");
             }
-// ReSharper restore HeuristicUnreachableCode
-// ReSharper restore ConditionIsAlwaysTrueOrFalse
+            // ReSharper restore HeuristicUnreachableCode
+            // ReSharper restore ConditionIsAlwaysTrueOrFalse
 
             var recf = res.Implementation.GetField("key");
-            try
-            {
-                instance = ctor.Invoke(args);
-                recf.SetValue(instance, k);
 
-                lock (res.Instances)
-                {
-                    k.RefCount = 1;
-                    res.Instances[k] = instance;
-                }
+            instance = ctor.Invoke(args);
+            recf.SetValue(instance, k);
 
-                return instance;
-            }
-            catch (Exception e)
+            lock (res.Instances)
             {
-                throw e.InnerException;
+                k.RefCount = 1;
+                res.Instances[k] = instance;
             }
+
+            return instance;
         }
 
         public static T Instance<T>(object[] args, Type[] types)
