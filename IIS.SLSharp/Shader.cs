@@ -335,24 +335,24 @@ namespace IIS.SLSharp
         /// </summary>
         private static readonly Dictionary<Type, PropInfo> _typeMap = new Dictionary<Type, PropInfo>
         {
-            {typeof(float), new PropInfo("float", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(float)}))},
+            { typeof(float), new PropInfo("float", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(float)}))},
             // TODO: what do we do for double? ...
-            {typeof(vec2), new PropInfo("vec2", GetHandler(ReflectionToken.ShaderVec2Helper))},
-            {typeof(vec3), new PropInfo("vec3", GetHandler(ReflectionToken.ShaderVec3Helper))},
-            {typeof(vec4), new PropInfo("vec4", GetHandler(ReflectionToken.ShaderVec4Helper))},
-            {typeof(mat2), new PropInfo("mat2", GetHandler(ReflectionToken.ShaderUniformMatrix2X2Helper))},
-            {typeof(mat2x3), new PropInfo("mat2x3", GetHandler(ReflectionToken.ShaderUniformMatrix2X3Helper))},
-            {typeof(mat2x4), new PropInfo("mat2x4", GetHandler(ReflectionToken.ShaderUniformMatrix2X4Helper))},
-            {typeof(mat3x2), new PropInfo("mat3x2", GetHandler(ReflectionToken.ShaderUniformMatrix3X2Helper))},
-            {typeof(mat3), new PropInfo("mat3", GetHandler(ReflectionToken.ShaderUniformMatrix3X3Helper))},
-            {typeof(mat3x4), new PropInfo("mat3x4", GetHandler(ReflectionToken.ShaderUniformMatrix3X4Helper))},
-            {typeof(mat4x2), new PropInfo("mat4x2", GetHandler(ReflectionToken.ShaderUniformMatrix4X2Helper))},
-            {typeof(mat4x3), new PropInfo("mat4x3", GetHandler(ReflectionToken.ShaderUniformMatrix4X3Helper))},
-            {typeof(mat4), new PropInfo("mat4", GetHandler(ReflectionToken.ShaderUniformMatrix4X4Helper))},
-            {typeof(Sampler1D), new PropInfo("sampler1D", GetHandler(ReflectionToken.ShaderSamplerHelper))},
-            {typeof(Sampler2D), new PropInfo("sampler2D", GetHandler(ReflectionToken.ShaderSamplerHelper))},
-            {typeof(int), new PropInfo("int", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(int)}))},
-            {typeof(uint), new PropInfo("uint", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(uint)}))},
+            { typeof(vec2), new PropInfo("vec2", GetHandler(ReflectionToken.ShaderVec2Helper)) },
+            { typeof(vec3), new PropInfo("vec3", GetHandler(ReflectionToken.ShaderVec3Helper)) },
+            { typeof(vec4), new PropInfo("vec4", GetHandler(ReflectionToken.ShaderVec4Helper)) },
+            { typeof(mat2), new PropInfo("mat2", GetHandler(ReflectionToken.ShaderUniformMatrix2X2Helper)) },
+            { typeof(mat2x3), new PropInfo("mat2x3", GetHandler(ReflectionToken.ShaderUniformMatrix2X3Helper)) },
+            { typeof(mat2x4), new PropInfo("mat2x4", GetHandler(ReflectionToken.ShaderUniformMatrix2X4Helper)) },
+            { typeof(mat3x2), new PropInfo("mat3x2", GetHandler(ReflectionToken.ShaderUniformMatrix3X2Helper)) },
+            { typeof(mat3), new PropInfo("mat3", GetHandler(ReflectionToken.ShaderUniformMatrix3X3Helper)) },
+            { typeof(mat3x4), new PropInfo("mat3x4", GetHandler(ReflectionToken.ShaderUniformMatrix3X4Helper)) },
+            { typeof(mat4x2), new PropInfo("mat4x2", GetHandler(ReflectionToken.ShaderUniformMatrix4X2Helper)) },
+            { typeof(mat4x3), new PropInfo("mat4x3", GetHandler(ReflectionToken.ShaderUniformMatrix4X3Helper)) },
+            { typeof(mat4), new PropInfo("mat4", GetHandler(ReflectionToken.ShaderUniformMatrix4X4Helper)) },
+            { typeof(Sampler1D), new PropInfo("sampler1D", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
+            { typeof(Sampler2D), new PropInfo("sampler2D", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
+            { typeof(int), new PropInfo("int", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(int)})) },
+            { typeof(uint), new PropInfo("uint", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(uint)})) },
         };
 
         /// <summary>
@@ -371,7 +371,8 @@ namespace IIS.SLSharp
         /// <typeparam name="T">Specifies which shader type to collect for</typeparam>
         /// <param name="entryPoint">Returns the name of the function flagged as entrypoint</param>
         /// <returns>A string containing the GLSL code for all collected functions</returns>
-        private string CollectFuncs<T>(out string entryPoint) where T : IShaderAttribute
+        private string CollectFuncs<T>(out string entryPoint)
+            where T : IShaderAttribute
         {
             entryPoint = string.Empty;
             var body = string.Empty;
@@ -388,10 +389,10 @@ namespace IIS.SLSharp
                 if (attr.EntryPoint)
                 {
                     if (hasEntry)
-                        throw new Exception("Shader cannot have two entrypoints.");
+                        throw new Exception("Shader cannot have two entry points.");
 
                     if (m.GetParameters().Count() != 0)
-                        throw new Exception("Entrypoint must not have parameters.");
+                        throw new Exception("Entry point must not have parameters.");
 
                     hasEntry = true;
                 }
