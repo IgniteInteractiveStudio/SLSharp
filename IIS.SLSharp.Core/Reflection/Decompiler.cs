@@ -28,9 +28,7 @@ namespace IIS.SLSharp.Core.Reflection
             }
         }
 
-        private delegate void InstructionHandler(Instruction inst);
-
-        private readonly Dictionary<OpCode, InstructionHandler> _handlers = new Dictionary<OpCode, InstructionHandler>();
+        private readonly Dictionary<OpCode, Action<Instruction>> _handlers = new Dictionary<OpCode, Action<Instruction>>();
 
         private readonly List<Expression> _stack = new List<Expression>();
 
@@ -44,7 +42,7 @@ namespace IIS.SLSharp.Core.Reflection
 
         private readonly bool _hasThis;
 
-        private readonly int _labelsEmmited;
+        private readonly int _labelsEmitted;
 
         private readonly Dictionary<int, LabelInformation> _labels = new Dictionary<int, LabelInformation>();
 
@@ -447,7 +445,7 @@ namespace IIS.SLSharp.Core.Reflection
                 OpCodes.Constrained);
 
             // unmanaged/native operations
-            AddIllegalOpCodes(OpCodes.Initblk, OpCodes.Cpblk, OpCodes.Ldftn, OpCodes.Ldvirtftn, OpCodes.Ldind_I, OpCodes.Conv_I);
+            AddIllegalOpCodes(OpCodes.Initblk, OpCodes.Cpblk, OpCodes.Ldftn, OpCodes.Ldvirtftn, OpCodes.Ldind_I, OpCodes.Conv_I, OpCodes.Conv_U);
 
             // other unsupported opcodes
             AddIllegalOpCodes(OpCodes.Ldnull, OpCodes.Ldstr); // GLSL doesn't know null, nor strings
@@ -671,10 +669,10 @@ namespace IIS.SLSharp.Core.Reflection
                     if (_labels.TryGetValue(inst.Offset, out label))
                     {
                         HandleTarget(label);
-                        _labelsEmmited++;
+                        _labelsEmitted++;
                     }
 
-                    InstructionHandler handler;
+                    Action<Instruction> handler;
                     if (_handlers.TryGetValue(inst.OpCode, out handler))
                     {
                         if (handler == null)
@@ -714,7 +712,7 @@ namespace IIS.SLSharp.Core.Reflection
                     throw new NotImplementedException();
             }
 
-            if (_labelsEmmited != _labels.Count)
+            if (_labelsEmitted != _labels.Count)
                 throw new Exception("Failed to place all labels");
 
             var reduced = LoopReducer.Reduce(_statements, _locs);
@@ -731,7 +729,7 @@ namespace IIS.SLSharp.Core.Reflection
 
         private void CollectBranches(IEnumerable<Instruction> instructions)
         {
-            var handlers = new Dictionary<OpCode, InstructionHandler>();
+            var handlers = new Dictionary<OpCode, Action<Instruction>>();
 
             handlers[OpCodes.Br] = i =>
             {
