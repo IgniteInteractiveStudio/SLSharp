@@ -14,7 +14,7 @@ namespace IIS.SLSharp.Translation
     /// Visitor used to translate an Expression tree to GLSL source
     /// This is internally used by GlslTransform.Transform()
     /// </summary>
-    internal sealed class GlslVisitor: ExpressionVisitor
+    internal sealed class GlslVisitor : ExpressionVisitor
     {
         private readonly HashSet<string> _functions = new HashSet<string>();
 
@@ -83,15 +83,13 @@ namespace IIS.SLSharp.Translation
             _s.AppendFormat(DoIndent(s), args);
         }
 
-        public static bool IsSingle(Type t)
-        {
-            return t == typeof(float);
-        }
-
         public static string ToGlslType(Type t)
         {
-            if (IsSingle(t))
+            if (t == typeof(float))
                 return "float";
+
+            if (t == typeof(double))
+                return "double";
 
             if (t == typeof(void))
                 return "void";
@@ -99,13 +97,16 @@ namespace IIS.SLSharp.Translation
             if (t == typeof(int))
                 return "int";
 
+            if (t == typeof(uint))
+                return "uint";
+
             if (t == typeof(bool))
                 return "bool";
 
             return t.Name;
         }
 
-        private static bool IsTernaryConditional (ConditionalExpression node)
+        private static bool IsTernaryConditional(ConditionalExpression node)
         {
             return node.Type != typeof(void) && (node.IfTrue.NodeType != ExpressionType.Block
                 || node.IfFalse.NodeType != ExpressionType.Block);
@@ -187,17 +188,26 @@ namespace IIS.SLSharp.Translation
 
         private readonly Dictionary<ExpressionType, string> _expToStr = new Dictionary<ExpressionType, string>
         {
-            { ExpressionType.Assign, " = " },
+            // Note: we only list binary operators here, see VisitUnary for unary operators
+            // arithmetic
             { ExpressionType.Add, " + " },
             { ExpressionType.Subtract, " - " },
             { ExpressionType.Multiply, " * " },
             { ExpressionType.Divide, " / " },
+            { ExpressionType.Modulo, " % " },
+            // bitwise
+            { ExpressionType.Or, " | " },
+            { ExpressionType.And, " & " },
+            { ExpressionType.ExclusiveOr, " ^ " },
+            { ExpressionType.LeftShift, " << " },
+            { ExpressionType.RightShift, " >> " },
+            // equivalence and comparison
             { ExpressionType.LessThan, " < " },
             { ExpressionType.LessThanOrEqual, " <= " },
             { ExpressionType.GreaterThan, " > " },
             { ExpressionType.GreaterThanOrEqual, " >= " },
             { ExpressionType.Equal, " == " },
-            { ExpressionType.NotEqual, " != " }
+            { ExpressionType.NotEqual, " != " },
         };
 
         protected override Expression VisitBinary(BinaryExpression node)
@@ -276,7 +286,7 @@ namespace IIS.SLSharp.Translation
 
         protected override Expression VisitConstant(ConstantExpression node)
         {
-            if (IsSingle(node.Type))
+            if (node.Type == typeof(float))
             {
                 var s = ((float)node.Value).ToString(CultureInfo.InvariantCulture.NumberFormat);
                 if (!s.Contains("."))
@@ -292,17 +302,33 @@ namespace IIS.SLSharp.Translation
 
         protected override Expression VisitDebugInfo(DebugInfoExpression node)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Debugging info is not supported in GLSL.");
         }
 
         protected override Expression VisitDynamic(DynamicExpression node)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Dynamic code is not supported in GLSL.");
         }
 
         protected override Expression VisitDefault(DefaultExpression node)
         {
-            throw new NotImplementedException();
+            var type = node.Type;
+            object value;
+
+            if (type == typeof(float))
+                value = default(float);
+            else if (type == typeof(double))
+                value = default(double);
+            else if (type == typeof(int))
+                value = default(int);
+            else if (type == typeof(uint))
+                value = default(uint);
+            else if (type == typeof(bool))
+                value = default(bool);
+            else
+                throw new NotSupportedException("Unsupported default type " + node.Type);
+
+            return VisitConstant(Expression.Constant(value));
         }
 
         protected override Expression VisitExtension(Expression node)
@@ -312,31 +338,32 @@ namespace IIS.SLSharp.Translation
 
         protected override Expression VisitGoto(GotoExpression node)
         {
-            throw new Exception("Goto expressions are not allowed in shaders.");
+            throw new NotSupportedException("Gotos and labels are not allowed in shaders.");
         }
 
         protected override Expression VisitInvocation(InvocationExpression node)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         protected override LabelTarget VisitLabelTarget(LabelTarget node)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Gotos and labels are not allowed in shaders.");
         }
 
         protected override Expression VisitLabel(LabelExpression node)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Gotos and labels are not allowed in shaders.");
         }
 
         protected override Expression VisitLambda<T>(Expression<T> node)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         protected override Expression VisitLoop(LoopExpression node)
         {
+            // TODO: decompose the node body and turn it into a while (true) (WhileExpression)
             throw new NotImplementedException();
         }
 
@@ -360,16 +387,33 @@ namespace IIS.SLSharp.Translation
 
         protected override Expression VisitIndex(IndexExpression node)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Indexing custom types is not allowed in GLSL.");
         }
 
-        private readonly Dictionary<string, string> _opMapping = new Dictionary<string, string>
+        private readonly Dictionary<string, Tuple<string, bool>> _unaryOpMapping = new Dictionary<string, Tuple<string, bool>>
         {
-            { "op_UnaryNegation", "-" },
+            // name -> (op, shouldPrepend)
+            { "op_UnaryPlus", Tuple.Create("+", true) },
+            { "op_UnaryNegation", Tuple.Create("-", true) },
+            { "op_LogicalNot", Tuple.Create("!", true) },
+            { "op_OnesComplement", Tuple.Create("~", true) },
+            // since compilers usually don't emit separate methods for pre/post-inc/dec, we use post-inc/dec by default
+            { "op_Increment", Tuple.Create("++", false) },
+            { "op_Decrement", Tuple.Create("--", false) },
+        };
+
+        private readonly Dictionary<string, string> _binaryOpMapping = new Dictionary<string, string>
+        {
             { "op_Multiply", " * " },
             { "op_Division", " / " },
             { "op_Addition", " + " },
-            { "op_Subtraction", " - " }
+            { "op_Subtraction", " - " },
+            { "op_Modulus", " % " },
+            { "op_BitwiseOr", " | " },
+            { "op_BitwiseAnd", " & " },
+            { "op_ExclusiveOr", " ^ " },
+            { "op_LeftShift", " << " },
+            { "op_RightShift", " >> " },
         };
 
         private void ArgsToString(ICollection<Expression> args)
@@ -413,7 +457,7 @@ namespace IIS.SLSharp.Translation
                 GetParameterString(m) + ")";
         }
 
-        private void RegisterFunc(MethodInfo m)
+        private void RegisterMethod(MethodInfo m)
         {
             // generate signature
             var neededTyp = _attr.GetType();
@@ -440,19 +484,28 @@ namespace IIS.SLSharp.Translation
                 if (m.Name == "op_Implicit")
                     return Visit(node.Arguments[0]);
 
-                var op = _opMapping[m.Name];
-                switch (args.Count())
+                switch (args.Count)
                 {
-                    case 2:
+                    case 2: // binary operator
                         Append("(");
                         Visit(args[0]);
-                        Append(op);
+                        Append(_binaryOpMapping[m.Name]);
                         Visit(args[1]);
                         Append(")");
                         break;
-                    case 1:
-                        Append(op);
+                    case 1: // unary operator
+                        var unary = _unaryOpMapping[m.Name];
+
+                        // should we prepend the operator? (+, -, !, ~)
+                        if (unary.Item2)
+                            Append(unary.Item1);
+
                         Visit(args[0]);
+
+                        // should we append the operator? (++, --)
+                        if (!unary.Item2)
+                            Append(unary.Item1);
+
                         break;
                     default:
                         throw new NotImplementedException();
@@ -479,7 +532,7 @@ namespace IIS.SLSharp.Translation
                 // must be either a getter or a lib invocation
                 //Visit(node.Object);
                 //Append(".");
-                RegisterFunc(m);
+                RegisterMethod(m);
                 Append(GetMethodName(m));
             }
             else
@@ -494,7 +547,7 @@ namespace IIS.SLSharp.Translation
 
         protected override Expression VisitNewArray(NewArrayExpression node)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         protected override Expression VisitNew(NewExpression node)
@@ -519,27 +572,28 @@ namespace IIS.SLSharp.Translation
 
         protected override SwitchCase VisitSwitchCase(SwitchCase node)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Switch tables are not supported yet.");
         }
 
         protected override Expression VisitSwitch(SwitchExpression node)
         {
-            throw new NotImplementedException();
+            // TODO: implement switches
+            throw new NotImplementedException("Switch tables are not supported yet.");
         }
 
         protected override CatchBlock VisitCatchBlock(CatchBlock node)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("GLSL does not support exceptions.");
         }
 
         protected override Expression VisitTry(TryExpression node)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("GLSL does not support exceptions.");
         }
 
         protected override Expression VisitTypeBinary(TypeBinaryExpression node)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("GLSL does not support any kind of reflection.");
         }
 
         protected override Expression VisitUnary(UnaryExpression node)
@@ -550,14 +604,38 @@ namespace IIS.SLSharp.Translation
                     Append("-");
                     Visit(node.Operand);
                     break;
-                case ExpressionType.Convert:
-                    Append(ToGlslType(node.Type) + "(");
+                case ExpressionType.UnaryPlus:
+                    Append("+");
                     Visit(node.Operand);
-                    Append(")");
                     break;
                 case ExpressionType.Not:
                     Append("!");
                     Visit(node.Operand);
+                    break;
+                case ExpressionType.OnesComplement:
+                    Append("~");
+                    Visit(node.Operand);
+                    break;
+                case ExpressionType.PreIncrementAssign:
+                    Append("++");
+                    Visit(node.Operand);
+                    break;
+                case ExpressionType.PostIncrementAssign:
+                    Visit(node.Operand);
+                    Append("++");
+                    break;
+                case ExpressionType.PreDecrementAssign:
+                    Append("--");
+                    Visit(node.Operand);
+                    break;
+                case ExpressionType.PostDecrementAssign:
+                    Visit(node.Operand);
+                    Append("--");
+                    break;
+                case ExpressionType.Convert:
+                    Append(ToGlslType(node.Type) + "(");
+                    Visit(node.Operand);
+                    Append(")");
                     break;
                 default:
                     throw new NotImplementedException();
@@ -571,37 +649,37 @@ namespace IIS.SLSharp.Translation
 
         protected override Expression VisitMemberInit(MemberInitExpression node)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         protected override Expression VisitListInit(ListInitExpression node)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         protected override ElementInit VisitElementInit(ElementInit node)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         protected override MemberBinding VisitMemberBinding(MemberBinding node)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         protected override MemberAssignment VisitMemberAssignment(MemberAssignment node)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         protected override MemberMemberBinding VisitMemberMemberBinding(MemberMemberBinding node)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         protected override MemberListBinding VisitMemberListBinding(MemberListBinding node)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
     }
 }

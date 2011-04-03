@@ -73,6 +73,8 @@ namespace IIS.SLSharp.Core.Reflection
 
         private void SetupHandlers()
         {
+            // TODO: we have virtually no support for checked vs unchecked instructions
+
             _handlers[OpCodes.Nop] = _ =>
             {
             };
@@ -97,7 +99,16 @@ namespace IIS.SLSharp.Core.Reflection
                 Push(_args[3]);
             };
 
-            _handlers[OpCodes.Ldarg_S] = InstLdargS;
+            _handlers[OpCodes.Ldarg_S] = i =>
+            {
+                // merge with InstStargs
+                var arg = (ParameterInfo)i.Operand;
+                var pos = arg.Position;
+                if (_hasThis)
+                    pos++;
+
+                Push(_args[pos]);
+            };
 
             _handlers[OpCodes.Ldfld] = i =>
             {
@@ -106,7 +117,10 @@ namespace IIS.SLSharp.Core.Reflection
 
             _handlers[OpCodes.Call] = InstCall;
 
-            _handlers[OpCodes.Callvirt] = InstCallVirt;
+            _handlers[OpCodes.Callvirt] = i =>
+            {
+                InstCall(i);
+            };
 
             _handlers[OpCodes.Conv_R4] = _ =>
             {
@@ -138,7 +152,11 @@ namespace IIS.SLSharp.Core.Reflection
                 PushStatement(Expression.Assign(_locs[3], Pop()));
             };
 
-            _handlers[OpCodes.Stloc_S] = InstStlocs;
+            _handlers[OpCodes.Stloc_S] = i =>
+            {
+                var lv = (LocalVariableInfo) i.Operand;
+                PushStatement(Expression.Assign(_locs[lv.LocalIndex], Pop()));
+            };
 
             _handlers[OpCodes.Ldloc_0] = _ =>
             {
@@ -160,14 +178,23 @@ namespace IIS.SLSharp.Core.Reflection
                 Push(_locs[3]);
             };
 
-            _handlers[OpCodes.Ldloc_S] = InstLdlocs;
+            _handlers[OpCodes.Ldloc_S] = i =>
+            {
+                var lv = (LocalVariableInfo)i.Operand;
+                Push(_locs[lv.LocalIndex]);
+            };
 
             _handlers[OpCodes.Dup] = _ =>
             {
                 Push(_stack.Last());
             };
 
-            _handlers[OpCodes.Newobj] = InstNewobj;
+            _handlers[OpCodes.Newobj] = i =>
+            {
+                var ctor = (ConstructorInfo)i.Operand;
+                var args = ctor.GetParameters().Count();
+                Push(Expression.New(ctor, Pop(args)));
+            };
 
             _handlers[OpCodes.Ldc_R4] = i =>
             {
@@ -229,6 +256,16 @@ namespace IIS.SLSharp.Core.Reflection
                 Push(Expression.Constant(8));
             };
 
+            _handlers[OpCodes.Ldc_I4_S] = i =>
+            {
+                Push(Expression.Constant(i.Operand));
+            };
+
+            _handlers[OpCodes.Ldc_I4_M1] = _ =>
+            {
+                Push(Expression.Constant(-1));
+            };
+
             _handlers[OpCodes.Add] = _ =>
             {
                 var a = Pop();
@@ -257,16 +294,75 @@ namespace IIS.SLSharp.Core.Reflection
                 Push(Expression.Subtract(b, a));
             };
 
+            _handlers[OpCodes.Rem] = InstRem;
+
+            _handlers[OpCodes.Rem_Un] = InstRem;
+
+            _handlers[OpCodes.Or] = _ =>
+            {
+                var a = Pop();
+                var b = Pop();
+                Push(Expression.Or(b, a));
+            };
+
+            _handlers[OpCodes.Xor] = _ =>
+            {
+                var a = Pop();
+                var b = Pop();
+                Push(Expression.ExclusiveOr(b, a));
+            };
+
+            _handlers[OpCodes.And] = _ =>
+            {
+                var a = Pop();
+                var b = Pop();
+                Push(Expression.And(b, a));
+            };
+
+            _handlers[OpCodes.Shl] = _ =>
+            {
+                var a = Pop();
+                var b = Pop();
+                Push(Expression.LeftShift(b, a));
+            };
+
+            _handlers[OpCodes.Shr] = InstShr;
+
+            _handlers[OpCodes.Shr_Un] = InstShr;
+
             _handlers[OpCodes.Neg] = _ =>
             {
                 Push(Expression.Negate(Pop()));
             };
 
-            _handlers[OpCodes.Stfld] = InstStfld;
+            _handlers[OpCodes.Not] = _ =>
+            {
+                Push(Expression.OnesComplement(Pop()));
+            };
 
-            _handlers[OpCodes.Stsfld] = InstStsfld;
+            _handlers[OpCodes.Stfld] = i =>
+            {
+                var fld = (FieldInfo)i.Operand;
+                var rhs = Pop();
+                PushStatement(Expression.Assign(Expression.Field(Pop(), fld), rhs));
+            };
 
-            _handlers[OpCodes.Starg_S] = InstStargs;
+            _handlers[OpCodes.Stsfld] = i =>
+            {
+                var fld = (FieldInfo)i.Operand;
+                var rhs = Pop();
+                PushStatement(Expression.Assign(Expression.Field(null, fld), rhs));
+            };
+
+            _handlers[OpCodes.Starg_S] = i =>
+            {
+                var arg = (ParameterInfo)i.Operand;
+                var pos = arg.Position;
+                if (_hasThis)
+                    pos++;
+
+                PushStatement(Expression.Assign(_args[pos], Pop()));
+            };
 
             _handlers[OpCodes.Ret] = _ =>
             {
@@ -293,7 +389,12 @@ namespace IIS.SLSharp.Core.Reflection
 
             _handlers[OpCodes.Brtrue_S] = InstBrtrue;
 
-            _handlers[OpCodes.Ldelem_Ref] = InstLdelemRef;
+            _handlers[OpCodes.Ldelem_Ref] = i =>
+            {
+                var index = Pop();
+                var array = Pop();
+                Push(Expression.ArrayIndex(array, index));
+            };
 
             _handlers[OpCodes.Clt] = _ =>
             {
@@ -645,17 +746,6 @@ namespace IIS.SLSharp.Core.Reflection
                 PushStatement(Expression.Goto(_labels[target].Label));
         }
 
-        private void InstLdargS(Instruction inst)
-        {
-            // merge with InstStargs
-            var arg = (ParameterInfo)inst.Operand;
-            var pos = arg.Position;
-            if (_hasThis)
-                pos++;
-
-            Push(_args[pos]);
-        }
-
         private void InstCall(Instruction inst)
         {
             var m = (MethodInfo) inst.Operand;
@@ -670,59 +760,18 @@ namespace IIS.SLSharp.Core.Reflection
                 Push(Expression.Call(m, Pop(args)));
         }
 
-        private void InstCallVirt(Instruction inst)
+        private void InstRem(Instruction inst)
         {
-            InstCall(inst);
+            var a = Pop();
+            var b = Pop();
+            Push(Expression.Modulo(b, a));
         }
 
-        private void InstStlocs(Instruction inst)
+        private void InstShr(Instruction inst)
         {
-            var lv = (LocalVariableInfo) inst.Operand;
-            PushStatement(Expression.Assign(_locs[lv.LocalIndex], Pop()));
-        }
-
-        private void InstLdlocs(Instruction inst)
-        {
-            var lv = (LocalVariableInfo)inst.Operand;
-            Push(_locs[lv.LocalIndex]);
-        }
-
-        private void InstNewobj(Instruction inst)
-        {
-            var ctor = (ConstructorInfo) inst.Operand;
-            var args = ctor.GetParameters().Count();
-            Push(Expression.New(ctor, Pop(args)));
-        }
-
-        private void InstStfld(Instruction inst)
-        {
-            var fld = (FieldInfo)inst.Operand;
-            var rhs = Pop();
-            PushStatement(Expression.Assign(Expression.Field(Pop(), fld), rhs));
-        }
-
-        private void InstStsfld(Instruction inst)
-        {
-            var fld = (FieldInfo)inst.Operand;
-            var rhs = Pop();
-            PushStatement(Expression.Assign(Expression.Field(null, fld), rhs));
-        }
-
-        private void InstStargs(Instruction inst)
-        {
-            var arg = (ParameterInfo)inst.Operand;
-            var pos = arg.Position;
-            if (_hasThis)
-                pos++;
-
-            PushStatement(Expression.Assign(_args[pos], Pop()));
-        }
-
-        private void InstLdelemRef(Instruction inst)
-        {
-            var index = Pop();
-            var array = Pop();
-            Push(Expression.ArrayIndex(array, index));
+            var a = Pop();
+            var b = Pop();
+            Push(Expression.RightShift(b, a));
         }
     }
 }
