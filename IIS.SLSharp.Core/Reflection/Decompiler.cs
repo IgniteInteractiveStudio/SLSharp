@@ -478,11 +478,16 @@ namespace IIS.SLSharp.Core.Reflection
                         _labelsEmmited++;
                     }
 
-                    var handler = _handlers[inst.OpCode];
-                    if (handler != null)
+                    InstructionHandler handler;
+                    if (_handlers.TryGetValue(inst.OpCode, out handler))
+                    {
+                        if (handler == null)
+                            throw new NotSupportedException("Encountered illegal opcode " + inst);
+
                         handler(inst);
+                    }
                     else
-                        throw new NotSupportedException("Encountered illegal opcode " + inst);
+                        throw new NotImplementedException("Encountered unimplemented opcode " + inst);
                 }
                 catch (Exception e)
                 {
