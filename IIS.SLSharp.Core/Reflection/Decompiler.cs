@@ -718,7 +718,6 @@ namespace IIS.SLSharp.Core.Reflection
                     Expression.Goto(label.Label)));
         }
 
-
         private void HandleTarget(LabelInformation label)
         {
             switch (label.CrossRefs.Count)
