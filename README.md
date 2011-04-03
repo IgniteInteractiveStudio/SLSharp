@@ -51,7 +51,6 @@ Known problems:
 * Support for other .NET languages (such as F#) is currently up in the air. We
   haven't had time to test SL# with F# yet, but we would definitely like to add
   support for it in the future (perhaps using quotations).
-* Matrices are not implemented yet.
 
 Donations
 ---------
