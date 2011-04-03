@@ -434,7 +434,7 @@ namespace IIS.SLSharp.Core.Reflection
                 OpCodes.Constrained);
 
             // unmanaged/native operations
-            AddIllegalOpCodes(OpCodes.Initblk, OpCodes.Cpblk, OpCodes.Ldftn, OpCodes.Ldvirtftn);
+            AddIllegalOpCodes(OpCodes.Initblk, OpCodes.Cpblk, OpCodes.Ldftn, OpCodes.Ldvirtftn, OpCodes.Ldind_I);
 
             // other unsupported opcodes
             AddIllegalOpCodes(OpCodes.Ldnull, OpCodes.Ldstr);
