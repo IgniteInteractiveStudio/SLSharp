@@ -73,10 +73,6 @@ namespace IIS.SLSharp.Core.Reflection
 
         private void SetupHandlers()
         {
-            _handlers[OpCodes.Nop] = _ =>
-            {
-            };
-
             _handlers[OpCodes.Ldarg_0] = _ =>
             {
                 Push(_args[0]);
@@ -115,10 +111,7 @@ namespace IIS.SLSharp.Core.Reflection
 
             _handlers[OpCodes.Call] = InstCall;
 
-            _handlers[OpCodes.Callvirt] = i =>
-            {
-                InstCall(i);
-            };
+            _handlers[OpCodes.Callvirt] = InstCall;
 
             _handlers[OpCodes.Conv_R4] = _ =>
             {
@@ -362,11 +355,6 @@ namespace IIS.SLSharp.Core.Reflection
                 PushStatement(Expression.Assign(_args[pos], Pop()));
             };
 
-            _handlers[OpCodes.Ret] = _ =>
-            {
-                /*Push(Expression.Return(Expression.Label(), Pop())); */
-            };
-
             _handlers[OpCodes.Br] = InstBr;
 
             _handlers[OpCodes.Br_S] = InstBr;
@@ -416,6 +404,16 @@ namespace IIS.SLSharp.Core.Reflection
                 Push(Expression.Equal(v1, v2));
             };
 
+            _handlers[OpCodes.Pop] = _ =>
+            {
+                Pop();
+            };
+
+            // opcodes that don't have any real meaning to us, we just ignore them
+
+            AddNopOpCodes(OpCodes.Prefix1, OpCodes.Prefix2, OpCodes.Prefix3, OpCodes.Prefix4, OpCodes.Prefix5, OpCodes.Prefix6, OpCodes.Prefix7,
+                OpCodes.Prefixref, OpCodes.Nop, OpCodes.Break, OpCodes.Ret, OpCodes.Tailcall);
+
             // these are opcodes that we can't sensibly translate to GLSL
 
             // overflow-checked opcodes
@@ -427,6 +425,15 @@ namespace IIS.SLSharp.Core.Reflection
             // 64-bit integer opcodes
             AddIllegalOpCodes(OpCodes.Ldc_I8, OpCodes.Ldelem_I8, OpCodes.Ldind_I8, OpCodes.Stelem_I8, OpCodes.Stind_I8, OpCodes.Conv_U8,
                 OpCodes.Conv_Ovf_I8, OpCodes.Conv_Ovf_I8_Un, OpCodes.Conv_Ovf_U8, OpCodes.Conv_Ovf_U8_Un);
+
+            // other unsupported opcodes
+            AddIllegalOpCodes(OpCodes.Ldnull);
+        }
+
+        private void AddNopOpCodes(params OpCode[] opCodes)
+        {
+            foreach (var opCode in opCodes)
+                _handlers[opCode] = InstNop;
         }
 
         private void AddIllegalOpCodes(params OpCode[] opCodes)
@@ -715,6 +722,10 @@ namespace IIS.SLSharp.Core.Reflection
             }
 
             PushStatement(Expression.Label(label.Label));
+        }
+
+        private void InstNop(Instruction inst)
+        {
         }
 
         private void InstBlt(Instruction inst)
