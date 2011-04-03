@@ -7,9 +7,10 @@ namespace IIS.SLSharp
     {
         public sealed class uvec2
         {
+            internal static uint[] value = new uint[2];
+
             /*
-            // TODO: need uniform glue code
-            public static Vector2 value;
+            // TODO: need uniform intializer glue code
 
             public static implicit operator uvec2(Vector2 v)
             { value = v; return null; }
@@ -61,9 +62,10 @@ namespace IIS.SLSharp
 
         public sealed class uvec3
         {
+            internal static uint[] value = new uint[3];
+
             /*
-            // TODO: need uniform glue code
-            public static Vector3 value;
+            // TODO: need uniform intializer glue code
 
             public static implicit operator uvec3(Vector3 v)
             { value = v; return null; }
@@ -150,9 +152,10 @@ namespace IIS.SLSharp
 
         public sealed class uvec4
         {
+            internal static uint[] value = new uint[4];
+
             /*
-            // TODO: need uniform glue code
-            public static Vector4 value;
+            // TODO: need uniform intializer glue code
 
             public static implicit operator uvec4(uvector4 v)
             { value = v; return null; }

@@ -363,7 +363,14 @@ namespace IIS.SLSharp
             {typeof (sampler2DRectShadow), new PropInfo("sampler2DRectShadow", GetHandler(ReflectionToken.ShaderSamplerHelper))},
             {typeof (isampler2DRect), new PropInfo("isampler2DRect", GetHandler(ReflectionToken.ShaderSamplerHelper))},
             {typeof (usampler2DRect), new PropInfo("usampler2DRect", GetHandler(ReflectionToken.ShaderSamplerHelper))},
-            {typeof (int), new PropInfo("int", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(int)}))}
+            {typeof (int), new PropInfo("int", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(int)}))},
+            {typeof (ivec2), new PropInfo("ivec2", GetHandler(ReflectionToken.ShaderIvec2Helper))},
+            {typeof (ivec3), new PropInfo("ivec3", GetHandler(ReflectionToken.ShaderIvec3Helper))},
+            {typeof (ivec4), new PropInfo("ivec4", GetHandler(ReflectionToken.ShaderIvec4Helper))},
+            {typeof (uint), new PropInfo("uint", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(uint)}))},
+            {typeof (uvec2), new PropInfo("uvec2", GetHandler(ReflectionToken.ShaderUvec2Helper))},
+            {typeof (uvec3), new PropInfo("uvec3", GetHandler(ReflectionToken.ShaderUvec3Helper))},
+            {typeof (uvec4), new PropInfo("uvec4", GetHandler(ReflectionToken.ShaderUvec4Helper))},
         };
 
         /// <summary>
@@ -627,6 +634,42 @@ namespace IIS.SLSharp
         public static void UniformVecHelper4(int location)
         {
             GL.Uniform4(location, vec4.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderIvec2Helper)]
+        public static void UniformIvecHelper2(int location)
+        {
+            GL.Uniform2(location, 1, ivec2.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderIvec3Helper)]
+        public static void UniformIvecHelper3(int location)
+        {
+            GL.Uniform3(location, 1, ivec3.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderIvec4Helper)]
+        public static void UniformIvecHelper4(int location)
+        {
+            GL.Uniform4(location, 1, ivec4.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUvec2Helper)]
+        public static void UniformUvecHelper2(int location)
+        {
+            GL.Uniform2(location, 1, uvec2.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUvec3Helper)]
+        public static void UniformUvecHelper3(int location)
+        {
+            GL.Uniform3(location, 1, uvec3.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUvec4Helper)]
+        public static void UniformUvecHelper4(int location)
+        {
+            GL.Uniform4(location, 1, uvec4.value);
         }
 
 
