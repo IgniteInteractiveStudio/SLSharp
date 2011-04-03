@@ -6,10 +6,10 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
     public abstract class WangShader: Shader
     {
         [Uniform]
-        public abstract Sampler2D WangTiles { set; get; }
+        public abstract sampler2D WangTiles { set; get; }
 
         [Uniform]
-        public abstract Sampler2D WangMap { set; get; }
+        public abstract sampler2D WangMap { set; get; }
 
         public Texture2D Tiles { get; set; }
 
