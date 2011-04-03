@@ -12,7 +12,7 @@ namespace IIS.SLSharp.Textures.Externals
 {
 
     /// <summary>The parameters in this class have only effect on the following Texture loads.</summary>
-    public static class TextureLoaderParameters
+    static class TextureLoaderParameters
     {
         /// <summary>(Debug Aid, should be set to false) If set to false only Errors will be printed. If set to true, debug information (Warnings and Queries) will be printed in addition to Errors.</summary>
         public static bool Verbose = false;
