@@ -128,6 +128,16 @@ namespace IIS.SLSharp.Core.Reflection
                 Push(Expression.Convert(Pop(), typeof(double)));
             };
 
+            _handlers[OpCodes.Conv_I4] = _ =>
+            {
+                Push(Expression.Convert(Pop(), typeof(int)));
+            };
+
+            _handlers[OpCodes.Conv_U4] = _ =>
+            {
+                Push(Expression.Convert(Pop(), typeof(uint)));
+            };
+
             _handlers[OpCodes.Stloc_0] = _ =>
             {
                 PushStatement(Expression.Assign(_locs[0], Pop()));
@@ -368,19 +378,13 @@ namespace IIS.SLSharp.Core.Reflection
                 Push(Expression.ArrayIndex(array, index));
             };
 
-            _handlers[OpCodes.Clt] = _ =>
-            {
-                var v1 = Pop();
-                var v2 = Pop();
-                Push(Expression.LessThan(v1, v2));
-            };
+            _handlers[OpCodes.Clt] = InstClt;
 
-            _handlers[OpCodes.Cgt] = _ =>
-            {
-                var v1 = Pop();
-                var v2 = Pop();
-                Push(Expression.GreaterThan(v1, v2));
-            };
+            _handlers[OpCodes.Clt_Un] = InstClt;
+
+            _handlers[OpCodes.Cgt] = InstCgt;
+
+            _handlers[OpCodes.Cgt_Un] = InstCgt;
 
             _handlers[OpCodes.Ceq] = _ =>
             {
@@ -410,7 +414,11 @@ namespace IIS.SLSharp.Core.Reflection
 
             // 64-bit integer opcodes
             AddIllegalOpCodes(OpCodes.Ldc_I8, OpCodes.Ldelem_I8, OpCodes.Ldind_I8, OpCodes.Stelem_I8, OpCodes.Stind_I8, OpCodes.Conv_U8,
-                OpCodes.Conv_Ovf_I8, OpCodes.Conv_Ovf_I8_Un, OpCodes.Conv_Ovf_U8, OpCodes.Conv_Ovf_U8_Un, OpCodes.Ldind_I8);
+                OpCodes.Conv_Ovf_I8, OpCodes.Conv_Ovf_I8_Un, OpCodes.Conv_Ovf_U8, OpCodes.Conv_Ovf_U8_Un, OpCodes.Ldind_I8, OpCodes.Conv_I8,
+                OpCodes.Conv_U8);
+
+            // unsupported conversions
+            AddIllegalOpCodes(OpCodes.Conv_I1, OpCodes.Conv_I2, OpCodes.Conv_U1, OpCodes.Conv_U2);
 
             // typed references (see C#'s __arglist, __makeref, __reftype, __refvalue (undocumenteded keywords in MS C#))
             AddIllegalOpCodes(OpCodes.Arglist, OpCodes.Mkrefany, OpCodes.Refanytype, OpCodes.Refanyval);
@@ -423,10 +431,10 @@ namespace IIS.SLSharp.Core.Reflection
                 OpCodes.Constrained);
 
             // unmanaged/native operations
-            AddIllegalOpCodes(OpCodes.Initblk, OpCodes.Cpblk, OpCodes.Ldftn, OpCodes.Ldvirtftn, OpCodes.Ldind_I);
+            AddIllegalOpCodes(OpCodes.Initblk, OpCodes.Cpblk, OpCodes.Ldftn, OpCodes.Ldvirtftn, OpCodes.Ldind_I, OpCodes.Conv_I);
 
             // other unsupported opcodes
-            AddIllegalOpCodes(OpCodes.Ldnull, OpCodes.Ldstr);
+            AddIllegalOpCodes(OpCodes.Ldnull, OpCodes.Ldstr); // GLSL doesn't know null, nor strings
 
             // TODO: these are not actually restricted, but need further investigation for a proper implementation; if you
             // run into an exception with one of these, then please report it with some source code we can reproduce it with!
@@ -489,7 +497,7 @@ namespace IIS.SLSharp.Core.Reflection
             {
                 Console.WriteLine("Can't process:");
                 foreach (var iinner in m.GetInstructions())
-                    Console.WriteLine("{2}: {0} {1}", iinner, iinner.Operand, iinner.Offset);
+                    Console.WriteLine("{2}: \t{0} {1}", iinner, iinner.Operand, iinner.Offset);
 
                 Console.WriteLine(e.Message);
             }
@@ -520,10 +528,10 @@ namespace IIS.SLSharp.Core.Reflection
                 {
                     Console.WriteLine("Can't process:");
                     foreach (var iinner in m.GetInstructions())
-                        Console.WriteLine("{2}: {0} {1}", iinner, iinner.Operand, iinner.Offset);
+                        Console.WriteLine("{2}: \t{0} {1}", iinner, iinner.Operand, iinner.Offset);
 
                     Console.WriteLine(e.Message);
-                    Console.WriteLine("Failed at {2}: {0} {1}", inst, inst.Operand, inst.Offset);
+                    Console.WriteLine("Failed at {2}: \t{0} {1}", inst, inst.Operand, inst.Offset);
                     throw;
                 }
             }
@@ -841,6 +849,20 @@ namespace IIS.SLSharp.Core.Reflection
         private void InstNonMacroLdc(Instruction inst)
         {
             Push(Expression.Constant(inst.Operand));
+        }
+
+        private void InstClt(Instruction inst)
+        {
+            var v1 = Pop();
+            var v2 = Pop();
+            Push(Expression.LessThan(v1, v2));
+        }
+
+        private void InstCgt(Instruction inst)
+        {
+            var v1 = Pop();
+            var v2 = Pop();
+            Push(Expression.GreaterThan(v1, v2));
         }
     }
 }
