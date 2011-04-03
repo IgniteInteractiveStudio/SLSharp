@@ -410,9 +410,8 @@ namespace IIS.SLSharp.Core.Reflection
             };
 
             // opcodes that don't have any real meaning to us, we just ignore them
-
             AddNopOpCodes(OpCodes.Prefix1, OpCodes.Prefix2, OpCodes.Prefix3, OpCodes.Prefix4, OpCodes.Prefix5, OpCodes.Prefix6, OpCodes.Prefix7,
-                OpCodes.Prefixref, OpCodes.Nop, OpCodes.Break, OpCodes.Ret, OpCodes.Tailcall, OpCodes.Volatile);
+                OpCodes.Prefixref, OpCodes.Nop, OpCodes.Break, OpCodes.Ret, OpCodes.Tailcall, OpCodes.Volatile, OpCodes.Unaligned, OpCodes.Readonly);
 
             // these are opcodes that we can't sensibly translate to GLSL
 
