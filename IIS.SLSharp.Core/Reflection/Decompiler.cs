@@ -158,11 +158,9 @@ namespace IIS.SLSharp.Core.Reflection
                 PushStatement(Expression.Assign(_locs[3], Pop()));
             };
 
-            _handlers[OpCodes.Stloc_S] = i =>
-            {
-                var lv = (LocalVariableInfo) i.Operand;
-                PushStatement(Expression.Assign(_locs[lv.LocalIndex], Pop()));
-            };
+            _handlers[OpCodes.Stloc] = InstStloc;
+
+            _handlers[OpCodes.Stloc_S] = InstStloc;
 
             _handlers[OpCodes.Ldloc_0] = _ =>
             {
@@ -184,11 +182,9 @@ namespace IIS.SLSharp.Core.Reflection
                 Push(_locs[3]);
             };
 
-            _handlers[OpCodes.Ldloc_S] = i =>
-            {
-                var lv = (LocalVariableInfo)i.Operand;
-                Push(_locs[lv.LocalIndex]);
-            };
+            _handlers[OpCodes.Ldloc] = InstLdloc;
+
+            _handlers[OpCodes.Ldloc_S] = InstLdloc;
 
             _handlers[OpCodes.Dup] = _ =>
             {
@@ -875,6 +871,18 @@ namespace IIS.SLSharp.Core.Reflection
             var v1 = Pop();
             var v2 = Pop();
             Push(Expression.GreaterThan(v1, v2));
+        }
+
+        private void InstStloc(Instruction inst)
+        {
+            var lv = (LocalVariableInfo)inst.Operand;
+            PushStatement(Expression.Assign(_locs[lv.LocalIndex], Pop()));
+        }
+
+        private void InstLdloc(Instruction inst)
+        {
+            var lv = (LocalVariableInfo)inst.Operand;
+            Push(_locs[lv.LocalIndex]);
         }
     }
 }
