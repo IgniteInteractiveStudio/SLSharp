@@ -478,6 +478,132 @@ namespace IIS.SLSharp.Core.Reflection
             }
         }
 
+        private void InstNop(Instruction inst)
+        {
+        }
+
+        private void InstBlt(Instruction inst)
+        {
+            var target = GetTarget(inst);
+            var v2 = Pop();
+            var v1 = Pop();
+            var conditional = new DualLogicalExpression(
+                Expression.LessThan(v1, v2),
+                Expression.GreaterThanOrEqual(v1, v2));
+
+            HandleConditionalBranch(inst, target, conditional);
+        }
+
+        private void InstBgt(Instruction inst)
+        {
+            var target = GetTarget(inst);
+            var v2 = Pop();
+            var v1 = Pop();
+            var conditional = new DualLogicalExpression(
+                Expression.GreaterThan(v1, v2),
+                Expression.LessThanOrEqual(v1, v2));
+
+            HandleConditionalBranch(inst, target, conditional);
+        }
+
+        private void InstBle(Instruction inst)
+        {
+            var target = GetTarget(inst);
+            var v2 = Pop();
+            var v1 = Pop();
+            var conditional = new DualLogicalExpression(
+                Expression.LessThanOrEqual(v1, v2),
+                Expression.GreaterThan(v1, v2));
+
+            HandleConditionalBranch(inst, target, conditional);
+        }
+
+        private void InstBrtrue(Instruction inst)
+        {
+            var target = GetTarget(inst);
+            var next = inst.Offset + inst.Size;
+            var v1 = Pop();
+            if (target == next)
+                return;
+
+            var conditional = new DualLogicalExpression(Expression.Not(v1), v1);
+            HandleConditionalBranch(inst, target, conditional);
+        }
+
+        private void InstBr(Instruction inst)
+        {
+            var target = GetTarget(inst);
+            var next = inst.Offset + inst.Size;
+            if (target != next)
+                PushStatement(Expression.Goto(_labels[target].Label));
+        }
+
+        private void InstCall(Instruction inst)
+        {
+            var m = (MethodInfo)inst.Operand;
+            var args = m.GetParameters().Length;
+
+            if (HasThis(m))
+            {
+                var a = Pop(args);
+                Push(Expression.Call(Pop(), m, a));
+            }
+            else
+                Push(Expression.Call(m, Pop(args)));
+        }
+
+        private void InstRem(Instruction inst)
+        {
+            var a = Pop();
+            var b = Pop();
+            Push(Expression.Modulo(b, a));
+        }
+
+        private void InstShr(Instruction inst)
+        {
+            var a = Pop();
+            var b = Pop();
+            Push(Expression.RightShift(b, a));
+        }
+
+        private void InstDiv(Instruction inst)
+        {
+            var a = Pop();
+            var b = Pop();
+            Push(Expression.Divide(b, a));
+        }
+
+        private void InstNonMacroLdc(Instruction inst)
+        {
+            Push(Expression.Constant(inst.Operand));
+        }
+
+        private void InstClt(Instruction inst)
+        {
+            var v1 = Pop();
+            var v2 = Pop();
+            Push(Expression.LessThan(v1, v2));
+        }
+
+        private void InstCgt(Instruction inst)
+        {
+            var v1 = Pop();
+            var v2 = Pop();
+            Push(Expression.GreaterThan(v1, v2));
+        }
+
+        private void InstStloc(Instruction inst)
+        {
+            var lv = (LocalVariableInfo)inst.Operand;
+            PushStatement(Expression.Assign(_locs[lv.LocalIndex], Pop()));
+        }
+
+        private void InstLdloc(Instruction inst)
+        {
+            var lv = (LocalVariableInfo)inst.Operand;
+            Push(_locs[lv.LocalIndex]);
+        }
+
         private Decompiler(MethodInfo m)
         {
             SetupHandlers();
@@ -491,7 +617,7 @@ namespace IIS.SLSharp.Core.Reflection
 
             var body = m.GetMethodBody();
             if (body == null)
-                throw new Exception("Method body is null");
+                throw new Exception("Method body is null"); // TODO: will this ever happen?
 
             foreach (var v in body.LocalVariables)
                 _locs[v.LocalIndex] = Expression.Variable(v.LocalType, "_l" + v.LocalIndex);
@@ -757,132 +883,6 @@ namespace IIS.SLSharp.Core.Reflection
             }
 
             PushStatement(Expression.Label(label.Label));
-        }
-
-        private void InstNop(Instruction inst)
-        {
-        }
-
-        private void InstBlt(Instruction inst)
-        {
-            var target = GetTarget(inst);
-            var v2 = Pop();
-            var v1 = Pop();
-            var conditional = new DualLogicalExpression(
-                Expression.LessThan(v1, v2),
-                Expression.GreaterThanOrEqual(v1, v2));
-
-            HandleConditionalBranch(inst, target, conditional);
-        }
-
-        private void InstBgt(Instruction inst)
-        {
-            var target = GetTarget(inst);
-            var v2 = Pop();
-            var v1 = Pop();
-            var conditional = new DualLogicalExpression(
-                Expression.GreaterThan(v1, v2),
-                Expression.LessThanOrEqual(v1, v2));
-
-            HandleConditionalBranch(inst, target, conditional);
-        }
-
-        private void InstBle(Instruction inst)
-        {
-            var target = GetTarget(inst);
-            var v2 = Pop();
-            var v1 = Pop();
-            var conditional = new DualLogicalExpression(
-                Expression.LessThanOrEqual(v1, v2),
-                Expression.GreaterThan(v1, v2));
-
-            HandleConditionalBranch(inst, target, conditional);
-        }
-
-        private void InstBrtrue(Instruction inst)
-        {
-            var target = GetTarget(inst);
-            var next = inst.Offset + inst.Size;
-            var v1 = Pop();
-            if (target == next)
-                return;
-
-            var conditional = new DualLogicalExpression(Expression.Not(v1), v1);
-            HandleConditionalBranch(inst, target, conditional);
-        }
-
-        private void InstBr(Instruction inst)
-        {
-            var target = GetTarget(inst);
-            var next = inst.Offset + inst.Size;
-            if (target != next)
-                PushStatement(Expression.Goto(_labels[target].Label));
-        }
-
-        private void InstCall(Instruction inst)
-        {
-            var m = (MethodInfo) inst.Operand;
-            var args = m.GetParameters().Length;
-
-            if (HasThis(m))
-            {
-                var a = Pop(args);
-                Push(Expression.Call(Pop(), m, a));
-            }
-            else
-                Push(Expression.Call(m, Pop(args)));
-        }
-
-        private void InstRem(Instruction inst)
-        {
-            var a = Pop();
-            var b = Pop();
-            Push(Expression.Modulo(b, a));
-        }
-
-        private void InstShr(Instruction inst)
-        {
-            var a = Pop();
-            var b = Pop();
-            Push(Expression.RightShift(b, a));
-        }
-
-        private void InstDiv(Instruction inst)
-        {
-            var a = Pop();
-            var b = Pop();
-            Push(Expression.Divide(b, a));
-        }
-
-        private void InstNonMacroLdc(Instruction inst)
-        {
-            Push(Expression.Constant(inst.Operand));
-        }
-
-        private void InstClt(Instruction inst)
-        {
-            var v1 = Pop();
-            var v2 = Pop();
-            Push(Expression.LessThan(v1, v2));
-        }
-
-        private void InstCgt(Instruction inst)
-        {
-            var v1 = Pop();
-            var v2 = Pop();
-            Push(Expression.GreaterThan(v1, v2));
-        }
-
-        private void InstStloc(Instruction inst)
-        {
-            var lv = (LocalVariableInfo)inst.Operand;
-            PushStatement(Expression.Assign(_locs[lv.LocalIndex], Pop()));
-        }
-
-        private void InstLdloc(Instruction inst)
-        {
-            var lv = (LocalVariableInfo)inst.Operand;
-            Push(_locs[lv.LocalIndex]);
         }
     }
 }
