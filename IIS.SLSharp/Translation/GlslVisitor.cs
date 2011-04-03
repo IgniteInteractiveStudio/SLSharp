@@ -462,7 +462,7 @@ namespace IIS.SLSharp.Translation
             // generate signature
             var neededTyp = _attr.GetType();
             var attr = m.GetCustomAttributes(neededTyp, false); 
-            if (attr.Count() == 0)
+            if (attr.Length == 0)
                 throw new Exception("Called shader method has no " + neededTyp.Name + Environment.NewLine + GetSignature(m));
 
             if (((IShaderAttribute)attr[0]).EntryPoint)

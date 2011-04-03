@@ -26,7 +26,7 @@ namespace IIS.SLSharp.Translation
         {
             var transforms = from m in typ.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
                              let attrs = m.GetCustomAttributes(typeof(DebugTranslatorAttribute), false)
-                             where attrs.Count() != 0
+                             where attrs.Length != 0
                              let allAttr = m.GetCustomAttributes(false)
                              let styp = allAttr.First(f => typeof(IShaderAttribute).IsAssignableFrom(f.GetType())) as IShaderAttribute
                              select Transform(m, styp);
