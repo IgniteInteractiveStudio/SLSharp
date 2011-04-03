@@ -111,6 +111,25 @@ namespace IIS.SLSharp.Core.Reflection
                 Push(Expression.Field(Pop(), (FieldInfo)i.Operand));
             };
 
+            _handlers[OpCodes.Stfld] = i =>
+            {
+                var fld = (FieldInfo)i.Operand;
+                var rhs = Pop();
+                PushStatement(Expression.Assign(Expression.Field(Pop(), fld), rhs));
+            };
+
+            _handlers[OpCodes.Stsfld] = i =>
+            {
+                var fld = (FieldInfo)i.Operand;
+                var rhs = Pop();
+                PushStatement(Expression.Assign(Expression.Field(null, fld), rhs));
+            };
+
+            _handlers[OpCodes.Ldsfld] = i =>
+            {
+                Push(Expression.Field(null, (FieldInfo)i.Operand));
+            };
+
             _handlers[OpCodes.Call] = InstCall;
 
             _handlers[OpCodes.Callvirt] = InstCall;
@@ -318,20 +337,6 @@ namespace IIS.SLSharp.Core.Reflection
             _handlers[OpCodes.Not] = _ =>
             {
                 Push(Expression.OnesComplement(Pop()));
-            };
-
-            _handlers[OpCodes.Stfld] = i =>
-            {
-                var fld = (FieldInfo)i.Operand;
-                var rhs = Pop();
-                PushStatement(Expression.Assign(Expression.Field(Pop(), fld), rhs));
-            };
-
-            _handlers[OpCodes.Stsfld] = i =>
-            {
-                var fld = (FieldInfo)i.Operand;
-                var rhs = Pop();
-                PushStatement(Expression.Assign(Expression.Field(null, fld), rhs));
             };
 
             _handlers[OpCodes.Starg_S] = i =>
