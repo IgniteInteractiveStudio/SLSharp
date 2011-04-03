@@ -98,16 +98,13 @@ namespace IIS.SLSharp.Core.Reflection
                 Push(_args[3]);
             };
 
-            _handlers[OpCodes.Ldarg_S] = i =>
-            {
-                // merge with InstStargs
-                var arg = (ParameterInfo)i.Operand;
-                var pos = arg.Position;
-                if (_hasThis)
-                    pos++;
+            _handlers[OpCodes.Ldarg] = InstLdarg;
 
-                Push(_args[pos]);
-            };
+            _handlers[OpCodes.Ldarg_S] = InstLdarg;
+
+            _handlers[OpCodes.Starg] = InstStarg;
+
+            _handlers[OpCodes.Starg_S] = InstStarg;
 
             _handlers[OpCodes.Ldfld] = i =>
             {
@@ -480,6 +477,26 @@ namespace IIS.SLSharp.Core.Reflection
 
         private void InstNop(Instruction inst)
         {
+        }
+
+        private void InstStarg(Instruction inst)
+        {
+            var top = Pop();
+            var pos = (int)inst.Operand;
+            if (_hasThis)
+                pos++;
+
+            _args[pos] = top;
+        }
+
+        private void InstLdarg(Instruction inst)
+        {
+            var arg = (ParameterInfo)inst.Operand;
+            var pos = arg.Position;
+            if (_hasThis)
+                pos++;
+
+            Push(_args[pos]);
         }
 
         private void InstBlt(Instruction inst)
