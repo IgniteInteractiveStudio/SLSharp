@@ -21,6 +21,12 @@ namespace IIS.SLSharp.Core.Reflection
         ShaderUniformMatrix4X4Helper,
         ShaderBegin,
         ResourceHelperRelease,
-        ShaderSamplerHelper
+        ShaderSamplerHelper,
+        ShaderIvec2Helper,
+        ShaderIvec3Helper,
+        ShaderIvec4Helper,
+        ShaderUvec2Helper,
+        ShaderUvec3Helper,
+        ShaderUvec4Helper,
     }
 }

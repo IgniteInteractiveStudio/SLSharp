@@ -13,10 +13,10 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
     public abstract class SimplexNoiseShader: Shader
     {
         [Uniform]
-        protected abstract Sampler1D PermGradSampler { set; get; }
+        protected abstract sampler1D PermGradSampler { set; get; }
 
         [Uniform]
-        protected abstract Sampler2D PermSampler2D { set; get;  }
+        protected abstract sampler2D PermSampler2D { set; get;  }
 
         private Texture2D _perm2D;
 

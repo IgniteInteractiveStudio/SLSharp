@@ -27,6 +27,26 @@ namespace IIS.SLSharp
 
         #endregion
 
+        #region genIType abs(genIType x)
+
+        /// <summary>Returns x if x >= 0, otherwise it returns –x.</summary>
+        /// <returns>The absolute value of x</returns>
+        protected static int abs(int x) { throw _invalidAccess; }
+
+        /// <summary>Returns x if x >= 0, otherwise it returns –x.</summary>
+        /// <returns>The absolute value of x</returns>
+        protected static ivec2 abs(ivec2 x) { throw _invalidAccess; }
+
+        /// <summary>Returns x if x >= 0, otherwise it returns –x.</summary>
+        /// <returns>The absolute value of x</returns>
+        protected static ivec3 abs(ivec3 x) { throw _invalidAccess; }
+
+        /// <summary>Returns x if x >= 0, otherwise it returns –x.</summary>
+        /// <returns>The absolute value of x</returns>
+        protected static ivec4 abs(ivec4 x) { throw _invalidAccess; }
+
+        #endregion
+
         #region genDType abs(genDType x)
 
         /// <summary>Returns x if x >= 0, otherwise it returns –x.</summary>
@@ -64,6 +84,26 @@ namespace IIS.SLSharp
         /// <summary>Returns 1.0 if x &gt; 0, 0.0 if x = 0, or –1.0 if x &lt; 0.</summary>
         /// <returns>The sign of x</returns>
         protected static vec4 sign(vec4 x) { throw _invalidAccess; }
+
+        #endregion
+
+        #region genIType sign(genIType x)
+
+        /// <summary>Returns 1.0 if x &gt; 0, 0.0 if x = 0, or –1.0 if x &lt; 0.</summary>
+        /// <returns>The sign of x</returns>
+        protected static int sign(int x) { throw _invalidAccess; }
+
+        /// <summary>Returns 1.0 if x &gt; 0, 0.0 if x = 0, or –1.0 if x &lt; 0.</summary>
+        /// <returns>The sign of x</returns>
+        protected static ivec2 sign(ivec2 x) { throw _invalidAccess; }
+
+        /// <summary>Returns 1.0 if x &gt; 0, 0.0 if x = 0, or –1.0 if x &lt; 0.</summary>
+        /// <returns>The sign of x</returns>
+        protected static ivec3 sign(ivec3 x) { throw _invalidAccess; }
+
+        /// <summary>Returns 1.0 if x &gt; 0, 0.0 if x = 0, or –1.0 if x &lt; 0.</summary>
+        /// <returns>The sign of x</returns>
+        protected static ivec4 sign(ivec4 x) { throw _invalidAccess; }
 
         #endregion
 
@@ -455,6 +495,64 @@ namespace IIS.SLSharp
 
         #endregion
 
+        #region genIType min(genIType x, int y)
+
+        /// <summary>Returns y if y &lt; x, otherwise it returns x.</summary>
+        protected static int min(int x, int y) { throw _invalidAccess; }
+
+        /// <summary>Returns y if y &lt; x, otherwise it returns x.</summary>
+        protected static ivec2 min(ivec2 x, int y) { throw _invalidAccess; }
+
+        /// <summary>Returns y if y &lt; x, otherwise it returns x.</summary>
+        protected static ivec3 min(ivec3 x, int y) { throw _invalidAccess; }
+
+        /// <summary>Returns y if y &lt; x, otherwise it returns x.</summary>
+        protected static ivec4 min(ivec4 x, int y) { throw _invalidAccess; }
+
+        #endregion
+
+        #region genIType min(genIType x, genIType y)
+
+        /// <summary>Returns y if y &lt; x, otherwise it returns x.</summary>
+        protected static ivec2 min(ivec2 x, ivec2 y) { throw _invalidAccess; }
+
+        /// <summary>Returns y if y &lt; x, otherwise it returns x.</summary>
+        protected static ivec3 min(ivec3 x, ivec3 y) { throw _invalidAccess; }
+
+        /// <summary>Returns y if y &lt; x, otherwise it returns x.</summary>
+        protected static ivec4 min(ivec4 x, ivec4 y) { throw _invalidAccess; }
+
+        #endregion
+
+        #region genUType min(genUType x, uint y)
+
+        /// <summary>Returns y if y &lt; x, otherwise it returns x.</summary>
+        protected static uint min(uint x, uint y) { throw _invalidAccess; }
+
+        /// <summary>Returns y if y &lt; x, otherwise it returns x.</summary>
+        protected static uvec2 min(uvec2 x, uint y) { throw _invalidAccess; }
+
+        /// <summary>Returns y if y &lt; x, otherwise it returns x.</summary>
+        protected static uvec3 min(uvec3 x, uint y) { throw _invalidAccess; }
+
+        /// <summary>Returns y if y &lt; x, otherwise it returns x.</summary>
+        protected static uvec4 min(uvec4 x, uint y) { throw _invalidAccess; }
+
+        #endregion
+
+        #region genUType min(genUType x, genUType y)
+
+        /// <summary>Returns y if y &lt; x, otherwise it returns x.</summary>
+        protected static uvec2 min(uvec2 x, uvec2 y) { throw _invalidAccess; }
+
+        /// <summary>Returns y if y &lt; x, otherwise it returns x.</summary>
+        protected static uvec3 min(uvec3 x, uvec3 y) { throw _invalidAccess; }
+
+        /// <summary>Returns y if y &lt; x, otherwise it returns x.</summary>
+        protected static uvec4 min(uvec4 x, uvec4 y) { throw _invalidAccess; }
+
+        #endregion
+
         #region genType max(genType x, float y)
 
         /// <summary>Returns y if x &lt; y, otherwise it returns x.</summary>
@@ -513,6 +611,64 @@ namespace IIS.SLSharp
 
         #endregion
 
+        #region genIType max(genIType x, int y)
+
+        /// <summary>Returns y if x &lt; y, otherwise it returns x.</summary>
+        protected static int max(int x, int y) { throw _invalidAccess; }
+
+        /// <summary>Returns y if x &lt; y, otherwise it returns x.</summary>
+        protected static ivec2 max(ivec2 x, int y) { throw _invalidAccess; }
+
+        /// <summary>Returns y if x &lt; y, otherwise it returns x.</summary>
+        protected static ivec3 max(ivec3 x, int y) { throw _invalidAccess; }
+
+        /// <summary>Returns y if x &lt; y, otherwise it returns x.</summary>
+        protected static ivec4 max(ivec4 x, int y) { throw _invalidAccess; }
+
+        #endregion
+
+        #region genIType max(genIType x, genIType y)
+
+        /// <summary>Returns y if x &lt; y, otherwise it returns x.</summary>
+        protected static ivec2 max(ivec2 x, ivec2 y) { throw _invalidAccess; }
+
+        /// <summary>Returns y if x &lt; y, otherwise it returns x.</summary>
+        protected static ivec3 max(ivec3 x, ivec3 y) { throw _invalidAccess; }
+
+        /// <summary>Returns y if x &lt; y, otherwise it returns x.</summary>
+        protected static ivec4 max(ivec4 x, ivec4 y) { throw _invalidAccess; }
+
+        #endregion
+
+        #region genUType max(genUType x, int y)
+
+        /// <summary>Returns y if x &lt; y, otherwise it returns x.</summary>
+        protected static uint max(uint x, uint y) { throw _invalidAccess; }
+
+        /// <summary>Returns y if x &lt; y, otherwise it returns x.</summary>
+        protected static uvec2 max(uvec2 x, uint y) { throw _invalidAccess; }
+
+        /// <summary>Returns y if x &lt; y, otherwise it returns x.</summary>
+        protected static uvec3 max(uvec3 x, uint y) { throw _invalidAccess; }
+
+        /// <summary>Returns y if x &lt; y, otherwise it returns x.</summary>
+        protected static uvec4 max(uvec4 x, uint y) { throw _invalidAccess; }
+
+        #endregion
+
+        #region genUType max(genUType x, genUType y)
+
+        /// <summary>Returns y if x &lt; y, otherwise it returns x.</summary>
+        protected static uvec2 max(uvec2 x, uvec2 y) { throw _invalidAccess; }
+
+        /// <summary>Returns y if x &lt; y, otherwise it returns x.</summary>
+        protected static uvec3 max(uvec3 x, uvec3 y) { throw _invalidAccess; }
+
+        /// <summary>Returns y if x &lt; y, otherwise it returns x.</summary>
+        protected static uvec4 max(uvec4 x, uvec4 y) { throw _invalidAccess; }
+
+        #endregion
+
         #region genType clamp(genType x, float minVal, float maxVal)
 
         /// <summary>Returns min (max (x, minVal), maxVal). Results are undefined if minVal > maxVal.</summary>
@@ -568,6 +724,64 @@ namespace IIS.SLSharp
 
         /// <summary>Returns min (max (x, minVal), maxVal). Results are undefined if minVal > maxVal.</summary>
         protected static dvec4 clamp(dvec4 x, dvec4 minVal, dvec4 maxVal) { throw _invalidAccess; }
+
+        #endregion
+
+        #region genIType clamp(genIType x, int minVal, int maxVal)
+
+        /// <summary>Returns min (max (x, minVal), maxVal). Results are undefined if minVal > maxVal.</summary>
+        protected static int clamp(int x, int minVal, int maxVal) { throw _invalidAccess; }
+
+        /// <summary>Returns min (max (x, minVal), maxVal). Results are undefined if minVal > maxVal.</summary>
+        protected static ivec2 clamp(ivec2 x, int minVal, int maxVal) { throw _invalidAccess; }
+
+        /// <summary>Returns min (max (x, minVal), maxVal). Results are undefined if minVal > maxVal.</summary>
+        protected static ivec3 clamp(ivec3 x, int minVal, int maxVal) { throw _invalidAccess; }
+
+        /// <summary>Returns min (max (x, minVal), maxVal). Results are undefined if minVal > maxVal.</summary>
+        protected static ivec4 clamp(ivec4 x, int minVal, int maxVal) { throw _invalidAccess; }
+
+        #endregion
+
+        #region genIType clamp(genIType x, genIType minVal, genIType maxVal)
+
+        /// <summary>Returns min (max (x, minVal), maxVal). Results are undefined if minVal > maxVal.</summary>
+        protected static ivec2 clamp(ivec2 x, ivec2 minVal, ivec2 maxVal) { throw _invalidAccess; }
+
+        /// <summary>Returns min (max (x, minVal), maxVal). Results are undefined if minVal > maxVal.</summary>
+        protected static ivec3 clamp(ivec3 x, ivec3 minVal, ivec3 maxVal) { throw _invalidAccess; }
+
+        /// <summary>Returns min (max (x, minVal), maxVal). Results are undefined if minVal > maxVal.</summary>
+        protected static ivec4 clamp(ivec4 x, ivec4 minVal, ivec4 maxVal) { throw _invalidAccess; }
+
+        #endregion
+
+        #region genUType clamp(genUType x, uint minVal, uint maxVal)
+
+        /// <summary>Returns min (max (x, minVal), maxVal). Results are undefined if minVal > maxVal.</summary>
+        protected static uint clamp(uint x, uint minVal, uint maxVal) { throw _invalidAccess; }
+
+        /// <summary>Returns min (max (x, minVal), maxVal). Results are undefined if minVal > maxVal.</summary>
+        protected static uvec2 clamp(uvec2 x, uint minVal, uint maxVal) { throw _invalidAccess; }
+
+        /// <summary>Returns min (max (x, minVal), maxVal). Results are undefined if minVal > maxVal.</summary>
+        protected static uvec3 clamp(uvec3 x, uint minVal, uint maxVal) { throw _invalidAccess; }
+
+        /// <summary>Returns min (max (x, minVal), maxVal). Results are undefined if minVal > maxVal.</summary>
+        protected static uvec4 clamp(uvec4 x, uint minVal, uint maxVal) { throw _invalidAccess; }
+
+        #endregion
+
+        #region genUType clamp(genUType x, genUType minVal, genUType maxVal)
+
+        /// <summary>Returns min (max (x, minVal), maxVal). Results are undefined if minVal > maxVal.</summary>
+        protected static uvec2 clamp(uvec2 x, uvec2 minVal, uvec2 maxVal) { throw _invalidAccess; }
+
+        /// <summary>Returns min (max (x, minVal), maxVal). Results are undefined if minVal > maxVal.</summary>
+        protected static uvec3 clamp(uvec3 x, uvec3 minVal, uvec3 maxVal) { throw _invalidAccess; }
+
+        /// <summary>Returns min (max (x, minVal), maxVal). Results are undefined if minVal > maxVal.</summary>
+        protected static uvec4 clamp(uvec4 x, uvec4 minVal, uvec4 maxVal) { throw _invalidAccess; }
 
         #endregion
 
@@ -784,6 +998,135 @@ namespace IIS.SLSharp
         /// This is useful in cases where you would want a threshold function with a smooth
         /// transition.</summary>
         protected static dvec4 smoothstep(dvec4 edge0, dvec4 edge1, dvec4 y) { throw _invalidAccess; }
+
+        #endregion
+
+        #region genIType floatBitsToInt (genType value)
+
+        /// <summary>
+        /// Returns a signed integer value representing the encoding of floating-point value. 
+        /// The floatingpoint value's bit-level representation is preserved.
+        /// </summary>
+        protected static int floatBitsToInt(float value) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Returns a signed or unsigned integer value representing the encoding of floating-point value. 
+        /// The floatingpoint value's bit-level representation is preserved.
+        /// </summary>
+        protected static ivec2 floatBitsToInt(vec2 value) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Returns a signed integer value representing the encoding of floating-point value. 
+        /// The floatingpoint value's bit-level representation is preserved.
+        /// </summary>
+        protected static ivec3 floatBitsToInt(vec3 value) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Returns a signed integer value representing the encoding of floating-point value. 
+        /// The floatingpoint value's bit-level representation is preserved.
+        /// </summary>
+        protected static ivec4 floatBitsToInt(vec4 value) { throw _invalidAccess; }
+
+        #endregion
+
+        #region genUType floatBitsToUint (genType value)
+
+        /// <summary>
+        /// Returns an unsigned integer value representing the encoding of floating-point value. 
+        /// The floatingpoint value's bit-level representation is preserved.
+        /// </summary>
+        protected static uint floatBitsToUint(float value) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Returns an unsigned integer value representing the encoding of floating-point value. 
+        /// The floatingpoint value's bit-level representation is preserved.
+        /// </summary>
+        protected static uvec2 floatBitsToUint(vec2 value) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Returns an unsigned integer value representing the encoding of floating-point value. 
+        /// The floatingpoint value's bit-level representation is preserved.
+        /// </summary>
+        protected static uvec3 floatBitsToUint(vec3 value) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Returns an unsigned integer value representing the encoding of floating-point value. 
+        /// The floatingpoint value's bit-level representation is preserved.
+        /// </summary>
+        protected static uvec4 floatBitsToUint(vec4 value) { throw _invalidAccess; }
+
+
+        #endregion
+
+        #region genType intBitsToFloat (genIType value)
+        
+        /// <summary>
+        /// Returns a floating-point value corresponding to a signed integer encoding 
+        /// of a floating-point value. If a NaN is passed in, it will not signal, 
+        /// and the resulting floating point value is unspecified. If an Inf is passed in,
+        /// the resulting floating-point value is the corresponding Inf.
+        /// </summary>
+        protected static float intBitsToFloat(int value) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Returns a floating-point value corresponding to a signed integer encoding 
+        /// of a floating-point value. If a NaN is passed in, it will not signal, 
+        /// and the resulting floating point value is unspecified. If an Inf is passed in,
+        /// the resulting floating-point value is the corresponding Inf.
+        /// </summary>
+        protected static vec2 intBitsToFloat(ivec2 value) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Returns a floating-point value corresponding to a signed integer encoding 
+        /// of a floating-point value. If a NaN is passed in, it will not signal, 
+        /// and the resulting floating point value is unspecified. If an Inf is passed in,
+        /// the resulting floating-point value is the corresponding Inf.
+        /// </summary>
+        protected static vec3 intBitsToFloat(ivec3 value) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Returns a floating-point value corresponding to a signed integer encoding 
+        /// of a floating-point value. If a NaN is passed in, it will not signal, 
+        /// and the resulting floating point value is unspecified. If an Inf is passed in,
+        /// the resulting floating-point value is the corresponding Inf.
+        /// </summary>
+        protected static vec4 intBitsToFloat(ivec4 value) { throw _invalidAccess; }
+
+        #endregion
+
+        #region genType uintBitsToFloat (genUType value)
+
+        /// <summary>
+        /// Returns a floating-point value corresponding to an unsigned integer encoding 
+        /// of a floating-point value. If a NaN is passed in, it will not signal, 
+        /// and the resulting floating point value is unspecified. If an Inf is passed in,
+        /// the resulting floating-point value is the corresponding Inf.
+        /// </summary>
+        protected static float uintBitsToFloat(uint value) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Returns a floating-point value corresponding to an unsigned integer encoding 
+        /// of a floating-point value. If a NaN is passed in, it will not signal, 
+        /// and the resulting floating point value is unspecified. If an Inf is passed in,
+        /// the resulting floating-point value is the corresponding Inf.
+        /// </summary>
+        protected static vec2 uintBitsToFloat(uvec2 value) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Returns a floating-point value corresponding to an unsigned integer encoding 
+        /// of a floating-point value. If a NaN is passed in, it will not signal, 
+        /// and the resulting floating point value is unspecified. If an Inf is passed in,
+        /// the resulting floating-point value is the corresponding Inf.
+        /// </summary>
+        protected static vec3 uintBitsToFloat(uvec3 value) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Returns a floating-point value corresponding to an unsigned integer encoding 
+        /// of a floating-point value. If a NaN is passed in, it will not signal, 
+        /// and the resulting floating point value is unspecified. If an Inf is passed in,
+        /// the resulting floating-point value is the corresponding Inf.
+        /// </summary>
+        protected static vec4 uintBitsToFloat(uvec4 value) { throw _invalidAccess; }
 
         #endregion
 

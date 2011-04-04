@@ -81,9 +81,9 @@ namespace IIS.SLSharp
             var t = GetType();
             var bt = GetShaderType();
 
-// ReSharper disable PossibleNullReferenceException
+            // ReSharper disable PossibleNullReferenceException
             while (t.BaseType != bt)
-// ReSharper restore PossibleNullReferenceException
+            // ReSharper restore PossibleNullReferenceException
                 t = t.BaseType;
             return t;
         }
@@ -92,9 +92,9 @@ namespace IIS.SLSharp
         {
             var t = GetType();
 
-// ReSharper disable PossibleNullReferenceException
+            // ReSharper disable PossibleNullReferenceException
             while (t.BaseType != typeof(Shader))
-// ReSharper restore PossibleNullReferenceException
+            // ReSharper restore PossibleNullReferenceException
                 t = t.BaseType;
 
             return t;
@@ -335,8 +335,8 @@ namespace IIS.SLSharp
         /// </summary>
         private static readonly Dictionary<Type, PropInfo> _typeMap = new Dictionary<Type, PropInfo>
         {
-            { typeof(float), new PropInfo("float", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(float)}))},
             // TODO: what do we do for double? ...
+            { typeof(float), new PropInfo("float", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(float)})) },
             { typeof(vec2), new PropInfo("vec2", GetHandler(ReflectionToken.ShaderVec2Helper)) },
             { typeof(vec3), new PropInfo("vec3", GetHandler(ReflectionToken.ShaderVec3Helper)) },
             { typeof(vec4), new PropInfo("vec4", GetHandler(ReflectionToken.ShaderVec4Helper)) },
@@ -349,10 +349,32 @@ namespace IIS.SLSharp
             { typeof(mat4x2), new PropInfo("mat4x2", GetHandler(ReflectionToken.ShaderUniformMatrix4X2Helper)) },
             { typeof(mat4x3), new PropInfo("mat4x3", GetHandler(ReflectionToken.ShaderUniformMatrix4X3Helper)) },
             { typeof(mat4), new PropInfo("mat4", GetHandler(ReflectionToken.ShaderUniformMatrix4X4Helper)) },
-            { typeof(Sampler1D), new PropInfo("sampler1D", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
-            { typeof(Sampler2D), new PropInfo("sampler2D", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
+            { typeof(sampler1D), new PropInfo("sampler1D", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
+            { typeof(sampler2D), new PropInfo("sampler2D", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
+            { typeof(sampler3D), new PropInfo("sampler3D", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
+            { typeof(samplerCube), new PropInfo("samplerCube", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
+            { typeof(sampler1DShadow), new PropInfo("sampler1DShadow", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
+            { typeof(sampler2DShadow), new PropInfo("sampler2DShadow", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
+            { typeof(isampler1D), new PropInfo("isampler1D", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
+            { typeof(isampler2D), new PropInfo("isampler2D", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
+            { typeof(isampler3D), new PropInfo("isampler3D", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
+            { typeof(isamplerCube), new PropInfo("isamplerCube", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
+            { typeof(usampler1D), new PropInfo("usampler1D", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
+            { typeof(usampler2D), new PropInfo("usampler2D", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
+            { typeof(usampler3D), new PropInfo("usampler3D", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
+            { typeof(usamplerCube), new PropInfo("usamplerCube", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
+            { typeof(sampler2DRect), new PropInfo("sampler2DRect", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
+            { typeof(sampler2DRectShadow), new PropInfo("sampler2DRectShadow", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
+            { typeof(isampler2DRect), new PropInfo("isampler2DRect", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
+            { typeof(usampler2DRect), new PropInfo("usampler2DRect", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
             { typeof(int), new PropInfo("int", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(int)})) },
+            { typeof(ivec2), new PropInfo("ivec2", GetHandler(ReflectionToken.ShaderIvec2Helper)) },
+            { typeof(ivec3), new PropInfo("ivec3", GetHandler(ReflectionToken.ShaderIvec3Helper)) },
+            { typeof(ivec4), new PropInfo("ivec4", GetHandler(ReflectionToken.ShaderIvec4Helper)) },
             { typeof(uint), new PropInfo("uint", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(uint)})) },
+            { typeof(uvec2), new PropInfo("uvec2", GetHandler(ReflectionToken.ShaderUvec2Helper)) },
+            { typeof(uvec3), new PropInfo("uvec3", GetHandler(ReflectionToken.ShaderUvec3Helper)) },
+            { typeof(uvec4), new PropInfo("uvec4", GetHandler(ReflectionToken.ShaderUvec4Helper)) },
         };
 
         /// <summary>
@@ -616,6 +638,42 @@ namespace IIS.SLSharp
         public static void UniformVecHelper4(int location)
         {
             GL.Uniform4(location, vec4.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderIvec2Helper)]
+        public static void UniformIvecHelper2(int location)
+        {
+            GL.Uniform2(location, 1, ivec2.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderIvec3Helper)]
+        public static void UniformIvecHelper3(int location)
+        {
+            GL.Uniform3(location, 1, ivec3.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderIvec4Helper)]
+        public static void UniformIvecHelper4(int location)
+        {
+            GL.Uniform4(location, 1, ivec4.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUvec2Helper)]
+        public static void UniformUvecHelper2(int location)
+        {
+            GL.Uniform2(location, 1, uvec2.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUvec3Helper)]
+        public static void UniformUvecHelper3(int location)
+        {
+            GL.Uniform3(location, 1, uvec3.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUvec4Helper)]
+        public static void UniformUvecHelper4(int location)
+        {
+            GL.Uniform4(location, 1, uvec4.value);
         }
 
 
