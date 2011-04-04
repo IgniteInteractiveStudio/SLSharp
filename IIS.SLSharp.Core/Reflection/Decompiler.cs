@@ -404,6 +404,12 @@ namespace IIS.SLSharp.Core.Reflection
 
             _handlers[OpCodes.Stelem_R8] = InstStelem;
 
+            _handlers[OpCodes.Ldlen] = _ =>
+            {
+                var array = Pop();
+                Push(Expression.ArrayLength(array));
+            };
+
             _handlers[OpCodes.Clt] = InstClt;
 
             _handlers[OpCodes.Clt_Un] = InstClt;
