@@ -382,12 +382,27 @@ namespace IIS.SLSharp.Core.Reflection
 
             _handlers[OpCodes.Brtrue_S] = InstBrtrue;
 
-            _handlers[OpCodes.Ldelem_Ref] = i =>
-            {
-                var index = Pop();
-                var array = Pop();
-                Push(Expression.ArrayIndex(array, index));
-            };
+            _handlers[OpCodes.Ldelem] = InstLdelem;
+
+            _handlers[OpCodes.Ldelem_Ref] = InstLdelem;
+
+            _handlers[OpCodes.Ldelem_I4] = InstLdelem;
+
+            _handlers[OpCodes.Ldelem_U4] = InstLdelem;
+
+            _handlers[OpCodes.Ldelem_R4] = InstLdelem;
+
+            _handlers[OpCodes.Ldelem_R8] = InstLdelem;
+
+            _handlers[OpCodes.Stelem] = InstStelem;
+
+            _handlers[OpCodes.Stelem_Ref] = InstStelem;
+
+            _handlers[OpCodes.Stelem_I4] = InstStelem;
+
+            _handlers[OpCodes.Stelem_R4] = InstStelem;
+
+            _handlers[OpCodes.Stelem_R8] = InstStelem;
 
             _handlers[OpCodes.Clt] = InstClt;
 
@@ -416,39 +431,18 @@ namespace IIS.SLSharp.Core.Reflection
                 OpCodes.Initobj);
 
             // these are opcodes that we can't sensibly translate to GLSL
-
-            // overflow-checked opcodes
             AddIllegalOpCodes(OpCodes.Add_Ovf, OpCodes.Add_Ovf_Un, OpCodes.Mul_Ovf, OpCodes.Mul_Ovf_Un, OpCodes.Sub_Ovf, OpCodes.Sub_Ovf_Un,
                 OpCodes.Conv_Ovf_I, OpCodes.Conv_Ovf_I_Un, OpCodes.Conv_Ovf_I1, OpCodes.Conv_Ovf_I1_Un, OpCodes.Conv_Ovf_I2, OpCodes.Conv_Ovf_I2_Un,
                 OpCodes.Conv_Ovf_I4, OpCodes.Conv_Ovf_I4_Un, OpCodes.Conv_Ovf_U, OpCodes.Conv_Ovf_U_Un, OpCodes.Conv_Ovf_U1, OpCodes.Conv_Ovf_U1_Un,
-                OpCodes.Conv_Ovf_U2, OpCodes.Conv_Ovf_U2_Un, OpCodes.Conv_Ovf_U4, OpCodes.Conv_Ovf_U4_Un, OpCodes.Ckfinite);
-
-            // 64-bit integer opcodes
-            AddIllegalOpCodes(OpCodes.Ldc_I8, OpCodes.Ldelem_I8, OpCodes.Ldind_I8, OpCodes.Stelem_I8, OpCodes.Stind_I8, OpCodes.Conv_U8,
-                OpCodes.Conv_Ovf_I8, OpCodes.Conv_Ovf_I8_Un, OpCodes.Conv_Ovf_U8, OpCodes.Conv_Ovf_U8_Un, OpCodes.Ldind_I8, OpCodes.Conv_I8,
-                OpCodes.Conv_U8);
-
-            // unsupported conversions
-            AddIllegalOpCodes(OpCodes.Conv_I1, OpCodes.Conv_I2, OpCodes.Conv_U1, OpCodes.Conv_U2);
-
-            // address opcodes
-            AddIllegalOpCodes(OpCodes.Ldind_I1, OpCodes.Ldind_I2, OpCodes.Ldind_I4, OpCodes.Ldind_U1, OpCodes.Ldind_U2, OpCodes.Ldind_U4);
-
-            // typed references (see C#'s __arglist, __makeref, __reftype, __refvalue (undocumenteded keywords in MS csc.exe))
-            AddIllegalOpCodes(OpCodes.Arglist, OpCodes.Mkrefany, OpCodes.Refanytype, OpCodes.Refanyval);
-
-            // exception handling
-            AddIllegalOpCodes(OpCodes.Leave, OpCodes.Leave_S, OpCodes.Endfilter, OpCodes.Endfinally, OpCodes.Throw, OpCodes.Rethrow);
-
-            // reflection and types
-            AddIllegalOpCodes(OpCodes.Isinst, OpCodes.Castclass, OpCodes.Ldtoken, OpCodes.Box, OpCodes.Unbox, OpCodes.Unbox_Any, OpCodes.Sizeof,
-                OpCodes.Constrained);
-
-            // unmanaged/native operations
-            AddIllegalOpCodes(OpCodes.Initblk, OpCodes.Cpblk, OpCodes.Ldftn, OpCodes.Ldvirtftn, OpCodes.Ldind_I, OpCodes.Conv_I, OpCodes.Conv_U);
-
-            // other unsupported opcodes
-            AddIllegalOpCodes(OpCodes.Ldnull, OpCodes.Ldstr); // GLSL doesn't know null, nor strings
+                OpCodes.Conv_Ovf_U2, OpCodes.Conv_Ovf_U2_Un, OpCodes.Conv_Ovf_U4, OpCodes.Conv_Ovf_U4_Un, OpCodes.Ckfinite, OpCodes.Ldc_I8,
+                OpCodes.Ldelem_I8, OpCodes.Ldind_I8, OpCodes.Stelem_I8, OpCodes.Stind_I8, OpCodes.Conv_U8,  OpCodes.Conv_Ovf_I8, OpCodes.Conv_Ovf_I8_Un,
+                OpCodes.Conv_Ovf_U8, OpCodes.Conv_Ovf_U8_Un, OpCodes.Ldind_I8, OpCodes.Conv_I8, OpCodes.Conv_U8, OpCodes.Conv_I1, OpCodes.Conv_I2,
+                OpCodes.Conv_U1, OpCodes.Conv_U2, OpCodes.Ldind_I1, OpCodes.Ldind_I2, OpCodes.Ldind_I4, OpCodes.Ldind_U1, OpCodes.Ldind_U2,
+                OpCodes.Ldind_U4, OpCodes.Arglist, OpCodes.Mkrefany, OpCodes.Refanytype, OpCodes.Refanyval, OpCodes.Leave, OpCodes.Leave_S,
+                OpCodes.Endfilter, OpCodes.Endfinally, OpCodes.Throw, OpCodes.Rethrow, OpCodes.Isinst, OpCodes.Castclass, OpCodes.Ldtoken, OpCodes.Box,
+                OpCodes.Unbox, OpCodes.Unbox_Any, OpCodes.Sizeof, OpCodes.Constrained, OpCodes.Initblk, OpCodes.Cpblk, OpCodes.Ldftn, OpCodes.Ldvirtftn,
+                OpCodes.Ldind_I, OpCodes.Conv_I, OpCodes.Conv_U, OpCodes.Ldelem_I, OpCodes.Stelem_I, OpCodes.Ldnull, OpCodes.Ldstr, OpCodes.Ldelem_I1,
+                OpCodes.Ldelem_I2, OpCodes.Ldelem_U1, OpCodes.Ldelem_U2, OpCodes.Stelem_I, OpCodes.Stelem_I1, OpCodes.Stelem_I2);
 
             // TODO: these are not actually restricted, but need further investigation for a proper implementation; if you
             // run into an exception with one of these, then please report it with some source code we can reproduce it with!
@@ -480,6 +474,21 @@ namespace IIS.SLSharp.Core.Reflection
 
         private void InstNop(Instruction inst)
         {
+        }
+
+        private void InstLdelem(Instruction inst)
+        {
+            var index = Pop();
+            var array = Pop();
+            Push(Expression.ArrayIndex(array, index));
+        }
+
+        private void InstStelem(Instruction inst)
+        {
+            var value = Pop();
+            var index = Pop();
+            var array = Pop();
+            PushStatement(Expression.Assign(Expression.ArrayAccess(array, index), value));
         }
 
         private void InstStarg(Instruction inst)
