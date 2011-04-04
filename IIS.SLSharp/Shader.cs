@@ -336,7 +336,7 @@ namespace IIS.SLSharp
         private static readonly Dictionary<Type, PropInfo> _typeMap = new Dictionary<Type, PropInfo>
         {
             // TODO: what do we do for double? ...
-            { typeof(float), new PropInfo("float", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(float)})) },
+            { typeof(float), new PropInfo("float", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(float) })) },
             { typeof(vec2), new PropInfo("vec2", GetHandler(ReflectionToken.ShaderVec2Helper)) },
             { typeof(vec3), new PropInfo("vec3", GetHandler(ReflectionToken.ShaderVec3Helper)) },
             { typeof(vec4), new PropInfo("vec4", GetHandler(ReflectionToken.ShaderVec4Helper)) },
@@ -367,15 +367,15 @@ namespace IIS.SLSharp
             { typeof(sampler2DRectShadow), new PropInfo("sampler2DRectShadow", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
             { typeof(isampler2DRect), new PropInfo("isampler2DRect", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
             { typeof(usampler2DRect), new PropInfo("usampler2DRect", GetHandler(ReflectionToken.ShaderSamplerHelper)) },
-            { typeof(int), new PropInfo("int", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(int)})) },
+            { typeof(int), new PropInfo("int", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(int) })) },
             { typeof(ivec2), new PropInfo("ivec2", GetHandler(ReflectionToken.ShaderIvec2Helper)) },
             { typeof(ivec3), new PropInfo("ivec3", GetHandler(ReflectionToken.ShaderIvec3Helper)) },
             { typeof(ivec4), new PropInfo("ivec4", GetHandler(ReflectionToken.ShaderIvec4Helper)) },
-            { typeof(uint), new PropInfo("uint", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(uint)})) },
+            { typeof(uint), new PropInfo("uint", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(uint) })) },
             { typeof(uvec2), new PropInfo("uvec2", GetHandler(ReflectionToken.ShaderUvec2Helper)) },
             { typeof(uvec3), new PropInfo("uvec3", GetHandler(ReflectionToken.ShaderUvec3Helper)) },
             { typeof(uvec4), new PropInfo("uvec4", GetHandler(ReflectionToken.ShaderUvec4Helper)) },
-            { typeof(double), new PropInfo("double", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(double)})) },
+            { typeof(double), new PropInfo("double", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(double) })) },
             { typeof(dvec2), new PropInfo("dvec2", GetHandler(ReflectionToken.ShaderDvec2Helper)) },
             { typeof(dvec3), new PropInfo("dvec3", GetHandler(ReflectionToken.ShaderDvec3Helper)) },
             { typeof(dvec4), new PropInfo("dvec4", GetHandler(ReflectionToken.ShaderDvec4Helper)) },
