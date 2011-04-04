@@ -1,0 +1,1058 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ICSharpCode.Decompiler</name>
+    </assembly>
+    <members>
+        <member name="T:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowGraphBuilder">
+            <summary>
+            Constructs the Control Flow Graph from a Cecil method body.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowGraphBuilder.GetInstructionIndex(Mono.Cecil.Cil.Instruction)">
+            <summary>
+            Determines the index of the instruction (for use with the hasIncomingJumps array)
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowGraphBuilder.Build">
+            <summary>
+            Builds the ControlFlowGraph.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowGraphBuilder.CopyFinallySubGraph(ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode,ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode,ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode)">
+            <summary>
+            Creates a copy of all nodes pointing to 'end' and replaces those references with references to 'newEnd'.
+            Nodes pointing to the copied node are copied recursively to update those references, too.
+            This recursion stops at 'start'. The modified version of start is returned.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.FlowAnalysis.SsaOptimization">
+            <summary>
+            Contains some very simple optimizations that work on the SSA form.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.FlowAnalysis.SsaOptimization.DirectlyStoreToVariables(ICSharpCode.Decompiler.FlowAnalysis.SsaForm)">
+            <summary>
+            When any instructions stores its result in a stack location that's used only once in a 'stloc' or 'starg' instruction,
+            we optimize this to directly store in the target location.
+            As optimization this is redundant (does the same as copy propagation), but it'll make us keep the variables named
+            after locals instead of keeping the temps as using only the simple copy propagation would do.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.Ast.CommentStatement">
+            <summary>
+            Allows storing comments inside IEnumerable{Statement}. Used in the AstMethodBuilder.
+            CommentStatement nodes are replaced with regular comments later on.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.ILAst.ILBasicBlock.Body">
+            <remarks> Body has to start with a label and end with unconditional control flow </remarks>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.FlowAnalysis.SsaFormBuilder">
+            <summary>
+            Constructs "SsaForm" graph for a CFG.
+            This class transforms the method from stack-based IL to a register-based IL language.
+            Then it calls into TransformToSsa to convert the resulting graph to static single assignment form.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.FlowAnalysis.SsaBlock">
+            <summary>
+            A block in a control flow graph; with instructions represented by "SsaInstructions" (instructions use variables, no evaluation stack).
+            Usually these variables are in SSA form to make analysis easier.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.SsaBlock.BlockIndex">
+            <summary>
+            The block index in the control flow graph.
+            This correspons to the node index in ControlFlowGraph.Nodes, so it can be used to retrieve the original CFG node and look
+            up additional information (e.g. dominance).
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.FlowAnalysis.JumpType">
+            <summary>
+            Describes the type of a control flow egde.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.JumpType.Normal">
+            <summary>
+            A regular control flow edge.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.JumpType.JumpToExceptionHandler">
+            <summary>
+            Jump to exception handler (an exception occurred)
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.JumpType.LeaveTry">
+            <summary>
+            Jump from try block to leave target:
+            This is not a real jump, as the finally handler is executed first!
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.JumpType.EndFinally">
+            <summary>
+            Jump at endfinally (to any of the potential leave targets).
+            For any leave-instruction, control flow enters the finally block - the edge to the leave target (LeaveTry) is not a real control flow edge.
+            EndFinally edges are inserted at the end of the finally block, jumping to any of the targets of the leave instruction.
+            This edge type is only used when copying of finally blocks is disabled (with copying, a normal deterministic edge is used at each copy of the endfinally node).
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowEdge">
+            <summary>
+            Represents an edge in the control flow graph, pointing from Source to Target.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.Ast.Transforms.IntroduceUsingDeclarations">
+            <summary>
+            Introduces using declarations.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.Ast.Transforms.DeclareVariables">
+            <summary>
+            Moves variable declarations to improved positions.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.Ast.Transforms.DeclareVariables.FindDeclarationPoint(ICSharpCode.NRefactory.CSharp.Analysis.DefiniteAssignmentAnalysis,ICSharpCode.NRefactory.CSharp.VariableDeclarationStatement,ICSharpCode.NRefactory.CSharp.BlockStatement,ICSharpCode.NRefactory.CSharp.Statement@)">
+            <summary>
+            Finds the declaration point for the variable within the specified block.
+            </summary>
+            <param name="daa">
+            Definite assignment analysis, must be prepared for 'block' or one of its parents.
+            </param>
+            <param name="varDecl">The variable to declare</param>
+            <param name="block">The block in which the variable should be declared</param>
+            <param name="declarationPoint">
+            Output parameter: the first statement within 'block' where the variable needs to be declared.
+            </param>
+            <returns>
+            Returns whether it is possible to move the variable declaration into sub-blocks.
+            </returns>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.Ast.Transforms.AddCheckedBlocks">
+            <summary>
+            Add checked/unchecked blocks.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.Ast.Transforms.AddCheckedBlocks.CheckedUncheckedAnnotation.IsChecked">
+            <summary>
+            true=checked, false=unchecked
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.Ast.Transforms.AddCheckedBlocks.InsertedNode">
+            <summary>
+            Holds the blocks and expressions that should be inserted
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.Ast.Transforms.AddCheckedBlocks.Result">
+            <summary>
+            Holds the result of an insertion operation.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.GotoRemoval.Enter(ICSharpCode.Decompiler.ILAst.ILNode,System.Collections.Generic.HashSet{ICSharpCode.Decompiler.ILAst.ILNode})">
+            <summary>
+            Get the first expression to be excecuted if the instruction pointer is at the start of the given node.
+            Try blocks may not be entered in any way.  If possible, the try block is returned as the node to be executed.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.GotoRemoval.Exit(ICSharpCode.Decompiler.ILAst.ILNode,System.Collections.Generic.HashSet{ICSharpCode.Decompiler.ILAst.ILNode})">
+            <summary>
+            Get the first expression to be excecuted if the instruction pointer is at the end of the given node
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.DecompilerSettings">
+            <summary>
+            Settings for the decompiler.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.DecompilerSettings.AnonymousMethods">
+            <summary>
+            Decompile anonymous methods/lambdas.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.DecompilerSettings.YieldReturn">
+            <summary>
+            Decompile enumerators.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.DecompilerSettings.AutomaticProperties">
+            <summary>
+            Decompile automatic properties
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.DecompilerSettings.AutomaticEvents">
+            <summary>
+            Decompile automatic events
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.DecompilerSettings.UsingStatement">
+            <summary>
+            Decompile using statements.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.DecompilerSettings.ForEachStatement">
+            <summary>
+            Decompile foreach statements.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.DecompilerSettings.LockStatement">
+            <summary>
+            Decompile lock statements.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.SpecialOpCode.None">
+            <summary>
+            No special op code: SsaInstruction has a normal IL instruction
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.SpecialOpCode.Phi">
+            <summary>
+            Φ function: chooses the appropriate variable based on which CFG edge was used to enter this block
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.SpecialOpCode.PrepareByRefCall">
+            <summary>
+            Variable is read from before passing it by ref.
+            This instruction constructs a managed reference to the variable.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.SpecialOpCode.PrepareByOutCall">
+            <summary>
+            This instruction constructs a managed reference to the variable.
+            The variable is not really read from.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.SpecialOpCode.PrepareForFieldAccess">
+            <summary>
+            This instruction constructs a managed reference to the variable.
+            The reference is used for a field access on a value type.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.SpecialOpCode.WriteAfterByRefOrOutCall">
+            <summary>
+            Variable is written to after passing it by ref or out.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.SpecialOpCode.Uninitialized">
+            <summary>
+            Variable is not initialized.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.SpecialOpCode.Parameter">
+            <summary>
+            Value is passed in as parameter
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.SpecialOpCode.Exception">
+            <summary>
+            Value is a caught exception.
+            TypeOperand is set to the exception type.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.SpecialOpCode.InitObj">
+            <summary>
+            Initialize a value type. Unlike the real initobj instruction, this one does not take an address
+            but assigns to the target variable.
+            TypeOperand is set to the type being created.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.SsaInstruction.Instruction">
+            <summary>
+            The original IL instruction.
+            May be null for "invented" instructions (SpecialOpCode != None).
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.SsaInstruction.Prefixes">
+            <summary>
+            Prefixes in front of the IL instruction.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.SsaInstruction.TypeOperand">
+            <summary>
+            Gets the type operand. This is used only in combination with some special opcodes.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.FlowAnalysis.SsaInstruction.IsMoveInstruction">
+            <summary>
+            Gets whether this instruction is a simple assignment from one variable to another.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.Ast.Transforms.ContextTrackingVisitor`1">
+            <summary>
+            Base class for AST visitors that need the current type/method context info.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowGraph">
+            <summary>
+            Contains the control flow graph.
+            </summary>
+            <remarks>Use ControlFlowGraph builder to create instances of the ControlFlowGraph.</remarks>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowGraph.ResetVisited">
+            <summary>
+            Resets "Visited" to false for all nodes in this graph.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowGraph.ComputeDominance(System.Threading.CancellationToken)">
+            <summary>
+            Computes the dominator tree.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowGraph.ComputeDominanceFrontier">
+            <summary>
+            Computes dominance frontiers.
+            This method requires that the dominator tree is already computed!
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.Disassembler.ILStructureType">
+            <summary>
+            Specifies the type of an IL structure.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.Disassembler.ILStructureType.Root">
+            <summary>
+            The root block of the method
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.Disassembler.ILStructureType.Loop">
+            <summary>
+            A nested control structure representing a loop.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.Disassembler.ILStructureType.Try">
+            <summary>
+            A nested control structure representing a try block.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.Disassembler.ILStructureType.Handler">
+            <summary>
+            A nested control structure representing a catch, finally, or fault block.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.Disassembler.ILStructureType.Filter">
+            <summary>
+            A nested control structure representing an exception filter block.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.Disassembler.ILStructure">
+            <summary>
+            An IL structure.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.Disassembler.ILStructure.StartOffset">
+            <summary>
+            Start position of the structure.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.Disassembler.ILStructure.EndOffset">
+            <summary>
+            End position of the structure. (exclusive)
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.Disassembler.ILStructure.ExceptionHandler">
+            <summary>
+            The exception handler associated with the Try, Filter or Handler block.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.Disassembler.ILStructure.LoopEntryPoint">
+            <summary>
+            The loop's entry point.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.Disassembler.ILStructure.Children">
+            <summary>
+            The list of child structures.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.Disassembler.ILStructure.FindAllBranches(Mono.Cecil.Cil.MethodBody)">
+            <summary>
+            Finds all branches. Returns list of source offset->target offset mapping.
+            Multiple entries for the same source offset are possible (switch statements).
+            The result is sorted by source offset.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.Disassembler.ILStructure.GetInnermost(System.Int32)">
+            <summary>
+            Gets the innermost structure containing the specified offset.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.DecompilerException">
+            <summary>
+            Desctiption of DecompilerException.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.YieldReturnDecompiler.AnalyzeCtor">
+            <summary>
+            Looks at the enumerator's ctor and figures out which of the fields holds the state.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.YieldReturnDecompiler.CreateILAst(Mono.Cecil.MethodDefinition)">
+            <summary>
+            Creates ILAst for the specified method, optimized up to before the 'YieldReturn' step.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.YieldReturnDecompiler.AnalyzeCurrentProperty">
+            <summary>
+            Looks at the enumerator's get_Current method and figures out which of the fields holds the current value.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.YieldReturnDecompiler.InitStateRanges(ICSharpCode.Decompiler.ILAst.ILNode)">
+            <summary>
+            Initializes the state range logic:
+            Clears 'ranges' and sets 'ranges[entryPoint]' to the full range (int.MinValue to int.MaxValue)
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.ILAst.YieldReturnDecompiler.YieldAnalysisFailedException">
+            <summary>
+            This exception is thrown when we find something else than we expect from the C# compiler.
+            This aborts the analysis and makes the whole transform fail.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.YieldReturnDecompiler.StateRange.UnionWith(ICSharpCode.Decompiler.ILAst.YieldReturnDecompiler.StateRange,System.Int32,System.Int32)">
+            <summary>
+            Unions this state range with (other intersect (minVal to maxVal))
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.YieldReturnDecompiler.StateRange.Simplify">
+            <summary>
+            Merges overlapping interval ranges.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.ILAst.YieldReturnDecompiler.SymbolicValueType.IntegerConstant">
+            <summary>
+            int: Constant (result of ldc.i4)
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.ILAst.YieldReturnDecompiler.SymbolicValueType.State">
+            <summary>
+            int: State + Constant
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.ILAst.YieldReturnDecompiler.SymbolicValueType.This">
+            <summary>
+            This pointer (result of ldarg.0)
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.ILAst.YieldReturnDecompiler.SymbolicValueType.StateEquals">
+            <summary>
+            bool: State == Constant
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.ILAst.YieldReturnDecompiler.SymbolicValueType.StateInEquals">
+            <summary>
+            bool: State != Constant
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.ILAst.TypeAnalysis">
+            <summary>
+            Assigns C# types to IL expressions.
+            </summary>
+            <remarks>
+            Types are inferred in a bidirectional manner:
+            The expected type flows from the outside to the inside, the actual inferred type flows from the inside to the outside.
+            </remarks>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.ILAst.TypeAnalysis.NativeInt">
+            <summary>
+            Information amount used for IntPtr.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.TypeAnalysis.CreateDependencyGraph(ICSharpCode.Decompiler.ILAst.ILNode)">
+            <summary>
+            Creates the "ExpressionToInfer" instances (=nodes in dependency graph)
+            </summary>
+            <remarks>
+            We are using a dependency graph to ensure that expressions are analyzed in the correct order.
+            </remarks>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.TypeAnalysis.InferTypeForExpression(ICSharpCode.Decompiler.ILAst.ILExpression,Mono.Cecil.TypeReference,System.Boolean)">
+            <summary>
+            Infers the C# type of <paramref name="expr"/>.
+            </summary>
+            <param name="expr">The expression</param>
+            <param name="expectedType">The expected type of the expression</param>
+            <param name="forceInferChildren">Whether direct children should be inferred even if its not necessary. (does not apply to nested children!)</param>
+            <returns>The inferred type</returns>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.TypeAnalysis.Reset(ICSharpCode.Decompiler.ILAst.ILBlock)">
+            <summary>
+            Clears the type inference data on the method.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.ILAst.TypeAnalysis.ExpressionToInfer.DependsOnSingleLoad">
+            <summary>
+            Set for assignment expressions that should wait until the variable type is available
+            from the context where the variable is used.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.ILAst.TypeAnalysis.ExpressionToInfer.Dependencies">
+            <summary>
+            The list variables that are read by this expression.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.Disassembler.ReflectionDisassembler">
+            <summary>
+            Disassembles type and member definitions.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.Ast.Transforms.DelegateConstruction">
+            <summary>
+            Converts "new Action(obj, ldftn(func))" into "new Action(obj.func)".
+            For anonymous methods, creates an AnonymousMethodExpression.
+            Also gets rid of any "Display Classes" left over after inlining an anonymous method.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.Ast.Transforms.DelegateConstruction.Annotation.IsVirtual">
+            <summary>
+            ldftn or ldvirtftn?
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.FlowAnalysis.OpCodeInfo">
+            <summary>
+            Additional info about opcodes.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.FlowAnalysis.OpCodeInfo.IsMoveInstruction">
+            <summary>
+            'Move' kind of instructions have one input (may be stack or local variable) and copy that value to all outputs (again stack or local variable).
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.FlowAnalysis.OpCodeInfo.CanThrow">
+            <summary>
+            Specifies whether this opcode is capable of throwing exceptions.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.FlowAnalysis.ControlStructureDetector">
+            <summary>
+            Detects the structure of the control flow (exception blocks and loops).
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.FlowAnalysis.ControlStructureDetector.FindNodes(ICSharpCode.Decompiler.FlowAnalysis.ControlStructure,Mono.Cecil.Cil.Instruction,Mono.Cecil.Cil.Instruction)">
+            <summary>
+            Removes all nodes from start to end (exclusive) from this ControlStructure and moves them to the target structure.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlStructureType.Root">
+            <summary>
+            The root block of the method
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlStructureType.Loop">
+            <summary>
+            A nested control structure representing a loop.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlStructureType.Try">
+            <summary>
+            A nested control structure representing a try block.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlStructureType.Handler">
+            <summary>
+            A nested control structure representing a catch, finally, or fault block.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlStructureType.Filter">
+            <summary>
+            A nested control structure representing an exception filter block.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.FlowAnalysis.ControlStructure">
+            <summary>
+            Represents the structure detected by the <see cref="T:ICSharpCode.Decompiler.FlowAnalysis.ControlStructureDetector"/>.
+            
+            This is a tree of ControlStructure nodes. Each node contains a set of CFG nodes, and every CFG node is contained in exactly one ControlStructure node.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlStructure.Nodes">
+            <summary>
+            The nodes in this control structure.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlStructure.AllNodes">
+            <summary>
+            The nodes in this control structure and in all child control structures.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlStructure.EntryPoint">
+            <summary>
+            The entry point of this control structure.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlStructure.ExceptionHandler">
+            <summary>
+            The exception handler associated with this Try,Handler or Finally structure.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.ILAst.LoopsAndConditions">
+            <summary>
+            Description of LoopsAndConditions.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.FlowAnalysis.TransformToSsa">
+            <summary>
+            Convers a method to static single assignment form.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.CecilExtensions">
+            <summary>
+            Cecil helper methods.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.CecilExtensions.GetEndOffset(Mono.Cecil.Cil.Instruction)">
+            <summary>
+            Gets the (exclusive) end offset of this instruction.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.Ast.AstMethodBodyBuilder.CreateMethodBody(Mono.Cecil.MethodDefinition,ICSharpCode.Decompiler.DecompilerContext,System.Collections.Generic.IEnumerable{ICSharpCode.NRefactory.CSharp.ParameterDeclaration})">
+            <summary>
+            Creates the body for the method definition.
+            </summary>
+            <param name="methodDef">Method definition to decompile.</param>
+            <param name="context">Decompilation context.</param>
+            <param name="parameters">Parameter declarations of the method being decompiled.
+            These are used to update the parameter names when the decompiler generates names for the parameters.</param>
+            <returns>Block for the method body</returns>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.Ast.AstMethodBodyBuilder.DivideBySize(ICSharpCode.NRefactory.CSharp.Expression,Mono.Cecil.TypeReference)">
+            <summary>
+            Divides expr by the size of 'type'.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.Ast.Transforms.ReplaceMethodCallsWithOperators">
+            <summary>
+            Replaces method calls with the appropriate operator expressions.
+            Also simplifies "x = x op y" into "x op= y" where possible.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.Ast.Transforms.ReplaceMethodCallsWithOperators.RestoreOriginalAssignOperatorAnnotation">
+            <summary>
+            This annotation is used to convert a compound assignment "a += 2;" or increment operator "a++;"
+            back to the original "a = a + 2;". This is sometimes necessary when the checked/unchecked semantics
+            cannot be guaranteed otherwise (see CheckedUnchecked.ForWithCheckedInitializerAndUncheckedIterator test)
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILAstOptimizer.RemoveRedundantCode(ICSharpCode.Decompiler.ILAst.ILBlock)">
+            <summary>
+            Removes redundatant Br, Nop, Dup, Pop
+            </summary>
+            <param name="method"></param>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILAstOptimizer.ReduceBranchInstructionSet(ICSharpCode.Decompiler.ILAst.ILBlock)">
+            <summary>
+            Reduces the branch codes to just br and brtrue.
+            Moves ILRanges to the branch argument
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILAstOptimizer.IntroducePropertyAccessInstructions(ICSharpCode.Decompiler.ILAst.ILBlock)">
+            <summary>
+            Converts call and callvirt instructions that read/write properties into CallGetter/CallSetter instructions.
+            
+            CallGetter/CallSetter is used to allow the ILAst to represent "while ((SomeProperty = value) != null)".
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILAstOptimizer.SplitToBasicBlocks(ICSharpCode.Decompiler.ILAst.ILBlock)">
+            <summary>
+            Group input into a set of blocks that can be later arbitraliby schufled.
+            The method adds necessary branches to make control flow between blocks
+            explicit and thus order independent.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILAstOptimizer.FlattenBasicBlocks(ICSharpCode.Decompiler.ILAst.ILNode)">
+            <summary>
+            Flattens all nested basic blocks, except the the top level 'node' argument
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILAstOptimizer.ReduceIfNesting(ICSharpCode.Decompiler.ILAst.ILNode)">
+            <summary>
+            Reduce the nesting of conditions.
+            It should be done on flat data that already had most gotos removed
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILAstOptimizerExtensionMethods.RunOptimization(ICSharpCode.Decompiler.ILAst.ILBlock,System.Func{System.Collections.Generic.List{ICSharpCode.Decompiler.ILAst.ILNode},ICSharpCode.Decompiler.ILAst.ILBasicBlock,System.Int32,System.Boolean})">
+            <summary>
+            Perform one pass of a given optimization on this block.
+            This block must consist of only basicblocks.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILAstOptimizerExtensionMethods.HasNoSideEffects(ICSharpCode.Decompiler.ILAst.ILExpression)">
+            <summary>
+            The expression has no effect on the program and can be removed
+            if its return value is not needed.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILAstOptimizerExtensionMethods.CanBeExpressionStatement(ICSharpCode.Decompiler.ILAst.ILExpression)">
+            <summary>
+            Can the expression be used as a statement in C#?
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.FlowAnalysis.SsaForm">
+            <summary>
+            Represents a graph of SsaBlocks.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNodeType">
+            <summary>
+            Type of the control flow node
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNodeType.Normal">
+            <summary>
+            A normal node represents a basic block.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNodeType.EntryPoint">
+            <summary>
+            The entry point of the method.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNodeType.RegularExit">
+            <summary>
+            The exit point of the method (every ret instruction branches to this node)
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNodeType.ExceptionalExit">
+            <summary>
+            This node represents leaving a method irregularly by throwing an exception.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNodeType.CatchHandler">
+            <summary>
+            This node is used as a header for exception handler blocks.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNodeType.FinallyOrFaultHandler">
+            <summary>
+            This node is used as a header for finally blocks and fault blocks.
+            Every leave instruction in the try block leads to the handler of the containing finally block;
+            and exceptional control flow also leads to this handler.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNodeType.EndFinallyOrFault">
+            <summary>
+            This node is used as footer for finally blocks and fault blocks.
+            Depending on the "copyFinallyBlocks" option used when creating the graph, it is connected with all leave targets using
+            EndFinally edges (when not copying); or with a specific leave target using a normal edge (when copying).
+            For fault blocks, an exception edge is used to represent the "re-throwing" of the exception.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode">
+            <summary>
+            Represents a block in the control flow graph.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode.BlockIndex">
+            <summary>
+            Index of this node in the ControlFlowGraph.Nodes collection.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode.Offset">
+            <summary>
+            Gets the IL offset of this node.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode.NodeType">
+            <summary>
+            Type of the node.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode.EndFinallyOrFaultNode">
+            <summary>
+            If this node is a FinallyOrFaultHandler node, this field points to the corresponding EndFinallyOrFault node.
+            Otherwise, this field is null.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode.Visited">
+            <summary>
+            Visited flag, used in various algorithms.
+            Before using it in your algorithm, reset it to false by calling ControlFlowGraph.ResetVisited();
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode.DominatorTreeChildren">
+            <summary>
+            List of children in the dominator tree.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode.DominanceFrontier">
+            <summary>
+            The dominance frontier of this node.
+            This is the set of nodes for which this node dominates a predecessor, but which are not strictly dominated by this node.
+            </summary>
+            <remarks>
+            b.DominanceFrontier = { y in CFG; (exists p in predecessors(y): b dominates p) and not (b strictly dominates y)}
+            </remarks>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode.Start">
+            <summary>
+            Start of code block represented by this node. Only set for nodetype == Normal.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode.End">
+            <summary>
+            End of the code block represented by this node. Only set for nodetype == Normal.
+            The end is exclusive, the end instruction itself does not belong to this block.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode.ExceptionHandler">
+            <summary>
+            Gets the exception handler associated with this node.
+            Only set for nodetype == CatchHandler or nodetype == FinallyOrFaultHandler.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode.Incoming">
+            <summary>
+            List of incoming control flow edges.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode.Outgoing">
+            <summary>
+            List of outgoing control flow edges.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode.UserData">
+            <summary>
+            Any user data
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode.Dominates(ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode)">
+            <summary>
+            Gets whether <c>this</c> dominates <paramref name="node"/>.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode.IsReachable">
+            <summary>
+            Gets whether this node is reachable. Requires that dominance is computed!
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode.CopyFrom">
+            <summary>
+            Signalizes that this node is a copy of another node.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode.ImmediateDominator">
+            <summary>
+            Gets the immediate dominator (the parent in the dominator tree).
+            Null if dominance has not been calculated; or if the node is unreachable.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode.Predecessors">
+            <summary>
+            Gets all predecessors (=sources of incoming edges)
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode.Successors">
+            <summary>
+            Gets all successors (=targets of outgoing edges)
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowNode.Instructions">
+            <summary>
+            Gets all instructions in this node.
+            Returns an empty list for special nodes that don't have any instructions.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.Disassembler.MethodBodyDisassembler">
+            <summary>
+            Disassembles a method body.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.Ast.Transforms.ConvertConstructorCallIntoInitializer">
+            <summary>
+            If the first element of a constructor is a chained constructor call, convert it into a constructor initializer.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILAstBuilder.ConvertLocalVariables(System.Collections.Generic.List{ICSharpCode.Decompiler.ILAst.ILAstBuilder.ByteCode})">
+            <summary>
+            If possible, separates local variables into several independent variables.
+            It should undo any compilers merging.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.ILAst.ILAstBuilder.StackSlot">
+            <summary> Immutable </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.ILAst.ILAstBuilder.VariableSlot">
+            <summary> Immutable </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.FlowAnalysis.SsaVariable">
+            <summary>
+            Represents a variable used with the SsaInstruction register-based instructions.
+            Despite what the name suggests, the variable is not necessarily in single-assignment form - take a look at "bool IsSingleAssignment".
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.SsaVariable.IsSingleAssignment">
+            <summary>
+            Gets whether this variable has only a single assignment.
+            This field is initialized in TransformToSsa step.
+            </summary>
+            <remarks>Not all variables can be transformed to single assignment form: variables that have their address taken
+            cannot be represented in SSA (although SimplifyByRefCalls will get rid of the address-taking instruction in almost all cases)</remarks>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.SsaVariable.Definition">
+            <summary>
+            Gets the instruction defining the variable.
+            This field is initialized in TransformToSsa step. It is only set for variables with a single assignment.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.FlowAnalysis.SsaVariable.Usage">
+            <summary>
+            Gets the places where a variable is used.
+            If a single instruction reads a variable 2 times (e.g. adding to itself), then it must be included 2 times in this list!
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.Ast.Transforms.PatternStatementTransform">
+            <summary>
+            Finds the expanded form of using statements using pattern matching and replaces it with a UsingStatement.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.Ast.Transforms.PatternStatementTransform.variableAssignPattern">
+            <summary>
+            $type $variable = $initializer;
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.Ast.Transforms.PatternStatementTransform.TransformTryCatchFinally(ICSharpCode.NRefactory.CSharp.TryCatchStatement)">
+            <summary>
+            Simplify nested 'try { try {} catch {} } finally {}'.
+            This transformation must run after the using/lock tranformations.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.ILAst.Initializers">
+            <summary>
+            IL AST transformation that introduces array, object and collection initializers.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.Ast.CecilTypeResolveContext">
+            <summary>
+            ITypeResolveContext implementation that lazily loads types from Cecil.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.Ast.AstBuilder.CreateType(Mono.Cecil.TypeDefinition)">
+            <summary>
+            Creates the AST for a type definition.
+            </summary>
+            <param name="typeDef"></param>
+            <returns>TypeDeclaration or DelegateDeclaration.</returns>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.Ast.AstBuilder.ConvertType(Mono.Cecil.TypeReference,Mono.Cecil.ICustomAttributeProvider,ICSharpCode.Decompiler.Ast.ConvertTypeOptions)">
+            <summary>
+            Converts a type reference.
+            </summary>
+            <param name="type">The Cecil type reference that should be converted into
+            a type system type reference.</param>
+            <param name="typeAttributes">Attributes associated with the Cecil type reference.
+            This is used to support the 'dynamic' type.</param>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.Ast.AstBuilder.GetDefaultMember(Mono.Cecil.TypeDefinition)">
+            <summary>
+            Gets the name of the default member of the type pointed by the <see cref="T:System.Reflection.DefaultMemberAttribute"/> attribute.
+            </summary>
+            <param name="type">The type definition.</param>
+            <returns>The name of the default member or null if no <see cref="T:System.Reflection.DefaultMemberAttribute"/> attribute has been found.</returns>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.ILAst.ILInlining">
+            <summary>
+            Performs inlining transformations.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILInlining.InlineInto(System.Collections.Generic.List{ICSharpCode.Decompiler.ILAst.ILNode},System.Int32,System.Boolean)">
+            <summary>
+            Inlines instructions before pos into block.Body[pos].
+            </summary>
+            <returns>The number of instructions that were inlined.</returns>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILInlining.InlineIfPossible(System.Collections.Generic.List{ICSharpCode.Decompiler.ILAst.ILNode},System.Int32@)">
+            <summary>
+            Aggressively inlines the stloc instruction at block.Body[pos] into the next instruction, if possible.
+            If inlining was possible; we will continue to inline (non-aggressively) into the the combined instruction.
+            </summary>
+            <remarks>
+            After the operation, pos will point to the new combined instruction.
+            </remarks>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILInlining.InlineOneIfPossible(System.Collections.Generic.List{ICSharpCode.Decompiler.ILAst.ILNode},System.Int32,System.Boolean)">
+            <summary>
+            Inlines the stloc instruction at block.Body[pos] into the next instruction, if possible.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILInlining.InlineIfPossible(ICSharpCode.Decompiler.ILAst.ILVariable,ICSharpCode.Decompiler.ILAst.ILExpression,ICSharpCode.Decompiler.ILAst.ILNode,System.Boolean)">
+            <summary>
+            Inlines 'expr' into 'next', if possible.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILInlining.CanInlineInto(ICSharpCode.Decompiler.ILAst.ILExpression,ICSharpCode.Decompiler.ILAst.ILVariable,ICSharpCode.Decompiler.ILAst.ILExpression)">
+            <summary>
+            Gets whether 'expressionBeingMoved' can be inlined into 'expr'.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILInlining.FindLoadInNext(ICSharpCode.Decompiler.ILAst.ILExpression,ICSharpCode.Decompiler.ILAst.ILVariable,ICSharpCode.Decompiler.ILAst.ILExpression,ICSharpCode.Decompiler.ILAst.ILExpression@,System.Int32@)">
+            <summary>
+            Finds the position to inline to.
+            </summary>
+            <returns>true = found; false = cannot continue search; null = not found</returns>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILInlining.IsSafeForInlineOver(ICSharpCode.Decompiler.ILAst.ILExpression,ICSharpCode.Decompiler.ILAst.ILExpression)">
+            <summary>
+            Determines whether it is save to move 'expressionBeingMoved' past 'expr'
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILInlining.CopyPropagation">
+            <summary>
+            Runs a very simple form of copy propagation.
+            Copy propagation is used in two cases:
+            1) assignments from arguments to local variables
+               If the target variable is assigned to only once (so always is that argument) and the argument is never changed (no ldarga/starg),
+               then we can replace the variable with the argument.
+            2) assignments of address-loading instructions to local variables
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.ILAst.ILCode.DefaultValue">
+            <summary>
+            Represents the 'default(T)' instruction.
+            </summary>
+            <remarks>Introduced by SimplifyLdObjAndStObj step</remarks>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.ILAst.ILCode.CompoundAssignment">
+            <summary>
+            ILExpression with a single child: binary operator.
+            This expression means that the binary operator will also assign the new value to its left-hand side.
+            'CompoundAssignment' must not be used for local variables, as inlining (and other) optimizations don't know that it modifies the variable.
+            </summary>
+            <remarks>Introduced by MakeCompoundAssignments step</remarks>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.ILAst.ILCode.PostIncrement">
+            <summary>
+            Represents the post-increment operator.
+            The first argument is the address of the variable to increment (ldloca instruction).
+            The second arugment is the amount the variable is incremented by (ldc.i4 instruction)
+            </summary>
+            <remarks>Introduced by IntroducePostIncrement step</remarks>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.ILAst.ILCode.CallGetter">
+            <summary>Calls the getter of a static property (or indexer), or of an instance property on 'base'</summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.ILAst.ILCode.CallvirtGetter">
+            <summary>Calls the getter of an instance property (or indexer)</summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.ILAst.ILCode.CallSetter">
+            <summary>Calls the setter of a static property (or indexer), or of an instance property on 'base'</summary>
+            <remarks>This allows us to represent "while ((SomeProperty = val) != null) {}"</remarks>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.ILAst.ILCode.CallvirtSetter">
+            <summary>Calls the setter of a instance property (or indexer)</summary>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.ILAst.ILCode.PropertyAddress">
+            <summary>Simulates getting the address of a property. Used as prefix on CallGetter or CallvirtGetter.</summary>
+            <remarks>Used for postincrement for properties, and to represent the Address() method on multi-dimensional arrays</remarks>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.ILAst.DefaultDictionary`2">
+            <summary>
+            Dictionary with default values.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.FlowAnalysis.SimplifyByRefCalls">
+            <summary>
+            This is a transformation working on SSA form.
+            It removes ldloca instructions and replaces them with SpecialOpCode.PrepareByOutCall or SpecialOpCode.PrepareByRefCall.
+            This then allows the variable that had its address taken to also be transformed into SSA.
+            </summary>
+        </member>
+    </members>
+</doc>
