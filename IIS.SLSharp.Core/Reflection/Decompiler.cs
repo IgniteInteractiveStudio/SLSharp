@@ -410,6 +410,13 @@ namespace IIS.SLSharp.Core.Reflection
                 Push(Expression.ArrayLength(array));
             };
 
+            _handlers[OpCodes.Newarr] = i =>
+            {
+                var type = (Type)i.Operand; // TODO: we need to throw if the type is not a GLSL type
+                var length = Pop();
+                Push(Expression.NewArrayBounds(type, length));
+            };
+
             _handlers[OpCodes.Clt] = InstClt;
 
             _handlers[OpCodes.Clt_Un] = InstClt;
@@ -796,6 +803,8 @@ namespace IIS.SLSharp.Core.Reflection
             {
                 AddTarget(i, GetTarget(i));
             };
+
+            // TODO: br.false and br.false.s (inverted logic?)
 
             handlers[OpCodes.Call] = _ =>
             {
