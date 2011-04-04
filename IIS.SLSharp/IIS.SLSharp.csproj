@@ -57,6 +57,7 @@
     <Compile Include="ShaderDefinition.DoubleVector.cs" />
     <Compile Include="ShaderDefinition.Exponential.cs" />
     <Compile Include="ShaderDefinition.Geometric.cs" />
+    <Compile Include="ShaderDefinition.Integer.cs" />
     <Compile Include="ShaderDefinition.Interpolation.cs" />
     <Compile Include="ShaderDefinition.IntVector.cs" />
     <Compile Include="ShaderDefinition.Matrix.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="ShaderDefinition.Texture.cs" />
     <Compile Include="ShaderDefinition.Trigonometry.cs" />
     <Compile Include="ShaderDefinition.UIntVector.cs" />
+    <Compile Include="ShaderDefinition.Packing.cs" />
     <Compile Include="ShaderDefinition.Vector.cs" />
     <Compile Include="Textures\BaseTexture.cs" />
     <Compile Include="Textures\Externals\LoaderDDS.cs" />

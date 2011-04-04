@@ -1055,7 +1055,6 @@ namespace IIS.SLSharp
         /// </summary>
         protected static uvec4 floatBitsToUint(vec4 value) { throw _invalidAccess; }
 
-
         #endregion
 
         #region genType intBitsToFloat (genIType value)

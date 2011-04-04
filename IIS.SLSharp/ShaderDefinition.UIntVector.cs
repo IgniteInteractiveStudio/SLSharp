@@ -69,7 +69,7 @@ namespace IIS.SLSharp
 
             public static implicit operator uvec3(Vector3 v)
             { value = v; return null; }
-             */
+            */
 
             public uint x, y, z;
 
@@ -159,7 +159,7 @@ namespace IIS.SLSharp
 
             public static implicit operator uvec4(uvector4 v)
             { value = v; return null; }
-             */
+            */
 
             public uint x, y, z, w;
 
