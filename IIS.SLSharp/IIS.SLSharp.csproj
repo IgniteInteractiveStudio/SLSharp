@@ -101,7 +101,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>rmdir /S /Q "$(SolutionDir)IIS.SLSharp.NuGet\App_Readme\"
+    <PostBuildEvent>IF NOT "$(ConfigurationName)" == "Release" goto :skip
+rmdir /S /Q "$(SolutionDir)IIS.SLSharp.NuGet\App_Readme\"
 mkdir "$(SolutionDir)IIS.SLSharp.NuGet\App_Readme\"
 rmdir /S /Q "$(SolutionDir)IIS.SLSharp.NuGet\lib\"
 mkdir "$(SolutionDir)IIS.SLSharp.NuGet\lib\"
@@ -114,7 +115,7 @@ copy /Y "$(SolutionDir)Dependencies\OpenTK.xml" "$(SolutionDir)IIS.SLSharp.NuGet
 copy /Y "$(SolutionDir)Dependencies\Mono.Reflection.dll" "$(SolutionDir)IIS.SLSharp.NuGet\lib\"
 copy /Y "$(SolutionDir)README.md" "$(SolutionDir)IIS.SLSharp.NuGet\App_Readme\SLSharp.readme.txt"
 "$(SolutionDir)Dependencies\NuGet.exe" pack "$(SolutionDir)IIS.SLSharp.NuGet\SLSharp.nuspec"
-</PostBuildEvent>
+:skip</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
