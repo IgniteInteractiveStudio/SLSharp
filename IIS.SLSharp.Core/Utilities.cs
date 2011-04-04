@@ -32,7 +32,7 @@ namespace IIS.SLSharp.Core
         
         public static bool HasExtension(string name)
         {
-            if (IsVersion(3,1))
+            if (IsVersion(3, 1))
             {
                 int numExt;
                 GL.GetInteger(GetPName.NumExtensions, out numExt);

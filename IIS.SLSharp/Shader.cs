@@ -53,7 +53,7 @@ namespace IIS.SLSharp
 
         private static int _quadVbo;
 
-        private static int _refcount;
+        private static int _refCount;
 
         private static readonly ShaderDebugger _debugger = new ShaderDebugger();
 
@@ -403,11 +403,11 @@ namespace IIS.SLSharp
             var trans = new GlslTransform();
             foreach (var m in GetType().GetMethods(BindingFlagsAny))
             {
-                var attrs = m.GetCustomAttributes(typeof (T), false);
+                var attrs = m.GetCustomAttributes(typeof(T), false);
                 if (attrs.Length == 0)
                     continue;
 
-                var attr = (T) attrs[0];
+                var attr = (T)attrs[0];
                 if (attr.EntryPoint)
                 {
                     if (hasEntry)
@@ -519,7 +519,7 @@ namespace IIS.SLSharp
                       select "in " + glslType + " " + name + ";").Aggregate(string.Empty, (current, glslVar) =>
                           current + (glslVar + Environment.NewLine));
 
-            // what was this supposed to be good for?
+            // TODO: what was this supposed to be good for?
             // should have documented might be bugged?
             var s2 = (from prop in GetShaderType().GetProperties(BindingFlagsAny)
                       let attrs = prop.GetCustomAttributes(typeof(VertexInAttribute), false)
@@ -952,16 +952,16 @@ namespace IIS.SLSharp
         // TODO: should move this static stuff to seperate file!
         private static void RefShaders()
         {
-            if (_refcount == 0)
+            if (_refCount == 0)
                 StaticInit();
 
-            _refcount++;
+            _refCount++;
         }
 
         private static void DerefShaders()
         {
-            _refcount--;
-            if (_refcount == 0)
+            _refCount--;
+            if (_refCount == 0)
                 StaticDispose();
         }
 

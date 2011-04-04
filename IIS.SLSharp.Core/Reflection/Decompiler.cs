@@ -442,7 +442,8 @@ namespace IIS.SLSharp.Core.Reflection
                 OpCodes.Endfilter, OpCodes.Endfinally, OpCodes.Throw, OpCodes.Rethrow, OpCodes.Isinst, OpCodes.Castclass, OpCodes.Ldtoken, OpCodes.Box,
                 OpCodes.Unbox, OpCodes.Unbox_Any, OpCodes.Sizeof, OpCodes.Constrained, OpCodes.Initblk, OpCodes.Cpblk, OpCodes.Ldftn, OpCodes.Ldvirtftn,
                 OpCodes.Ldind_I, OpCodes.Conv_I, OpCodes.Conv_U, OpCodes.Ldelem_I, OpCodes.Stelem_I, OpCodes.Ldnull, OpCodes.Ldstr, OpCodes.Ldelem_I1,
-                OpCodes.Ldelem_I2, OpCodes.Ldelem_U1, OpCodes.Ldelem_U2, OpCodes.Stelem_I, OpCodes.Stelem_I1, OpCodes.Stelem_I2);
+                OpCodes.Ldelem_I2, OpCodes.Ldelem_U1, OpCodes.Ldelem_U2, OpCodes.Stelem_I, OpCodes.Stelem_I1, OpCodes.Stelem_I2, OpCodes.Stind_I,
+                OpCodes.Stind_I1, OpCodes.Stind_I2);
 
             // TODO: these are not actually restricted, but need further investigation for a proper implementation; if you
             // run into an exception with one of these, then please report it with some source code we can reproduce it with!
