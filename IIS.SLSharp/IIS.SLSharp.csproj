@@ -82,6 +82,7 @@
     <Compile Include="Translation\DebugTranslatorAttribute.cs" />
     <Compile Include="Translation\GlslTransform.cs" />
     <Compile Include="Translation\GlslVisitor.cs" />
+    <Compile Include="Translation\GlslVisitor2.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IIS.SLSharp.Core\IIS.SLSharp.Core.csproj">
@@ -90,6 +91,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.NRefactory, Version=1.0.4110.1435, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Dependencies\ICSharpCode.NRefactory.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Reflection">
       <HintPath>..\Dependencies\Mono.Reflection.dll</HintPath>
     </Reference>

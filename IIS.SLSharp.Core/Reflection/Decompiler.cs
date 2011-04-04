@@ -4,8 +4,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
+using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory.CSharp;
 using IIS.SLSharp.Core.Expressions;
 using Mono.Reflection;
+using Expression = System.Linq.Expressions.Expression;
 
 namespace IIS.SLSharp.Core.Reflection
 {
@@ -46,10 +49,15 @@ namespace IIS.SLSharp.Core.Reflection
 
         private readonly Dictionary<int, LabelInformation> _labels = new Dictionary<int, LabelInformation>();
 
-        public static Expression DecompileMethod(MethodInfo m)
+        public static BlockStatement DecompileMethod(MethodInfo m)
         {
-            var d = new Decompiler(m);
-            return d._block;
+            var dc = new DecompilerContext();
+            var asm = Mono.Cecil.AssemblyDefinition.ReadAssembly(m.DeclaringType.Assembly.Location);
+            var mod = asm.Modules.First((lmod) => lmod.Name == m.Module.Name);
+            var typ = mod.GetType(m.DeclaringType.FullName);
+            var met = typ.Methods.First((lmet) => lmet.Name == m.Name);
+            dc.CurrentType = typ;
+            return ICSharpCode.Decompiler.Ast.AstMethodBodyBuilder.CreateMethodBody(met, dc);
         }
 
         private void WidenTypes(ref Expression lhs, ref Expression rhs)
