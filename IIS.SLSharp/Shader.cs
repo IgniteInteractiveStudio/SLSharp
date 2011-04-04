@@ -375,6 +375,10 @@ namespace IIS.SLSharp
             { typeof(uvec2), new PropInfo("uvec2", GetHandler(ReflectionToken.ShaderUvec2Helper)) },
             { typeof(uvec3), new PropInfo("uvec3", GetHandler(ReflectionToken.ShaderUvec3Helper)) },
             { typeof(uvec4), new PropInfo("uvec4", GetHandler(ReflectionToken.ShaderUvec4Helper)) },
+            { typeof(double), new PropInfo("double", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(double)})) },
+            { typeof(dvec2), new PropInfo("dvec2", GetHandler(ReflectionToken.ShaderDvec2Helper)) },
+            { typeof(dvec3), new PropInfo("dvec3", GetHandler(ReflectionToken.ShaderDvec3Helper)) },
+            { typeof(dvec4), new PropInfo("dvec4", GetHandler(ReflectionToken.ShaderDvec4Helper)) },
         };
 
         /// <summary>
@@ -676,6 +680,25 @@ namespace IIS.SLSharp
             GL.Uniform4(location, 1, uvec4.value);
         }
 
+
+        [ReflectionMarker(ReflectionToken.ShaderDvec2Helper)]
+        public static void UniformDvecHelper2(int location)
+        {
+            GL.Uniform2(location, dvec2.value.X, dvec2.value.Y);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderDvec3Helper)]
+        public static void UniformDvecHelper3(int location)
+        {
+            GL.Uniform3(location, dvec3.value.X, dvec3.value.Y, dvec3.value.Z);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderDvec4Helper)]
+        public static void UniformDvecHelper4(int location)
+        {
+            GL.Uniform4(location, dvec4.value.X, dvec4.value.Y, dvec4.value.Z,
+                dvec4.value.W);
+        }
 
         [ReflectionMarker(ReflectionToken.ShaderUniformMatrix2X2Helper)]
         public static void UniformMatrix2Helper(int location)

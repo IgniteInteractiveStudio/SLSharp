@@ -28,5 +28,8 @@ namespace IIS.SLSharp.Core.Reflection
         ShaderUvec2Helper,
         ShaderUvec3Helper,
         ShaderUvec4Helper,
+        ShaderDvec2Helper,
+        ShaderDvec3Helper,
+        ShaderDvec4Helper,
     }
 }
