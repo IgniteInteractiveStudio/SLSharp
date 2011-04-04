@@ -101,9 +101,11 @@ namespace IIS.SLSharp.Textures
             Activate();
 
             GL.TexParameter(Target, TextureParameterName.TextureMaxLod, maxLevel);
-            //GL.TexParameter(Target, TextureParameterName.GenerateMipmap, 1);
             GL.TexParameter(Target, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
-            GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+
+            if (Utilities.IsVersion(3) || Utilities.HasExtension("GL_EXT_framebuffer_object extension"))
+                GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+            GL.TexParameter(Target, TextureParameterName.GenerateMipmap, 1);
 
             Utilities.CheckGL();
         }
