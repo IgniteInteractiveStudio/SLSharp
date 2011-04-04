@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<package> 
+  <metadata> 
+    <id>SLSharp</id> 
+    <version>1.4</version> 
+    <authors>Ignite Interactive Studio</authors>
+    <description>Runtime IL-to-GLSL translator, allowing developers to write OpenGL shaders in C#.</description> 
+    <language>en-US</language>
+    <licenseUrl>https://github.com/IgniteInteractiveStudio/SLSharp/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/IgniteInteractiveStudio/SLSharp</projectUrl>
+    <tags>il glsl c# runtime shader shaders opengl gl graphics graphic opentk otk game games</tags>
+  </metadata> 
+</package>
