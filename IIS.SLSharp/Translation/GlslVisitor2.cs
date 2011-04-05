@@ -2,18 +2,11 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 using System.Text;
 using ICSharpCode.NRefactory.CSharp;
 using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Shaders;
 using Mono.Cecil;
-using Attribute = ICSharpCode.NRefactory.CSharp.Attribute;
-using ConditionalExpression = ICSharpCode.NRefactory.CSharp.ConditionalExpression;
-using Expression = ICSharpCode.NRefactory.CSharp.Expression;
-using InvocationExpression = ICSharpCode.NRefactory.CSharp.InvocationExpression;
-using LambdaExpression = ICSharpCode.NRefactory.CSharp.LambdaExpression;
 
 namespace IIS.SLSharp.Translation
 {
@@ -159,7 +152,8 @@ namespace IIS.SLSharp.Translation
         {
             // generate signature
             var neededTyp = _attr.GetType();
-            var attr = m.CustomAttributes.FirstOrDefault((a) => a.AttributeType.FullName == neededTyp.FullName);
+            var attr = m.CustomAttributes.FirstOrDefault(a => a.AttributeType.FullName == neededTyp.FullName);
+
             if (attr == null)
                 throw new Exception("Called shader method has no " + neededTyp.Name + Environment.NewLine + GetSignature(m));
 
@@ -169,7 +163,7 @@ namespace IIS.SLSharp.Translation
             _functions.Add(GetSignature(m));
         }
 
-        private void ArgsToString(AstNodeCollection<Expression> args)
+        private void ArgsToString(ICollection<Expression> args)
         {
             if (args.Count <= 0)
                 return;
