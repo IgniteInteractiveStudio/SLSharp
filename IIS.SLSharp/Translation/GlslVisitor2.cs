@@ -16,7 +16,7 @@ using LambdaExpression = ICSharpCode.NRefactory.CSharp.LambdaExpression;
 
 namespace IIS.SLSharp.Translation
 {
-    internal sealed partial class GlslVisitor2: ICSharpCode.NRefactory.CSharp.IAstVisitor<int, int>
+    internal sealed partial class GlslVisitor2 : IAstVisitor<int, int>
     {
         private readonly HashSet<string> _functions = new HashSet<string>();
 
@@ -94,17 +94,17 @@ namespace IIS.SLSharp.Translation
         {
             switch (t.FullName)
             {
-                case "float":
+                case "System.Single":
                     return "float";
-                case "double":
+                case "System.Double":
                     return "double";
-                case "void":
+                case "System.Void":
                     return "void";
-                case "int":
+                case "System.Int32":
                     return "int";
-                case "uint":
+                case "System.UInt32":
                     return "uint";
-                case "bool":
+                case "System.Boolean":
                     return "bool";
                 default:
                     return t.Name;
@@ -163,7 +163,7 @@ namespace IIS.SLSharp.Translation
                 throw new Exception("Called shader method has no " + neededTyp.Name + Environment.NewLine + GetSignature(m));
 
             if ((bool)attr.ConstructorArguments[0].Value)
-                throw new Exception("Cannot call shader entrypoint.");
+                throw new Exception("Cannot call shader entry point.");
 
             _functions.Add(GetSignature(m));
         }
@@ -178,9 +178,9 @@ namespace IIS.SLSharp.Translation
                 v.AcceptVisitor(this, 0);
                 Append(",");
             }
+
             args.Last().AcceptVisitor(this, 0);
         }
-
 
         public GlslVisitor2(BlockStatement block, IShaderAttribute attr)
         {
@@ -192,8 +192,10 @@ namespace IIS.SLSharp.Translation
         {
             AppendLine(Environment.NewLine + "{");
             Indent++;
+
             foreach (var stm in blockStatement.Statements)
                 stm.AcceptVisitor(this, data);
+
             Indent--;
             AppendLine("}");
             return 0;
@@ -216,8 +218,6 @@ namespace IIS.SLSharp.Translation
 
         public int VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, int data)
         {
-            
-
             if (!(memberReferenceExpression.Target is ThisReferenceExpression))
             {
                 memberReferenceExpression.Target.AcceptVisitor(this, 0);
@@ -284,8 +284,8 @@ namespace IIS.SLSharp.Translation
             }
             else
                 Append(primitiveExpression.Value.ToString());
+
             return 0;
         }
-
     }
 }

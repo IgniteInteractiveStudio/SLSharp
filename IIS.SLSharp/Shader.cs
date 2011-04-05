@@ -328,10 +328,10 @@ namespace IIS.SLSharp
                 Delegate = dele;
             }
         }
-  
+
         private static MethodInfo GetHandler(ReflectionToken token)
         {
-            return ReflectionMarkerAttribute.FindMethod(typeof(Shader), token);
+            return ReflectionMarkerAttribute.FindMethod(typeof(ShaderHelpers), token);
         }
 
         /// <summary>

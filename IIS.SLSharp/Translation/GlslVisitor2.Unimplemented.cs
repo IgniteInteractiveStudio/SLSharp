@@ -7,7 +7,7 @@ using Attribute = System.Attribute;
 
 namespace IIS.SLSharp.Translation
 {
-    internal sealed partial class GlslVisitor2 : ICSharpCode.NRefactory.CSharp.IAstVisitor<int, int>
+    internal sealed partial class GlslVisitor2
     {
         #region unimplemented
 
