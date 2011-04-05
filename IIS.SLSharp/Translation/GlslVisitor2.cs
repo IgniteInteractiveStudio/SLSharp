@@ -154,16 +154,6 @@ namespace IIS.SLSharp.Translation
                 GetParameterString(m) + ")";
         }
 
-        private static MethodInfo ToMethodInfo(MethodDefinition m)
-        {
-            var asm = Assembly.LoadFrom(m.Module.FullyQualifiedName);
-            var typ = asm.GetType(m.DeclaringType.FullName);
-            var met = typ.GetMethod(m.Name,
-                                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static |
-                                    BindingFlags.Instance);
-            return met;
-        }
-
         private void RegisterMethod(MethodDefinition m)
         {
             // generate signature
@@ -172,9 +162,7 @@ namespace IIS.SLSharp.Translation
             if (attr == null)
                 throw new Exception("Called shader method has no " + neededTyp.Name + Environment.NewLine + GetSignature(m));
 
-            var mi = ToMethodInfo(m);
-            var a2 = mi.GetCustomAttributes(neededTyp, false);
-            if (((IShaderAttribute)a2[0]).EntryPoint)
+            if ((bool)attr.ConstructorArguments[0].Value)
                 throw new Exception("Cannot call shader entrypoint.");
 
             _functions.Add(GetSignature(m));
