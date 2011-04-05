@@ -7,6 +7,7 @@ using System.Reflection.Emit;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
 using IIS.SLSharp.Core.Expressions;
+using Mono.Cecil;
 using Mono.Reflection;
 using Expression = System.Linq.Expressions.Expression;
 
@@ -55,9 +56,27 @@ namespace IIS.SLSharp.Core.Reflection
             var asm = Mono.Cecil.AssemblyDefinition.ReadAssembly(m.DeclaringType.Assembly.Location);
             var mod = asm.Modules.First((lmod) => lmod.Name == m.Module.Name);
             var typ = mod.GetType(m.DeclaringType.FullName);
-            var met = typ.Methods.First((lmet) => lmet.Name == m.Name);
+            var met = typ.Methods.First((lmet) => (lmet.Name == m.Name) && MatchSignature(lmet, m));
             dc.CurrentType = typ;
             return ICSharpCode.Decompiler.Ast.AstMethodBodyBuilder.CreateMethodBody(met, dc);
+        }
+
+        private static bool MatchSignature(MethodDefinition md, MethodInfo mi)
+        {
+            var pd = md.Parameters;
+            var pi = mi.GetParameters();
+            if (pd.Count != pi.Count())
+                return false;
+
+            for (var i = 0; i < pd.Count; i++)
+            {
+                var pdi = pd[i];
+                var pii = pi[i];
+                if (pdi.ParameterType.FullName != pii.ParameterType.FullName)
+                    return false;
+            }
+
+            return true;
         }
 
         private void WidenTypes(ref Expression lhs, ref Expression rhs)
