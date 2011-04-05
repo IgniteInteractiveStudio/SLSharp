@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIS.SLSharp.Core", "IIS.SLSharp.Core\IIS.SLSharp.Core.csproj", "{CC851980-C8CC-46EB-8687-869AD8864A95}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIS.SLSharp", "IIS.SLSharp\IIS.SLSharp.csproj", "{ECF58025-4591-4708-8EC9-4B95A5673DDA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIS.SLSharp.Examples.Simple", "IIS.SLSharp.Examples.Simple\IIS.SLSharp.Examples.Simple.csproj", "{2BD44DA8-AEA2-4AC5-AC86-C5047FF28917}"
@@ -28,10 +26,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CC851980-C8CC-46EB-8687-869AD8864A95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CC851980-C8CC-46EB-8687-869AD8864A95}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CC851980-C8CC-46EB-8687-869AD8864A95}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CC851980-C8CC-46EB-8687-869AD8864A95}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ECF58025-4591-4708-8EC9-4B95A5673DDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ECF58025-4591-4708-8EC9-4B95A5673DDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECF58025-4591-4708-8EC9-4B95A5673DDA}.Release|Any CPU.ActiveCfg = Release|Any CPU

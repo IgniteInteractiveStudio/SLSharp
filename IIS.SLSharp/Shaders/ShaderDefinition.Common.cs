@@ -1,7 +1,7 @@
 ﻿// ReSharper disable InconsistentNaming
 
 
-namespace IIS.SLSharp
+namespace IIS.SLSharp.Shaders
 {
     public abstract partial class ShaderDefinition
     {

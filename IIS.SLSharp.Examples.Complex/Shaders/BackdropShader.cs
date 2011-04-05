@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Resources;
 using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Examples.Complex.Textures;
+using IIS.SLSharp.Shaders;
 using IIS.SLSharp.Textures;
 using OpenTK;
 

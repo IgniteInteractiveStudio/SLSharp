@@ -1,4 +1,5 @@
 ﻿using IIS.SLSharp.Annotations;
+using IIS.SLSharp.Shaders;
 
 namespace IIS.SLSharp.Examples.Complex.Shaders
 {

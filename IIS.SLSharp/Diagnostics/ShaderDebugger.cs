@@ -1,4 +1,5 @@
 ﻿using System;
+using IIS.SLSharp.Shaders;
 
 namespace IIS.SLSharp.Diagnostics
 {

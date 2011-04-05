@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using IIS.SLSharp.Examples.Complex.Shaders;
+using IIS.SLSharp.Shaders;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 

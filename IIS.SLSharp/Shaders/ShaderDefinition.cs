@@ -1,7 +1,6 @@
 ﻿using System;
-using OpenTK;
 
-namespace IIS.SLSharp
+namespace IIS.SLSharp.Shaders
 {
     /// <summary>
     /// Contains definitions to allow GLSL syntax within Shaders

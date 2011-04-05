@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Reflection;
 using IIS.SLSharp.Annotations;
+using IIS.SLSharp.Shaders;
 using IIS.SLSharp.Textures;
 using OpenTK.Graphics.OpenGL;
 

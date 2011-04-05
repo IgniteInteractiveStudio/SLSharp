@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using IIS.SLSharp.Annotations;
-using IIS.SLSharp.Core.Expressions;
+using IIS.SLSharp.Shaders;
 
 namespace IIS.SLSharp.Translation
 {
@@ -164,11 +164,12 @@ namespace IIS.SLSharp.Translation
 
         public override Expression Visit(Expression node)
         {
-            return node.Type == typeof(WhileExpression) ? VisitFor((WhileExpression) node) : base.Visit(node);
+            return /*node.Type == typeof(WhileExpression) ? VisitFor((WhileExpression) node) : */base.Visit(node);
         }
 
-        private Expression VisitFor(WhileExpression node)
+        private Expression VisitFor(/*WhileExpression node*/)
         {
+            /*
             Append("while (");
             Visit(node.Comperator);
             Append(")" + Environment.NewLine + "{" + Environment.NewLine);
@@ -184,6 +185,8 @@ namespace IIS.SLSharp.Translation
             Append("}" + Environment.NewLine);
 
             return node;
+            */
+            throw new NotImplementedException();
         }
 
         private readonly Dictionary<ExpressionType, string> _expToStr = new Dictionary<ExpressionType, string>

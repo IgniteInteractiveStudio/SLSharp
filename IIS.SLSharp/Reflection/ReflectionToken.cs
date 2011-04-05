@@ -1,6 +1,6 @@
 using System;
 
-namespace IIS.SLSharp.Core.Reflection
+namespace IIS.SLSharp.Reflection
 {
     [Serializable]
     public enum ReflectionToken

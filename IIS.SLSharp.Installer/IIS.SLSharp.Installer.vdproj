@@ -184,13 +184,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_E694DC09E08B4A8B88FD2F672991A83D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_550953C01F2197829493A6B7436A9C8E"
+        "OwnerKey" = "8:_DBE18C82C123412194855B7611B6D933"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -202,13 +196,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_DBE18C82C123412194855B7611B6D933"
+        "OwnerKey" = "8:_550953C01F2197829493A6B7436A9C8E"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C4617B382B914267A0C0356C4F3BC8B1"
+        "OwnerKey" = "8:_E694DC09E08B4A8B88FD2F672991A83D"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -443,11 +437,6 @@
             "AssemblyAsmDisplayName" = "8:ICSharpCode.NRefactory, Version=1.0.4110.1435, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_550953C01F2197829493A6B7436A9C8E"
-                    {
-                    "Name" = "8:ICSharpCode.NRefactory.DLL"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:ICSharpCode.NRefactory.DLL"
             "TargetName" = "8:"
@@ -754,11 +743,6 @@
             "AssemblyAsmDisplayName" = "8:Mono.Cecil, Version=0.9.4.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_D553193150C1CA735E0CA7E045470863"
-                    {
-                    "Name" = "8:Mono.Cecil.DLL"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Mono.Cecil.DLL"
             "TargetName" = "8:"
@@ -1525,34 +1509,6 @@
             "OutputConfiguration" = "8:Release|Any CPU"
             "OutputGroupCanonicalName" = "8:Documentation"
             "OutputProjectGuid" = "8:{ECF58025-4591-4708-8EC9-4B95A5673DDA}"
-            "ShowKeyOutput" = "11:TRUE"
-                "ExcludeFilters"
-                {
-                }
-            }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_C4617B382B914267A0C0356C4F3BC8B1"
-            {
-            "SourcePath" = "8:..\\IIS.SLSharp.Core\\obj\\Release\\IIS.SLSharp.Core.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_87E1111318384F36AD6820F5F07DDC76"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:Release|Any CPU"
-            "OutputGroupCanonicalName" = "8:Built"
-            "OutputProjectGuid" = "8:{CC851980-C8CC-46EB-8687-869AD8864A95}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {

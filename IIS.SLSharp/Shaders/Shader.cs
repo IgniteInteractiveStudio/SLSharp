@@ -7,9 +7,9 @@ using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Core;
-using IIS.SLSharp.Core.Reflection;
-using IIS.SLSharp.Core.Runtime;
 using IIS.SLSharp.Diagnostics;
+using IIS.SLSharp.Reflection;
+using IIS.SLSharp.Runtime;
 using IIS.SLSharp.Textures;
 using IIS.SLSharp.Translation;
 using Mono.Cecil;
@@ -20,7 +20,7 @@ using FieldAttributes = System.Reflection.FieldAttributes;
 using MethodAttributes = System.Reflection.MethodAttributes;
 using TypeAttributes = System.Reflection.TypeAttributes;
 
-namespace IIS.SLSharp
+namespace IIS.SLSharp.Shaders
 {
     /// <summary>
     /// Base class of which all typed GLSL shaders derive of
@@ -799,7 +799,7 @@ namespace IIS.SLSharp
         public static T CreateSharedShader<T>() where T: Shader
         {
             var ctor = GetConstructor<T>();
-            return (T)ResourceHelper.Instance(ctor.DeclaringType, null, null);
+            return (T)ResourceManager.Instance(ctor.DeclaringType, null, null);
         }
 
         /// <summary>

@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using ICSharpCode.NRefactory.CSharp;
 using IIS.SLSharp.Annotations;
+using IIS.SLSharp.Shaders;
 using Mono.Cecil;
 using Attribute = ICSharpCode.NRefactory.CSharp.Attribute;
 using ConditionalExpression = ICSharpCode.NRefactory.CSharp.ConditionalExpression;

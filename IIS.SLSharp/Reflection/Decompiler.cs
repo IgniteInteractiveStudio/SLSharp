@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
+﻿using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.NRefactory.CSharp;
-using IIS.SLSharp.Core.Expressions;
 using Mono.Cecil;
 
-namespace IIS.SLSharp.Core.Reflection
+namespace IIS.SLSharp.Reflection
 {
     public sealed class Decompiler
     {

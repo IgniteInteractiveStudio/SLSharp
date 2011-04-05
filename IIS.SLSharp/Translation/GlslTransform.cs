@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using IIS.SLSharp.Annotations;
-using IIS.SLSharp.Core.Reflection;
+using IIS.SLSharp.Reflection;
 
 namespace IIS.SLSharp.Translation
 {

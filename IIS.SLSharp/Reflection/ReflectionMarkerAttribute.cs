@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 
-namespace IIS.SLSharp.Core.Reflection
+namespace IIS.SLSharp.Reflection
 {
     public sealed class ReflectionMarkerAttribute : Attribute
     {

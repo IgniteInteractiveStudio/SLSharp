@@ -2,7 +2,7 @@
 
 // ReSharper disable InconsistentNaming
 
-namespace IIS.SLSharp
+namespace IIS.SLSharp.Shaders
 {
     // TODO: textureGather textureGatherOffset textureGatherOffsets and deprecated funcs
 

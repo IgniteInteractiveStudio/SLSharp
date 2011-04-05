@@ -1,12 +1,9 @@
-﻿using System;
-using System.Linq.Expressions;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedParameter.Local
 
-namespace IIS.SLSharp
+namespace IIS.SLSharp.Shaders
 {
     public abstract partial class ShaderDefinition
     {

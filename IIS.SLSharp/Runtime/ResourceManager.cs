@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using IIS.SLSharp.Core.Reflection;
+using IIS.SLSharp.Reflection;
 
-namespace IIS.SLSharp.Core.Runtime
+namespace IIS.SLSharp.Runtime
 {
-    public static class ResourceHelper
+    public static class ResourceManager
     {
         // derive a class T' of T that overrides Dispose() replacing it with a Release call
 
         private const BindingFlags BindingFlagsAny =
            BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 
-        internal sealed class AllocationKey
+        private sealed class AllocationKey
         {
             public object[] Args { get; set; }
 
@@ -23,7 +23,7 @@ namespace IIS.SLSharp.Core.Runtime
             public int RefCount { get; set; }
         }
 
-        internal sealed class AllocationKeyComparer : IEqualityComparer<AllocationKey>
+        private sealed class AllocationKeyComparer : IEqualityComparer<AllocationKey>
         {
             public bool Equals(AllocationKey x, AllocationKey y)
             {
@@ -49,7 +49,7 @@ namespace IIS.SLSharp.Core.Runtime
             }
         }
 
-        internal sealed class ResourceRecord
+        private sealed class ResourceRecord
         {
             public ResourceRecord()
             {
@@ -104,7 +104,7 @@ namespace IIS.SLSharp.Core.Runtime
             var ilDispose = disposeFun.GetILGenerator();
 
             var release = ReflectionMarkerAttribute.FindMethod(
-                 typeof(ResourceHelper), ReflectionToken.ResourceHelperRelease);
+                 typeof(ResourceManager), ReflectionToken.ResourceHelperRelease);
 
             ilDispose.Emit(OpCodes.Ldarg, 0);
             ilDispose.Emit(OpCodes.Call, release);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using IIS.SLSharp.Examples.Simple.Shaders;
+using IIS.SLSharp.Shaders;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 

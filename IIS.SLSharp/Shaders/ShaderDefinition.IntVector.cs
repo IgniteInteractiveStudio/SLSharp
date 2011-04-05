@@ -1,95 +1,101 @@
-﻿using OpenTK;
-
-// ReSharper disable InconsistentNaming
+﻿// ReSharper disable InconsistentNaming
 // ReSharper disable UnusedParameter.Local
 
-namespace IIS.SLSharp
+namespace IIS.SLSharp.Shaders
 {
     public abstract partial class ShaderDefinition
     {
-        public sealed class dvec2
+        public sealed class ivec2
         {
-            public static Vector2d value;
+            internal static int[] value = new int[2];
 
-            public static implicit operator dvec2(Vector2d v)
+            /*
+            // TODO: need uniform intializer glue code
+             
+            public static implicit operator ivec2(Vector2 v)
             { value = v; return null; }
+            */
 
-            public float x, y;
+            public int x, y;
 
-            public float r, g;
+            public int r, g;
 
-            public float s, t;
+            public int s, t;
 
-            public dvec2 xx, xy, yx, yy;
+            public ivec2 xx, xy, yx, yy;
 
-            public dvec2 rr, rg, gr, gg;
+            public ivec2 rr, rg, gr, gg;
 
-            public dvec2 ss, st, ts, tt;
+            public ivec2 ss, st, ts, tt;
 
-            public dvec3 xxx, xxy, xyx, xyy, yxx, yxy, yyx, yyy;
+            public ivec3 xxx, xxy, xyx, xyy, yxx, yxy, yyx, yyy;
 
-            public dvec3 rrr, rrg, rgr, rgg, grr, grg, ggr, ggg;
+            public ivec3 rrr, rrg, rgr, rgg, grr, grg, ggr, ggg;
 
-            public dvec3 sss, sst, sts, stt, tss, tst, tts, ttt;
+            public ivec3 sss, sst, sts, stt, tss, tst, tts, ttt;
 
-            public dvec4 xxxx, xxxy, xxyx, xxyy, xyxx, xyxy, xyyx, xyyy,
+            public ivec4 xxxx, xxxy, xxyx, xxyy, xyxx, xyxy, xyyx, xyyy,
                 yxxx, yxxy, yxyx, yxyy, yyxx, yyxy, yyyx, yyyy;
 
-            public dvec4 rrrr, rrrg, rrgr, rrgg, rgrr, rgrg, rggr, rggg,
+            public ivec4 rrrr, rrrg, rrgr, rrgg, rgrr, rgrg, rggr, rggg,
                 grrr, grrg, grgr, grgg, ggrr, ggrg, gggr, gggg;
 
-            public dvec4 ssss, ssst, ssts, sstt, stss, stst, stts, sttt,
+            public ivec4 ssss, ssst, ssts, sstt, stss, stst, stts, sttt,
                 tsss, tsst, tsts, tstt, ttss, ttst, ttts, tttt;
 
-            public static dvec2 operator +(dvec2 v1, dvec2 v2) { throw _invalidAccess; }
+            public static ivec2 operator +(ivec2 v1, ivec2 v2) { throw _invalidAccess; }
 
-            public static dvec2 operator -(dvec2 v1, dvec2 v2) { throw _invalidAccess; }
+            public static ivec2 operator -(ivec2 v1, ivec2 v2) { throw _invalidAccess; }
 
-            public static dvec2 operator *(dvec2 v1, dvec2 v2) { throw _invalidAccess; }
+            public static ivec2 operator *(ivec2 v1, ivec2 v2) { throw _invalidAccess; }
 
-            public static dvec2 operator *(dvec2 v1, float s) { throw _invalidAccess; }
+            public static ivec2 operator *(ivec2 v1, int s) { throw _invalidAccess; }
 
-            public static dvec2 operator /(dvec2 v1, float s) { throw _invalidAccess; }
+            public static ivec2 operator /(ivec2 v1, int s) { throw _invalidAccess; }
 
-            public static dvec2 operator -(dvec2 v) { throw _invalidAccess; }
+            public static ivec2 operator -(ivec2 v) { throw _invalidAccess; }
 
-            public dvec2(float xy) { throw _invalidAccess; }
+            public ivec2(int xy) { throw _invalidAccess; }
 
-            public dvec2(float x, float y) { throw _invalidAccess; }
+            public ivec2(int x, int y) { throw _invalidAccess; }
         }
 
-        public sealed class dvec3
+        public sealed class ivec3
         {
-            public static Vector3d value;
+            internal static int[] value = new int[3];
 
-            public static implicit operator dvec3(Vector3d v)
+            /*
+            // TODO: need uniform intializer glue code
+
+            public static implicit operator ivec3(Vector3 v)
             { value = v; return null; }
+            */
 
-            public float x, y, z;
+            public int x, y, z;
 
-            public float r, g, b;
+            public int r, g, b;
 
-            public float s, t, p;
+            public int s, t, p;
 
-            public dvec2 xx, xy, xz, yx, yy, yz, zx, zy, zz;
+            public ivec2 xx, xy, xz, yx, yy, yz, zx, zy, zz;
 
-            public dvec2 rr, rg, rb, gr, gg, gb, br, bg, bb;
+            public ivec2 rr, rg, rb, gr, gg, gb, br, bg, bb;
 
-            public dvec2 ss, st, sp, ts, tt, tp, ps, pt, pp;
+            public ivec2 ss, st, sp, ts, tt, tp, ps, pt, pp;
 
-            public dvec3 xxx, xxy, xxz, xyx, xyy, xyz, xzx, xzy, xzz,
+            public ivec3 xxx, xxy, xxz, xyx, xyy, xyz, xzx, xzy, xzz,
                 yxx, yxy, yxz, yyx, yyy, yyz, yzx, yzy, yzz,
                 zxx, zxy, zxz, zyx, zyy, zyz, zzx, zzy, zzz;
 
-            public dvec3 rrr, rrg, rrb, rgr, rgg, rgb, rbr, rbg, rbb,
+            public ivec3 rrr, rrg, rrb, rgr, rgg, rgb, rbr, rbg, rbb,
                 grr, grg, grb, ggr, ggg, ggb, gbr, gbg, gbb,
                 brr, brg, brb, bgr, bgg, bgb, bbr, bbg, bbb;
 
-            public dvec3 sss, sst, ssp, sts, stt, stp, sps, spt, spp,
+            public ivec3 sss, sst, ssp, sts, stt, stp, sps, spt, spp,
                 tss, tst, tsp, tts, ttt, ttp, tps, tpt, tpp,
                 pss, pst, psp, pts, ptt, ptp, pps, ppt, ppp;
 
-            public dvec4 xxxx, xxxy, xxxz, xxyx, xxyy, xxyz, xxzx, xxzy, xxzz,
+            public ivec4 xxxx, xxxy, xxxz, xxyx, xxyy, xxyz, xxzx, xxzy, xxzz,
                 xyxx, xyxy, xyxz, xyyx, xyyy, xyyz, xyzx, xyzy, xyzz,
                 xzxx, xzxy, xzxz, xzyx, xzyy, xzyz, xzzx, xzzy, xzzz,
                 yxxx, yxxy, yxxz, yxyx, yxyy, yxyz, yxzx, yxzy, yxzz,
@@ -99,7 +105,7 @@ namespace IIS.SLSharp
                 zyxx, zyxy, zyxz, zyyx, zyyy, zyyz, zyzx, zyzy, zyzz,
                 zzxx, zzxy, zzxz, zzyx, zzyy, zzyz, zzzx, zzzy, zzzz;
 
-            public dvec4 rrrr, rrrg, rrrb, rrgr, rrgg, rrgb, rrbr, rrbg, rrbb,
+            public ivec4 rrrr, rrrg, rrrb, rrgr, rrgg, rrgb, rrbr, rrbg, rrbb,
                 rgrr, rgrg, rgrb, rggr, rggg, rggb, rgbr, rgbg, rgbb,
                 rbrr, rbrg, rbrb, rbgr, rbgg, rbgb, rbbr, rbbg, rbbb,
                 grrr, grrg, grrb, grgr, grgg, grgb, grbr, grbg, grbb,
@@ -109,7 +115,7 @@ namespace IIS.SLSharp
                 bgrr, bgrg, bgrb, bggr, bggg, bggb, bgbr, bgbg, bgbb,
                 bbrr, bbrg, bbrb, bbgr, bbgg, bbgb, bbbr, bbbg, bbbb;
 
-            public dvec4 ssss, ssst, sssp, ssts, sstt, sstp, ssps, sspt, sspp,
+            public ivec4 ssss, ssst, sssp, ssts, sstt, sstp, ssps, sspt, sspp,
                 stss, stst, stsp, stts, sttt, sttp, stps, stpt, stpp,
                 spss, spst, spsp, spts, sptt, sptp, spps, sppt, sppp,
                 tsss, tsst, tssp, tsts, tstt, tstp, tsps, tspt, tspp,
@@ -119,70 +125,70 @@ namespace IIS.SLSharp
                 ptss, ptst, ptsp, ptts, pttt, pttp, ptps, ptpt, ptpp,
                 ppss, ppst, ppsp, ppts, pptt, pptp, ppps, pppt, pppp;
 
-            public static dvec3 operator -(dvec3 v, dvec3 m) { throw _invalidAccess; }
+            public static ivec3 operator -(ivec3 v, ivec3 m) { throw _invalidAccess; }
 
-            public static dvec3 operator +(dvec3 v, dvec3 m) { throw _invalidAccess; }
+            public static ivec3 operator +(ivec3 v, ivec3 m) { throw _invalidAccess; }
 
-            public static dvec3 operator *(dvec3 v, dvec3 m) { throw _invalidAccess; }
+            public static ivec3 operator *(ivec3 v, ivec3 m) { throw _invalidAccess; }
 
-            public static dvec3 operator *(dvec3 v, float d) { throw _invalidAccess; }
+            public static ivec3 operator *(ivec3 v, int d) { throw _invalidAccess; }
 
-            public static dvec3 operator *(dvec3 v, mat3 m) { throw _invalidAccess; }
+            public static ivec3 operator /(ivec3 v, int d) { throw _invalidAccess; }
 
-            public static dvec3 operator *(mat3 m, dvec3 v) { throw _invalidAccess; }
+            public static ivec3 operator -(ivec3 v, int d) { throw _invalidAccess; }
 
-            public static dvec3 operator /(dvec3 v, float d) { throw _invalidAccess; }
+            public static ivec3 operator +(ivec3 v, int d) { throw _invalidAccess; }
 
-            public static dvec3 operator -(dvec3 v, float d) { throw _invalidAccess; }
+            public static ivec3 operator -(ivec3 v) { throw _invalidAccess; }
 
-            public static dvec3 operator +(dvec3 v, float d) { throw _invalidAccess; }
+            public ivec3(int xyz) { throw _invalidAccess; }
 
-            public static dvec3 operator -(dvec3 v) { throw _invalidAccess; }
+            public ivec3(ivec2 xy, int z) { throw _invalidAccess; }
 
-            public dvec3(float xyz) { throw _invalidAccess; }
+            public ivec3(int x, ivec2 yz) { throw _invalidAccess; }
 
-            public dvec3(dvec2 xy, float z) { throw _invalidAccess; }
-
-            public dvec3(float x, dvec2 yz) { throw _invalidAccess; }
-
-            public dvec3(float x, float y, float z) { throw _invalidAccess; }
+            public ivec3(int x, int y, int z) { throw _invalidAccess; }
         }
 
-        public sealed class dvec4
+        public sealed class ivec4
         {
-            public static Vector4d value;
+            internal static int[] value = new int[4];
 
-            public static implicit operator dvec4(Vector4d v)
+            /*
+            // TODO: need uniform intializer glue code
+
+            public static implicit operator ivec4(ivector4 v)
             { value = v; return null; }
+            */
 
-            public float x, y, z, w;
+            public int x, y, z, w;
 
-            public float r, g, b, a;
+            public int r, g, b, a;
 
-            public float s, t, p, q;
+            public int s, t, p, q;
 
-            public dvec2 xx, xy, xz, xw, yx, yy, yz, yw, zx, zy, zz, zw, wx, wy, wz, ww;
+            public ivec2 xx, xy, xz, xw, yx, yy, yz, yw, zx, zy, zz, zw, wx, wy, wz, ww;
 
-            public dvec2 rr, rg, rb, ra, gr, gg, gb, ga, br, bg, bb, ba, ar, ag, ab, aa;
+            public ivec2 rr, rg, rb, ra, gr, gg, gb, ga, br, bg, bb, ba, ar, ag, ab, aa;
 
-            public dvec2 ss, st, sp, sq, ts, tt, tp, tq, ps, pt, pp, pq, qs, qt, qp, qq;
+            public ivec2 ss, st, sp, sq, ts, tt, tp, tq, ps, pt, pp, pq, qs, qt, qp, qq;
 
-            public dvec3 xxx, xxy, xxz, xxw, xyx, xyy, xyz, xyw, xzx, xzy, xzz, xzw, xwx, xwy, xwz, xww,
+            public ivec3 xxx, xxy, xxz, xxw, xyx, xyy, xyz, xyw, xzx, xzy, xzz, xzw, xwx, xwy, xwz, xww,
                 yxx, yxy, yxz, yxw, yyx, yyy, yyz, yyw, yzx, yzy, yzz, yzw, ywx, ywy, ywz, yww,
                 zxx, zxy, zxz, zxw, zyx, zyy, zyz, zyw, zzx, zzy, zzz, zzw, zwx, zwy, zwz, zww,
                 wxx, wxy, wxz, wxw, wyx, wyy, wyz, wyw, wzx, wzy, wzz, wzw, wwx, wwy, wwz, www;
 
-            public dvec3 rrr, rrg, rrb, rra, rgr, rgg, rgb, rga, rbr, rbg, rbb, rba, rar, rag, rab, raa,
+            public ivec3 rrr, rrg, rrb, rra, rgr, rgg, rgb, rga, rbr, rbg, rbb, rba, rar, rag, rab, raa,
                 grr, grg, grb, gra, ggr, ggg, ggb, gga, gbr, gbg, gbb, gba, gar, gag, gab, gaa,
                 brr, brg, brb, bra, bgr, bgg, bgb, bga, bbr, bbg, bbb, bba, bar, bag, bab, baa,
                 arr, arg, arb, ara, agr, agg, agb, aga, abr, abg, abb, aba, aar, aag, aab, aaa;
 
-            public dvec3 sss, sst, ssp, ssq, sts, stt, stp, stq, sps, spt, spp, spq, sqs, sqt, sqp, sqq,
+            public ivec3 sss, sst, ssp, ssq, sts, stt, stp, stq, sps, spt, spp, spq, sqs, sqt, sqp, sqq,
                 tss, tst, tsp, tsq, tts, ttt, ttp, ttq, tps, tpt, tpp, tpq, tqs, tqt, tqp, tqq,
                 pss, pst, psp, psq, pts, ptt, ptp, ptq, pps, ppt, ppp, ppq, pqs, pqt, pqp, pqq,
                 qss, qst, qsp, qsq, qts, qtt, qtp, qtq, qps, qpt, qpp, qpq, qqs, qqt, qqp, qqq;
 
-            public dvec4 xxxx, xxxy, xxxz, xxxw, xxyx, xxyy, xxyz, xxyw, xxzx, xxzy, xxzz, xxzw, xxwx, xxwy, xxwz, xxww,
+            public ivec4 xxxx, xxxy, xxxz, xxxw, xxyx, xxyy, xxyz, xxyw, xxzx, xxzy, xxzz, xxzw, xxwx, xxwy, xxwz, xxww,
                 xyxx, xyxy, xyxz, xyxw, xyyx, xyyy, xyyz, xyyw, xyzx, xyzy, xyzz, xyzw, xywx, xywy, xywz, xyww,
                 xzxx, xzxy, xzxz, xzxw, xzyx, xzyy, xzyz, xzyw, xzzx, xzzy, xzzz, xzzw, xzwx, xzwy, xzwz, xzww,
                 xwxx, xwxy, xwxz, xwxw, xwyx, xwyy, xwyz, xwyw, xwzx, xwzy, xwzz, xwzw, xwwx, xwwy, xwwz, xwww,
@@ -199,7 +205,7 @@ namespace IIS.SLSharp
                 wzxx, wzxy, wzxz, wzxw, wzyx, wzyy, wzyz, wzyw, wzzx, wzzy, wzzz, wzzw, wzwx, wzwy, wzwz, wzww,
                 wwxx, wwxy, wwxz, wwxw, wwyx, wwyy, wwyz, wwyw, wwzx, wwzy, wwzz, wwzw, wwwx, wwwy, wwwz, wwww;
 
-            public dvec4 rrrr, rrrg, rrrb, rrra, rrgr, rrgg, rrgb, rrga, rrbr, rrbg, rrbb, rrba, rrar, rrag, rrab, rraa,
+            public ivec4 rrrr, rrrg, rrrb, rrra, rrgr, rrgg, rrgb, rrga, rrbr, rrbg, rrbb, rrba, rrar, rrag, rrab, rraa,
                 rgrr, rgrg, rgrb, rgra, rggr, rggg, rggb, rgga, rgbr, rgbg, rgbb, rgba, rgar, rgag, rgab, rgaa,
                 rbrr, rbrg, rbrb, rbra, rbgr, rbgg, rbgb, rbga, rbbr, rbbg, rbbb, rbba, rbar, rbag, rbab, rbaa,
                 rarr, rarg, rarb, rara, ragr, ragg, ragb, raga, rabr, rabg, rabb, raba, raar, raag, raab, raaa,
@@ -216,7 +222,7 @@ namespace IIS.SLSharp
                 abrr, abrg, abrb, abra, abgr, abgg, abgb, abga, abbr, abbg, abbb, abba, abar, abag, abab, abaa,
                 aarr, aarg, aarb, aara, aagr, aagg, aagb, aaga, aabr, aabg, aabb, aaba, aaar, aaag, aaab, aaaa;
 
-            public dvec4 ssss, ssst, sssp, sssq, ssts, sstt, sstp, sstq, ssps, sspt, sspp, sspq, ssqs, ssqt, ssqp, ssqq,
+            public ivec4 ssss, ssst, sssp, sssq, ssts, sstt, sstp, sstq, ssps, sspt, sspp, sspq, ssqs, ssqt, ssqp, ssqq,
                 stss, stst, stsp, stsq, stts, sttt, sttp, sttq, stps, stpt, stpp, stpq, stqs, stqt, stqp, stqq,
                 spss, spst, spsp, spsq, spts, sptt, sptp, sptq, spps, sppt, sppp, sppq, spqs, spqt, spqp, spqq,
                 sqss, sqst, sqsp, sqsq, sqts, sqtt, sqtp, sqtq, sqps, sqpt, sqpp, sqpq, sqqs, sqqt, sqqp, sqqq,
@@ -233,41 +239,37 @@ namespace IIS.SLSharp
                 qpss, qpst, qpsp, qpsq, qpts, qptt, qptp, qptq, qpps, qppt, qppp, qppq, qpqs, qpqt, qpqp, qpqq,
                 qqss, qqst, qqsp, qqsq, qqts, qqtt, qqtp, qqtq, qqps, qqpt, qqpp, qqpq, qqqs, qqqt, qqqp, qqqq;
 
-            public static dvec4 operator -(dvec4 v, dvec4 m) { throw _invalidAccess; }
+            public static ivec4 operator -(ivec4 v, ivec4 m) { throw _invalidAccess; }
 
-            public static dvec4 operator +(dvec4 v, dvec4 m) { throw _invalidAccess; }
+            public static ivec4 operator +(ivec4 v, ivec4 m) { throw _invalidAccess; }
 
-            public static dvec4 operator *(dvec4 v, dvec4 m) { throw _invalidAccess; }
+            public static ivec4 operator *(ivec4 v, ivec4 m) { throw _invalidAccess; }
 
-            public static dvec4 operator *(dvec4 v, mat4 m) { throw _invalidAccess; }
+            public static ivec2 operator /(ivec4 v, int s) { throw _invalidAccess; }
 
-            public static dvec4 operator *(mat4 m, dvec4 v) { throw _invalidAccess; }
+            public static ivec4 operator +(ivec4 v, int s) { throw _invalidAccess; }
 
-            public static dvec2 operator /(dvec4 v, float s) { throw _invalidAccess; }
+            public static ivec4 operator -(ivec4 v, int s) { throw _invalidAccess; }
 
-            public static dvec4 operator +(dvec4 v, float s) { throw _invalidAccess; }
+            public static ivec4 operator *(ivec4 v, int s) { throw _invalidAccess; }
 
-            public static dvec4 operator -(dvec4 v, float s) { throw _invalidAccess; }
+            public static ivec4 operator -(ivec4 v) { throw _invalidAccess; }
 
-            public static dvec4 operator *(dvec4 v, float s) { throw _invalidAccess; }
+            public ivec4(int xyzw) { throw _invalidAccess; }
 
-            public static dvec4 operator -(dvec4 v) { throw _invalidAccess; }
+            public ivec4(int x, int y, int z, int w) { throw _invalidAccess; }
 
-            public dvec4(float xyzw) { throw _invalidAccess; }
+            public ivec4(ivec2 xy, int z, int w) { throw _invalidAccess; }
 
-            public dvec4(float x, float y, float z, float w) { throw _invalidAccess; }
+            public ivec4(int x, ivec2 yz, int w) { throw _invalidAccess; }
 
-            public dvec4(dvec2 xy, float z, float w) { throw _invalidAccess; }
+            public ivec4(int x, int y, ivec2 zw) { throw _invalidAccess; }
 
-            public dvec4(float x, dvec2 yz, float w) { throw _invalidAccess; }
+            public ivec4(ivec2 xy, ivec2 zw) { throw _invalidAccess; }
 
-            public dvec4(float x, float y, dvec2 zw) { throw _invalidAccess; }
+            public ivec4(ivec3 xyz, int w) { throw _invalidAccess; }
 
-            public dvec4(dvec2 xy, dvec2 zw) { throw _invalidAccess; }
-
-            public dvec4(dvec3 xyz, float w) { throw _invalidAccess; }
-
-            public dvec4(float x, dvec3 yzw) { throw _invalidAccess; }
+            public ivec4(int x, ivec3 yzw) { throw _invalidAccess; }
         }
     }
 }

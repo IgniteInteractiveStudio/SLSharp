@@ -48,28 +48,34 @@
     <Compile Include="Annotations\UniformAttribute.cs" />
     <Compile Include="Annotations\VaryingAttribute.cs" />
     <Compile Include="Annotations\VertexShaderAttribute.cs" />
-    <Compile Include="Shader.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="GpuStopwatch.cs" />
+    <Compile Include="Reflection\Decompiler.cs" />
+    <Compile Include="Reflection\ReflectionMarkerAttribute.cs" />
+    <Compile Include="Reflection\ReflectionToken.cs" />
+    <Compile Include="Runtime\ResourceManager.cs" />
+    <Compile Include="Shaders\Shader.cs" />
     <Compile Include="Diagnostics\ShaderDebugger.cs" />
-    <Compile Include="ShaderDefinition.Common.cs" />
-    <Compile Include="ShaderDefinition.cs" />
+    <Compile Include="Shaders\ShaderDefinition.Common.cs" />
+    <Compile Include="Shaders\ShaderDefinition.cs" />
     <Compile Include="Annotations\ShaderVariableAttribute.cs" />
-    <Compile Include="ShaderDefinition.Derivative.cs" />
-    <Compile Include="ShaderDefinition.DoubleVector.cs" />
-    <Compile Include="ShaderDefinition.Exponential.cs" />
-    <Compile Include="ShaderDefinition.Geometric.cs" />
-    <Compile Include="ShaderDefinition.Integer.cs" />
-    <Compile Include="ShaderDefinition.Interpolation.cs" />
-    <Compile Include="ShaderDefinition.IntVector.cs" />
-    <Compile Include="ShaderDefinition.Matrix.cs" />
-    <Compile Include="ShaderDefinition.MatrixFunctions.cs" />
-    <Compile Include="ShaderDefinition.Noise.cs" />
-    <Compile Include="ShaderDefinition.Sampler.cs" />
-    <Compile Include="ShaderDefinition.Texture.cs" />
-    <Compile Include="ShaderDefinition.Trigonometry.cs" />
-    <Compile Include="ShaderDefinition.UIntVector.cs" />
-    <Compile Include="ShaderDefinition.Packing.cs" />
-    <Compile Include="ShaderDefinition.Vector.cs" />
-    <Compile Include="ShaderHelpers.cs" />
+    <Compile Include="Shaders\ShaderDefinition.Derivative.cs" />
+    <Compile Include="Shaders\ShaderDefinition.DoubleVector.cs" />
+    <Compile Include="Shaders\ShaderDefinition.Exponential.cs" />
+    <Compile Include="Shaders\ShaderDefinition.Geometric.cs" />
+    <Compile Include="Shaders\ShaderDefinition.Integer.cs" />
+    <Compile Include="Shaders\ShaderDefinition.Interpolation.cs" />
+    <Compile Include="Shaders\ShaderDefinition.IntVector.cs" />
+    <Compile Include="Shaders\ShaderDefinition.Matrix.cs" />
+    <Compile Include="Shaders\ShaderDefinition.MatrixFunctions.cs" />
+    <Compile Include="Shaders\ShaderDefinition.Noise.cs" />
+    <Compile Include="Shaders\ShaderDefinition.Sampler.cs" />
+    <Compile Include="Shaders\ShaderDefinition.Texture.cs" />
+    <Compile Include="Shaders\ShaderDefinition.Trigonometry.cs" />
+    <Compile Include="Shaders\ShaderDefinition.UIntVector.cs" />
+    <Compile Include="Shaders\ShaderDefinition.Packing.cs" />
+    <Compile Include="Shaders\ShaderDefinition.Vector.cs" />
+    <Compile Include="Shaders\ShaderHelpers.cs" />
     <Compile Include="Textures\BaseTexture.cs" />
     <Compile Include="Textures\Externals\LoaderDDS.cs" />
     <Compile Include="Textures\Externals\LoaderStatics.cs" />
@@ -85,14 +91,12 @@
     <Compile Include="Translation\GlslVisitor.cs" />
     <Compile Include="Translation\GlslVisitor2.cs" />
     <Compile Include="Translation\GlslVisitor2.Unimplemented.cs" />
+    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IIS.SLSharp.Core\IIS.SLSharp.Core.csproj">
-      <Project>{CC851980-C8CC-46EB-8687-869AD8864A95}</Project>
-      <Name>IIS.SLSharp.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
+    <Reference Include="ICSharpCode.Decompiler, Version=1.0.0.674, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\Dependencies\ICSharpCode.Decompiler.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.NRefactory, Version=1.0.4110.1435, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dependencies\ICSharpCode.NRefactory.dll</HintPath>
@@ -119,8 +123,6 @@ rmdir /S /Q "$(SolutionDir)IIS.SLSharp.NuGet\lib\"
 mkdir "$(SolutionDir)IIS.SLSharp.NuGet\lib\"
 copy /Y "$(TargetDir)IIS.SLSharp.dll" "$(SolutionDir)IIS.SLSharp.NuGet\lib\"
 copy /Y "$(TargetDir)IIS.SLSharp.xml" "$(SolutionDir)IIS.SLSharp.NuGet\lib\"
-copy /Y "$(TargetDir)IIS.SLSharp.Core.dll" "$(SolutionDir)IIS.SLSharp.NuGet\lib\"
-copy /Y "$(TargetDir)IIS.SLSharp.Core.xml" "$(SolutionDir)IIS.SLSharp.NuGet\lib\"
 copy /Y "$(SolutionDir)Dependencies\ICSharpCode.Decompiler.dll" "$(SolutionDir)IIS.SLSharp.NuGet\lib\"
 copy /Y "$(SolutionDir)Dependencies\ICSharpCode.Decompiler.xml" "$(SolutionDir)IIS.SLSharp.NuGet\lib\"
 copy /Y "$(SolutionDir)Dependencies\ICSharpCode.NRefactory.dll" "$(SolutionDir)IIS.SLSharp.NuGet\lib\"

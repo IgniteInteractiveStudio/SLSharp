@@ -1,7 +1,7 @@
-using IIS.SLSharp.Core.Reflection;
+using IIS.SLSharp.Reflection;
 using OpenTK.Graphics.OpenGL;
 
-namespace IIS.SLSharp
+namespace IIS.SLSharp.Shaders
 {
     public static class ShaderHelpers
     {
