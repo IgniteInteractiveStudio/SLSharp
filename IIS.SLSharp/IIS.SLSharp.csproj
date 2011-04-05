@@ -83,6 +83,7 @@
     <Compile Include="Translation\GlslTransform.cs" />
     <Compile Include="Translation\GlslVisitor.cs" />
     <Compile Include="Translation\GlslVisitor2.cs" />
+    <Compile Include="Translation\GlslVisitor2.Unimplemented.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IIS.SLSharp.Core\IIS.SLSharp.Core.csproj">
@@ -94,6 +95,10 @@
     <Reference Include="ICSharpCode.NRefactory, Version=1.0.4110.1435, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dependencies\ICSharpCode.NRefactory.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil, Version=0.9.4.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Dependencies\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Reflection">
       <HintPath>..\Dependencies\Mono.Reflection.dll</HintPath>

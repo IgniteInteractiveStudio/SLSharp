@@ -25,6 +25,7 @@ namespace IIS.SLSharp.Examples.Simple.Shaders
         [FragmentShader(true)]
         protected void FragmentMain()
         {
+            //Invert.Channels = new vec4(1.0f); // invalid testcode
             Color = Invert.Invert(new vec4(_uv, Blue, 1.0f));
         }
 

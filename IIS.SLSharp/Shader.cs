@@ -12,9 +12,13 @@ using IIS.SLSharp.Core.Runtime;
 using IIS.SLSharp.Diagnostics;
 using IIS.SLSharp.Textures;
 using IIS.SLSharp.Translation;
+using Mono.Cecil;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System.Collections.Generic;
+using FieldAttributes = System.Reflection.FieldAttributes;
+using MethodAttributes = System.Reflection.MethodAttributes;
+using TypeAttributes = System.Reflection.TypeAttributes;
 
 namespace IIS.SLSharp
 {
@@ -458,6 +462,7 @@ namespace IIS.SLSharp
 #endif
         }
 
+
         public static string GetUniformName(PropertyInfo prop)
         {
             var fullName = "U@" + prop.DeclaringType.FullName + "." + prop.Name;
@@ -467,6 +472,18 @@ namespace IIS.SLSharp
         public static string GetVaryingName(FieldInfo prop)
         {
             var fullName = "P@" + prop.DeclaringType.FullName + "." + prop.Name;
+            return GetGlobalName(fullName);
+        }
+
+        public static string GetVaryingName(FieldDefinition prop)
+        {
+            var fullName = "P@" + prop.DeclaringType.FullName + "." + prop.Name;
+            return GetGlobalName(fullName);
+        }
+
+        public static string GetMethodName(MethodDefinition prop)
+        {
+            var fullName = "M@" + prop.DeclaringType.FullName + "." + prop.Name;
             return GetGlobalName(fullName);
         }
 
@@ -948,6 +965,21 @@ namespace IIS.SLSharp
                 return GetVaryingName(field);
 
             return name;
+        }
+
+
+        private static readonly string[] _attribStrings = new[]
+                                                              {
+                                                                  typeof (VaryingAttribute).FullName,
+                                                                  typeof (VertexInAttribute).FullName,
+                                                                  typeof (FragmentOutAttribute).FullName
+                                                              };
+
+        public static string ResolveName(FieldDefinition member)
+        {
+            if (member.CustomAttributes.Any((x) => _attribStrings.Contains(x.AttributeType.FullName)))
+                GetVaryingName(member);
+            return member.Name;
         }
 
         public static string ResolveName(MemberInfo member)
