@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using ICSharpCode.NRefactory.CSharp;
 using IIS.SLSharp.Annotations;
 using Mono.Cecil;
 using Attribute = ICSharpCode.NRefactory.CSharp.Attribute;
 using ConditionalExpression = ICSharpCode.NRefactory.CSharp.ConditionalExpression;
+using Expression = ICSharpCode.NRefactory.CSharp.Expression;
 using InvocationExpression = ICSharpCode.NRefactory.CSharp.InvocationExpression;
 using LambdaExpression = ICSharpCode.NRefactory.CSharp.LambdaExpression;
 
@@ -108,6 +111,20 @@ namespace IIS.SLSharp.Translation
             }
         }
 
+        private readonly Dictionary<string, string> _binaryOpMapping = new Dictionary<string, string>
+        {
+            { "op_Multiply", " * " },
+            { "op_Division", " / " },
+            { "op_Addition", " + " },
+            { "op_Subtraction", " - " },
+            { "op_Modulus", " % " },
+            { "op_BitwiseOr", " | " },
+            { "op_BitwiseAnd", " & " },
+            { "op_ExclusiveOr", " ^ " },
+            { "op_LeftShift", " << " },
+            { "op_RightShift", " >> " },
+        };
+
         public static string GetMethodName(MethodDefinition m)
         {
             return Shader.GetMethodName(m);
@@ -137,6 +154,15 @@ namespace IIS.SLSharp.Translation
                 GetParameterString(m) + ")";
         }
 
+        private static MethodInfo ToMethodInfo(MethodDefinition m)
+        {
+            var asm = Assembly.LoadFrom(m.Module.FullyQualifiedName);
+            var typ = asm.GetType(m.DeclaringType.FullName);
+            var met = typ.GetMethod(m.Name,
+                                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static |
+                                    BindingFlags.Instance);
+            return met;
+        }
 
         private void RegisterMethod(MethodDefinition m)
         {
@@ -146,18 +172,32 @@ namespace IIS.SLSharp.Translation
             if (attr == null)
                 throw new Exception("Called shader method has no " + neededTyp.Name + Environment.NewLine + GetSignature(m));
 
+            var mi = ToMethodInfo(m);
+            var a2 = mi.GetCustomAttributes(neededTyp, false);
+            if (((IShaderAttribute)a2[0]).EntryPoint)
+                throw new Exception("Cannot call shader entrypoint.");
 
-            throw new NotImplementedException();
-            //if (((IShaderAttribute)attr[0]).EntryPoint)
-            //    throw new Exception("Cannot call shader entrypoint.");
-            //_functions.Add(GetSignature(m));
+            _functions.Add(GetSignature(m));
+        }
+
+        private void ArgsToString(AstNodeCollection<Expression> args)
+        {
+            if (args.Count <= 0)
+                return;
+
+            foreach (var v in args.Take(args.Count - 1))
+            {
+                v.AcceptVisitor(this, 0);
+                Append(",");
+            }
+            args.Last().AcceptVisitor(this, 0);
         }
 
 
         public GlslVisitor2(BlockStatement block, IShaderAttribute attr)
         {
-            block.AcceptVisitor(this, 0);
             _attr = attr;
+            block.AcceptVisitor(this, 0);
         }
 
         public int VisitBlockStatement(BlockStatement blockStatement, int data)
@@ -188,7 +228,7 @@ namespace IIS.SLSharp.Translation
 
         public int VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, int data)
         {
-            var anno = memberReferenceExpression.Annotation<FieldDefinition>();
+            
 
             if (!(memberReferenceExpression.Target is ThisReferenceExpression))
             {
@@ -196,24 +236,68 @@ namespace IIS.SLSharp.Translation
                 Append(".");
             }
 
-            Append(Shader.ResolveName(anno));            
-            return 0;
+            var anno = memberReferenceExpression.Annotation<FieldDefinition>();
+            if (anno != null)
+            {
+                Append(Shader.ResolveName(anno));
+                return 0;
+            }
+
+            var annop = memberReferenceExpression.Annotation<PropertyDefinition>();
+            if (annop != null)
+            {
+                Append(Shader.ResolveName(annop));
+                return 0;
+            }
+
+            throw new NotImplementedException();
         }
 
         public int VisitInvocationExpression(InvocationExpression invocationExpression, int data)
         {
+            //Console.WriteLine(invocationExpression.Target);
 
-            // Annotations[0] <--
-            var m = invocationExpression.Target;
-            var args = invocationExpression.Arguments;
-
-            Console.WriteLine(invocationExpression.Target);
-            //RegisterMethod(invocationExpression.Target);
-            //    Append(GetMethodName(m));
-          
-
-            throw new NotImplementedException();
+            var anno = invocationExpression.Annotation<MethodDefinition>();
+            RegisterMethod(anno);
+            Append(GetMethodName(anno));
+            //invocationExpression.Target.AcceptVisitor(this, 0);
+            
+            Append("(");
+            ArgsToString(invocationExpression.Arguments);
+            Append(")");
+            return 0;
         }
-        
+
+        public int VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, int data)
+        {
+            objectCreateExpression.Type.AcceptVisitor(this, 0);
+            Append("(");
+            ArgsToString(objectCreateExpression.Arguments);
+            Append(")");
+            return 0;
+        }
+
+        public int VisitMemberType(MemberType memberType, int data)
+        {
+            Append(memberType.MemberName);
+            return 0;
+        }
+
+        public int VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, int data)
+        {
+
+            if (primitiveExpression.Value.GetType() == typeof(float))
+            {
+                var s = ((float)primitiveExpression.Value).ToString(CultureInfo.InvariantCulture.NumberFormat);
+                if (!s.Contains("."))
+                    s += ".0";
+
+                Append(s);
+            }
+            else
+                Append(primitiveExpression.Value.ToString());
+            return 0;
+        }
+
     }
 }

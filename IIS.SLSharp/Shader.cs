@@ -469,6 +469,12 @@ namespace IIS.SLSharp
             return GetGlobalName(fullName);
         }
 
+        public static string GetUniformName(PropertyDefinition prop)
+        {
+            var fullName = "U@" + prop.DeclaringType.FullName + "." + prop.Name;
+            return GetGlobalName(fullName);
+        }
+
         public static string GetVaryingName(FieldInfo prop)
         {
             var fullName = "P@" + prop.DeclaringType.FullName + "." + prop.Name;
@@ -982,6 +988,13 @@ namespace IIS.SLSharp
             return member.Name;
         }
 
+        public static string ResolveName(PropertyDefinition member)
+        {
+            if (member.CustomAttributes.Any((x) => _attribStrings.Contains(x.AttributeType.FullName)))
+                GetUniformName(member);
+            return member.Name;
+        }
+        
         public static string ResolveName(MemberInfo member)
         {
             if (member.MemberType == MemberTypes.Method)

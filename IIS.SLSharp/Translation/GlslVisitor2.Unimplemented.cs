@@ -101,22 +101,12 @@ namespace IIS.SLSharp.Translation
             throw new NotImplementedException();
         }
 
-        public int VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, int data)
-        {
-            throw new NotImplementedException();
-        }
-
         public int VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, int data)
         {
             throw new NotImplementedException();
         }
 
         public int VisitPointerReferenceExpression(PointerReferenceExpression pointerReferenceExpression, int data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, int data)
         {
             throw new NotImplementedException();
         }
@@ -482,11 +472,6 @@ namespace IIS.SLSharp.Translation
         }
 
         public int VisitSimpleType(SimpleType simpleType, int data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int VisitMemberType(MemberType memberType, int data)
         {
             throw new NotImplementedException();
         }
