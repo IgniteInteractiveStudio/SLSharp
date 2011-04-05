@@ -91,7 +91,7 @@ namespace IIS.SLSharp.Examples.Complex
 
             _cubeShader.Begin();
             _cubeShader.ModelViewProjectionMatrix = SetupCamera();
-            _cube.Render(_cubeShader.AttributeLocation(() => _cubeShader.Vertex));
+            _cube.Render(Shader.AttributeLocation(_cubeShader, () => _cubeShader.Vertex));
             _cubeShader.End();
 
             SwapBuffers();

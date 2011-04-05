@@ -9,7 +9,6 @@ using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.NRefactory.CSharp;
 using IIS.SLSharp.Core.Expressions;
 using Mono.Cecil;
-using Mono.Reflection;
 
 namespace IIS.SLSharp.Core.Reflection
 {

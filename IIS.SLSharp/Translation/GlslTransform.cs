@@ -56,9 +56,6 @@ namespace IIS.SLSharp.Translation
         public string Transform(MethodInfo m, IShaderAttribute attr)
         {
             var d = Decompiler.DecompileMethod(m);
-            
-
-            //var glsl = new GlslVisitor(d, attr);
             var glsl = new GlslVisitor2(d, attr);
 
             _functions.UnionWith(glsl.Functions);

@@ -69,6 +69,7 @@
     <Compile Include="ShaderDefinition.UIntVector.cs" />
     <Compile Include="ShaderDefinition.Packing.cs" />
     <Compile Include="ShaderDefinition.Vector.cs" />
+    <Compile Include="ShaderHelpers.cs" />
     <Compile Include="Textures\BaseTexture.cs" />
     <Compile Include="Textures\Externals\LoaderDDS.cs" />
     <Compile Include="Textures\Externals\LoaderStatics.cs" />

@@ -80,7 +80,7 @@ namespace IIS.SLSharp
 
 #endif
 
-        private Type GetImplType()
+        private Type GetImplementingType()
         {
             var t = GetType();
             var bt = GetShaderType();
@@ -89,6 +89,7 @@ namespace IIS.SLSharp
             while (t.BaseType != bt)
             // ReSharper restore PossibleNullReferenceException
                 t = t.BaseType;
+
             return t;
         }
 
@@ -649,144 +650,10 @@ namespace IIS.SLSharp
 
         private static readonly Dictionary<Type, ConstructorInfo> _ctors = new Dictionary<Type, ConstructorInfo>();
 
-        [ReflectionMarker(ReflectionToken.ShaderVec2Helper)]
-        public static void UniformVecHelper2(int location)
-        {
-            GL.Uniform2(location, vec2.value);
-        }
-
-        [ReflectionMarker(ReflectionToken.ShaderVec3Helper)]
-        public static void UniformVecHelper3(int location)
-        {
-            GL.Uniform3(location, vec3.value);
-        }
-
-        [ReflectionMarker(ReflectionToken.ShaderVec4Helper)]
-        public static void UniformVecHelper4(int location)
-        {
-            GL.Uniform4(location, vec4.value);
-        }
-
-        [ReflectionMarker(ReflectionToken.ShaderIvec2Helper)]
-        public static void UniformIvecHelper2(int location)
-        {
-            GL.Uniform2(location, 1, ivec2.value);
-        }
-
-        [ReflectionMarker(ReflectionToken.ShaderIvec3Helper)]
-        public static void UniformIvecHelper3(int location)
-        {
-            GL.Uniform3(location, 1, ivec3.value);
-        }
-
-        [ReflectionMarker(ReflectionToken.ShaderIvec4Helper)]
-        public static void UniformIvecHelper4(int location)
-        {
-            GL.Uniform4(location, 1, ivec4.value);
-        }
-
-        [ReflectionMarker(ReflectionToken.ShaderUvec2Helper)]
-        public static void UniformUvecHelper2(int location)
-        {
-            GL.Uniform2(location, 1, uvec2.value);
-        }
-
-        [ReflectionMarker(ReflectionToken.ShaderUvec3Helper)]
-        public static void UniformUvecHelper3(int location)
-        {
-            GL.Uniform3(location, 1, uvec3.value);
-        }
-
-        [ReflectionMarker(ReflectionToken.ShaderUvec4Helper)]
-        public static void UniformUvecHelper4(int location)
-        {
-            GL.Uniform4(location, 1, uvec4.value);
-        }
-
-
-        [ReflectionMarker(ReflectionToken.ShaderDvec2Helper)]
-        public static void UniformDvecHelper2(int location)
-        {
-            GL.Uniform2(location, dvec2.value.X, dvec2.value.Y);
-        }
-
-        [ReflectionMarker(ReflectionToken.ShaderDvec3Helper)]
-        public static void UniformDvecHelper3(int location)
-        {
-            GL.Uniform3(location, dvec3.value.X, dvec3.value.Y, dvec3.value.Z);
-        }
-
-        [ReflectionMarker(ReflectionToken.ShaderDvec4Helper)]
-        public static void UniformDvecHelper4(int location)
-        {
-            GL.Uniform4(location, dvec4.value.X, dvec4.value.Y, dvec4.value.Z,
-                dvec4.value.W);
-        }
-
-        [ReflectionMarker(ReflectionToken.ShaderUniformMatrix2X2Helper)]
-        public static void UniformMatrix2Helper(int location)
-        {
-            GL.UniformMatrix2(location, 1, false, mat2.value);
-        }
-
-        [ReflectionMarker(ReflectionToken.ShaderUniformMatrix2X3Helper)]
-        public static void UniformMatrix2X3Helper(int location)
-        {
-            GL.UniformMatrix2x3(location, 1, false, mat2x3.value);
-        }
-
-        [ReflectionMarker(ReflectionToken.ShaderUniformMatrix2X4Helper)]
-        public static void UniformMatrix2X4Helper(int location)
-        {
-            GL.UniformMatrix2x4(location, 1, false, mat2x4.value);
-        }
-
-        [ReflectionMarker(ReflectionToken.ShaderUniformMatrix3X2Helper)]
-        public static void UniformMatrix3X2Helper(int location)
-        {
-            GL.UniformMatrix3x2(location, 1, false, mat3x2.value);
-        }
-
-        [ReflectionMarker(ReflectionToken.ShaderUniformMatrix3X3Helper)]
-        public static void UniformMatrix3Helper(int location)
-        {
-            GL.UniformMatrix3(location, 1, false, mat3.value);
-        }
-
-        [ReflectionMarker(ReflectionToken.ShaderUniformMatrix3X4Helper)]
-        public static void UniformMatrix3X4Helper(int location)
-        {
-            GL.UniformMatrix3x4(location, 1, false, mat3x4.value);
-        }
-
-        [ReflectionMarker(ReflectionToken.ShaderUniformMatrix4X2Helper)]
-        public static void UniformMatrix4X2Helper(int location)
-        {
-            GL.UniformMatrix4x2(location, 1, false, mat4x2.value);
-        }
-
-        [ReflectionMarker(ReflectionToken.ShaderUniformMatrix4X3Helper)]
-        public static void UniformMatrix4X3Helper(int location)
-        {
-            GL.UniformMatrix4x3(location, 1, false, mat4x3.value);
-        }
-
-        [ReflectionMarker(ReflectionToken.ShaderUniformMatrix4X4Helper)]
-        public static void UniformMatrix4Helper(int location)
-        {
-            GL.UniformMatrix4(location, false, ref mat4.value);
-        }
-
-        [ReflectionMarker(ReflectionToken.ShaderSamplerHelper)]
-        public static void UniformSamplerHelper(int location)
-        {
-            GL.Uniform1(location, Sampler.value);
-        }
-
         private void CacheUniforms()
         {
             var typ = GetShaderType();
-            var impl = GetImplType();
+            var impl = GetImplementingType();
 
             foreach (var prop in typ.GetProperties(BindingFlagsAny))
             {
@@ -973,28 +840,25 @@ namespace IIS.SLSharp
             return name;
         }
 
-
         private static readonly string[] _attribStrings = new[]
-                                                              {
-                                                                  typeof (VaryingAttribute).FullName,
-                                                                  typeof (VertexInAttribute).FullName,
-                                                                  typeof (FragmentOutAttribute).FullName
-                                                              };
+        {
+            typeof(VaryingAttribute).FullName,
+            typeof(VertexInAttribute).FullName,
+            typeof(FragmentOutAttribute).FullName,
+        };
 
         public static string ResolveName(FieldDefinition member)
         {
-            if (member.CustomAttributes.Any((x) => _attribStrings.Contains(x.AttributeType.FullName)))
-                GetVaryingName(member);
-            return member.Name;
+            return member.CustomAttributes.Any(x => _attribStrings.Contains(x.AttributeType.FullName)) ?
+                GetVaryingName(member) : member.Name;
         }
 
         public static string ResolveName(PropertyDefinition member)
         {
-            if (member.CustomAttributes.Any((x) => _attribStrings.Contains(x.AttributeType.FullName)))
-                GetUniformName(member);
-            return member.Name;
+            return member.CustomAttributes.Any(x => _attribStrings.Contains(x.AttributeType.FullName)) ?
+                GetUniformName(member) : member.Name;
         }
-        
+
         public static string ResolveName(MemberInfo member)
         {
             if (member.MemberType == MemberTypes.Method)
@@ -1008,11 +872,11 @@ namespace IIS.SLSharp
             return member.Name;
         }
 
-        public int AttributeLocation<T>(Expression<Func<T>> expr)
+        public static int AttributeLocation<T>(Shader shader, Expression<Func<T>> expr)
         {
             var body = ((MemberExpression)expr.Body);
             var globalName = GetVaryingName(body.Member as FieldInfo);
-            var loc = GL.GetAttribLocation(Name, globalName);
+            var loc = GL.GetAttribLocation(shader.Name, globalName);
             Utilities.CheckGL();
             return loc;
         }
@@ -1044,7 +908,7 @@ namespace IIS.SLSharp
                 new Vector2(0.0f, 0.0f),
                 new Vector2(1.0f, 0.0f),
                 new Vector2(1.0f, 1.0f),
-                new Vector2(0.0f, 1.0f)
+                new Vector2(0.0f, 1.0f),
             };
 
             GL.GenBuffers(1, out _quadVbo);
@@ -1069,25 +933,25 @@ namespace IIS.SLSharp
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
 
-        protected void RenderQuad(int location)
+        public static void RenderQuad(Shader shader, int location)
         {
             RenderQuad(location, 0);
         }
 
-        protected void RenderQuad<T>(Expression<Func<T>> vertexLocation)
+        public static void RenderQuad<T>(Shader shader, Expression<Func<T>> vertexLocation)
         {
-            var loca = AttributeLocation(vertexLocation);
+            var loca = AttributeLocation(shader, vertexLocation);
             RenderQuad(loca, 0);
         }
 
-        protected void RenderPositiveQuad(int location)
+        public static void RenderPositiveQuad(Shader shader, int location)
         {
             RenderQuad(location, 4);
         }
 
-        protected void RenderPositiveQuad<T>(Expression<Func<T>> vertexLocation)
+        public static void RenderPositiveQuad<T>(Shader shader, Expression<Func<T>> vertexLocation)
         {
-            var loca = AttributeLocation(vertexLocation);
+            var loca = AttributeLocation(shader, vertexLocation);
             RenderQuad(loca, 4);
         }
     }

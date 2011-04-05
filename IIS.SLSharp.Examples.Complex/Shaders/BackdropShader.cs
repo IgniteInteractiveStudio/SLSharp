@@ -75,7 +75,7 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
             MaxScale = 2.0f;
             var s = (float)(Math.Cos(time * MathHelper.TwoPi) + 1.0f) * 0.5f + 0.05f;
             Scale = new Vector2(s * aspect, s);
-            RenderQuad(() => GlVertex);
+            RenderQuad(this, () => GlVertex);
         }
     }
 }

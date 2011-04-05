@@ -57,7 +57,7 @@ namespace IIS.SLSharp.Examples.Simple.Shaders
 
         public void RenderQuad()
         {
-            RenderQuad(() => Vertex);
+            RenderQuad(this, () => Vertex);
         }
     }
 }

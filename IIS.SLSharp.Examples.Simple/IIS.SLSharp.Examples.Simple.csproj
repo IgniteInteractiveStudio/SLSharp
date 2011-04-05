@@ -55,9 +55,6 @@
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IIS.SLSharp">
-      <HintPath>..\..\Dependencies\IIS.SLSharp.dll</HintPath>
-    </Reference>
     <Reference Include="OpenTK">
       <HintPath>..\Dependencies\OpenTK.dll</HintPath>
     </Reference>
@@ -71,6 +68,12 @@
     <Compile Include="Shaders\InvertShader.cs" />
     <Compile Include="Shaders\MyShader.cs" />
     <Compile Include="Program.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IIS.SLSharp\IIS.SLSharp.csproj">
+      <Project>{ECF58025-4591-4708-8EC9-4B95A5673DDA}</Project>
+      <Name>IIS.SLSharp</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
