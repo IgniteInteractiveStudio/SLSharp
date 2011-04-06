@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using IIS.SLSharp.Annotations;
+﻿using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Shaders;
 
 namespace IIS.SLSharp.Examples.Simple.Shaders

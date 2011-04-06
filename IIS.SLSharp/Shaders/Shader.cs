@@ -470,7 +470,7 @@ namespace IIS.SLSharp.Shaders
             return GetGlobalName(fullName);
         }
 
-        public static string GetUniformName(PropertyDefinition prop)
+        public static string GetUniformName(IMemberDefinition prop)
         {
             var fullName = "U@" + prop.DeclaringType.FullName + "." + prop.Name;
             return GetGlobalName(fullName);
@@ -482,13 +482,13 @@ namespace IIS.SLSharp.Shaders
             return GetGlobalName(fullName);
         }
 
-        public static string GetVaryingName(FieldDefinition prop)
+        public static string GetVaryingName(IMemberDefinition prop)
         {
             var fullName = "P@" + prop.DeclaringType.FullName + "." + prop.Name;
             return GetGlobalName(fullName);
         }
 
-        public static string GetMethodName(MethodDefinition prop)
+        public static string GetMethodName(IMemberDefinition prop)
         {
             var fullName = "M@" + prop.DeclaringType.FullName + "." + prop.Name;
             return GetGlobalName(fullName);
@@ -821,6 +821,7 @@ namespace IIS.SLSharp.Shaders
             }
         }
 
+        [Obsolete]
         public static string ResolveName(Type t, string name)
         {
             var prop = t.GetProperty(name, BindingFlagsAny);
@@ -847,18 +848,37 @@ namespace IIS.SLSharp.Shaders
             typeof(FragmentOutAttribute).FullName,
         };
 
+        private static readonly string _uniformString = typeof (UniformAttribute).FullName;
+
+        [Obsolete]
         public static string ResolveName(FieldDefinition member)
         {
             return member.CustomAttributes.Any(x => _attribStrings.Contains(x.AttributeType.FullName)) ?
                 GetVaryingName(member) : member.Name;
         }
 
+        [Obsolete]
         public static string ResolveName(PropertyDefinition member)
         {
             return member.CustomAttributes.Any(x => _attribStrings.Contains(x.AttributeType.FullName)) ?
                 GetUniformName(member) : member.Name;
         }
 
+        public static string ResolveName(IMemberDefinition member)
+        {
+            if (member is MethodDefinition)
+                return GetMethodName(member);
+
+            if (member.CustomAttributes.Any(x => _attribStrings.Contains(x.AttributeType.FullName)))
+                return GetVaryingName(member);
+
+            if (member.CustomAttributes.Any(x => x.AttributeType.FullName == _uniformString))
+                return GetUniformName(member);
+
+            return member.Name;
+        }
+
+        [Obsolete]
         public static string ResolveName(MemberInfo member)
         {
             if (member.MemberType == MemberTypes.Method)

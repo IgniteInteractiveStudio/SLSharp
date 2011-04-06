@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.NRefactory.CSharp;
 using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Shaders;
@@ -10,11 +11,10 @@ using Mono.Cecil;
 
 namespace IIS.SLSharp.Translation
 {
-    internal sealed partial class GlslVisitor2 : IAstVisitor<int, int>
+    internal sealed partial class GlslVisitor2 : IAstVisitor<int, StringBuilder>
     {
         private readonly HashSet<string> _functions = new HashSet<string>();
 
-        private readonly StringBuilder _s = new StringBuilder();
 
         private readonly IShaderAttribute _attr;
 
@@ -23,66 +23,7 @@ namespace IIS.SLSharp.Translation
             get { return _functions; }
         }
 
-        public string Result
-        {
-            get { return _s.ToString(); }
-        }
-
-        private int _indent;
-
-        private int Indent
-        {
-            get { return _indent; }
-            set
-            {
-                if (value == _indent)
-                    return;
-
-                var ds = string.Empty;
-                if (value > _indent)
-                {
-                    var d = value - _indent;
-                    for (var i = 0; i < d; i++)
-                        ds += "    ";
-
-                    _s.Append(ds);
-                    _indentString += ds;
-                }
-                else
-                {
-                    var d = (_indent - value) * 4;
-                    if (_s.ToString().EndsWith(_indentString))
-                        _s.Remove(_s.Length - d, d);
-
-                    _indentString = _indentString.Remove(0, d);
-                }
-
-                _indent = value;
-            }
-        }
-
-        private string _indentString = string.Empty;
-
-        private string DoIndent(string s)
-        {
-            return s.Replace(Environment.NewLine, Environment.NewLine + _indentString);
-        }
-
-        private void Append(string s)
-        {
-            _s.Append(DoIndent(s));
-        }
-
-        private void AppendLine(string s)
-        {
-            _s.AppendLine(DoIndent(s));
-            _s.Append(_indentString);
-        }
-
-        private void AppendFormat(string s, params object[] args)
-        {
-            _s.AppendFormat(DoIndent(s), args);
-        }
+        
 
         public static string ToGlslType(TypeReference t)
         {
@@ -119,10 +60,7 @@ namespace IIS.SLSharp.Translation
             { "op_RightShift", " >> " },
         };
 
-        public static string GetMethodName(MethodDefinition m)
-        {
-            return Shader.GetMethodName(m);
-        }
+        public string Result { get; private set; }
 
         public static string GetParameterString(MethodDefinition m)
         {
@@ -144,7 +82,7 @@ namespace IIS.SLSharp.Translation
         private static string GetSignature(MethodDefinition m)
         {
             return ToGlslType(m.ReturnType) + " " +
-                GetMethodName(m) + "(" +
+                Shader.GetMethodName(m) + "(" +
                 GetParameterString(m) + ")";
         }
 
@@ -163,124 +101,124 @@ namespace IIS.SLSharp.Translation
             _functions.Add(GetSignature(m));
         }
 
-        private void ArgsToString(ICollection<Expression> args)
+        private StringBuilder ArgsToString(ICollection<Expression> args)
         {
+            var result = new StringBuilder();
             if (args.Count <= 0)
-                return;
+                return result;
 
             foreach (var v in args.Take(args.Count - 1))
             {
-                v.AcceptVisitor(this, 0);
-                Append(",");
+                result.Append(v.AcceptVisitor(this, 0));
+                result.Append(",");
             }
 
-            args.Last().AcceptVisitor(this, 0);
+            result.Append(args.Last().AcceptVisitor(this, 0));
+            return result;
+        }
+
+        private static StringBuilder Indent(StringBuilder b)
+        {
+            var res = new StringBuilder();
+            res.Append("\t");
+            res.Append(b.Replace(Environment.NewLine, "\t" + Environment.NewLine));
+            return res;
         }
 
         public GlslVisitor2(BlockStatement block, IShaderAttribute attr)
         {
             _attr = attr;
+
+            var trans = (IAstTransform)new ReplaceMethodCallsWithOperators();
+            trans.Run(block);
+
             block.AcceptVisitor(this, 0);
         }
 
-        public int VisitBlockStatement(BlockStatement blockStatement, int data)
+        public StringBuilder VisitBlockStatement(BlockStatement blockStatement, int data)
         {
-            AppendLine(Environment.NewLine + "{");
-            Indent++;
-
+            var result = new StringBuilder();
+            result.Append("{");
             foreach (var stm in blockStatement.Statements)
-                stm.AcceptVisitor(this, data);
-
-            Indent--;
-            AppendLine("}");
-            return 0;
+                result.Append(Indent(stm.AcceptVisitor(this, data)));
+            result.Append("}");
+            return result;
         }
 
-        public int VisitExpressionStatement(ExpressionStatement expressionStatement, int data)
+        public StringBuilder VisitExpressionStatement(ExpressionStatement expressionStatement, int data)
         {
-            expressionStatement.Expression.AcceptVisitor(this, data);
-            Append(";");
-            return 0;
+            return expressionStatement.Expression.AcceptVisitor(this, data).Append(";");
         }
 
-        public int VisitAssignmentExpression(AssignmentExpression assignmentExpression, int data)
+        public StringBuilder VisitAssignmentExpression(AssignmentExpression assignmentExpression, int data)
         {
-            assignmentExpression.Left.AcceptVisitor(this, data);
-            Append(" = ");
-            assignmentExpression.Right.AcceptVisitor(this, data);
-            return 0;
+            var result = assignmentExpression.Left.AcceptVisitor(this, data);
+            result.Append(" = ");
+            result.Append(assignmentExpression.Right.AcceptVisitor(this, data));
+            return result;
         }
 
-        public int VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, int data)
+        public StringBuilder VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, int data)
         {
+            var result = new StringBuilder();
             if (!(memberReferenceExpression.Target is ThisReferenceExpression))
-            {
-                memberReferenceExpression.Target.AcceptVisitor(this, 0);
-                Append(".");
-            }
+                result.Append(memberReferenceExpression.Target.AcceptVisitor(this, 0)).Append(".");
 
-            var anno = memberReferenceExpression.Annotation<FieldDefinition>();
-            if (anno != null)
-            {
-                Append(Shader.ResolveName(anno));
-                return 0;
-            }
-
-            var annop = memberReferenceExpression.Annotation<PropertyDefinition>();
-            if (annop != null)
-            {
-                Append(Shader.ResolveName(annop));
-                return 0;
-            }
-
-            throw new NotImplementedException();
+            // Annotation could be FieldReference which aint compatible to IMemberDefinition
+            // var mref = memberReferenceExpression.Annotation<MemberReference>();
+            //Shader.ResolveName(mref);
+            return result.Append(Shader.ResolveName(memberReferenceExpression.Annotation<IMemberDefinition>()));
         }
 
-        public int VisitInvocationExpression(InvocationExpression invocationExpression, int data)
+        public StringBuilder VisitInvocationExpression(InvocationExpression invocationExpression, int data)
         {
             //Console.WriteLine(invocationExpression.Target);
 
-            var anno = invocationExpression.Annotation<MethodDefinition>();
-            RegisterMethod(anno);
-            Append(GetMethodName(anno));
-            //invocationExpression.Target.AcceptVisitor(this, 0);
-            
-            Append("(");
-            ArgsToString(invocationExpression.Arguments);
-            Append(")");
-            return 0;
+            var result = new StringBuilder();
+            var mref = invocationExpression.Annotation<MethodReference>();
+            var m = mref != null ? mref.Resolve() : invocationExpression.Annotation<MethodDefinition>();
+            if (m != null)
+            {
+                RegisterMethod(m);
+                result.Append(Shader.GetMethodName(m));
+                return result.Append("(").Append(ArgsToString(invocationExpression.Arguments)).Append(")");
+            }
+            throw new NotImplementedException();
         }
 
-        public int VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, int data)
+        public StringBuilder VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, int data)
         {
-            objectCreateExpression.Type.AcceptVisitor(this, 0);
-            Append("(");
-            ArgsToString(objectCreateExpression.Arguments);
-            Append(")");
-            return 0;
+            return
+                objectCreateExpression.Type.AcceptVisitor(this, 0).Append("(").Append(
+                    ArgsToString(objectCreateExpression.Arguments)).Append(")");
         }
 
-        public int VisitMemberType(MemberType memberType, int data)
+        public StringBuilder VisitMemberType(MemberType memberType, int data)
         {
-            Append(memberType.MemberName);
-            return 0;
+                return new StringBuilder(memberType.MemberName);
         }
 
-        public int VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, int data)
+        public StringBuilder VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, int data)
         {
-
+            var result = new StringBuilder();
             if (primitiveExpression.Value.GetType() == typeof(float))
             {
                 var s = ((float)primitiveExpression.Value).ToString(CultureInfo.InvariantCulture.NumberFormat);
+                result.Append(s);
                 if (!s.Contains("."))
-                    s += ".0";
+                   result.Append(".0");
 
-                Append(s);
+                return result;
             }
-            else
-                Append(primitiveExpression.Value.ToString());
+            
+            return result.Append(primitiveExpression.Value.ToString());
+        }
 
-            return 0;
+        public StringBuilder VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, int data)
+        {
+            var result = binaryOperatorExpression.Left.AcceptVisitor(this, 0);
+            result.Append(binaryOperatorExpression.Operator);
+            return result.Append(binaryOperatorExpression.Right.AcceptVisitor(this, 0));
         }
     }
 }

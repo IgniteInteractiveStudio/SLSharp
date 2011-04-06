@@ -11,507 +11,502 @@ namespace IIS.SLSharp.Translation
     {
         #region unimplemented
 
-        public int VisitAnonymousMethodExpression(AnonymousMethodExpression anonymousMethodExpression, int data)
+        public StringBuilder VisitAnonymousMethodExpression(AnonymousMethodExpression anonymousMethodExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitArgListExpression(ArgListExpression argListExpression, int data)
+        public StringBuilder VisitArgListExpression(ArgListExpression argListExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression, int data)
+        public StringBuilder VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitArrayInitializerExpression(ArrayInitializerExpression arrayInitializerExpression, int data)
+        public StringBuilder VisitArrayInitializerExpression(ArrayInitializerExpression arrayInitializerExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitAsExpression(AsExpression asExpression, int data)
+        public StringBuilder VisitAsExpression(AsExpression asExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitBaseReferenceExpression(BaseReferenceExpression baseReferenceExpression, int data)
+        public StringBuilder VisitBaseReferenceExpression(BaseReferenceExpression baseReferenceExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, int data)
+        public StringBuilder VisitCastExpression(CastExpression castExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitCastExpression(CastExpression castExpression, int data)
+        public StringBuilder VisitCheckedExpression(CheckedExpression checkedExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitCheckedExpression(CheckedExpression checkedExpression, int data)
+        public StringBuilder VisitConditionalExpression(ConditionalExpression conditionalExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitConditionalExpression(ConditionalExpression conditionalExpression, int data)
+        public StringBuilder VisitDefaultValueExpression(DefaultValueExpression defaultValueExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitDefaultValueExpression(DefaultValueExpression defaultValueExpression, int data)
+        public StringBuilder VisitDirectionExpression(DirectionExpression directionExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitDirectionExpression(DirectionExpression directionExpression, int data)
+        public StringBuilder VisitIdentifierExpression(IdentifierExpression identifierExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitIdentifierExpression(IdentifierExpression identifierExpression, int data)
+        public StringBuilder VisitIndexerExpression(IndexerExpression indexerExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitIndexerExpression(IndexerExpression indexerExpression, int data)
+        public StringBuilder VisitIsExpression(IsExpression isExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitIsExpression(IsExpression isExpression, int data)
+        public StringBuilder VisitLambdaExpression(LambdaExpression lambdaExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitLambdaExpression(LambdaExpression lambdaExpression, int data)
+        public StringBuilder VisitNamedArgumentExpression(NamedArgumentExpression namedArgumentExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitNamedArgumentExpression(NamedArgumentExpression namedArgumentExpression, int data)
+        public StringBuilder VisitNullReferenceExpression(NullReferenceExpression nullReferenceExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitNullReferenceExpression(NullReferenceExpression nullReferenceExpression, int data)
+        public StringBuilder VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, int data)
+        public StringBuilder VisitPointerReferenceExpression(PointerReferenceExpression pointerReferenceExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitPointerReferenceExpression(PointerReferenceExpression pointerReferenceExpression, int data)
+        public StringBuilder VisitSizeOfExpression(SizeOfExpression sizeOfExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitSizeOfExpression(SizeOfExpression sizeOfExpression, int data)
+        public StringBuilder VisitStackAllocExpression(StackAllocExpression stackAllocExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitStackAllocExpression(StackAllocExpression stackAllocExpression, int data)
+        public StringBuilder VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression, int data)
+        public StringBuilder VisitTypeOfExpression(TypeOfExpression typeOfExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitTypeOfExpression(TypeOfExpression typeOfExpression, int data)
+        public StringBuilder VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, int data)
+        public StringBuilder VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, int data)
+        public StringBuilder VisitUncheckedExpression(UncheckedExpression uncheckedExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitUncheckedExpression(UncheckedExpression uncheckedExpression, int data)
+        public StringBuilder VisitEmptyExpression(EmptyExpression emptyExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitEmptyExpression(EmptyExpression emptyExpression, int data)
+        public StringBuilder VisitQueryExpression(QueryExpression queryExpression, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitQueryExpression(QueryExpression queryExpression, int data)
+        public StringBuilder VisitQueryContinuationClause(QueryContinuationClause queryContinuationClause, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitQueryContinuationClause(QueryContinuationClause queryContinuationClause, int data)
+        public StringBuilder VisitQueryFromClause(QueryFromClause queryFromClause, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitQueryFromClause(QueryFromClause queryFromClause, int data)
+        public StringBuilder VisitQueryLetClause(QueryLetClause queryLetClause, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitQueryLetClause(QueryLetClause queryLetClause, int data)
+        public StringBuilder VisitQueryWhereClause(QueryWhereClause queryWhereClause, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitQueryWhereClause(QueryWhereClause queryWhereClause, int data)
+        public StringBuilder VisitQueryJoinClause(QueryJoinClause queryJoinClause, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitQueryJoinClause(QueryJoinClause queryJoinClause, int data)
+        public StringBuilder VisitQueryOrderClause(QueryOrderClause queryOrderClause, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitQueryOrderClause(QueryOrderClause queryOrderClause, int data)
+        public StringBuilder VisitQueryOrdering(QueryOrdering queryOrdering, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitQueryOrdering(QueryOrdering queryOrdering, int data)
+        public StringBuilder VisitQuerySelectClause(QuerySelectClause querySelectClause, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitQuerySelectClause(QuerySelectClause querySelectClause, int data)
+        public StringBuilder VisitQueryGroupClause(QueryGroupClause queryGroupClause, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitQueryGroupClause(QueryGroupClause queryGroupClause, int data)
+        public StringBuilder VisitAttribute(ICSharpCode.NRefactory.CSharp.Attribute attribute, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitAttribute(ICSharpCode.NRefactory.CSharp.Attribute attribute, int data)
+        public StringBuilder VisitAttribute(Attribute attribute, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitAttribute(Attribute attribute, int data)
+        public StringBuilder VisitAttributeSection(AttributeSection attributeSection, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitAttributeSection(AttributeSection attributeSection, int data)
+        public StringBuilder VisitDelegateDeclaration(DelegateDeclaration delegateDeclaration, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitDelegateDeclaration(DelegateDeclaration delegateDeclaration, int data)
+        public StringBuilder VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, int data)
+        public StringBuilder VisitTypeDeclaration(TypeDeclaration typeDeclaration, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitTypeDeclaration(TypeDeclaration typeDeclaration, int data)
+        public StringBuilder VisitUsingAliasDeclaration(UsingAliasDeclaration usingAliasDeclaration, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitUsingAliasDeclaration(UsingAliasDeclaration usingAliasDeclaration, int data)
+        public StringBuilder VisitUsingDeclaration(UsingDeclaration usingDeclaration, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitUsingDeclaration(UsingDeclaration usingDeclaration, int data)
+        public StringBuilder VisitExternAliasDeclaration(ExternAliasDeclaration externAliasDeclaration, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitExternAliasDeclaration(ExternAliasDeclaration externAliasDeclaration, int data)
+        public StringBuilder VisitBreakStatement(BreakStatement breakStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitBreakStatement(BreakStatement breakStatement, int data)
+        public StringBuilder VisitCheckedStatement(CheckedStatement checkedStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitCheckedStatement(CheckedStatement checkedStatement, int data)
+        public StringBuilder VisitContinueStatement(ContinueStatement continueStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitContinueStatement(ContinueStatement continueStatement, int data)
+        public StringBuilder VisitDoWhileStatement(DoWhileStatement doWhileStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitDoWhileStatement(DoWhileStatement doWhileStatement, int data)
+        public StringBuilder VisitEmptyStatement(EmptyStatement emptyStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitEmptyStatement(EmptyStatement emptyStatement, int data)
+        public StringBuilder VisitFixedStatement(FixedStatement fixedStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitFixedStatement(FixedStatement fixedStatement, int data)
+        public StringBuilder VisitForeachStatement(ForeachStatement foreachStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitForeachStatement(ForeachStatement foreachStatement, int data)
+        public StringBuilder VisitForStatement(ForStatement forStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitForStatement(ForStatement forStatement, int data)
+        public StringBuilder VisitGotoCaseStatement(GotoCaseStatement gotoCaseStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitGotoCaseStatement(GotoCaseStatement gotoCaseStatement, int data)
+        public StringBuilder VisitGotoDefaultStatement(GotoDefaultStatement gotoDefaultStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitGotoDefaultStatement(GotoDefaultStatement gotoDefaultStatement, int data)
+        public StringBuilder VisitGotoStatement(GotoStatement gotoStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitGotoStatement(GotoStatement gotoStatement, int data)
+        public StringBuilder VisitIfElseStatement(IfElseStatement ifElseStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitIfElseStatement(IfElseStatement ifElseStatement, int data)
+        public StringBuilder VisitLabelStatement(LabelStatement labelStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitLabelStatement(LabelStatement labelStatement, int data)
+        public StringBuilder VisitLockStatement(LockStatement lockStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitLockStatement(LockStatement lockStatement, int data)
+        public StringBuilder VisitReturnStatement(ReturnStatement returnStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitReturnStatement(ReturnStatement returnStatement, int data)
+        public StringBuilder VisitSwitchStatement(SwitchStatement switchStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitSwitchStatement(SwitchStatement switchStatement, int data)
+        public StringBuilder VisitSwitchSection(SwitchSection switchSection, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitSwitchSection(SwitchSection switchSection, int data)
+        public StringBuilder VisitCaseLabel(CaseLabel caseLabel, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitCaseLabel(CaseLabel caseLabel, int data)
+        public StringBuilder VisitThrowStatement(ThrowStatement throwStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitThrowStatement(ThrowStatement throwStatement, int data)
+        public StringBuilder VisitTryCatchStatement(TryCatchStatement tryCatchStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitTryCatchStatement(TryCatchStatement tryCatchStatement, int data)
+        public StringBuilder VisitCatchClause(CatchClause catchClause, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitCatchClause(CatchClause catchClause, int data)
+        public StringBuilder VisitUncheckedStatement(UncheckedStatement uncheckedStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitUncheckedStatement(UncheckedStatement uncheckedStatement, int data)
+        public StringBuilder VisitUnsafeStatement(UnsafeStatement unsafeStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitUnsafeStatement(UnsafeStatement unsafeStatement, int data)
+        public StringBuilder VisitUsingStatement(UsingStatement usingStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitUsingStatement(UsingStatement usingStatement, int data)
+        public StringBuilder VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement, int data)
+        public StringBuilder VisitWhileStatement(WhileStatement whileStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitWhileStatement(WhileStatement whileStatement, int data)
+        public StringBuilder VisitYieldBreakStatement(YieldBreakStatement yieldBreakStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitYieldBreakStatement(YieldBreakStatement yieldBreakStatement, int data)
+        public StringBuilder VisitYieldStatement(YieldStatement yieldStatement, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitYieldStatement(YieldStatement yieldStatement, int data)
+        public StringBuilder VisitAccessor(Accessor accessor, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitAccessor(Accessor accessor, int data)
+        public StringBuilder VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, int data)
+        public StringBuilder VisitConstructorInitializer(ConstructorInitializer constructorInitializer, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitConstructorInitializer(ConstructorInitializer constructorInitializer, int data)
+        public StringBuilder VisitDestructorDeclaration(DestructorDeclaration destructorDeclaration, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitDestructorDeclaration(DestructorDeclaration destructorDeclaration, int data)
+        public StringBuilder VisitEnumMemberDeclaration(EnumMemberDeclaration enumMemberDeclaration, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitEnumMemberDeclaration(EnumMemberDeclaration enumMemberDeclaration, int data)
+        public StringBuilder VisitEventDeclaration(EventDeclaration eventDeclaration, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitEventDeclaration(EventDeclaration eventDeclaration, int data)
+        public StringBuilder VisitCustomEventDeclaration(CustomEventDeclaration customEventDeclaration, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitCustomEventDeclaration(CustomEventDeclaration customEventDeclaration, int data)
+        public StringBuilder VisitFieldDeclaration(FieldDeclaration fieldDeclaration, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitFieldDeclaration(FieldDeclaration fieldDeclaration, int data)
+        public StringBuilder VisitIndexerDeclaration(IndexerDeclaration indexerDeclaration, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitIndexerDeclaration(IndexerDeclaration indexerDeclaration, int data)
+        public StringBuilder VisitMethodDeclaration(MethodDeclaration methodDeclaration, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitMethodDeclaration(MethodDeclaration methodDeclaration, int data)
+        public StringBuilder VisitOperatorDeclaration(OperatorDeclaration operatorDeclaration, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitOperatorDeclaration(OperatorDeclaration operatorDeclaration, int data)
+        public StringBuilder VisitParameterDeclaration(ParameterDeclaration parameterDeclaration, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitParameterDeclaration(ParameterDeclaration parameterDeclaration, int data)
+        public StringBuilder VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, int data)
+        public StringBuilder VisitVariableInitializer(VariableInitializer variableInitializer, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitVariableInitializer(VariableInitializer variableInitializer, int data)
+        public StringBuilder VisitFixedFieldDeclaration(FixedFieldDeclaration fixedFieldDeclaration, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitFixedFieldDeclaration(FixedFieldDeclaration fixedFieldDeclaration, int data)
+        public StringBuilder VisitFixedVariableInitializer(FixedVariableInitializer fixedVariableInitializer, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitFixedVariableInitializer(FixedVariableInitializer fixedVariableInitializer, int data)
+        public StringBuilder VisitCompilationUnit(CompilationUnit compilationUnit, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitCompilationUnit(CompilationUnit compilationUnit, int data)
+        public StringBuilder VisitSimpleType(SimpleType simpleType, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitSimpleType(SimpleType simpleType, int data)
+        public StringBuilder VisitComposedType(ComposedType composedType, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitComposedType(ComposedType composedType, int data)
+        public StringBuilder VisitArraySpecifier(ArraySpecifier arraySpecifier, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitArraySpecifier(ArraySpecifier arraySpecifier, int data)
+        public StringBuilder VisitPrimitiveType(PrimitiveType primitiveType, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitPrimitiveType(PrimitiveType primitiveType, int data)
+        public StringBuilder VisitComment(Comment comment, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitComment(Comment comment, int data)
+        public StringBuilder VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, int data)
+        public StringBuilder VisitConstraint(Constraint constraint, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitConstraint(Constraint constraint, int data)
+        public StringBuilder VisitCSharpTokenNode(CSharpTokenNode cSharpTokenNode, int data)
         {
             throw new NotImplementedException();
         }
 
-        public int VisitCSharpTokenNode(CSharpTokenNode cSharpTokenNode, int data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int VisitIdentifier(Identifier identifier, int data)
+        public StringBuilder VisitIdentifier(Identifier identifier, int data)
         {
             throw new NotImplementedException();
         }
