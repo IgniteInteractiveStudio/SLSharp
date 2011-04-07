@@ -103,9 +103,14 @@ namespace IIS.SLSharp.Textures
             GL.TexParameter(Target, TextureParameterName.TextureMaxLod, maxLevel);
             GL.TexParameter(Target, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
 
-            if (Utilities.IsVersion(3) || Utilities.HasExtension("GL_EXT_framebuffer_object extension"))
+            if (Utilities.IsVersion(3) || Utilities.HasExtension("GL_EXT_framebuffer_object"))
                 GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-            GL.TexParameter(Target, TextureParameterName.GenerateMipmap, 1);
+            else
+            {
+                GL.TexParameter(Target, TextureParameterName.GenerateMipmap, 1);
+                throw new NotImplementedException("You currently GL_EXT_framebuffer_object; we need need testing here as the" +
+                    " fallback version doesnt seem to work.");
+            }
 
             Utilities.CheckGL();
         }

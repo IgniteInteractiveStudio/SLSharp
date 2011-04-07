@@ -516,7 +516,7 @@ namespace IIS.SLSharp.Shaders
 #if DEBUG
                     let comment = " // " + prop.DeclaringType.FullName + "." + prop.Name
 #else
-                    let comment = "";
+                    let comment = ""
 #endif
                     select "uniform " + glslType + " " + name + ";" + comment).Aggregate(string.Empty, (current, glslVar) =>
                         current + (glslVar + Environment.NewLine));
@@ -537,7 +537,7 @@ namespace IIS.SLSharp.Shaders
 #if DEBUG
                     let comment = " // " + field.DeclaringType.FullName + "." + field.Name
 #else
-                    let comment = "";
+                    let comment = ""
 #endif
                     select "varying " + glslType + " " + name + ";" + comment).Aggregate(string.Empty, (current, glslVar) =>
                         current + (glslVar + Environment.NewLine));
@@ -558,7 +558,7 @@ namespace IIS.SLSharp.Shaders
 #if DEBUG
                       let comment = " // " + field.DeclaringType.FullName + "." + field.Name
 #else
-                      let comment = "";
+                      let comment = ""
 #endif
 
                       select "in " + glslType + " " + name + ";" + comment).Aggregate(string.Empty, (current, glslVar) =>
@@ -575,7 +575,7 @@ namespace IIS.SLSharp.Shaders
 #if DEBUG
                       let comment = " // " + prop.DeclaringType.FullName + "." + prop.Name
 #else
-                      let comment = "";
+                      let comment = ""
 #endif
                       select "uniform " + glslType + " " + name + ";" + comment).Aggregate(string.Empty, (current, glslVar) =>
                           current + (glslVar + Environment.NewLine));
@@ -598,7 +598,7 @@ namespace IIS.SLSharp.Shaders
 #if DEBUG
                     let comment = " // " + field.DeclaringType.FullName + "." + field.Name
 #else
-                    let comment = "";
+                    let comment = ""
 #endif
                     select "out " + glslType + " " + name + ";").Aggregate(string.Empty, (current, glslVar) =>
                         current + (glslVar + Environment.NewLine));

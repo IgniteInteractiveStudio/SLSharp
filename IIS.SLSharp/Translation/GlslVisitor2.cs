@@ -252,7 +252,8 @@ namespace IIS.SLSharp.Translation
 
         public StringBuilder VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, int data)
         {
-            var result = binaryOperatorExpression.Left.AcceptVisitor(this, 0);
+            var result = new StringBuilder("(");
+            result.Append(binaryOperatorExpression.Left.AcceptVisitor(this, 0));
             switch (binaryOperatorExpression.Operator)
             {
                 case BinaryOperatorType.Multiply: result.Append(" * "); break;
@@ -274,7 +275,7 @@ namespace IIS.SLSharp.Translation
                 default:
                     throw new NotImplementedException();
             }
-            return result.Append(binaryOperatorExpression.Right.AcceptVisitor(this, 0));
+            return result.Append(binaryOperatorExpression.Right.AcceptVisitor(this, 0)).Append(")");
         }
 
         public StringBuilder VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, int data)
