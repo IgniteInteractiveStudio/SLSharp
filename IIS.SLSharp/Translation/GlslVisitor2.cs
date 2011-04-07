@@ -129,8 +129,10 @@ namespace IIS.SLSharp.Translation
         {
             _attr = attr;
 
-            var trans = (IAstTransform)new ReplaceMethodCallsWithOperators();
-            trans.Run(block);
+            var trans1 = (IAstTransform)new ReplaceMethodCallsWithOperators();
+            var trans2 = new RenameLocals();
+            trans1.Run(block);
+            trans2.Run(block);
 
             Result = block.AcceptVisitor(this, 0).ToString();
         }
@@ -138,7 +140,7 @@ namespace IIS.SLSharp.Translation
         public StringBuilder VisitBlockStatement(BlockStatement blockStatement, int data)
         {
             var result = new StringBuilder();
-            result.Append("{");
+            result.Append(Environment.NewLine).Append("{");
             foreach (var stm in blockStatement.Statements)
                 result.Append(Environment.NewLine).Append(Indent(stm.AcceptVisitor(this, data)));
             result.Append(Environment.NewLine).Append("}");

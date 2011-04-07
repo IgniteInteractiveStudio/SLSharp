@@ -91,6 +91,7 @@
     <Compile Include="Translation\GlslVisitor.cs" />
     <Compile Include="Translation\GlslVisitor2.cs" />
     <Compile Include="Translation\GlslVisitor2.Unimplemented.cs" />
+    <Compile Include="Translation\RenameLocals.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
