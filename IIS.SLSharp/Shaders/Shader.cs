@@ -534,10 +534,14 @@ namespace IIS.SLSharp.Shaders
                     let attr = (VaryingAttribute)attrs[0]
                     let glslType = GlslVisitor.ToGlslType((field).FieldType)
                     let name = GetVaryingName(field)
+
 #if DEBUG
+
                     let comment = " // " + field.DeclaringType.FullName + "." + field.Name
+
 #else
-                    let comment = ""
+
+                    let comment = string.Empty
 #endif
                     select "varying " + glslType + " " + name + ";" + comment).Aggregate(string.Empty, (current, glslVar) =>
                         current + (glslVar + Environment.NewLine));
@@ -555,10 +559,15 @@ namespace IIS.SLSharp.Shaders
                       let attr = (VertexInAttribute)attrs[0]
                       let glslType = GlslVisitor.ToGlslType((field).FieldType)
                       let name = GetVaryingName(field)
+
 #if DEBUG
+
                       let comment = " // " + field.DeclaringType.FullName + "." + field.Name
+
 #else
-                      let comment = ""
+
+                      let comment = string.Empty
+
 #endif
 
                       select "in " + glslType + " " + name + ";" + comment).Aggregate(string.Empty, (current, glslVar) =>
@@ -572,10 +581,14 @@ namespace IIS.SLSharp.Shaders
                       let attr = (VertexInAttribute)attrs[0]
                       let glslType = _typeMap[prop.PropertyType].Name
                       let name = GetUniformName(prop)
+
 #if DEBUG
                       let comment = " // " + prop.DeclaringType.FullName + "." + prop.Name
+
 #else
-                      let comment = ""
+
+                      let comment = string.Empty
+
 #endif
                       select "uniform " + glslType + " " + name + ";" + comment).Aggregate(string.Empty, (current, glslVar) =>
                           current + (glslVar + Environment.NewLine));
@@ -595,10 +608,14 @@ namespace IIS.SLSharp.Shaders
                     let attr = (FragmentOutAttribute)attrs[0]
                     let glslType = GlslVisitor.ToGlslType((field).FieldType)
                     let name = GetVaryingName(field)
+
 #if DEBUG
                     let comment = " // " + field.DeclaringType.FullName + "." + field.Name
+
 #else
-                    let comment = ""
+
+                    let comment = string.Empty
+
 #endif
                     select "out " + glslType + " " + name + ";").Aggregate(string.Empty, (current, glslVar) =>
                         current + (glslVar + Environment.NewLine));
@@ -711,12 +728,12 @@ namespace IIS.SLSharp.Shaders
             var baseBegin = ReflectionMarkerAttribute.FindMethod(
                  typeof(Shader), ReflectionToken.ShaderBegin);
 
-            var typ = typeof(T);
-            if (typ.IsNotPublic)
-                throw new Exception("Type " + typ.Name + " must be public");
+            var type = typeof(T);
+            if (type.IsNotPublic)
+                throw new Exception("Type " + type.Name + " must be public");
 
             ConstructorInfo ctor;
-            if (_ctors.TryGetValue(typ, out ctor))
+            if (_ctors.TryGetValue(type, out ctor))
             {
                 try
                 {
@@ -728,10 +745,10 @@ namespace IIS.SLSharp.Shaders
                 }
             }
 
-            var assemblyName = new AssemblyName { Name = "tmp_" + typ.Name };
+            var assemblyName = new AssemblyName { Name = "tmp_" + type.Name };
             var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
             var module = assemblyBuilder.DefineDynamicModule("tmpModule");
-            var typeBuilder = module.DefineType(typ.Name + "_impl", TypeAttributes.Public | TypeAttributes.Class, typ);
+            var typeBuilder = module.DefineType(type.Name + "_impl", TypeAttributes.Public | TypeAttributes.Class, type);
 
             var beginFun = typeBuilder.DefineMethod(baseBegin.Name, MethodAttributes.Virtual | MethodAttributes.Public, typeof(void), Type.EmptyTypes);
             var ilBeg = beginFun.GetILGenerator();
@@ -750,7 +767,7 @@ namespace IIS.SLSharp.Shaders
             ilBeg.Emit(OpCodes.Call, getName);
             ilBeg.Emit(OpCodes.Stloc, nameIndex);
 
-            foreach (var prop in typ.GetProperties(BindingFlagsAny))
+            foreach (var prop in type.GetProperties(BindingFlagsAny))
             {
                 var attr = prop.GetCustomAttributes(typeof(UniformAttribute), false);
                 if (attr.Length == 0)
@@ -784,11 +801,11 @@ namespace IIS.SLSharp.Shaders
             }
 
             ilBeg.Emit(OpCodes.Ldarg, 0);
-            ilBeg.Emit(OpCodes.Call, typ.GetMethod(baseBegin.Name, Type.EmptyTypes));
+            ilBeg.Emit(OpCodes.Call, type.GetMethod(baseBegin.Name, Type.EmptyTypes));
             ilBeg.Emit(OpCodes.Ret);
 
             // implement in accessors
-            foreach (var prop in typ.GetProperties(BindingFlagsAny))
+            foreach (var prop in type.GetProperties(BindingFlagsAny))
             {
                 var attr = prop.GetCustomAttributes(typeof(VertexInAttribute), false);
                 if (attr.Length == 0)
@@ -812,7 +829,7 @@ namespace IIS.SLSharp.Shaders
 
             var timpl = typeBuilder.CreateType();
             ctor = timpl.GetConstructor(Type.EmptyTypes);
-            _ctors[typ] = ctor;
+            _ctors[type] = ctor;
             return ctor;
         }
 
@@ -848,26 +865,6 @@ namespace IIS.SLSharp.Shaders
             }
         }
 
-        [Obsolete]
-        public static string ResolveName(Type t, string name)
-        {
-            var prop = t.GetProperty(name, BindingFlagsAny);
-            var field = t.GetField(name, BindingFlagsAny);
-
-            if (prop != null &&
-                (prop.GetCustomAttributes(typeof(UniformAttribute), false).Length != 0 ||
-                prop.GetCustomAttributes(typeof(VertexInAttribute), false).Length != 0))
-                return GetUniformName(prop);
-
-            if (field != null &&
-                (field.GetCustomAttributes(typeof(VaryingAttribute), false).Length != 0 ||
-                field.GetCustomAttributes(typeof(VertexInAttribute), false).Length != 0 ||
-                field.GetCustomAttributes(typeof(FragmentOutAttribute), false).Length != 0))
-                return GetVaryingName(field);
-
-            return name;
-        }
-
         private static readonly string[] _attribStrings = new[]
         {
             typeof(VaryingAttribute).FullName,
@@ -876,20 +873,6 @@ namespace IIS.SLSharp.Shaders
         };
 
         private static readonly string _uniformString = typeof (UniformAttribute).FullName;
-
-        [Obsolete]
-        public static string ResolveName(FieldDefinition member)
-        {
-            return member.CustomAttributes.Any(x => _attribStrings.Contains(x.AttributeType.FullName)) ?
-                GetVaryingName(member) : member.Name;
-        }
-
-        [Obsolete]
-        public static string ResolveName(PropertyDefinition member)
-        {
-            return member.CustomAttributes.Any(x => _attribStrings.Contains(x.AttributeType.FullName)) ?
-                GetUniformName(member) : member.Name;
-        }
 
         public static string ResolveName(IMemberDefinition member)
         {
@@ -905,20 +888,6 @@ namespace IIS.SLSharp.Shaders
             return member.Name;
         }
 
-        [Obsolete]
-        public static string ResolveName(MemberInfo member)
-        {
-            if (member.MemberType == MemberTypes.Method)
-                return GetMethodName(member as MethodInfo);
-            
-            if (member.GetCustomAttributes(typeof(VaryingAttribute), false).Length != 0 ||
-                member.GetCustomAttributes(typeof(VertexInAttribute), false).Length != 0 ||
-                member.GetCustomAttributes(typeof(FragmentOutAttribute), false).Length != 0)
-                return GetVaryingName(member as FieldInfo);
-
-            return member.Name;
-        }
-
         public static int AttributeLocation<T>(Shader shader, Expression<Func<T>> expr)
         {
             var body = ((MemberExpression)expr.Body);
@@ -928,7 +897,6 @@ namespace IIS.SLSharp.Shaders
             return loc;
         }
 
-        // TODO: should move this static stuff to seperate file!
         private static void RefShaders()
         {
             if (_refCount == 0)
