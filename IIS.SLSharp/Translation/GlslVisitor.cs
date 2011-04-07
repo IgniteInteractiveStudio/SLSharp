@@ -15,7 +15,7 @@ namespace IIS.SLSharp.Translation
     {
         private readonly HashSet<string> _functions = new HashSet<string>();
 
-        private readonly IShaderAttribute _attr;
+        private readonly CustomAttribute _attr;
 
         public IEnumerable<string> Functions
         {
@@ -62,7 +62,7 @@ namespace IIS.SLSharp.Translation
             return sig;
         }
 
-        private static string GetSignature(MethodDefinition m)
+        internal static string GetSignature(MethodDefinition m)
         {
             return ToGlslType(m.ReturnType) + " " +
                 Shader.GetMethodName(m) + "(" +
@@ -72,13 +72,13 @@ namespace IIS.SLSharp.Translation
         private void RegisterMethod(MethodDefinition m)
         {
             // generate signature
-            var neededTyp = _attr.GetType();
-            var attr = m.CustomAttributes.FirstOrDefault(a => a.AttributeType.FullName == neededTyp.FullName);
+            var neededTyp = _attr.AttributeType.Resolve();
+            var attr = m.CustomAttributes.FirstOrDefault(a => a.AttributeType.Resolve().MetadataToken == neededTyp.MetadataToken);
 
             if (attr == null)
                 throw new Exception("Called shader method has no " + neededTyp.Name + Environment.NewLine + GetSignature(m));
 
-            if ((bool)attr.ConstructorArguments[0].Value)
+            if ((bool)attr.ConstructorArguments.FirstOrDefault().Value)
                 throw new Exception("Cannot call shader entry point.");
 
             _functions.Add(GetSignature(m));
@@ -108,7 +108,7 @@ namespace IIS.SLSharp.Translation
             return res;
         }
 
-        public GlslVisitor(BlockStatement block, IShaderAttribute attr)
+        public GlslVisitor(BlockStatement block, CustomAttribute attr)
         {
             _attr = attr;
 

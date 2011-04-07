@@ -87,7 +87,6 @@
     <Compile Include="Textures\Texture1D.cs" />
     <Compile Include="Textures\Texture2D.cs" />
     <Compile Include="Textures\TextureCube.cs" />
-    <Compile Include="Translation\DebugTranslatorAttribute.cs" />
     <Compile Include="Translation\GlslTransform.cs" />
     <Compile Include="Translation\GlslVisitor.cs" />
     <Compile Include="Translation\GlslVisitor.Illegal.cs" />
