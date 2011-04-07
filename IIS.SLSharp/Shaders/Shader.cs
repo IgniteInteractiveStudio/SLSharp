@@ -397,8 +397,8 @@ namespace IIS.SLSharp.Shaders
         /// <summary>
         /// Collects the sources of all functions within this shader
         /// </summary>
-        /// <typeparam name="T">Specifies which shader type to collect for</typeparam>
         /// <param name="entryPoint">Returns the name of the function flagged as entrypoint</param>
+        /// <param name="metaToken"></param>
         /// <returns>A string containing the GLSL code for all collected functions</returns>
         private string CollectFuncs(out string entryPoint, int metaToken)
         {
@@ -411,8 +411,8 @@ namespace IIS.SLSharp.Shaders
             foreach (var m in _shader.Methods)
             {
                 //var attrs = m.GetCustomAttributes(typeof(T), false);
-                var attrs =
-                    m.CustomAttributes.Where((a) => a.AttributeType.Resolve().MetadataToken.ToInt32() == metaToken);
+                var attrs = m.CustomAttributes.Where(a =>
+                    a.AttributeType.Resolve().MetadataToken.ToInt32() == metaToken);
                 if (attrs.Count() == 0)
                     continue;
 
@@ -428,7 +428,6 @@ namespace IIS.SLSharp.Shaders
                     hasEntry = true;
                 }
 
-                
                 body += trans.Transform(_shader, m, attr) + Environment.NewLine;
             }
 
@@ -513,18 +512,25 @@ namespace IIS.SLSharp.Shaders
         private string CollectUniforms()
         {
             return (from prop in _shader.Properties
-                        let attrs = prop.CustomAttributes.Where((a) => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(UniformAttribute).MetadataToken)
-                        where attrs.Count() != 0
-                        let attr = attrs.First()
-                        let glslType = attr.ConstructorArguments.FirstOrDefault().Value as string ?? _typeMap[prop.PropertyType.Resolve().MetadataToken.ToInt32()].Name
-                        let name = GetUniformName(prop)
+                    let attrs = prop.CustomAttributes.Where((a) => a.AttributeType.Resolve().MetadataToken.ToInt32() ==
+                        typeof(UniformAttribute).MetadataToken)
+                    where attrs.Count() != 0
+                    let attr = attrs.First()
+                    let glslType = attr.ConstructorArguments.FirstOrDefault().Value as string ??
+                        _typeMap[prop.PropertyType.Resolve().MetadataToken.ToInt32()].Name
+                    let name = GetUniformName(prop)
+
 #if DEBUG
-                        let comment = " // " + prop.DeclaringType.FullName + "." + prop.Name
+
+                    let comment = " // " + prop.DeclaringType.FullName + "." + prop.Name
+
 #else
-                        let comment = ""
+
+                    let comment = string.Empty
+
 #endif
-                        select "uniform " + glslType + " " + name + ";" + comment).Aggregate(string.Empty, (current, glslVar) =>
-                            current + (glslVar + Environment.NewLine));
+                    select "uniform " + glslType + " " + name + ";" + comment).Aggregate(string.Empty, (current, glslVar) =>
+                        current + (glslVar + Environment.NewLine));
         }
 
         /// <summary>
@@ -539,11 +545,15 @@ namespace IIS.SLSharp.Shaders
                     let attr = attrs.First()
                     let glslType = GlslVisitor.ToGlslType(field.FieldType)
                     let name = GetVaryingName(field)
+
 #if DEBUG
                     let comment = " // " + field.DeclaringType.FullName + "." + field.Name
+
 #else
-                        let comment = ""
+
+                    let comment = string.Empty
 #endif
+
                     select "varying " + glslType + " " + name + ";" + comment).Aggregate(string.Empty, (current, glslVar) =>
                         current + (glslVar + Environment.NewLine));
         }
@@ -560,11 +570,17 @@ namespace IIS.SLSharp.Shaders
                       let attr = attrs.First()
                       let glslType = GlslVisitor.ToGlslType(field.FieldType)
                       let name = GetVaryingName(field)
+
 #if DEBUG
+
                       let comment = " // " + field.DeclaringType.FullName + "." + field.Name
+
 #else
-                        let comment = ""
+
+                      let comment = string.Empty
+
 #endif
+
                       select "in " + glslType + " " + name + ";" + comment).Aggregate(string.Empty, (current, glslVar) =>
                         current + (glslVar + Environment.NewLine));
 
@@ -576,11 +592,16 @@ namespace IIS.SLSharp.Shaders
                       let attr = attrs.First()
                       let glslType = _typeMap[prop.PropertyType.Resolve().MetadataToken.ToInt32()].Name
                       let name = GetUniformName(prop)
+
 #if DEBUG
+
                       let comment = " // " + prop.DeclaringType.FullName + "." + prop.Name
+
 #else
-                        let comment = ""
+
+                      let comment = string.Empty
 #endif
+
                       select "uniform " + glslType + " " + name + ";" + comment).Aggregate(string.Empty, (current, glslVar) =>
                             current + (glslVar + Environment.NewLine));
 
@@ -599,11 +620,17 @@ namespace IIS.SLSharp.Shaders
                     let attr = attrs.First()
                     let glslType = GlslVisitor.ToGlslType(field.FieldType)
                     let name = GetVaryingName(field)
+
 #if DEBUG
+
                     let comment = " // " + field.DeclaringType.FullName + "." + field.Name
+
 #else
-                        let comment = ""
+
+                    let comment = string.Empty
+
 #endif
+
                     select "out " + glslType + " " + name + ";" + comment).Aggregate(string.Empty, (current, glslVar) =>
                         current + (glslVar + Environment.NewLine));
         }

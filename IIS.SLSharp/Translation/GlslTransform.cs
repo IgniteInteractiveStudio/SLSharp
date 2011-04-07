@@ -21,6 +21,7 @@ namespace IIS.SLSharp.Translation
         /// Public translation interface.
         /// Translates the given method to GLSL
         /// </summary>
+        /// <param name="s">Shader type definition.</param>
         /// <param name="m">A method representing a shader to translate.</param>
         /// <param name="attr">The shader type pass either (FragmentShaderAttribute or VertexShaderAttribute) </param>
         /// <returns>The translated GLSL shader source</returns>
