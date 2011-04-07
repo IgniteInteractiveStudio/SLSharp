@@ -9,6 +9,7 @@ namespace IIS.SLSharp.Translation
     internal sealed class RenameLocals: IAstTransform
     {
         private int _ctr;
+
         private readonly Dictionary<string, string> _locals = new Dictionary<string, string>();
 
         public void Run(AstNode node)
@@ -20,7 +21,6 @@ namespace IIS.SLSharp.Translation
                 _locals[n.Name] = newName;
                 n.ReplaceWith(new VariableInitializer(newName, n.Initializer));
             }
-
 
             if (node is IdentifierExpression)
             {

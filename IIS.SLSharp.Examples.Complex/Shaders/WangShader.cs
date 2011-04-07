@@ -4,7 +4,7 @@ using IIS.SLSharp.Textures;
 
 namespace IIS.SLSharp.Examples.Complex.Shaders
 {
-    public abstract class WangShader: Shader
+    public abstract class WangShader : Shader
     {
         [Uniform]
         public abstract sampler2D WangTiles { set; get; }

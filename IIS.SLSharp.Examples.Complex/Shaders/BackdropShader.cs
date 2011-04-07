@@ -39,7 +39,7 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
         [VertexShader(true)]
         public void VertexMain()
         {
-            _uv = (GlVertex.xy) * 0.5f * Scale * MaxScale;
+            _uv = GlVertex.xy * 0.5f * Scale * MaxScale;
             gl_Position = GlVertex;
         }
 

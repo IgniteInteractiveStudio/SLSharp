@@ -2,450 +2,57 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 using System.Text;
+using ICSharpCode.Decompiler.Ast.Transforms;
+using ICSharpCode.NRefactory.CSharp;
 using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Shaders;
+using Mono.Cecil;
 
 namespace IIS.SLSharp.Translation
 {
-    /// <summary>
-    /// Visitor used to translate an Expression tree to GLSL source
-    /// This is internally used by GlslTransform.Transform()
-    /// </summary>
-    internal sealed class GlslVisitor : ExpressionVisitor
+    internal sealed partial class GlslVisitor : IAstVisitor<int, StringBuilder>
     {
         private readonly HashSet<string> _functions = new HashSet<string>();
+
+        private readonly IShaderAttribute _attr;
 
         public IEnumerable<string> Functions
         {
             get { return _functions; }
         }
 
-        private readonly StringBuilder _s = new StringBuilder();
-
-        private readonly IShaderAttribute _attr;
-
-        private int _indent;
-
-        private int Indent
+        public static string ToGlslType(TypeReference t)
         {
-            get { return _indent; } 
-            set
+            switch (t.FullName)
             {
-                if (value == _indent)
-                    return;
-                
-                var ds = string.Empty;
-                if (value > _indent)
-                {
-                    var d = value - _indent;
-                    for (var i = 0; i < d; i++)
-                        ds += "    ";
-
-                    _s.Append(ds);
-                    _indentString += ds;
-                }
-                else
-                {
-                    var d = (_indent - value) * 4;
-                    if (_s.ToString().EndsWith(_indentString))
-                        _s.Remove(_s.Length - d, d);
-
-                    _indentString = _indentString.Remove(0, d);
-                }
-                
-                _indent = value;
-            }
-        }
-
-        private string _indentString = string.Empty;
-
-        private string DoIndent(string s)
-        {
-            return s.Replace(Environment.NewLine, Environment.NewLine + _indentString);
-        }
-
-        private void Append(string s)
-        {
-            _s.Append(DoIndent(s));
-        }
-
-        private void AppendLine(string s)
-        {
-            _s.AppendLine(DoIndent(s));
-            _s.Append(_indentString);
-        }
-
-        private void AppendFormat(string s, params object[] args)
-        {
-            _s.AppendFormat(DoIndent(s), args);
-        }
-
-        public static string ToGlslType(Type t)
-        {
-            if (t == typeof(float))
-                return "float";
-
-            if (t == typeof(double))
-                return "double";
-
-            if (t == typeof(void))
-                return "void";
-
-            if (t == typeof(int))
-                return "int";
-
-            if (t == typeof(uint))
-                return "uint";
-
-            if (t == typeof(bool))
-                return "bool";
-
-            return t.Name;
-        }
-
-        private static bool IsTernaryConditional(ConditionalExpression node)
-        {
-            return node.Type != typeof(void) && (node.IfTrue.NodeType != ExpressionType.Block
-                || node.IfFalse.NodeType != ExpressionType.Block);
-        }
-
-        private static bool IsActualStatement(Expression expression)
-        {
-            switch (expression.NodeType)
-            {
-                case ExpressionType.Label:
-                    return false;
-                case ExpressionType.Conditional:
-                    return IsTernaryConditional((ConditionalExpression) expression);
-                case ExpressionType.Try:
-                case ExpressionType.Loop:
-                case ExpressionType.Switch:
-                    return false;
+                case "System.Single":
+                    return "float";
+                case "System.Double":
+                    return "double";
+                case "System.Void":
+                    return "void";
+                case "System.Int32":
+                    return "int";
+                case "System.UInt32":
+                    return "uint";
+                case "System.Boolean":
+                    return "bool";
                 default:
-                    return true;
+                    return t.Name;
             }
         }
 
-        private static bool RequiresExplicitReturn(BlockExpression node, int index, bool returnLast)
-        {
-            if (!returnLast)
-                return false;
+        public string Result { get; private set; }
 
-            var lastIndex = node.Expressions.Count - 1;
-            if (index != lastIndex)
-                return false;
-
-            var last = node.Expressions[lastIndex];
-            return last.NodeType != ExpressionType.Goto || ((GotoExpression)last).Kind != GotoExpressionKind.Return;
-        }
-
-        public string Result
-        {
-            get { return _s.ToString(); }
-        }
-
-        public GlslVisitor(Expression block, IShaderAttribute attr)
-        {
-            _attr = attr;
-
-            //try
-            //{
-                Visit(block);
-            //} 
-            /*catch (Exception e)
-            {
-                //Console.WriteLine(block.ToCSharpCode());
-                Console.WriteLine("Expression translation failed:{0}{1}", Environment.NewLine, e.Message);
-            }*/
-        }
-
-        public override Expression Visit(Expression node)
-        {
-            return /*node.Type == typeof(WhileExpression) ? VisitFor((WhileExpression) node) : */base.Visit(node);
-        }
-
-        private Expression VisitFor(/*WhileExpression node*/)
-        {
-            /*
-            Append("while (");
-            Visit(node.Comperator);
-            Append(")" + Environment.NewLine + "{" + Environment.NewLine);
-            Indent++;
-
-            foreach (var e in node.Body)
-            {
-                Visit(e);
-                AppendLine(";");
-            }
-
-            Indent--;
-            Append("}" + Environment.NewLine);
-
-            return node;
-            */
-            throw new NotImplementedException();
-        }
-
-        private readonly Dictionary<ExpressionType, string> _expToStr = new Dictionary<ExpressionType, string>
-        {
-            // Note: we only list binary operators here, see VisitUnary for unary operators
-            // arithmetic
-            { ExpressionType.Add, " + " },
-            { ExpressionType.Subtract, " - " },
-            { ExpressionType.Multiply, " * " },
-            { ExpressionType.Divide, " / " },
-            { ExpressionType.Modulo, " % " },
-            // bitwise
-            { ExpressionType.Or, " | " },
-            { ExpressionType.And, " & " },
-            { ExpressionType.ExclusiveOr, " ^ " },
-            { ExpressionType.LeftShift, " << " },
-            { ExpressionType.RightShift, " >> " },
-            // equivalence and comparison
-            { ExpressionType.LessThan, " < " },
-            { ExpressionType.LessThanOrEqual, " <= " },
-            { ExpressionType.GreaterThan, " > " },
-            { ExpressionType.GreaterThanOrEqual, " >= " },
-            { ExpressionType.Equal, " == " },
-            { ExpressionType.NotEqual, " != " },
-        };
-
-        protected override Expression VisitBinary(BinaryExpression node)
-        {
-            switch (node.NodeType)
-            {
-                case ExpressionType.ArrayIndex:
-                    Visit(node.Left);
-                    Append("[");
-                    Visit(node.Right);
-                    Append("]");
-                    break;
-                case ExpressionType.Assign:
-                    Visit(node.Left);
-                    Append(" = ");
-                    Visit(node.Right);
-                    break;
-                default:
-                    Append("(");
-                    Visit(node.Left);
-                    Append(_expToStr[node.NodeType]);
-                    Visit(node.Right);
-                    Append(")");
-                    break;
-            }
-            
-            return node;
-        }
-
-        protected override Expression VisitBlock(BlockExpression node)
-        {
-            AppendLine(Environment.NewLine + "{");
-            Indent++;
-
-            foreach (var v in node.Variables)
-            {
-                var t = ToGlslType(v.Type);
-                AppendFormat("{0} {1};" + Environment.NewLine, t, v.Name);
-            }
-
-            for (var i = 0; i < node.Expressions.Count; i++)
-            {
-                var e = node.Expressions[i];
-                if (IsActualStatement(e) && RequiresExplicitReturn(node, i, node.Type != typeof(void)))
-                    Append("return ");
-
-                Visit(e);
-
-                if (!IsActualStatement(e))
-                    continue;
-
-                AppendLine(";");
-            }
-
-            Indent--;
-            AppendLine("}");
-
-            return node;
-        }
-
-        protected override Expression VisitConditional(ConditionalExpression node)
-        {
-            Append("if (");
-            Visit(node.Test);
-            Append(")");
-            Visit(node.IfTrue);
-
-            if (node.IfFalse.NodeType != ExpressionType.Default)
-            {
-                Append("else");
-                Visit(node.IfFalse);
-            }
-
-            return node;
-        }
-
-        protected override Expression VisitConstant(ConstantExpression node)
-        {
-            if (node.Type == typeof(float))
-            {
-                var s = ((float)node.Value).ToString(CultureInfo.InvariantCulture.NumberFormat);
-                if (!s.Contains("."))
-                    s += ".0";
-
-                Append(s);
-            }
-            else
-                Append(node.Value.ToString());
-
-            return node;
-        }
-
-        protected override Expression VisitDebugInfo(DebugInfoExpression node)
-        {
-            throw new NotSupportedException("Debugging info is not supported in GLSL.");
-        }
-
-        protected override Expression VisitDynamic(DynamicExpression node)
-        {
-            throw new NotSupportedException("Dynamic code is not supported in GLSL.");
-        }
-
-        protected override Expression VisitDefault(DefaultExpression node)
-        {
-            var type = node.Type;
-            object value;
-
-            if (type == typeof(float))
-                value = default(float);
-            else if (type == typeof(double))
-                value = default(double);
-            else if (type == typeof(int))
-                value = default(int);
-            else if (type == typeof(uint))
-                value = default(uint);
-            else if (type == typeof(bool))
-                value = default(bool);
-            else
-                throw new NotSupportedException("Unsupported default type " + node.Type);
-
-            return VisitConstant(Expression.Constant(value));
-        }
-
-        protected override Expression VisitExtension(Expression node)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override Expression VisitGoto(GotoExpression node)
-        {
-            throw new NotSupportedException("Gotos and labels are not allowed in shaders.");
-        }
-
-        protected override Expression VisitInvocation(InvocationExpression node)
-        {
-            throw new NotSupportedException();
-        }
-
-        protected override LabelTarget VisitLabelTarget(LabelTarget node)
-        {
-            throw new NotSupportedException("Gotos and labels are not allowed in shaders.");
-        }
-
-        protected override Expression VisitLabel(LabelExpression node)
-        {
-            throw new NotSupportedException("Gotos and labels are not allowed in shaders.");
-        }
-
-        protected override Expression VisitLambda<T>(Expression<T> node)
-        {
-            throw new NotSupportedException();
-        }
-
-        protected override Expression VisitLoop(LoopExpression node)
-        {
-            // TODO: decompose the node body and turn it into a while (true) (WhileExpression)
-            throw new NotImplementedException();
-        }
-
-        protected override Expression VisitMember(MemberExpression node)
-        {
-            //if (node.Expression.Name != "this")
-            if (node.Member.DeclaringType != typeof(ShaderDefinition))
-            {
-                //if (node.Expression)
-                var pe = node.Expression as ParameterExpression;
-                if (pe == null || pe.Name != "this")
-                {
-                    Visit(node.Expression);
-                    Append(".");
-                }
-            }
-
-            Append(Shader.ResolveName(node.Member));
-            return node;
-        }
-
-        protected override Expression VisitIndex(IndexExpression node)
-        {
-            throw new NotSupportedException("Indexing custom types is not allowed in GLSL.");
-        }
-
-        private readonly Dictionary<string, Tuple<string, bool>> _unaryOpMapping = new Dictionary<string, Tuple<string, bool>>
-        {
-            // name -> (op, shouldPrepend)
-            { "op_UnaryPlus", Tuple.Create("+", true) },
-            { "op_UnaryNegation", Tuple.Create("-", true) },
-            { "op_LogicalNot", Tuple.Create("!", true) },
-            { "op_OnesComplement", Tuple.Create("~", true) },
-            // since compilers usually don't emit separate methods for pre/post-inc/dec, we use post-inc/dec by default
-            { "op_Increment", Tuple.Create("++", false) },
-            { "op_Decrement", Tuple.Create("--", false) },
-        };
-
-        private readonly Dictionary<string, string> _binaryOpMapping = new Dictionary<string, string>
-        {
-            { "op_Multiply", " * " },
-            { "op_Division", " / " },
-            { "op_Addition", " + " },
-            { "op_Subtraction", " - " },
-            { "op_Modulus", " % " },
-            { "op_BitwiseOr", " | " },
-            { "op_BitwiseAnd", " & " },
-            { "op_ExclusiveOr", " ^ " },
-            { "op_LeftShift", " << " },
-            { "op_RightShift", " >> " },
-        };
-
-        private void ArgsToString(ICollection<Expression> args)
-        {
-            if (args.Count <= 0)
-                return;
-
-            foreach (var v in args.Take(args.Count - 1))
-            {
-                Visit(v);
-                Append(",");
-            }
-
-            Visit(args.Last());
-        }
-
-        public static string GetMethodName(MethodInfo m)
-        {
-            return Shader.ResolveName(m);
-        }
-
-        public static string GetParameterString(MethodInfo m)
+        public static string GetParameterString(MethodDefinition m)
         {
             var sig = string.Empty;
-            var parameters = m.GetParameters();
 
-            if (parameters.Length > 0)
+            var parameters = m.Parameters;
+            if (parameters.Count > 0)
             {
-                sig = parameters.Take(parameters.Length - 1).Aggregate(sig, (current, v) =>
+                sig = parameters.Take(parameters.Count - 1).Aggregate(sig, (current, v) =>
                     current + ToGlslType(v.ParameterType) + " " + v.Name + ",");
 
                 var l = parameters.Last();
@@ -455,236 +62,324 @@ namespace IIS.SLSharp.Translation
             return sig;
         }
 
-        public static string GetSignature(MethodInfo m)
+        private static string GetSignature(MethodDefinition m)
         {
             return ToGlslType(m.ReturnType) + " " +
-                GetMethodName(m) + "(" +
+                Shader.GetMethodName(m) + "(" +
                 GetParameterString(m) + ")";
         }
 
-        private void RegisterMethod(MethodInfo m)
+        private void RegisterMethod(MethodDefinition m)
         {
             // generate signature
             var neededTyp = _attr.GetType();
-            var attr = m.GetCustomAttributes(neededTyp, false); 
-            if (attr.Length == 0)
+            var attr = m.CustomAttributes.FirstOrDefault(a => a.AttributeType.FullName == neededTyp.FullName);
+
+            if (attr == null)
                 throw new Exception("Called shader method has no " + neededTyp.Name + Environment.NewLine + GetSignature(m));
 
-            if (((IShaderAttribute)attr[0]).EntryPoint)
-                throw new Exception("Cannot call shader entrypoint.");
+            if ((bool)attr.ConstructorArguments[0].Value)
+                throw new Exception("Cannot call shader entry point.");
 
             _functions.Add(GetSignature(m));
         }
 
-        protected override Expression VisitMethodCall(MethodCallExpression node)
+        private StringBuilder ArgsToString(ICollection<Expression> args)
         {
-            var m = node.Method;
-            var args = node.Arguments;
+            var result = new StringBuilder();
+            if (args.Count <= 0)
+                return result;
 
-            // the method must be either within ShaderDefinition
-            // or an "external" lib func
-
-            if (m.IsSpecialName && m.Name.StartsWith("op_"))
+            foreach (var v in args.Take(args.Count - 1))
             {
-                if (m.Name == "op_Implicit")
-                    return Visit(node.Arguments[0]);
-
-                switch (args.Count)
-                {
-                    case 2: // binary operator
-                        Append("(");
-                        Visit(args[0]);
-                        Append(_binaryOpMapping[m.Name]);
-                        Visit(args[1]);
-                        Append(")");
-                        break;
-                    case 1: // unary operator
-                        var unary = _unaryOpMapping[m.Name];
-
-                        // should we prepend the operator? (+, -, !, ~)
-                        if (unary.Item2)
-                            Append(unary.Item1);
-
-                        Visit(args[0]);
-
-                        // should we append the operator? (++, --)
-                        if (!unary.Item2)
-                            Append(unary.Item1);
-
-                        break;
-                    default:
-                        throw new NotImplementedException();
-                }
-
-                return node;
+                result.Append(v.AcceptVisitor(this, 0));
+                result.Append(",");
             }
 
-            if (node.Object != null)
+            result.Append(args.Last().AcceptVisitor(this, 0));
+            return result;
+        }
+
+        private static StringBuilder Indent(StringBuilder b)
+        {
+            var res = new StringBuilder();
+            res.Append("\t");
+            res.Append(b.Replace(Environment.NewLine, "\t" + Environment.NewLine));
+            return res;
+        }
+
+        public GlslVisitor(BlockStatement block, IShaderAttribute attr)
+        {
+            _attr = attr;
+
+            var trans1 = (IAstTransform)new ReplaceMethodCallsWithOperators();
+            var trans2 = new RenameLocals();
+            trans1.Run(block);
+            trans2.Run(block);
+
+            Result = block.AcceptVisitor(this, 0).ToString();
+        }
+
+        public StringBuilder VisitBlockStatement(BlockStatement blockStatement, int data)
+        {
+            var result = new StringBuilder();
+            result.Append(Environment.NewLine).Append("{");
+
+            foreach (var stm in blockStatement.Statements)
+                result.Append(Environment.NewLine).Append(Indent(stm.AcceptVisitor(this, data)));
+
+            result.Append(Environment.NewLine).Append("}");
+            return result;
+        }
+
+        public StringBuilder VisitExpressionStatement(ExpressionStatement expressionStatement, int data)
+        {
+            return expressionStatement.Expression.AcceptVisitor(this, data).Append(";");
+        }
+
+        public StringBuilder VisitAssignmentExpression(AssignmentExpression assignmentExpression, int data)
+        {
+            var result = assignmentExpression.Left.AcceptVisitor(this, data);
+
+            switch (assignmentExpression.Operator)
             {
-                if (m.IsSpecialName)
-                {
-                    if (m.Name.StartsWith("get_") && args.Count == 0)
-                    {
-                        var uniform = m.Name.Remove(0, 4);
-                        uniform = Shader.ResolveName(m.DeclaringType, uniform);
-
-                        // TODO: translate uniform to shared name
-                        Append(uniform);
-                        return node;
-                    }
-                }
-
-                // must be either a getter or a lib invocation
-                //Visit(node.Object);
-                //Append(".");
-                RegisterMethod(m);
-                Append(GetMethodName(m));
-            }
-            else
-                Append(m.Name);
-
-            AppendFormat("(");
-            ArgsToString(args);
-            Append(")");
-
-            return node;
-        }
-
-        protected override Expression VisitNewArray(NewArrayExpression node)
-        {
-            throw new NotSupportedException();
-        }
-
-        protected override Expression VisitNew(NewExpression node)
-        {
-            Append(node.Type.Name + "(");
-            ArgsToString(node.Arguments);
-            Append(")");
-
-            return node;
-        }
-
-        protected override Expression VisitParameter(ParameterExpression node)
-        {
-            Append(node.Name);
-            return node;
-        }
-
-        protected override Expression VisitRuntimeVariables(RuntimeVariablesExpression node)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override SwitchCase VisitSwitchCase(SwitchCase node)
-        {
-            throw new NotImplementedException("Switch tables are not supported yet.");
-        }
-
-        protected override Expression VisitSwitch(SwitchExpression node)
-        {
-            // TODO: implement switches
-            throw new NotImplementedException("Switch tables are not supported yet.");
-        }
-
-        protected override CatchBlock VisitCatchBlock(CatchBlock node)
-        {
-            throw new NotSupportedException("GLSL does not support exceptions.");
-        }
-
-        protected override Expression VisitTry(TryExpression node)
-        {
-            throw new NotSupportedException("GLSL does not support exceptions.");
-        }
-
-        protected override Expression VisitTypeBinary(TypeBinaryExpression node)
-        {
-            throw new NotSupportedException("GLSL does not support any kind of reflection.");
-        }
-
-        protected override Expression VisitUnary(UnaryExpression node)
-        {
-            switch (node.NodeType)
-            {
-                case ExpressionType.Negate:
-                    Append("-");
-                    Visit(node.Operand);
+                case AssignmentOperatorType.Assign:
+                    result.Append(" = ");
                     break;
-                case ExpressionType.UnaryPlus:
-                    Append("+");
-                    Visit(node.Operand);
+                case AssignmentOperatorType.Add:
+                    result.Append(" += ");
                     break;
-                case ExpressionType.Not:
-                    Append("!");
-                    Visit(node.Operand);
+                case AssignmentOperatorType.BitwiseAnd:
+                    result.Append(" &= ");
                     break;
-                case ExpressionType.OnesComplement:
-                    Append("~");
-                    Visit(node.Operand);
+                case AssignmentOperatorType.BitwiseOr:
+                    result.Append(" |= ");
                     break;
-                case ExpressionType.PreIncrementAssign:
-                    Append("++");
-                    Visit(node.Operand);
+                case AssignmentOperatorType.Divide:
+                    result.Append(" /= ");
                     break;
-                case ExpressionType.PostIncrementAssign:
-                    Visit(node.Operand);
-                    Append("++");
+                case AssignmentOperatorType.ExclusiveOr:
+                    result.Append(" ^= ");
                     break;
-                case ExpressionType.PreDecrementAssign:
-                    Append("--");
-                    Visit(node.Operand);
+                case AssignmentOperatorType.Modulus:
+                    result.Append(" %= ");
                     break;
-                case ExpressionType.PostDecrementAssign:
-                    Visit(node.Operand);
-                    Append("--");
+                case AssignmentOperatorType.Multiply:
+                    result.Append(" *= ");
                     break;
-                case ExpressionType.Convert:
-                    Append(ToGlslType(node.Type) + "(");
-                    Visit(node.Operand);
-                    Append(")");
+                case AssignmentOperatorType.ShiftLeft:
+                    result.Append(" <<= ");
+                    break;
+                case AssignmentOperatorType.ShiftRight:
+                    result.Append(" >>= ");
+                    break;
+                case AssignmentOperatorType.Subtract:
+                    result.Append(" -= ");
                     break;
                 default:
                     throw new NotImplementedException();
             }
 
-            //Append(node.Method);
-            //Visit(node.Operand);
-
-            return node;
+            result.Append(assignmentExpression.Right.AcceptVisitor(this, data));
+            return result;
         }
 
-        protected override Expression VisitMemberInit(MemberInitExpression node)
+        public StringBuilder VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, int data)
         {
-            throw new NotSupportedException();
+            var result = new StringBuilder();
+            if (!(memberReferenceExpression.Target is ThisReferenceExpression))
+                result.Append(memberReferenceExpression.Target.AcceptVisitor(this, 0)).Append(".");
+
+            // Annotation could be FieldReference which aint compatible to IMemberDefinition
+
+            //if (fref != null)
+            //    result.Append(Shader.ResolveName(fref));
+
+            //Shader.ResolveName(mref);
+            var def = memberReferenceExpression.Annotation<IMemberDefinition>();
+            if (def != null)
+                return result.Append(Shader.ResolveName(def));
+
+            var fref = memberReferenceExpression.Annotation<FieldReference>();
+            if (fref != null)
+                return result.Append(Shader.ResolveName((IMemberDefinition)fref.Resolve()));
+
+            throw new NotImplementedException();
         }
 
-        protected override Expression VisitListInit(ListInitExpression node)
+        public StringBuilder VisitInvocationExpression(InvocationExpression invocationExpression, int data)
         {
-            throw new NotSupportedException();
+            //Console.WriteLine(invocationExpression.Target);
+
+            var result = new StringBuilder();
+            var mref = invocationExpression.Annotation<MethodReference>();
+            var m = mref != null ? mref.Resolve() : invocationExpression.Annotation<MethodDefinition>();
+
+            if (m.DeclaringType.MetadataToken.ToInt32() == typeof(ShaderDefinition).MetadataToken)
+                return result.Append(m.Name).Append("(").Append(ArgsToString(invocationExpression.Arguments)).Append(")");
+
+            RegisterMethod(m);
+            result.Append(Shader.GetMethodName(m));
+            return result.Append("(").Append(ArgsToString(invocationExpression.Arguments)).Append(")");
         }
 
-        protected override ElementInit VisitElementInit(ElementInit node)
+        public StringBuilder VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, int data)
         {
-            throw new NotSupportedException();
+            return objectCreateExpression.Type.AcceptVisitor(this, 0).Append("(").Append(
+                ArgsToString(objectCreateExpression.Arguments)).Append(")");
         }
 
-        protected override MemberBinding VisitMemberBinding(MemberBinding node)
+        public StringBuilder VisitMemberType(MemberType memberType, int data)
         {
-            throw new NotSupportedException();
+            return new StringBuilder(memberType.MemberName);
         }
 
-        protected override MemberAssignment VisitMemberAssignment(MemberAssignment node)
+        public StringBuilder VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, int data)
         {
-            throw new NotSupportedException();
+            var result = new StringBuilder();
+            if (primitiveExpression.Value.GetType() == typeof(float))
+            {
+                var s = ((float)primitiveExpression.Value).ToString(CultureInfo.InvariantCulture.NumberFormat);
+                result.Append(s);
+                if (!s.Contains("."))
+                   result.Append(".0");
+
+                return result;
+            }
+            
+            return result.Append(primitiveExpression.Value.ToString());
         }
 
-        protected override MemberMemberBinding VisitMemberMemberBinding(MemberMemberBinding node)
+        public StringBuilder VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, int data)
         {
-            throw new NotSupportedException();
+            var result = new StringBuilder("(");
+            result.Append(binaryOperatorExpression.Left.AcceptVisitor(this, 0));
+
+            switch (binaryOperatorExpression.Operator)
+            {
+                case BinaryOperatorType.Multiply:
+                    result.Append(" * ");
+                    break;
+                case BinaryOperatorType.Divide:
+                    result.Append(" / ");
+                    break;
+                case BinaryOperatorType.Add:
+                    result.Append(" + ");
+                    break;
+                case BinaryOperatorType.Subtract:
+                    result.Append(" - ");
+                    break;
+                case BinaryOperatorType.Modulus:
+                    result.Append(" % ");
+                    break;
+                case BinaryOperatorType.BitwiseOr:
+                    result.Append(" | ");
+                    break;
+                case BinaryOperatorType.BitwiseAnd:
+                    result.Append(" & ");
+                    break;
+                case BinaryOperatorType.ExclusiveOr:
+                    result.Append(" ^ ");
+                    break;
+                case BinaryOperatorType.ShiftLeft:
+                    result.Append(" << ");
+                    break;
+                case BinaryOperatorType.ShiftRight:
+                    result.Append(" >> ");
+                    break;
+                case BinaryOperatorType.LessThan:
+                    result.Append(" < ");
+                    break;
+                case BinaryOperatorType.GreaterThan:
+                    result.Append(" > ");
+                    break;
+                case BinaryOperatorType.LessThanOrEqual:
+                    result.Append(" <= ");
+                    break;
+                case BinaryOperatorType.GreaterThanOrEqual:
+                    result.Append(" >= ");
+                    break;
+                case BinaryOperatorType.Equality:
+                    result.Append(" == ");
+                    break;
+                case BinaryOperatorType.InEquality:
+                    result.Append(" != ");
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+
+            return result.Append(binaryOperatorExpression.Right.AcceptVisitor(this, 0)).Append(")");
         }
 
-        protected override MemberListBinding VisitMemberListBinding(MemberListBinding node)
+        public StringBuilder VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, int data)
         {
-            throw new NotSupportedException();
+            var result = new StringBuilder();
+            var exp = unaryOperatorExpression.Expression.AcceptVisitor(this, 0);
+
+            switch (unaryOperatorExpression.Operator)
+            {
+                case UnaryOperatorType.Decrement: return result.Append("--").Append(exp);
+                case UnaryOperatorType.Increment: return result.Append("++").Append(exp);
+                case UnaryOperatorType.Minus: return result.Append("-").Append(exp);
+                case UnaryOperatorType.Plus: return result.Append("+").Append(exp);
+                case UnaryOperatorType.BitNot: return result.Append("~").Append(exp);
+                case UnaryOperatorType.Not: return result.Append("!").Append(exp);
+                case UnaryOperatorType.PostDecrement: return result.Append(exp).Append("--");
+                case UnaryOperatorType.PostIncrement: return result.Append(exp).Append("++");
+            }
+
+            throw new NotImplementedException();
+        }
+
+        public StringBuilder VisitReturnStatement(ReturnStatement returnStatement, int data)
+        {
+            var result = new StringBuilder();
+            result.Append("return");
+
+            var exp = returnStatement.Expression.AcceptVisitor(this, 0);
+            if (exp.Length > 0)
+                result.Append(" ").Append(exp);
+
+            result.Append(";");
+            return result;
+        }
+
+        public StringBuilder VisitIdentifierExpression(IdentifierExpression identifierExpression, int data)
+        {
+            return new StringBuilder(identifierExpression.Identifier);
+        }
+
+        public StringBuilder VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement, int data)
+        {
+            var result = new StringBuilder();
+            var typ = variableDeclarationStatement.Type.AcceptVisitor(this, 0);
+            foreach (var v in variableDeclarationStatement.Variables)
+                result.Append(typ).Append(" ").Append(v.AcceptVisitor(this, 0)).Append(";");
+
+            return result;
+        }
+
+        public StringBuilder VisitVariableInitializer(VariableInitializer variableInitializer, int data)
+        {
+            var result = new StringBuilder(variableInitializer.Name);
+            if (!variableInitializer.Initializer.IsNull)
+                result.Append(" = ").Append(variableInitializer.Initializer.AcceptVisitor(this, 0));
+            return result;
+        }
+
+        public StringBuilder VisitPrimitiveType(PrimitiveType primitiveType, int data)
+        {
+            return new StringBuilder(primitiveType.Keyword);
+        }
+
+        public StringBuilder VisitWhileStatement(WhileStatement whileStatement, int data)
+        {
+            var result = new StringBuilder("while (").Append(whileStatement.Condition.AcceptVisitor(this, 0)).Append(")");
+            result.Append(Environment.NewLine + "{");
+            result.Append(Indent(whileStatement.EmbeddedStatement.AcceptVisitor(this, 0)));
+            result.Append(Environment.NewLine + "}");
+            return result;
         }
     }
 }

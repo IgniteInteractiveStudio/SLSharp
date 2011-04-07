@@ -11,7 +11,7 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
     /// Implements a simplex noise shader as in
     /// http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter26.html
     /// </summary>
-    public abstract class SimplexNoiseShader: Shader
+    public abstract class SimplexNoiseShader : Shader
     {
         [Uniform]
         protected abstract sampler1D PermGradSampler { set; get; }

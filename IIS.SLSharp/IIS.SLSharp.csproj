@@ -76,6 +76,7 @@
     <Compile Include="Shaders\ShaderDefinition.Packing.cs" />
     <Compile Include="Shaders\ShaderDefinition.Vector.cs" />
     <Compile Include="Shaders\ShaderHelpers.cs" />
+    <Compile Include="SLSharpException.cs" />
     <Compile Include="Textures\BaseTexture.cs" />
     <Compile Include="Textures\Externals\LoaderDDS.cs" />
     <Compile Include="Textures\Externals\LoaderStatics.cs" />
@@ -89,8 +90,9 @@
     <Compile Include="Translation\DebugTranslatorAttribute.cs" />
     <Compile Include="Translation\GlslTransform.cs" />
     <Compile Include="Translation\GlslVisitor.cs" />
-    <Compile Include="Translation\GlslVisitor2.cs" />
-    <Compile Include="Translation\GlslVisitor2.Unimplemented.cs" />
+    <Compile Include="Translation\GlslVisitor.Illegal.cs" />
+    <Compile Include="Translation\GlslVisitor.Unimplemented.cs" />
+    <Compile Include="Translation\GlslVisitor.Unsupported.cs" />
     <Compile Include="Translation\RenameLocals.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
