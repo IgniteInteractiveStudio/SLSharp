@@ -66,11 +66,6 @@ namespace IIS.SLSharp.Translation
             throw new NotImplementedException();
         }
 
-        public StringBuilder VisitIdentifierExpression(IdentifierExpression identifierExpression, int data)
-        {
-            throw new NotImplementedException();
-        }
-
         public StringBuilder VisitIndexerExpression(IndexerExpression indexerExpression, int data)
         {
             throw new NotImplementedException();
@@ -127,11 +122,6 @@ namespace IIS.SLSharp.Translation
         }
 
         public StringBuilder VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, int data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public StringBuilder VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, int data)
         {
             throw new NotImplementedException();
         }
@@ -311,11 +301,6 @@ namespace IIS.SLSharp.Translation
             throw new NotImplementedException();
         }
 
-        public StringBuilder VisitReturnStatement(ReturnStatement returnStatement, int data)
-        {
-            throw new NotImplementedException();
-        }
-
         public StringBuilder VisitSwitchStatement(SwitchStatement switchStatement, int data)
         {
             throw new NotImplementedException();
@@ -357,16 +342,6 @@ namespace IIS.SLSharp.Translation
         }
 
         public StringBuilder VisitUsingStatement(UsingStatement usingStatement, int data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public StringBuilder VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement, int data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public StringBuilder VisitWhileStatement(WhileStatement whileStatement, int data)
         {
             throw new NotImplementedException();
         }
@@ -446,11 +421,6 @@ namespace IIS.SLSharp.Translation
             throw new NotImplementedException();
         }
 
-        public StringBuilder VisitVariableInitializer(VariableInitializer variableInitializer, int data)
-        {
-            throw new NotImplementedException();
-        }
-
         public StringBuilder VisitFixedFieldDeclaration(FixedFieldDeclaration fixedFieldDeclaration, int data)
         {
             throw new NotImplementedException();
@@ -477,11 +447,6 @@ namespace IIS.SLSharp.Translation
         }
 
         public StringBuilder VisitArraySpecifier(ArraySpecifier arraySpecifier, int data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public StringBuilder VisitPrimitiveType(PrimitiveType primitiveType, int data)
         {
             throw new NotImplementedException();
         }

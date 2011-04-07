@@ -132,7 +132,7 @@ namespace IIS.SLSharp.Translation
             var trans = (IAstTransform)new ReplaceMethodCallsWithOperators();
             trans.Run(block);
 
-            block.AcceptVisitor(this, 0);
+            Result = block.AcceptVisitor(this, 0).ToString();
         }
 
         public StringBuilder VisitBlockStatement(BlockStatement blockStatement, int data)
@@ -140,8 +140,8 @@ namespace IIS.SLSharp.Translation
             var result = new StringBuilder();
             result.Append("{");
             foreach (var stm in blockStatement.Statements)
-                result.Append(Indent(stm.AcceptVisitor(this, data)));
-            result.Append("}");
+                result.Append(Environment.NewLine).Append(Indent(stm.AcceptVisitor(this, data)));
+            result.Append(Environment.NewLine).Append("}");
             return result;
         }
 
@@ -165,9 +165,20 @@ namespace IIS.SLSharp.Translation
                 result.Append(memberReferenceExpression.Target.AcceptVisitor(this, 0)).Append(".");
 
             // Annotation could be FieldReference which aint compatible to IMemberDefinition
-            // var mref = memberReferenceExpression.Annotation<MemberReference>();
+           
+            //if (fref != null)
+            //    result.Append(Shader.ResolveName(fref));
+            
             //Shader.ResolveName(mref);
-            return result.Append(Shader.ResolveName(memberReferenceExpression.Annotation<IMemberDefinition>()));
+            var def = memberReferenceExpression.Annotation<IMemberDefinition>();
+            if (def != null)
+                return result.Append(Shader.ResolveName(def));
+
+            var fref = memberReferenceExpression.Annotation<FieldReference>();
+            if (fref != null)
+                return result.Append(Shader.ResolveName((IMemberDefinition)fref.Resolve()));
+            
+            throw new NotImplementedException();
         }
 
         public StringBuilder VisitInvocationExpression(InvocationExpression invocationExpression, int data)
@@ -177,6 +188,13 @@ namespace IIS.SLSharp.Translation
             var result = new StringBuilder();
             var mref = invocationExpression.Annotation<MethodReference>();
             var m = mref != null ? mref.Resolve() : invocationExpression.Annotation<MethodDefinition>();
+
+
+            if (m.DeclaringType.MetadataToken.ToInt32() == typeof(ShaderDefinition).MetadataToken)
+            {
+                return result.Append(m.Name).Append("(").Append(ArgsToString(invocationExpression.Arguments)).Append(")");
+            }
+
             if (m != null)
             {
                 RegisterMethod(m);
@@ -217,8 +235,94 @@ namespace IIS.SLSharp.Translation
         public StringBuilder VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, int data)
         {
             var result = binaryOperatorExpression.Left.AcceptVisitor(this, 0);
-            result.Append(binaryOperatorExpression.Operator);
+            switch (binaryOperatorExpression.Operator)
+            {
+                case BinaryOperatorType.Multiply: result.Append(" * "); break;
+                case BinaryOperatorType.Divide: result.Append(" / "); break;
+                case BinaryOperatorType.Add: result.Append(" + "); break;
+                case BinaryOperatorType.Subtract: result.Append(" - "); break;
+                case BinaryOperatorType.Modulus: result.Append(" % "); break;
+                case BinaryOperatorType.BitwiseOr: result.Append(" | "); break;
+                case BinaryOperatorType.BitwiseAnd: result.Append(" & "); break;
+                case BinaryOperatorType.ExclusiveOr: result.Append(" ^ "); break;
+                case BinaryOperatorType.ShiftLeft: result.Append(" << "); break;
+                case BinaryOperatorType.ShiftRight: result.Append(" >> "); break;
+                case BinaryOperatorType.LessThan: result.Append(" < "); break;
+                case BinaryOperatorType.GreaterThan: result.Append(" > "); break;
+                case BinaryOperatorType.LessThanOrEqual: result.Append(" <= "); break;
+                case BinaryOperatorType.GreaterThanOrEqual: result.Append(" >= "); break;
+                case BinaryOperatorType.Equality: result.Append(" == "); break;
+                case BinaryOperatorType.InEquality: result.Append(" != "); break;
+                default:
+                    throw new NotImplementedException();
+            }
             return result.Append(binaryOperatorExpression.Right.AcceptVisitor(this, 0));
+        }
+
+        public StringBuilder VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, int data)
+        {
+            var result = new StringBuilder();
+            var exp = unaryOperatorExpression.Expression.AcceptVisitor(this, 0);
+            switch (unaryOperatorExpression.Operator)
+            {
+                case UnaryOperatorType.Decrement: return result.Append("--").Append(exp);
+                case UnaryOperatorType.Increment: return result.Append("++").Append(exp);
+                case UnaryOperatorType.Minus: return result.Append("-").Append(exp);
+                case UnaryOperatorType.Plus: return result.Append("+").Append(exp);
+                case UnaryOperatorType.BitNot: return result.Append("~").Append(exp);
+                case UnaryOperatorType.Not: return result.Append("!").Append(exp);
+                case UnaryOperatorType.PostDecrement: return result.Append(exp).Append("--");
+                case UnaryOperatorType.PostIncrement: return result.Append(exp).Append("++");
+            }
+            throw new NotImplementedException();
+        }
+
+        public StringBuilder VisitReturnStatement(ReturnStatement returnStatement, int data)
+        {
+            var result = new StringBuilder();
+            result.Append("return");
+            var exp = returnStatement.Expression.AcceptVisitor(this, 0);
+            if (exp.Length > 0)
+                result.Append(" ").Append(exp);
+            result.Append(";");
+            return result;
+        }
+
+        public StringBuilder VisitIdentifierExpression(IdentifierExpression identifierExpression, int data)
+        {
+            return new StringBuilder(identifierExpression.Identifier);
+        }
+
+        public StringBuilder VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement, int data)
+        {
+            var result = new StringBuilder();
+            var typ = variableDeclarationStatement.Type.AcceptVisitor(this, 0);
+            foreach (var v in variableDeclarationStatement.Variables)
+                result.Append(typ).Append(" ").Append(v.AcceptVisitor(this, 0)).Append(";");
+
+            return result;
+        }
+
+        public StringBuilder VisitVariableInitializer(VariableInitializer variableInitializer, int data)
+        {
+            var result = new StringBuilder(variableInitializer.Name);
+            if (!variableInitializer.Initializer.IsNull)
+                result.Append(" = ").Append(variableInitializer.Initializer.AcceptVisitor(this, 0));
+            return result;
+        }
+
+        public StringBuilder VisitPrimitiveType(PrimitiveType primitiveType, int data)
+        {
+            return new StringBuilder(primitiveType.Keyword);
+        }
+
+        public StringBuilder VisitWhileStatement(WhileStatement whileStatement, int data)
+        {
+            var result = new StringBuilder("while (").Append(whileStatement.Condition.AcceptVisitor(this, 0)).Append(")");
+            result.Append(Environment.NewLine + "{");
+            result.Append(Indent(whileStatement.EmbeddedStatement.AcceptVisitor(this, 0)));
+            result.Append(Environment.NewLine + "}");
+            return result;
         }
     }
 }
