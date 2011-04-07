@@ -155,7 +155,23 @@ namespace IIS.SLSharp.Translation
         public StringBuilder VisitAssignmentExpression(AssignmentExpression assignmentExpression, int data)
         {
             var result = assignmentExpression.Left.AcceptVisitor(this, data);
-            result.Append(" = ");
+            switch (assignmentExpression.Operator)
+            {
+                case AssignmentOperatorType.Assign: result.Append(" = "); break;
+                case AssignmentOperatorType.Add: result.Append(" += "); break;
+                case AssignmentOperatorType.BitwiseAnd: result.Append(" &= "); break;
+                case AssignmentOperatorType.BitwiseOr: result.Append(" |= "); break;
+                case AssignmentOperatorType.Divide: result.Append(" /= "); break;
+                case AssignmentOperatorType.ExclusiveOr: result.Append(" ^= "); break;
+                case AssignmentOperatorType.Modulus: result.Append(" %= "); break;
+                case AssignmentOperatorType.Multiply: result.Append(" *= "); break;
+                case AssignmentOperatorType.ShiftLeft: result.Append(" <<= "); break;
+                case AssignmentOperatorType.ShiftRight: result.Append(" >>= "); break;
+                case AssignmentOperatorType.Subtract: result.Append(" -= "); break;
+                default:
+                    throw new NotImplementedException();
+            }
+            
             result.Append(assignmentExpression.Right.AcceptVisitor(this, data));
             return result;
         }
