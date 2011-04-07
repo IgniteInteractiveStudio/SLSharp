@@ -251,11 +251,7 @@ namespace IIS.SLSharp.Shaders
             CacheUniforms();
         }
 
-#if !DEBUG
-
         private static readonly Dictionary<string, string> _globalNames = new Dictionary<string, string>();
-
-#endif
 
         private static readonly ITexture[] _textures = new ITexture[32];
 
@@ -445,22 +441,26 @@ namespace IIS.SLSharp.Shaders
         /// <returns>The (obfuscated) shared GLSL name</returns>
         private static string GetGlobalName(string key)
         {
-#if DEBUG
-
-            return key.Replace("@", "_").Replace(".", "_").Replace("__", "_s_");
-
-#else
-
             string name;
             if (!_globalNames.TryGetValue(key, out name))
             {
-                name = "_v" + _globalNames.Count;
+                name = key.Split('.').Last();
+                if (_globalNames.Values.Contains(name))
+                {
+                    var ctr = 1;
+                    while (_globalNames.Values.Contains(name + ctr))
+                        ctr++;
+                    name = name + ctr;
+                }
+#if DEBUG
+                //name = key.Replace("@", "_").Replace(".", "_").Replace("__", "_s_");
                 _globalNames[key] = name;
-            }
-
-            return name;
-
+#else
+                name = "_v" + _globalNames.Count;
+                _globalNames[key] = name;            
 #endif
+            }
+            return name;
         }
 
 
@@ -500,6 +500,7 @@ namespace IIS.SLSharp.Shaders
             return GetGlobalName(fullName);
         }
 
+
         /// <summary>
         /// Builds a string containing all uniform declarations.
         /// </summary>
@@ -512,7 +513,12 @@ namespace IIS.SLSharp.Shaders
                     let attr = (UniformAttribute)attrs[0]
                     let glslType = attr.ExplicitName ?? _typeMap[prop.PropertyType].Name
                     let name = GetUniformName(prop)
-                    select "uniform " + glslType + " " + name + ";").Aggregate(string.Empty, (current, glslVar) =>
+#if DEBUG
+                    let comment = " // " + prop.DeclaringType.FullName + "." + prop.Name
+#else
+                    let comment = "";
+#endif
+                    select "uniform " + glslType + " " + name + ";" + comment).Aggregate(string.Empty, (current, glslVar) =>
                         current + (glslVar + Environment.NewLine));
         }
 
@@ -528,7 +534,12 @@ namespace IIS.SLSharp.Shaders
                     let attr = (VaryingAttribute)attrs[0]
                     let glslType = GlslVisitor.ToGlslType((field).FieldType)
                     let name = GetVaryingName(field)
-                    select "varying " + glslType + " " + name + ";").Aggregate(string.Empty, (current, glslVar) =>
+#if DEBUG
+                    let comment = " // " + field.DeclaringType.FullName + "." + field.Name
+#else
+                    let comment = "";
+#endif
+                    select "varying " + glslType + " " + name + ";" + comment).Aggregate(string.Empty, (current, glslVar) =>
                         current + (glslVar + Environment.NewLine));
         }
 
@@ -544,7 +555,13 @@ namespace IIS.SLSharp.Shaders
                       let attr = (VertexInAttribute)attrs[0]
                       let glslType = GlslVisitor.ToGlslType((field).FieldType)
                       let name = GetVaryingName(field)
-                      select "in " + glslType + " " + name + ";").Aggregate(string.Empty, (current, glslVar) =>
+#if DEBUG
+                      let comment = " // " + field.DeclaringType.FullName + "." + field.Name
+#else
+                      let comment = "";
+#endif
+
+                      select "in " + glslType + " " + name + ";" + comment).Aggregate(string.Empty, (current, glslVar) =>
                           current + (glslVar + Environment.NewLine));
 
             // TODO: what was this supposed to be good for?
@@ -555,7 +572,12 @@ namespace IIS.SLSharp.Shaders
                       let attr = (VertexInAttribute)attrs[0]
                       let glslType = _typeMap[prop.PropertyType].Name
                       let name = GetUniformName(prop)
-                      select "uniform " + glslType + " " + name + ";").Aggregate(string.Empty, (current, glslVar) =>
+#if DEBUG
+                      let comment = " // " + prop.DeclaringType.FullName + "." + prop.Name
+#else
+                      let comment = "";
+#endif
+                      select "uniform " + glslType + " " + name + ";" + comment).Aggregate(string.Empty, (current, glslVar) =>
                           current + (glslVar + Environment.NewLine));
 
             return s1 + s2;
@@ -573,6 +595,11 @@ namespace IIS.SLSharp.Shaders
                     let attr = (FragmentOutAttribute)attrs[0]
                     let glslType = GlslVisitor.ToGlslType((field).FieldType)
                     let name = GetVaryingName(field)
+#if DEBUG
+                    let comment = " // " + field.DeclaringType.FullName + "." + field.Name
+#else
+                    let comment = "";
+#endif
                     select "out " + glslType + " " + name + ";").Aggregate(string.Empty, (current, glslVar) =>
                         current + (glslVar + Environment.NewLine));
         }
