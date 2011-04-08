@@ -49,11 +49,6 @@ namespace IIS.SLSharp.Translation
             throw new NotImplementedException();
         }
 
-        public StringBuilder VisitNamedArgumentExpression(NamedArgumentExpression namedArgumentExpression, int data)
-        {
-            throw new NotImplementedException();
-        }
-
         public StringBuilder VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, int data)
         {
             throw new NotImplementedException();
@@ -74,52 +69,12 @@ namespace IIS.SLSharp.Translation
             throw new NotImplementedException();
         }
 
-        public StringBuilder VisitBreakStatement(BreakStatement breakStatement, int data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public StringBuilder VisitContinueStatement(ContinueStatement continueStatement, int data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public StringBuilder VisitDoWhileStatement(DoWhileStatement doWhileStatement, int data)
-        {
-            throw new NotImplementedException();
-        }
-
         public StringBuilder VisitEmptyStatement(EmptyStatement emptyStatement, int data)
         {
             return new StringBuilder();
         }
 
         public StringBuilder VisitForeachStatement(ForeachStatement foreachStatement, int data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public StringBuilder VisitForStatement(ForStatement forStatement, int data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public StringBuilder VisitIfElseStatement(IfElseStatement ifElseStatement, int data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public StringBuilder VisitSwitchStatement(SwitchStatement switchStatement, int data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public StringBuilder VisitSwitchSection(SwitchSection switchSection, int data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public StringBuilder VisitCaseLabel(CaseLabel caseLabel, int data)
         {
             throw new NotImplementedException();
         }

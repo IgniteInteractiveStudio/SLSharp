@@ -6,7 +6,7 @@ using ICSharpCode.NRefactory.CSharp;
 
 namespace IIS.SLSharp.Translation
 {
-    internal sealed class RenameLocals: IAstTransform
+    internal sealed class RenameLocals : IAstTransform
     {
         private int _ctr;
 
@@ -14,20 +14,22 @@ namespace IIS.SLSharp.Translation
 
         public void Run(AstNode node)
         {
-            if (node is VariableInitializer)
+            var initializer = node as VariableInitializer;
+            if (initializer != null)
             {
-                var n = (VariableInitializer) node;
                 var newName = "_loc" + _ctr++;
-                _locals[n.Name] = newName;
-                n.ReplaceWith(new VariableInitializer(newName, n.Initializer));
+                _locals[initializer.Name] = newName;
+                initializer.ReplaceWith(new VariableInitializer(newName, initializer.Initializer));
             }
-
-            if (node is IdentifierExpression)
+            else
             {
-                var n = (IdentifierExpression)node;
-                string newName;
-                if (_locals.TryGetValue(n.Identifier, out newName))
-                    n.ReplaceWith(new IdentifierExpression(newName));
+                var identifier = node as IdentifierExpression;
+                if (identifier != null)
+                {
+                    string newName;
+                    if (_locals.TryGetValue(identifier.Identifier, out newName))
+                        identifier.ReplaceWith(new IdentifierExpression(newName));
+                }
             }
 
             foreach (var c in node.Children)

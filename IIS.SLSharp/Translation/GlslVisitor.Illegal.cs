@@ -211,5 +211,10 @@ namespace IIS.SLSharp.Translation
         {
             throw new SLSharpException("GLSL does not understand the fixed keyword.");
         }
+
+        public StringBuilder VisitNamedArgumentExpression(NamedArgumentExpression namedArgumentExpression, int data)
+        {
+            throw new SLSharpException("GLSL does not support named arguments.");
+        }
     }
 }
