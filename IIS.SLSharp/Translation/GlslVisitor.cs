@@ -319,14 +319,22 @@ namespace IIS.SLSharp.Translation
 
             switch (unaryOperatorExpression.Operator)
             {
-                case UnaryOperatorType.Decrement: return result.Append("--").Append(exp);
-                case UnaryOperatorType.Increment: return result.Append("++").Append(exp);
-                case UnaryOperatorType.Minus: return result.Append("-").Append(exp);
-                case UnaryOperatorType.Plus: return result.Append("+").Append(exp);
-                case UnaryOperatorType.BitNot: return result.Append("~").Append(exp);
-                case UnaryOperatorType.Not: return result.Append("!").Append(exp);
-                case UnaryOperatorType.PostDecrement: return result.Append(exp).Append("--");
-                case UnaryOperatorType.PostIncrement: return result.Append(exp).Append("++");
+                case UnaryOperatorType.Decrement:
+                    return result.Append("--").Append(exp);
+                case UnaryOperatorType.Increment:
+                    return result.Append("++").Append(exp);
+                case UnaryOperatorType.Minus:
+                    return result.Append("-").Append(exp);
+                case UnaryOperatorType.Plus:
+                    return result.Append("+").Append(exp);
+                case UnaryOperatorType.BitNot:
+                    return result.Append("~").Append(exp);
+                case UnaryOperatorType.Not:
+                    return result.Append("!").Append(exp);
+                case UnaryOperatorType.PostDecrement:
+                    return result.Append(exp).Append("--");
+                case UnaryOperatorType.PostIncrement:
+                    return result.Append(exp).Append("++");
             }
 
             throw new NotImplementedException();
