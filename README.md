@@ -45,8 +45,6 @@ Please report any issues on the GitHub issue tracker.
 
 Known problems:
 
-* Branching isn't very well-supported at this point. We need to investigate the
-  transforms that the C# compiler performs in order to fully support these.
 * Geometry shaders are currently not supported.
 * Support for other .NET languages (such as F#) is currently up in the air. We
   haven't had time to test SL# with F# yet, but we would definitely like to add
