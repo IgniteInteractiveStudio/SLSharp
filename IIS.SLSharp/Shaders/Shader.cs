@@ -148,10 +148,8 @@ namespace IIS.SLSharp.Shaders
             var src = "#version " + version + Environment.NewLine;
 
             if (version >= 130)
-            {
                 if (type == ShaderType.FragmentShader)
                     src += "precision highp float;" + Environment.NewLine;
-            }
 
             switch (type)
             {

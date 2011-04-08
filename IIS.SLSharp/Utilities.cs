@@ -19,7 +19,13 @@ namespace IIS.SLSharp.Core
 
         public static bool IsVersion(int major, int minor = 0)
         {
-            var v = GL.GetString(StringName.Version).Split('.').Select(x => int.Parse(x)).ToArray();
+            var s = GL.GetString(StringName.Version);
+
+            var idx = s.IndexOf(' ');
+            if (idx != -1)
+                s = s.Substring(0, idx);
+
+            var v = s.Split('.').Select(x => int.Parse(x)).ToArray();
 
             if (v[0] > major)
                 return true;
