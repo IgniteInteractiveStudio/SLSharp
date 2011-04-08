@@ -151,9 +151,6 @@ namespace IIS.SLSharp.Shaders
             {
                 if (type == ShaderType.FragmentShader)
                     src += "precision highp float;" + Environment.NewLine;
-
-                if (type == ShaderType.VertexShader)
-                    src += "in vec4 gl_Vertex;" + Environment.NewLine; // should we disallow this?
             }
 
             switch (type)
