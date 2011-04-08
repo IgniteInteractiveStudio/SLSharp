@@ -50,7 +50,6 @@
     <Compile Include="Annotations\VertexShaderAttribute.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="GpuStopwatch.cs" />
-    <Compile Include="Reflection\Decompiler.cs" />
     <Compile Include="Reflection\ReflectionMarkerAttribute.cs" />
     <Compile Include="Reflection\ReflectionToken.cs" />
     <Compile Include="Runtime\ResourceManager.cs" />

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.Ast;
 using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Reflection;
 using Mono.Cecil;
@@ -27,7 +29,12 @@ namespace IIS.SLSharp.Translation
         /// <returns>The translated GLSL shader source</returns>
         public string Transform(TypeDefinition s, MethodDefinition m, CustomAttribute attr)
         {
-            var d = Decompiler.DecompileMethod(s, m);
+            var d = AstMethodBodyBuilder.CreateMethodBody(m, new DecompilerContext
+            {
+                CurrentType = s,
+                CurrentMethod = m,
+            });
+
             var glsl = new GlslVisitor(d, attr);
 
             _functions.UnionWith(glsl.Functions);
