@@ -13,6 +13,8 @@ namespace IIS.SLSharp.Examples.Complex
 
         private BackdropShader _backdropShader;
 
+        private SimplexNoiseShader _simplexNoiseShader;
+
         private Cube _cube;
 
         private readonly Stopwatch _timer = new Stopwatch();
@@ -45,6 +47,13 @@ namespace IIS.SLSharp.Examples.Complex
             Console.WriteLine("Fragment Shader");
             Console.WriteLine("===============");
             Console.WriteLine(_cubeShader.FragmentShader);
+
+            Console.WriteLine("Vertex Shader");
+            Console.WriteLine("=============");
+            Console.WriteLine(_cubeShader.Noise.VertexShader);
+            Console.WriteLine("Fragment Shader");
+            Console.WriteLine("===============");
+            Console.WriteLine(_cubeShader.Noise.FragmentShader);
 
             _cube = new Cube();
             _timer.Start();
