@@ -3,7 +3,7 @@ using System;
 namespace IIS.SLSharp.Reflection
 {
     [Serializable]
-    public enum ReflectionToken
+    internal enum ReflectionToken
     {
         ShaderName,
         ShaderActivate,

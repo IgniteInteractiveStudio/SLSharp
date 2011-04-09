@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace IIS.SLSharp.Core
+namespace IIS.SLSharp
 {
     /// <summary>
     /// Exception thrown by the SL# library when an error occurs.

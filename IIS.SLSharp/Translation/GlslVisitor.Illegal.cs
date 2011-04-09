@@ -1,7 +1,6 @@
 using System;
 using System.Text;
 using ICSharpCode.NRefactory.CSharp;
-using IIS.SLSharp.Core;
 
 namespace IIS.SLSharp.Translation
 {

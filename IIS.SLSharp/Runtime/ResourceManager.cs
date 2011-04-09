@@ -7,7 +7,7 @@ using IIS.SLSharp.Reflection;
 
 namespace IIS.SLSharp.Runtime
 {
-    public static class ResourceManager
+    internal static class ResourceManager
     {
         // derive a class T' of T that overrides Dispose() replacing it with a Release call
 

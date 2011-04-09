@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ICSharpCode.NRefactory.CSharp;
-using IIS.SLSharp.Core;
 
 namespace IIS.SLSharp.Translation
 {

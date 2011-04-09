@@ -249,6 +249,7 @@ namespace IIS.SLSharp.Translation
                 result.Append(s);
                 if (!s.Contains("."))
                    result.Append(".0");
+
                 result.Append("f");
                 return result;
             }
@@ -259,6 +260,7 @@ namespace IIS.SLSharp.Translation
                 result.Append(s);
                 if (!s.Contains("."))
                     result.Append(".0");
+
                 result.Append("lf");
                 return result;
             }

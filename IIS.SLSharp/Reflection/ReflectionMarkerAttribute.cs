@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace IIS.SLSharp.Reflection
 {
-    public sealed class ReflectionMarkerAttribute : Attribute
+    internal sealed class ReflectionMarkerAttribute : Attribute
     {
         public ReflectionToken Token { get; private set; }
 
