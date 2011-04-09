@@ -3,6 +3,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace IIS.SLSharp.Shaders
 {
+    // Only public so derived shaders can call the below methods.
     public static class ShaderHelpers
     {
         [ReflectionMarker(ReflectionToken.ShaderVec2Helper)]
