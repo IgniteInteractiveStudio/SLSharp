@@ -433,9 +433,53 @@ namespace IIS.SLSharp.Shaders
 
         #endregion
 
-        // not yet supported (need to implement out modifier)
-        // genType modf(genType x, out genType i)
-        // genDType modf(genDType x, out genDType i)
+        #region genType modf (genType x, out genType i)
+
+        /// <summary>Returns the fractional part of x and sets i to the integer part 
+        /// (as a whole number floating point value). 
+        /// Both the return value and the output parameter will have the same sign as x..</summary>
+        protected static float mod(float x, out float y) { throw _invalidAccess; }
+
+        /// <summary>Returns the fractional part of x and sets i to the integer part 
+        /// (as a whole number floating point value). 
+        /// Both the return value and the output parameter will have the same sign as x..</summary>
+        protected static vec2 mod(vec2 x, out vec2 y) { throw _invalidAccess; }
+
+        /// <summary>Returns the fractional part of x and sets i to the integer part 
+        /// (as a whole number floating point value). 
+        /// Both the return value and the output parameter will have the same sign as x..</summary>
+        protected static vec3 mod(vec3 x, out vec3 y) { throw _invalidAccess; }
+
+        /// <summary>Returns the fractional part of x and sets i to the integer part 
+        /// (as a whole number floating point value). 
+        /// Both the return value and the output parameter will have the same sign as x..</summary>
+        protected static vec4 mod(vec4 x, out vec4 y) { throw _invalidAccess; }
+
+        #endregion
+
+        #region genDType modf (genDType x, out genDType i)
+
+        /// <summary>Returns the fractional part of x and sets i to the integer part 
+        /// (as a whole number floating point value). 
+        /// Both the return value and the output parameter will have the same sign as x..</summary>
+        protected static double mod(double x, out double y) { throw _invalidAccess; }
+
+        /// <summary>Returns the fractional part of x and sets i to the integer part 
+        /// (as a whole number floating point value). 
+        /// Both the return value and the output parameter will have the same sign as x..</summary>
+        protected static dvec2 mod(dvec2 x, out dvec2 y) { throw _invalidAccess; }
+
+        /// <summary>Returns the fractional part of x and sets i to the integer part 
+        /// (as a whole number floating point value). 
+        /// Both the return value and the output parameter will have the same sign as x..</summary>
+        protected static dvec3 mod(dvec3 x, out dvec3 y) { throw _invalidAccess; }
+
+        /// <summary>Returns the fractional part of x and sets i to the integer part 
+        /// (as a whole number floating point value). 
+        /// Both the return value and the output parameter will have the same sign as x..</summary>
+        protected static dvec4 mod(dvec4 x, out dvec4 y) { throw _invalidAccess; }
+
+        #endregion
 
         #region genType min(genType x, float y)
 
