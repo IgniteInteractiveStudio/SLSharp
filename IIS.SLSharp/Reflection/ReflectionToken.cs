@@ -31,5 +31,9 @@ namespace IIS.SLSharp.Reflection
         ShaderDvec2Helper,
         ShaderDvec3Helper,
         ShaderDvec4Helper,
+        ShaderBvec1Helper,
+        ShaderBvec2Helper,
+        ShaderBvec3Helper,
+        ShaderBvec4Helper,
     }
 }

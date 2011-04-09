@@ -371,6 +371,10 @@ namespace IIS.SLSharp.Shaders
             { typeof(dvec2).MetadataToken, new PropInfo("dvec2", GetHandler(ReflectionToken.ShaderDvec2Helper)) },
             { typeof(dvec3).MetadataToken, new PropInfo("dvec3", GetHandler(ReflectionToken.ShaderDvec3Helper)) },
             { typeof(dvec4).MetadataToken, new PropInfo("dvec4", GetHandler(ReflectionToken.ShaderDvec4Helper)) },
+            { typeof(bool).MetadataToken, new PropInfo("bool",  GetHandler(ReflectionToken.ShaderBvec1Helper)) },
+            { typeof(bvec2).MetadataToken, new PropInfo("bvec2", GetHandler(ReflectionToken.ShaderBvec2Helper)) },
+            { typeof(bvec3).MetadataToken, new PropInfo("bvec3", GetHandler(ReflectionToken.ShaderBvec3Helper)) },
+            { typeof(bvec4).MetadataToken, new PropInfo("bvec4", GetHandler(ReflectionToken.ShaderBvec4Helper)) },
         };
 
         /// <summary>

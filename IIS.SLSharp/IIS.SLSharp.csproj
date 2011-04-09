@@ -54,6 +54,7 @@
     <Compile Include="Reflection\ReflectionToken.cs" />
     <Compile Include="Runtime\ResourceManager.cs" />
     <Compile Include="Shaders\Shader.cs" />
+    <Compile Include="Shaders\ShaderDefinition.BoolVector.cs" />
     <Compile Include="Shaders\ShaderDefinition.Common.cs" />
     <Compile Include="Shaders\ShaderDefinition.cs" />
     <Compile Include="Annotations\ShaderVariableAttribute.cs" />

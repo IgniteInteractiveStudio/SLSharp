@@ -1,3 +1,4 @@
+using System;
 using IIS.SLSharp.Reflection;
 using OpenTK.Graphics.OpenGL;
 
@@ -78,6 +79,40 @@ namespace IIS.SLSharp.Shaders
             GL.Uniform4(location, ShaderDefinition.dvec4.value.X, ShaderDefinition.dvec4.value.Y, ShaderDefinition.dvec4.value.Z,
                 ShaderDefinition.dvec4.value.W);
         }
+
+        [ReflectionMarker(ReflectionToken.ShaderBvec1Helper)]
+        public static void UniformBvecHelper1(int location, bool v)
+        {
+            GL.Uniform1(location, v ? 1 : 0);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderBvec2Helper)]
+        public static void UniformBvecHelper2(int location)
+        {
+            var i0 = ShaderDefinition.bvec2.value[0] ? 1 : 0;
+            var i1 = ShaderDefinition.bvec2.value[1] ? 1 : 0;
+            GL.Uniform2(location, i0, i1);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderBvec3Helper)]
+        public static void UniformBvecHelper3(int location)
+        {
+            var i0 = ShaderDefinition.bvec2.value[0] ? 1 : 0;
+            var i1 = ShaderDefinition.bvec2.value[1] ? 1 : 0;
+            var i2 = ShaderDefinition.bvec2.value[2] ? 1 : 0;
+            GL.Uniform3(location, i0, i1, i2);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderBvec4Helper)]
+        public static void UniformBvecHelper4(int location)
+        {
+            var i0 = ShaderDefinition.bvec2.value[0] ? 1 : 0;
+            var i1 = ShaderDefinition.bvec2.value[1] ? 1 : 0;
+            var i2 = ShaderDefinition.bvec2.value[2] ? 1 : 0;
+            var i3 = ShaderDefinition.bvec2.value[3] ? 1 : 0;
+            GL.Uniform4(location, i0, i1, i2, i3);
+        }
+
 
         [ReflectionMarker(ReflectionToken.ShaderUniformMatrix2X2Helper)]
         public static void UniformMatrix2Helper(int location)
