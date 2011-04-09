@@ -237,14 +237,30 @@ namespace IIS.SLSharp.Translation
         {
             var result = new StringBuilder();
 
-            // TODO: same for float, int, uint
             if (primitiveExpression.Value.GetType() == typeof(float))
             {
                 var s = ((float)primitiveExpression.Value).ToString(CultureInfo.InvariantCulture.NumberFormat);
                 result.Append(s);
                 if (!s.Contains("."))
                    result.Append(".0");
+                result.Append("f");
+                return result;
+            }
 
+            if (primitiveExpression.Value.GetType() == typeof(double))
+            {
+                var s = ((double)primitiveExpression.Value).ToString(CultureInfo.InvariantCulture.NumberFormat);
+                result.Append(s);
+                if (!s.Contains("."))
+                    result.Append(".0");
+                result.Append("lf");
+                return result;
+            }
+
+            if (primitiveExpression.Value.GetType() == typeof(uint))
+            {
+                var s = ((uint)primitiveExpression.Value).ToString(CultureInfo.InvariantCulture.NumberFormat);
+                result.Append(s).Append("u");
                 return result;
             }
             
