@@ -1,6 +1,6 @@
 namespace IIS.SLSharp.Annotations
 {
-    public interface IShaderAttribute
+    internal interface IShaderAttribute
     {
         bool EntryPoint { get; }
     }
