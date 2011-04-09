@@ -7,7 +7,7 @@ using IIS.SLSharp.Reflection;
 
 namespace IIS.SLSharp.Runtime
 {
-    internal static class ResourceManager
+    public static class ResourceManager
     {
         // derive a class T' of T that overrides Dispose() replacing it with a Release call
 
@@ -27,6 +27,12 @@ namespace IIS.SLSharp.Runtime
         {
             public bool Equals(AllocationKey x, AllocationKey y)
             {
+                if (x == null)
+                    throw new ArgumentNullException("x");
+
+                if (y == null)
+                    throw new ArgumentNullException("y");
+
                 if (x.Args.Length != y.Args.Length)
                     return false;
 
@@ -44,6 +50,9 @@ namespace IIS.SLSharp.Runtime
 
             public int GetHashCode(AllocationKey obj)
             {
+                if (obj == null)
+                    throw new ArgumentNullException("obj");
+
                 var hash = obj.Args.Aggregate(0, (current, x) => current ^ x.GetHashCode());
                 return obj.Types.Aggregate(hash, (current, x) => current ^ x.GetHashCode());
             }
@@ -66,6 +75,9 @@ namespace IIS.SLSharp.Runtime
         [ReflectionMarker(ReflectionToken.ResourceHelperRelease)]
         public static void Release(object instance)
         {
+            if (instance == null)
+                throw new ArgumentNullException("instance");
+
             var type = instance.GetType();
             var rec = GetResource(type);
             var key = (AllocationKey)type.GetField("key").GetValue(instance);
@@ -82,20 +94,23 @@ namespace IIS.SLSharp.Runtime
             }
         }
 
-        private static ResourceRecord GetResource(Type typ)
+        private static ResourceRecord GetResource(Type type)
         {
+            if (type == null)
+                throw new ArgumentNullException("type");
+
             ResourceRecord result;
-            if (_impls.TryGetValue(typ, out result))
+            if (_impls.TryGetValue(type, out result))
                 return result;
 
-            var assemblyName = new AssemblyName { Name = "tmp_" + typ.Name };
+            var assemblyName = new AssemblyName { Name = "tmp_" + type.Name };
             var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
             var module = assemblyBuilder.DefineDynamicModule("tmpModule");
-            var typeBuilder = module.DefineType(typ.Name + "SharedSingletonWrapper", TypeAttributes.Public | TypeAttributes.Class, typ);
+            var typeBuilder = module.DefineType(type.Name + "SharedSingletonWrapper", TypeAttributes.Public | TypeAttributes.Class, type);
 
-            var baseDispose = typ.GetMethod("Dispose", BindingFlags.Public | BindingFlags.Instance);
+            var baseDispose = type.GetMethod("Dispose", BindingFlags.Public | BindingFlags.Instance);
             if (baseDispose.IsFinal)
-                throw new Exception(typ.Name + ".Dispose() is final");
+                throw new Exception(type.Name + ".Dispose() is final");
 
             var disposeFun = typeBuilder.DefineMethod("Dispose", MethodAttributes.Virtual | MethodAttributes.Public, typeof(void), Type.EmptyTypes);
             var disposeBaseFun = typeBuilder.DefineMethod("DisposeBase", MethodAttributes.Public, typeof(void), Type.EmptyTypes);
@@ -112,10 +127,10 @@ namespace IIS.SLSharp.Runtime
 
             var ilDisposeBase = disposeBaseFun.GetILGenerator();
             ilDisposeBase.Emit(OpCodes.Ldarg, 0);
-            ilDisposeBase.Emit(OpCodes.Call, typ.GetMethod("Dispose", BindingFlags.Public | BindingFlags.Instance));
+            ilDisposeBase.Emit(OpCodes.Call, type.GetMethod("Dispose", BindingFlags.Public | BindingFlags.Instance));
             ilDisposeBase.Emit(OpCodes.Ret);
                 
-            foreach (var tctor in typ.GetConstructors(BindingFlagsAny))
+            foreach (var tctor in type.GetConstructors(BindingFlagsAny))
             {
                 if (tctor.IsPrivate)
                     continue;
@@ -139,13 +154,16 @@ namespace IIS.SLSharp.Runtime
             {
                 Implementation = typeBuilder.CreateType()
             };
-            _impls[typ] = result;
+            _impls[type] = result;
 
             return result;
         }
 
         public static object Instance(Type t, object[] args, Type[] types)
         {
+            if (t == null)
+                throw new ArgumentNullException("t");
+
             var res = GetResource(t);
 
             if (types == null)

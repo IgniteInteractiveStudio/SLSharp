@@ -11,7 +11,7 @@ namespace IIS.SLSharp.Textures
     /// <summary>
     /// Specialization of BaseTexture for 1D Textures.
     /// </summary>
-    public class Texture2D : BaseTexture
+    public class Texture2D : TextureBase
     {
         public int Width { get; private set; }
 
@@ -46,8 +46,6 @@ namespace IIS.SLSharp.Textures
         public Texture2D(int width, int height, int components, Type type, TextureTarget target = TextureTarget.Texture2D)
             : base(target)
         {
-            type = type ?? typeof(byte);
-
             Activate();
             GL.TexParameter(Target, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge); // GL_REPEAT
             GL.TexParameter(Target, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge); // GL_REPEAT
@@ -55,7 +53,7 @@ namespace IIS.SLSharp.Textures
             GL.TexParameter(Target, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 
             PixelFormat format;
-            GetFormat(components, type, out _internalFormat, out format);
+            GetFormat(components, type ?? typeof(byte), out _internalFormat, out format);
 
             Resize(width, height);
         }
@@ -67,8 +65,8 @@ namespace IIS.SLSharp.Textures
         /// <param name="height">The height in Pixels of the Texture</param>
         /// <param name="format">The format to use</param>
         /// <param name="target">The target this Texture will be bound to</param>
-        public Texture2D(int width, int height, PixelInternalFormat format, 
-            TextureTarget target = TextureTarget.Texture2D) : base(target)
+        public Texture2D(int width, int height, PixelInternalFormat format,  TextureTarget target = TextureTarget.Texture2D)
+            : base(target)
          {
             _internalFormat = format;
             Activate();
@@ -89,6 +87,8 @@ namespace IIS.SLSharp.Textures
         public Texture2D(int width, int height, Texture2D other)
             : this(width, height, other._internalFormat, other.Target)
         {
+            if (other == null)
+                throw new ArgumentNullException("other");
         }
 
         /// <summary>
@@ -121,6 +121,9 @@ namespace IIS.SLSharp.Textures
         /// <returns>The texture object</returns>
         public static Texture2D FromBitmap(Bitmap bmp)
         {
+            if (bmp == null)
+                throw new ArgumentNullException("bmp");
+
             var bits = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly,
                 System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
@@ -144,30 +147,39 @@ namespace IIS.SLSharp.Textures
         /// <param name="s">The stream to load from</param>
         /// <returns>The texture object</returns>
         public static Texture2D FromStream(Stream s)
-        {    
+        {
+            if (s == null)
+                throw new ArgumentNullException("s");
+
             return FromBitmap((Bitmap)Image.FromStream(s));
         }
 
         /// <summary>
         /// Loads a texture from a file which is supported by System.Drawing.Image
         /// </summary>
-        /// <param name="filename">The file to be loaded</param>
+        /// <param name="fileName">The file to be loaded</param>
         /// <returns>The texture object</returns>
-        public static Texture2D FromFile(string filename)
+        public static Texture2D FromFile(string fileName)
         {
-            return FromBitmap((Bitmap) Image.FromFile(filename));
+            if (fileName == null)
+                throw new ArgumentNullException("fileName");
+
+            return FromBitmap((Bitmap) Image.FromFile(fileName));
         }
 
         /// <summary>
         /// Loads a texture from a dds file
         /// </summary>
-        /// <param name="filename">The file to be loaded</param>
+        /// <param name="fileName">The file to be loaded</param>
         /// <returns>The texture object</returns>
-        public static Texture2D FromDdsFile(string filename)
+        public static Texture2D FromDdsFile(string fileName)
         {
+            if (fileName == null)
+                throw new ArgumentNullException("fileName");
+
             uint name;
             TextureTarget dim;
-            ImageDDS.LoadFromDisk(filename, out name, out dim);
+            ImageDDS.LoadFromDisk(fileName, out name, out dim);
 
             if (dim != TextureTarget.Texture2D)
                 throw new InvalidDataException("Texture was not 2D.");

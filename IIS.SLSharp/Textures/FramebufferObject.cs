@@ -56,6 +56,9 @@ namespace IIS.SLSharp.Textures
         /// <param name="index">The channel to asscociate</param>
         public void SetTexture(Texture2D texture, int index = 0)
         {
+            if (texture == null)
+                throw new ArgumentNullException("texture");
+
             Activate();
 
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer,

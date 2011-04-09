@@ -76,7 +76,7 @@
     <Compile Include="Shaders\ShaderDefinition.Vector.cs" />
     <Compile Include="Shaders\ShaderHelpers.cs" />
     <Compile Include="SLSharpException.cs" />
-    <Compile Include="Textures\BaseTexture.cs" />
+    <Compile Include="Textures\TextureBase.cs" />
     <Compile Include="Textures\Externals\LoaderDDS.cs" />
     <Compile Include="Textures\Externals\LoaderStatics.cs" />
     <Compile Include="Textures\FramebufferObject.cs" />
@@ -105,9 +105,6 @@
     <Reference Include="Mono.Cecil, Version=0.9.4.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dependencies\Mono.Cecil.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Reflection">
-      <HintPath>..\Dependencies\Mono.Reflection.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK">
       <HintPath>..\Dependencies\OpenTK.dll</HintPath>

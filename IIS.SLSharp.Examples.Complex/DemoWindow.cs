@@ -13,8 +13,6 @@ namespace IIS.SLSharp.Examples.Complex
 
         private BackdropShader _backdropShader;
 
-        private SimplexNoiseShader _simplexNoiseShader;
-
         private Cube _cube;
 
         private readonly Stopwatch _timer = new Stopwatch();

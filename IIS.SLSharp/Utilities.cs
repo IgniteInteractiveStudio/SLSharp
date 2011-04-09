@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using OpenTK.Graphics.OpenGL;
 
 namespace IIS.SLSharp
@@ -26,6 +27,9 @@ namespace IIS.SLSharp
         
         public static bool HasExtension(string name)
         {
+            if (name == null)
+                throw new ArgumentNullException("name");
+
             if (IsVersion(3, 1))
             {
                 int numExt;

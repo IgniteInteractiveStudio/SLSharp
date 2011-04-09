@@ -8,6 +8,12 @@ namespace IIS.SLSharp
         public static TSource Max<TSource, TSelect>(this IEnumerable<TSource> source, Func<TSource, TSelect> selector)
             where TSelect : IComparable<TSelect>
         {
+            if (source == null)
+                throw new ArgumentNullException("source");
+
+            if (selector == null)
+                throw new ArgumentNullException("selector");
+
             var enumer = source.GetEnumerator();
  
             enumer.MoveNext();
@@ -32,6 +38,12 @@ namespace IIS.SLSharp
         public static TSource Min<TSource, TSelect>(this IEnumerable<TSource> source, Func<TSource, TSelect> selector)
             where TSelect : IComparable<TSelect>
         {
+            if (source == null)
+                throw new ArgumentNullException("source");
+
+            if (selector == null)
+                throw new ArgumentNullException("selector");
+
             var enumer = source.GetEnumerator();
 
             enumer.MoveNext();

@@ -6,7 +6,7 @@ namespace IIS.SLSharp.Textures
     /// <summary>
     /// Specialization of BaseTexture for Cube maps.
     /// </summary>
-    public class TextureCube : BaseTexture
+    public class TextureCube : TextureBase
     {
         public int Width { get; private set; }
 
@@ -19,10 +19,9 @@ namespace IIS.SLSharp.Textures
         /// <param name="height">The height in Pixels of the Texture</param>
         /// <param name="components">The number of components. Must be 1 2 3 or 4.</param>
         /// <param name="type">The data type to use (Default is 16bit Half)</param>
-        public TextureCube(int width, int height, int components, Type type)
+        public TextureCube(int width, int height, int components, Type type = null)
             : base(TextureTarget.TextureCubeMap)
         {
-            type = type ?? typeof (byte);
             Width = width;
             Height = height;
 
@@ -35,7 +34,7 @@ namespace IIS.SLSharp.Textures
 
             PixelInternalFormat internalformat;
             PixelFormat format;
-            GetFormat(components, type, out internalformat, out format);
+            GetFormat(components, type ?? typeof(byte), out internalformat, out format);
 
             for (var i = 0; i < 6; i++)
                 GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, internalformat, Width, Height, 0, format,

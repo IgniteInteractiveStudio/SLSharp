@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 namespace IIS.SLSharp.Textures
@@ -7,7 +8,7 @@ namespace IIS.SLSharp.Textures
     /// <summary>
     /// Basic texture class that manages an OpenGL texture
     /// </summary>
-    public abstract class BaseTexture : IDisposable, ITexture
+    public abstract class TextureBase : IDisposable, ITexture
     {
         public int Name { get; private set; }
 
@@ -29,7 +30,7 @@ namespace IIS.SLSharp.Textures
             GL.BindTexture(Target, 0);
         }
 
-        protected BaseTexture(TextureTarget target)
+        protected TextureBase(TextureTarget target)
         {
             Target = target;
             Name = GL.GenTexture();
@@ -42,7 +43,7 @@ namespace IIS.SLSharp.Textures
         /// </summary>
         /// <param name="target">The OpenGL texture target</param>
         /// <param name="existingName">An existing OpenGL texture name</param>
-        protected BaseTexture(TextureTarget target, uint existingName)
+        protected TextureBase(TextureTarget target, uint existingName)
         {
             Target = target;
             Name = (int)existingName;
@@ -59,7 +60,7 @@ namespace IIS.SLSharp.Textures
             GC.SuppressFinalize(this);
         }
 
-        ~BaseTexture()
+        ~TextureBase()
         {
             Dispose();
         }
@@ -87,7 +88,7 @@ namespace IIS.SLSharp.Textures
             PixelFormat.Red,
             PixelFormat.Rg,
             PixelFormat.Rgb,
-            PixelFormat.Rgba
+            PixelFormat.Rgba,
         };
 
         private static readonly PixelInternalFormat[] _floatFormats = new[]
@@ -95,7 +96,7 @@ namespace IIS.SLSharp.Textures
             PixelInternalFormat.R32f,
             PixelInternalFormat.Rg32f,
             PixelInternalFormat.Rgb32f,
-            PixelInternalFormat.Rgba32f
+            PixelInternalFormat.Rgba32f,
         };
 
         private static readonly PixelInternalFormat[] _halfFormats = new[]
@@ -103,7 +104,7 @@ namespace IIS.SLSharp.Textures
             PixelInternalFormat.R16f,
             PixelInternalFormat.Rg16f,
             PixelInternalFormat.Rgb16f,
-            PixelInternalFormat.Rgba16f
+            PixelInternalFormat.Rgba16f,
         };
 
         private static readonly PixelInternalFormat[] _u8Formats = new[]
@@ -111,7 +112,7 @@ namespace IIS.SLSharp.Textures
             PixelInternalFormat.Alpha8,
             PixelInternalFormat.Luminance8Alpha8,
             PixelInternalFormat.Rgb8,
-            PixelInternalFormat.Rgba8
+            PixelInternalFormat.Rgba8,
         };
 
         private static readonly PixelInternalFormat[] _u16Formats = new[]
@@ -119,17 +120,16 @@ namespace IIS.SLSharp.Textures
             PixelInternalFormat.Alpha16,
             PixelInternalFormat.Luminance16Alpha16,
             PixelInternalFormat.Rgb16,
-            PixelInternalFormat.Rgb16
+            PixelInternalFormat.Rgb16,
         };
 
-        private static readonly Dictionary<Type, PixelInternalFormat[]> _internalFormats =
-            new Dictionary<Type, PixelInternalFormat[]>
-            {
-                { typeof(float), _floatFormats },
-                { typeof(OpenTK.Half), _halfFormats },
-                { typeof(byte), _u8Formats },
-                { typeof(ushort), _u16Formats }
-            };
+        private static readonly Dictionary<Type, PixelInternalFormat[]> _internalFormats = new Dictionary<Type, PixelInternalFormat[]>
+        {
+            { typeof(float), _floatFormats },
+            { typeof(Half), _halfFormats },
+            { typeof(byte), _u8Formats },
+            { typeof(ushort), _u16Formats },
+        };
                 
             
         /// <summary>
@@ -143,14 +143,17 @@ namespace IIS.SLSharp.Textures
             out PixelFormat format)
         {
             if (components < 1 || components > 4)
-                throw new ArgumentOutOfRangeException("components", components, "Components must be between 1 and 4");
+                throw new ArgumentOutOfRangeException("components", components, "Components must be between 1 and 4.");
+
+            if (type == null)
+                throw new ArgumentNullException("type");
 
             var index = components - 1;
             format = _formats[index];
 
             PixelInternalFormat[] internalTable;
             if (!_internalFormats.TryGetValue(type, out internalTable))
-                throw new ArgumentException("Unsupported texture data type", "type");
+                throw new ArgumentException("Unsupported texture data type.", "type");
 
             internalFormat = internalTable[index];
         }

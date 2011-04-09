@@ -41,9 +41,8 @@ namespace IIS.SLSharp.Textures
         /// <param name="components">The number of color components the Texture(s) have</param>
         /// <param name="format">The data format the Texture(s) shall use, default is 16bit Half</param>
         /// <param name="buffers">The number of Textures to use.</param>
-        public RenderToTexture(int width, int height, bool depth, int components = 3, Type format = null, int buffers = 1   )
+        public RenderToTexture(int width, int height, bool depth, int components = 3, Type format = null, int buffers = 1)
         {
-            format = format ?? typeof (Half);
             _fbo = new FramebufferObject();
             _textures = new Texture2D[buffers];
             _bufs = new DrawBuffersEnum[buffers];
@@ -61,7 +60,7 @@ namespace IIS.SLSharp.Textures
 
             for (var i = 0; i < buffers; i++)
             {
-                _textures[i] = new Texture2D(width, height, components, format);
+                _textures[i] = new Texture2D(width, height, components, format ?? typeof(Half));
                 _fbo.SetTexture(_textures[i], i);
             }
 

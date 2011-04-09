@@ -9,6 +9,9 @@ namespace IIS.SLSharp.Diagnostics
 
         public void BeginDebug(Shader shader)
         {
+            if (shader == null)
+                throw new ArgumentNullException("shader");
+
             if (_shader != null)
                 throw new InvalidOperationException("This debugger object is already debugging a shader.");
         }
