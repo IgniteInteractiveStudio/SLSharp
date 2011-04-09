@@ -1214,7 +1214,7 @@ namespace IIS.SLSharp.Shaders
         /// For a floating-point value of zero, the significant and exponent are both zero. 
         /// For a floating-point value that is an infinity or is not a number, the results are undefined.
         /// </summary>
-        protected static float frexp(float x, int exp) { throw _invalidAccess; }
+        protected static float frexp(float x, out int exp) { throw _invalidAccess; }
 
         /// <summary>
         /// Splits x into a floating-point significand in the range [0.5, 1.0) 
@@ -1223,7 +1223,7 @@ namespace IIS.SLSharp.Shaders
         /// For a floating-point value of zero, the significant and exponent are both zero. 
         /// For a floating-point value that is an infinity or is not a number, the results are undefined.
         /// </summary>
-        protected static vec2 frexp(vec2 x, ivec2 exp) { throw _invalidAccess; }
+        protected static vec2 frexp(vec2 x, out ivec2 exp) { throw _invalidAccess; }
 
         /// <summary>
         /// Splits x into a floating-point significand in the range [0.5, 1.0) 
@@ -1232,7 +1232,7 @@ namespace IIS.SLSharp.Shaders
         /// For a floating-point value of zero, the significant and exponent are both zero. 
         /// For a floating-point value that is an infinity or is not a number, the results are undefined.
         /// </summary>
-        protected static vec3 frexp(vec3 x, ivec3 exp) { throw _invalidAccess; }
+        protected static vec3 frexp(vec3 x, out ivec3 exp) { throw _invalidAccess; }
 
         /// <summary>
         /// Splits x into a floating-point significand in the range [0.5, 1.0) 
@@ -1241,7 +1241,7 @@ namespace IIS.SLSharp.Shaders
         /// For a floating-point value of zero, the significant and exponent are both zero. 
         /// For a floating-point value that is an infinity or is not a number, the results are undefined.
         /// </summary>
-        protected static vec4 frexp(vec4 x, ivec4 exp) { throw _invalidAccess; }
+        protected static vec4 frexp(vec4 x, out ivec4 exp) { throw _invalidAccess; }
 
         #endregion
         
@@ -1254,7 +1254,7 @@ namespace IIS.SLSharp.Shaders
         /// For a floating-point value of zero, the significant and exponent are both zero. 
         /// For a floating-point value that is an infinity or is not a number, the results are undefined.
         /// </summary>
-        protected static double frexp(double x, int exp) { throw _invalidAccess; }
+        protected static double frexp(double x, out int exp) { throw _invalidAccess; }
 
         /// <summary>
         /// Splits x into a floating-point significand in the range [0.5, 1.0) 
@@ -1263,7 +1263,7 @@ namespace IIS.SLSharp.Shaders
         /// For a floating-point value of zero, the significant and exponent are both zero. 
         /// For a floating-point value that is an infinity or is not a number, the results are undefined.
         /// </summary>
-        protected static dvec2 frexp(dvec2 x, ivec2 exp) { throw _invalidAccess; }
+        protected static dvec2 frexp(dvec2 x, out ivec2 exp) { throw _invalidAccess; }
 
         /// <summary>
         /// Splits x into a floating-point significand in the range [0.5, 1.0) 
@@ -1272,7 +1272,7 @@ namespace IIS.SLSharp.Shaders
         /// For a floating-point value of zero, the significant and exponent are both zero. 
         /// For a floating-point value that is an infinity or is not a number, the results are undefined.
         /// </summary>
-        protected static dvec3 frexp(dvec3 x, ivec3 exp) { throw _invalidAccess; }
+        protected static dvec3 frexp(dvec3 x, out ivec3 exp) { throw _invalidAccess; }
 
         /// <summary>
         /// Splits x into a floating-point significand in the range [0.5, 1.0) 
@@ -1281,7 +1281,71 @@ namespace IIS.SLSharp.Shaders
         /// For a floating-point value of zero, the significant and exponent are both zero. 
         /// For a floating-point value that is an infinity or is not a number, the results are undefined.
         /// </summary>
-        protected static dvec4 frexp(dvec4 x, ivec4 exp) { throw _invalidAccess; }
+        protected static dvec4 frexp(dvec4 x, out ivec4 exp) { throw _invalidAccess; }
+
+        #endregion
+
+        #region genType ldexp (genType x, in genIType exp)
+
+        /// <summary>
+        /// Builds a floating-point number from x and the corresponding integral exponent of two in exp, 
+        /// returning: significand⋅2*+exponent
+        /// If this product is too large to be represented in the floating-point type, the result is undefined.
+        /// </summary>
+        protected static float ldexp(float x, int exp) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Builds a floating-point number from x and the corresponding integral exponent of two in exp, 
+        /// returning: significand⋅2*+exponent
+        /// If this product is too large to be represented in the floating-point type, the result is undefined.
+        /// </summary>
+        protected static vec2 ldexp(vec2 x, ivec2 exp) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Builds a floating-point number from x and the corresponding integral exponent of two in exp, 
+        /// returning: significand⋅2*+exponent
+        /// If this product is too large to be represented in the floating-point type, the result is undefined.
+        /// </summary>
+        protected static vec3 ldexp(vec3 x, ivec3 exp) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Builds a floating-point number from x and the corresponding integral exponent of two in exp, 
+        /// returning: significand⋅2*+exponent
+        /// If this product is too large to be represented in the floating-point type, the result is undefined.
+        /// </summary>
+        protected static vec4 ldexp(vec4 x, ivec4 exp) { throw _invalidAccess; }
+
+        #endregion
+
+        #region genDType ldexp (genDType x, in genIType exp)
+
+        /// <summary>
+        /// Builds a floating-point number from x and the corresponding integral exponent of two in exp, 
+        /// returning: significand⋅2*+exponent
+        /// If this product is too large to be represented in the floating-point type, the result is undefined.
+        /// </summary>
+        protected static double ldexp(double x, int exp) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Builds a floating-point number from x and the corresponding integral exponent of two in exp, 
+        /// returning: significand⋅2*+exponent
+        /// If this product is too large to be represented in the floating-point type, the result is undefined.
+        /// </summary>
+        protected static dvec2 ldexp(dvec2 x, ivec2 exp) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Builds a floating-point number from x and the corresponding integral exponent of two in exp, 
+        /// returning: significand⋅2*+exponent
+        /// If this product is too large to be represented in the floating-point type, the result is undefined.
+        /// </summary>
+        protected static dvec3 ldexp(dvec3 x, ivec3 exp) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Builds a floating-point number from x and the corresponding integral exponent of two in exp, 
+        /// returning: significand⋅2*+exponent
+        /// If this product is too large to be represented in the floating-point type, the result is undefined.
+        /// </summary>
+        protected static dvec4 ldexp(dvec4 x, ivec4 exp) { throw _invalidAccess; }
 
         #endregion
     }
