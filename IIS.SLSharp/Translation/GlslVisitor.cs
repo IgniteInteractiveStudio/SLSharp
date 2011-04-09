@@ -26,11 +26,13 @@ namespace IIS.SLSharp.Translation
         {
             if (type.Resolve().DeclaringType.MetadataToken.ToInt32() == typeof(ShaderDefinition).MetadataToken)
                 return;
+
             throw new SLSharpException(type.FullName + " is invalid in a shader program.");
         }
 
         public static void ValidateType(TypeReference t)
         {
+            // ToGlslType returns normally if it's a correct type
             ToGlslType(t);
         }
 

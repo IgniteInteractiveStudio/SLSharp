@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using IIS.SLSharp.Annotations;
-using IIS.SLSharp.Diagnostics;
 using IIS.SLSharp.Reflection;
 using IIS.SLSharp.Runtime;
 using IIS.SLSharp.Textures;
@@ -57,8 +56,6 @@ namespace IIS.SLSharp.Shaders
         private static int _quadVbo;
 
         private static int _refCount;
-
-        private static readonly ShaderDebugger _debugger = new ShaderDebugger();
 
         private readonly List<int> _objects = new List<int>();
 
@@ -633,8 +630,8 @@ namespace IIS.SLSharp.Shaders
         [ReflectionMarker(ReflectionToken.ShaderBegin)]
         public virtual void Begin()
         {
-            if (DebugMode)
-                _debugger.BeginDebug(this);
+            // intentionally virtual (not abstract) in case we want to add
+            // code here later on
         }
 
         /// <summary>
@@ -647,9 +644,6 @@ namespace IIS.SLSharp.Shaders
 
             UnbindTextures();
             GL.UseProgram(0);
-
-            if (DebugMode)
-                _debugger.EndDebug();
         }
 
         public virtual void Dispose()
