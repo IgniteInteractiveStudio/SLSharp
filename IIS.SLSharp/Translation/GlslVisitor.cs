@@ -13,11 +13,11 @@ namespace IIS.SLSharp.Translation
 {
     internal sealed partial class GlslVisitor : IAstVisitor<int, StringBuilder>
     {
-        private readonly HashSet<string> _functions = new HashSet<string>();
+        private readonly HashSet<Tuple<string, string>> _functions = new HashSet<Tuple<string, string>>();
 
         private readonly CustomAttribute _attr;
 
-        public IEnumerable<string> Functions
+        public IEnumerable<Tuple<string, string>> Functions
         {
             get { return _functions; }
         }
@@ -81,7 +81,7 @@ namespace IIS.SLSharp.Translation
             if ((bool)attr.ConstructorArguments.FirstOrDefault().Value)
                 throw new Exception("Cannot call shader entry point.");
 
-            _functions.Add(GetSignature(m));
+            _functions.Add(new Tuple<string, string>(GetSignature(m), m.DeclaringType.FullName + "." + m.Name));
         }
 
         private StringBuilder ArgsToString(ICollection<Expression> args)

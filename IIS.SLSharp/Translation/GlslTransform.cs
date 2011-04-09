@@ -12,9 +12,9 @@ namespace IIS.SLSharp.Translation
 {
     public sealed class GlslTransform
     {
-        private readonly HashSet<string> _functions = new HashSet<string>();
+        private readonly HashSet<Tuple<string, string>> _functions = new HashSet<Tuple<string, string>>();
 
-        public IEnumerable<string> Functions
+        public IEnumerable<Tuple<string, string>> Functions
         {
             get { return _functions; }
         }

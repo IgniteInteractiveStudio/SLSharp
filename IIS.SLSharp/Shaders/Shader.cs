@@ -384,9 +384,14 @@ namespace IIS.SLSharp.Shaders
         /// </summary>
         /// <param name="functions"></param>
         /// <returns></returns>
-        private static string ForwardDeclare(IEnumerable<string> functions)
+        private static string ForwardDeclare(IEnumerable<Tuple<string, string>> functions)
         {
-            return functions.Aggregate(string.Empty, (a, b) => a + b + ";" + Environment.NewLine) + Environment.NewLine;
+            return functions.Aggregate(string.Empty, (a, b) => 
+                a + b.Item1 + ";" +
+#if DEBUG
+                " // " + b.Item2 +
+#endif
+                Environment.NewLine) + Environment.NewLine;
         }
 
         /// <summary>
