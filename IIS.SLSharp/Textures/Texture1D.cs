@@ -27,7 +27,6 @@ namespace IIS.SLSharp.Textures
             GL.TexParameter(TextureTarget.Texture1D, TextureParameterName.TextureMinFilter, (int) TextureMinFilter.Linear);
             GL.TexParameter(TextureTarget.Texture1D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 
-
             PixelInternalFormat internalformat;
             PixelFormat format;
             GetFormat(components, type, out internalformat, out format);

@@ -31,7 +31,7 @@ namespace IIS.SLSharp.Textures
         { 
             get { return _textures[index]; } 
         }
-        
+
         /// <summary>
         /// Creates new (set of) renderable Texture(s)
         /// </summary>

@@ -108,7 +108,7 @@ namespace IIS.SLSharp.Textures
             {
                 GL.TexParameter(Target, TextureParameterName.GenerateMipmap, 1);
                 throw new NotImplementedException("You currently GL_EXT_framebuffer_object; we need need testing here as the" +
-                    " fallback version doesnt seem to work.");
+                    " fallback version doesn't seem to work.");
             }
 
             Utilities.CheckGL();
@@ -170,10 +170,10 @@ namespace IIS.SLSharp.Textures
             ImageDDS.LoadFromDisk(filename, out name, out dim);
 
             if (dim != TextureTarget.Texture2D)
-                throw new Exception("Texture was not 2D");
+                throw new InvalidDataException("Texture was not 2D.");
 
             if (!GL.IsTexture(name))
-                throw new Exception("Texture loading failed");
+                throw new InvalidDataException("Texture loading failed.");
 
             return new Texture2D(name);
         }
@@ -199,19 +199,17 @@ namespace IIS.SLSharp.Textures
 
                 Width = width;
                 Height = height;
-                GL.TexImage2D(Target, 0, _internalFormat, Width, Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte,
-                    IntPtr.Zero);
+                GL.TexImage2D(Target, 0, _internalFormat, Width, Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
                 GL.TexSubImage2D(Target, 0, 0, 0, tmpWidth, tmpHeight, PixelFormat.Rgba, PixelType.Float, tmp);
             }
             else
             {
                 Width = width;
                 Height = height;
-                GL.TexImage2D(Target, 0, _internalFormat, Width, Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte,
-                    IntPtr.Zero);
+                GL.TexImage2D(Target, 0, _internalFormat, Width, Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
             }
 
-            Utilities.CheckGL();            
+            Utilities.CheckGL();
         }
     }
 }
