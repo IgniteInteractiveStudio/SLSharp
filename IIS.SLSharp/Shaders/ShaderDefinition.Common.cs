@@ -1205,8 +1205,85 @@ namespace IIS.SLSharp.Shaders
 
         #endregion
 
-        // not yet supported (need to implement out modifier)
-        // genType frexp(genType x, out genIType exp)
+        #region genType frexp (genType x, out genIType exp)
+
+        /// <summary>
+        /// Splits x into a floating-point significand in the range [0.5, 1.0) 
+        /// and an integral exponent of two, such that: x=significand⋅2**exponent
+        /// The significand is returned by the function and the exponent is returned in the parameter exp. 
+        /// For a floating-point value of zero, the significant and exponent are both zero. 
+        /// For a floating-point value that is an infinity or is not a number, the results are undefined.
+        /// </summary>
+        protected static float frexp(float x, int exp) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Splits x into a floating-point significand in the range [0.5, 1.0) 
+        /// and an integral exponent of two, such that: x=significand⋅2**exponent
+        /// The significand is returned by the function and the exponent is returned in the parameter exp. 
+        /// For a floating-point value of zero, the significant and exponent are both zero. 
+        /// For a floating-point value that is an infinity or is not a number, the results are undefined.
+        /// </summary>
+        protected static vec2 frexp(vec2 x, ivec2 exp) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Splits x into a floating-point significand in the range [0.5, 1.0) 
+        /// and an integral exponent of two, such that: x=significand⋅2**exponent
+        /// The significand is returned by the function and the exponent is returned in the parameter exp. 
+        /// For a floating-point value of zero, the significant and exponent are both zero. 
+        /// For a floating-point value that is an infinity or is not a number, the results are undefined.
+        /// </summary>
+        protected static vec3 frexp(vec3 x, ivec3 exp) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Splits x into a floating-point significand in the range [0.5, 1.0) 
+        /// and an integral exponent of two, such that: x=significand⋅2**exponent
+        /// The significand is returned by the function and the exponent is returned in the parameter exp. 
+        /// For a floating-point value of zero, the significant and exponent are both zero. 
+        /// For a floating-point value that is an infinity or is not a number, the results are undefined.
+        /// </summary>
+        protected static vec4 frexp(vec4 x, ivec4 exp) { throw _invalidAccess; }
+
+        #endregion
+        
+        #region genDType frexp (genDType x, out genIType exp)
+
+        /// <summary>
+        /// Splits x into a floating-point significand in the range [0.5, 1.0) 
+        /// and an integral exponent of two, such that: x=significand⋅2**exponent
+        /// The significand is returned by the function and the exponent is returned in the parameter exp. 
+        /// For a floating-point value of zero, the significant and exponent are both zero. 
+        /// For a floating-point value that is an infinity or is not a number, the results are undefined.
+        /// </summary>
+        protected static double frexp(double x, int exp) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Splits x into a floating-point significand in the range [0.5, 1.0) 
+        /// and an integral exponent of two, such that: x=significand⋅2**exponent
+        /// The significand is returned by the function and the exponent is returned in the parameter exp. 
+        /// For a floating-point value of zero, the significant and exponent are both zero. 
+        /// For a floating-point value that is an infinity or is not a number, the results are undefined.
+        /// </summary>
+        protected static dvec2 frexp(dvec2 x, ivec2 exp) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Splits x into a floating-point significand in the range [0.5, 1.0) 
+        /// and an integral exponent of two, such that: x=significand⋅2**exponent
+        /// The significand is returned by the function and the exponent is returned in the parameter exp. 
+        /// For a floating-point value of zero, the significant and exponent are both zero. 
+        /// For a floating-point value that is an infinity or is not a number, the results are undefined.
+        /// </summary>
+        protected static dvec3 frexp(dvec3 x, ivec3 exp) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Splits x into a floating-point significand in the range [0.5, 1.0) 
+        /// and an integral exponent of two, such that: x=significand⋅2**exponent
+        /// The significand is returned by the function and the exponent is returned in the parameter exp. 
+        /// For a floating-point value of zero, the significant and exponent are both zero. 
+        /// For a floating-point value that is an infinity or is not a number, the results are undefined.
+        /// </summary>
+        protected static dvec4 frexp(dvec4 x, ivec4 exp) { throw _invalidAccess; }
+
+        #endregion
     }
 }
 
