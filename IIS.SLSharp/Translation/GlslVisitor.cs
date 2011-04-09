@@ -22,6 +22,18 @@ namespace IIS.SLSharp.Translation
             get { return _functions; }
         }
 
+        private static void ValidateComplexType(TypeReference type)
+        {
+            if (type.Resolve().DeclaringType.MetadataToken.ToInt32() == typeof(ShaderDefinition).MetadataToken)
+                return;
+            throw new SLSharpException(type.FullName + " is invalid in a shader program.");
+        }
+
+        public static void ValidateType(TypeReference t)
+        {
+            ToGlslType(t);
+        }
+
         public static string ToGlslType(TypeReference t)
         {
             switch (t.FullName)
@@ -39,6 +51,7 @@ namespace IIS.SLSharp.Translation
                 case "System.Boolean":
                     return "bool";
                 default:
+                    ValidateComplexType(t);
                     return t.Name;
             }
         }
@@ -234,19 +247,9 @@ namespace IIS.SLSharp.Translation
                 ArgsToString(objectCreateExpression.Arguments)).Append(")");
         }
 
-        private static void ValidateType(MemberType type)
-        {
-            var typeref = type.Target.Annotation<TypeReference>();
-            if (typeref.Resolve().MetadataToken.ToInt32() == typeof(ShaderDefinition).MetadataToken)
-                return;
-
-            // TODO: support basic types float double int uint bool here
-            throw new SLSharpException(type.MemberName + " is invalid in a shader program.");
-        }
-
         public StringBuilder VisitMemberType(MemberType memberType, int data)
         {
-            ValidateType(memberType);
+            ValidateType(memberType.Annotation<TypeReference>());
             return new StringBuilder(memberType.MemberName);
         }
 
