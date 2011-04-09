@@ -62,7 +62,7 @@ namespace IIS.SLSharp.Shaders
 
         private readonly List<int> _objects = new List<int>();
 
-        private TypeDefinition _shader;
+        private readonly TypeDefinition _shader;
 
 #if DEBUG
 
