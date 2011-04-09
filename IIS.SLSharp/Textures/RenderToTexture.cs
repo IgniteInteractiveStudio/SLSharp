@@ -1,5 +1,4 @@
 ﻿using System;
-using IIS.SLSharp.Core;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 

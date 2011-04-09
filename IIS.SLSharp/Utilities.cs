@@ -1,22 +1,10 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using OpenTK.Graphics.OpenGL;
 
-namespace IIS.SLSharp.Core
+namespace IIS.SLSharp
 {
     public static class Utilities
     {
-        public static float Fract(float f)
-        {
-            var fout = (float)Math.Floor(f);
-            return f - fout;
-        }
-
-        public static float Squared(float x)
-        {
-            return x * x;
-        }
-
         public static bool IsVersion(int major, int minor = 0)
         {
             var s = GL.GetString(StringName.Version);
@@ -53,10 +41,10 @@ namespace IIS.SLSharp.Core
             return GL.GetString(StringName.Extensions).Contains(name);
         }
 
-        public static void ThrowGLError(ErrorCode error)
+        internal static void ThrowGLError(ErrorCode error)
         {
             var lastError = string.Format("{0} [{1}]", error.ToString("f"), (int)error);
-            throw new Exception("GL Error: " + lastError);
+            throw new SLSharpException("GL Error: " + lastError);
         }
 
         public static void CheckGL()

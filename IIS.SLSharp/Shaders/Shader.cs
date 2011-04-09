@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using IIS.SLSharp.Annotations;
-using IIS.SLSharp.Core;
 using IIS.SLSharp.Diagnostics;
 using IIS.SLSharp.Reflection;
 using IIS.SLSharp.Runtime;

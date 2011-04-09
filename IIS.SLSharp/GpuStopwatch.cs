@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using OpenTK.Graphics.OpenGL;
 
-namespace IIS.SLSharp.Core
+namespace IIS.SLSharp
 {
     public sealed class GpuStopwatch : IDisposable
     {
