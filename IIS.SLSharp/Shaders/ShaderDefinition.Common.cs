@@ -887,6 +887,94 @@ namespace IIS.SLSharp.Shaders
 
         #endregion
 
+        #region genType mix (genType x, genType y, genBType a)
+
+        /// <summary>
+        /// Selects which vector each returned component comes from. For a component of a that is false, 
+        /// the corresponding component of x is returned. For a component of a that is true, 
+        /// the corresponding component of y is returned. Components of x and y that are not selected 
+        /// are allowed to be invalid floating point values and will have no effect on the results. 
+        /// Thus, this provides different functionality than, for example,
+        /// genType mix(genType x, genType y, genType(a)) where a is a Boolean vector.
+        /// </summary>
+        protected static float mix(float x, float y, bool a) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Selects which vector each returned component comes from. For a component of a that is false, 
+        /// the corresponding component of x is returned. For a component of a that is true, 
+        /// the corresponding component of y is returned. Components of x and y that are not selected 
+        /// are allowed to be invalid floating point values and will have no effect on the results. 
+        /// Thus, this provides different functionality than, for example,
+        /// genType mix(genType x, genType y, genType(a)) where a is a Boolean vector.
+        /// </summary>
+        protected static vec2 mix(vec2 x, vec2 y, bvec2 a) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Selects which vector each returned component comes from. For a component of a that is false, 
+        /// the corresponding component of x is returned. For a component of a that is true, 
+        /// the corresponding component of y is returned. Components of x and y that are not selected 
+        /// are allowed to be invalid floating point values and will have no effect on the results. 
+        /// Thus, this provides different functionality than, for example,
+        /// genType mix(genType x, genType y, genType(a)) where a is a Boolean vector.
+        /// </summary>
+        protected static vec3 mix(vec3 x, vec3 y, bvec3 a) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Selects which vector each returned component comes from. For a component of a that is false, 
+        /// the corresponding component of x is returned. For a component of a that is true, 
+        /// the corresponding component of y is returned. Components of x and y that are not selected 
+        /// are allowed to be invalid floating point values and will have no effect on the results. 
+        /// Thus, this provides different functionality than, for example,
+        /// genType mix(genType x, genType y, genType(a)) where a is a Boolean vector.
+        /// </summary>
+        protected static vec4 mix(vec4 x, vec4 y, bvec4 a) { throw _invalidAccess; }
+
+        #endregion
+
+        #region genDType mix (genDType x, genDType y, genBType a)
+
+        /// <summary>
+        /// Selects which vector each returned component comes from. For a component of a that is false, 
+        /// the corresponding component of x is returned. For a component of a that is true, 
+        /// the corresponding component of y is returned. Components of x and y that are not selected 
+        /// are allowed to be invalid floating point values and will have no effect on the results. 
+        /// Thus, this provides different functionality than, for example,
+        /// genType mix(genType x, genType y, genType(a)) where a is a Boolean vector.
+        /// </summary>
+        protected static double mix(double x, double y, bool a) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Selects which vector each returned component comes from. For a component of a that is false, 
+        /// the corresponding component of x is returned. For a component of a that is true, 
+        /// the corresponding component of y is returned. Components of x and y that are not selected 
+        /// are allowed to be invalid floating point values and will have no effect on the results. 
+        /// Thus, this provides different functionality than, for example,
+        /// genType mix(genType x, genType y, genType(a)) where a is a Boolean vector.
+        /// </summary>
+        protected static dvec2 mix(dvec2 x, dvec2 y, bvec2 a) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Selects which vector each returned component comes from. For a component of a that is false, 
+        /// the corresponding component of x is returned. For a component of a that is true, 
+        /// the corresponding component of y is returned. Components of x and y that are not selected 
+        /// are allowed to be invalid floating point values and will have no effect on the results. 
+        /// Thus, this provides different functionality than, for example,
+        /// genType mix(genType x, genType y, genType(a)) where a is a Boolean vector.
+        /// </summary>
+        protected static dvec3 mix(dvec3 x, dvec3 y, bvec3 a) { throw _invalidAccess; }
+
+        /// <summary>
+        /// Selects which vector each returned component comes from. For a component of a that is false, 
+        /// the corresponding component of x is returned. For a component of a that is true, 
+        /// the corresponding component of y is returned. Components of x and y that are not selected 
+        /// are allowed to be invalid floating point values and will have no effect on the results. 
+        /// Thus, this provides different functionality than, for example,
+        /// genType mix(genType x, genType y, genType(a)) where a is a Boolean vector.
+        /// </summary>
+        protected static dvec4 mix(dvec4 x, dvec4 y, bvec4 a) { throw _invalidAccess; }
+
+        #endregion
+
         #region genType step(float edge, genType x)
 
         /// <summary>Returns 0.0 if x &lt; edge, otherwise it returns 1.0.</summary>
