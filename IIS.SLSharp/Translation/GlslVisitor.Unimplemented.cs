@@ -23,11 +23,6 @@ namespace IIS.SLSharp.Translation
             return null;
         }
 
-        public StringBuilder VisitCastExpression(CastExpression castExpression, int data)
-        {
-            throw new NotImplementedException();
-        }
-
         public StringBuilder VisitConditionalExpression(ConditionalExpression conditionalExpression, int data)
         {
             throw new NotImplementedException();
@@ -81,11 +76,6 @@ namespace IIS.SLSharp.Translation
         public StringBuilder VisitUncheckedStatement(UncheckedStatement uncheckedStatement, int data)
         {
             return new StringBuilder();
-        }
-
-        public StringBuilder VisitSimpleType(SimpleType simpleType, int data)
-        {
-            throw new NotImplementedException();
         }
 
         public StringBuilder VisitComposedType(ComposedType composedType, int data)

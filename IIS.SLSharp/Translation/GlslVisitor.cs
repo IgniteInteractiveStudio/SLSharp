@@ -24,7 +24,10 @@ namespace IIS.SLSharp.Translation
 
         private static void ValidateComplexType(TypeReference type)
         {
-            if (type.Resolve().DeclaringType.MetadataToken.ToInt32() == typeof(ShaderDefinition).MetadataToken)
+            var typeDef = type.Resolve();
+            var declType = typeDef.DeclaringType;
+
+            if (declType != null && declType.MetadataToken.ToInt32() == typeof(ShaderDefinition).MetadataToken)
                 return;
 
             throw new SLSharpException(type.FullName + " is invalid in a shader program.");
@@ -255,6 +258,13 @@ namespace IIS.SLSharp.Translation
             return new StringBuilder(memberType.MemberName);
         }
 
+        public StringBuilder VisitSimpleType(SimpleType simpleType, int data)
+        {
+            // this cast might not work for all cases...
+            ValidateType((TypeReference)simpleType.Annotation<MemberReference>());
+            return new StringBuilder(simpleType.ToString());
+        }
+
         public StringBuilder VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, int data)
         {
             var result = new StringBuilder();
@@ -289,6 +299,12 @@ namespace IIS.SLSharp.Translation
             }
 
             return result.Append(primitiveExpression.Value.ToString());
+        }
+
+        public StringBuilder VisitCastExpression(CastExpression castExpression, int data)
+        {
+            // TODO: implement
+            throw new NotImplementedException();
         }
 
         public StringBuilder VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, int data)
