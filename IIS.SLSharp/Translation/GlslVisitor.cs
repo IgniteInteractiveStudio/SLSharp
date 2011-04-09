@@ -234,8 +234,19 @@ namespace IIS.SLSharp.Translation
                 ArgsToString(objectCreateExpression.Arguments)).Append(")");
         }
 
+        private static void ValidateType(MemberType type)
+        {
+            var typeref = type.Target.Annotation<TypeReference>();
+            if (typeref.Resolve().MetadataToken.ToInt32() == typeof(ShaderDefinition).MetadataToken)
+                return;
+
+            // TODO: support basic types float double int uint bool here
+            throw new SLSharpException(type.MemberName + " is invalid in a shader program.");
+        }
+
         public StringBuilder VisitMemberType(MemberType memberType, int data)
         {
+            ValidateType(memberType);
             return new StringBuilder(memberType.MemberName);
         }
 
