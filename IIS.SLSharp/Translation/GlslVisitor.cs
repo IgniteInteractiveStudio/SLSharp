@@ -53,7 +53,7 @@ namespace IIS.SLSharp.Translation
             if (parameters.Count > 0)
             {
                 sig = parameters.Take(parameters.Count - 1).Aggregate(sig, (current, v) =>
-                    current + ToGlslType(v.ParameterType) + " " + v.Name + ",");
+                    current + ToGlslType(v.ParameterType) + " " + v.Name + ", ");
 
                 var l = parameters.Last();
                 sig += ToGlslType(l.ParameterType) + " " + l.Name;
@@ -93,18 +93,23 @@ namespace IIS.SLSharp.Translation
             foreach (var v in args.Take(args.Count - 1))
             {
                 result.Append(v.AcceptVisitor(this, 0));
-                result.Append(",");
+                result.Append(", ");
             }
 
             result.Append(args.Last().AcceptVisitor(this, 0));
             return result;
         }
 
-        private static StringBuilder Indent(StringBuilder b)
+        private static StringBuilder Indent(AstNode node, StringBuilder b)
         {
+            if (node is BlockStatement)
+                return b;
+
             var res = new StringBuilder();
+
             res.Append("\t");
-            res.Append(b.Replace(Environment.NewLine, "\t" + Environment.NewLine));
+            res.Append(b.Replace(Environment.NewLine, Environment.NewLine + "\t"));
+
             return res;
         }
 
@@ -118,6 +123,7 @@ namespace IIS.SLSharp.Translation
             trans2.Run(block);
 
             Result = block.AcceptVisitor(this, 0).ToString();
+            Result += Environment.NewLine;
         }
 
         public StringBuilder VisitBlockStatement(BlockStatement blockStatement, int data)
@@ -127,7 +133,7 @@ namespace IIS.SLSharp.Translation
             result.Append(Environment.NewLine).Append("{");
 
             foreach (var stm in blockStatement.Statements)
-                result.Append(Environment.NewLine).Append(Indent(stm.AcceptVisitor(this, data)));
+                result.Append(Environment.NewLine).Append(Indent(stm, stm.AcceptVisitor(this, data)));
 
             result.Append(Environment.NewLine).Append("}");
 
@@ -411,9 +417,8 @@ namespace IIS.SLSharp.Translation
         {
             var result = new StringBuilder("while (").Append(whileStatement.Condition.AcceptVisitor(this, data)).Append(")");
 
-            result.Append(Environment.NewLine + "{");
-            result.Append(Indent(whileStatement.EmbeddedStatement.AcceptVisitor(this, data)));
-            result.Append(Environment.NewLine + "}");
+            var stmt = whileStatement.EmbeddedStatement;
+            result.Append(Indent(stmt, stmt.AcceptVisitor(this, data)));
 
             return result;
         }
@@ -422,9 +427,8 @@ namespace IIS.SLSharp.Translation
         {
             var result = new StringBuilder("do");
 
-            result.Append(Environment.NewLine + "{");
-            result.Append(Indent(doWhileStatement.EmbeddedStatement.AcceptVisitor(this, data)));
-            result.Append(Environment.NewLine + "}");
+            var stmt = doWhileStatement.EmbeddedStatement;
+            result.Append(Indent(stmt, stmt.AcceptVisitor(this, data)));
 
             result.Append("while (").Append(doWhileStatement.Condition.AcceptVisitor(this, data)).Append(");");
 
@@ -435,17 +439,14 @@ namespace IIS.SLSharp.Translation
         {
             var result = new StringBuilder("if (").Append(ifElseStatement.Condition.AcceptVisitor(this, data)).Append(")");
 
-            result.Append(Environment.NewLine + "{");
-            result.Append(Indent(ifElseStatement.TrueStatement.AcceptVisitor(this, data)));
-            result.Append(Environment.NewLine + "}");
+            var trueSection = ifElseStatement.TrueStatement;
+            result.Append(Indent(trueSection, trueSection.AcceptVisitor(this, data)));
 
             var elseSection = ifElseStatement.FalseStatement;
             if (elseSection != null)
             {
                 result.Append(Environment.NewLine + "else");
-                result.Append(Environment.NewLine + "{");
-                result.Append(Indent(elseSection.AcceptVisitor(this, data)));
-                result.Append(Environment.NewLine + "}");
+                result.Append(Indent(elseSection, elseSection.AcceptVisitor(this, data)));
             }
 
             return result;
@@ -458,7 +459,7 @@ namespace IIS.SLSharp.Translation
             result.Append(Environment.NewLine + "{");
 
             foreach (var section in switchStatement.SwitchSections)
-                result.Append(Environment.NewLine).Append(Indent(section.AcceptVisitor(this, data)));
+                result.Append(Environment.NewLine).Append(Indent(section, section.AcceptVisitor(this, data)));
 
             result.Append(Environment.NewLine + "}");
 
@@ -471,14 +472,14 @@ namespace IIS.SLSharp.Translation
 
             foreach (var label in switchSection.CaseLabels)
             {
-                result.Append(Indent(label.AcceptVisitor(this, data)));
+                result.Append(Indent(label, label.AcceptVisitor(this, data)));
                 result.Append(Environment.NewLine);
             }
 
             result.Append(Environment.NewLine).Append("{");
 
             foreach (var stmt in switchSection.Statements)
-                result.Append(Environment.NewLine).Append(Indent(stmt.AcceptVisitor(this, data)));
+                result.Append(Environment.NewLine).Append(Indent(stmt, stmt.AcceptVisitor(this, data)));
 
             result.Append(Environment.NewLine).Append("}");
 
@@ -511,13 +512,27 @@ namespace IIS.SLSharp.Translation
                 var initializer = initializers[i];
                 result.Append(initializer.AcceptVisitor(this, data));
 
-                result.Append(i != initializerCount - 1 ? ", " : "; ");
+                if (i != initializerCount - 1)
+                    result.Append(", ");
             }
 
-            result.Append(forStatement.Condition.AcceptVisitor(this, data)).Append("; ");
+            result.Append(";");
+
+            var condition = forStatement.Condition;
+            if (condition != null)
+            {
+                result.Append(" ");
+                result.Append(condition.AcceptVisitor(this, data));
+            }
+
+            result.Append(";");
 
             var iterators = forStatement.Iterators.ToList();
             var iteratorCount = iterators.Count;
+
+            if (iteratorCount != 0)
+                result.Append(" ");
+
             for (var i = 0; i < iteratorCount; i++)
             {
                 var iterator = iterators[i];
@@ -529,9 +544,8 @@ namespace IIS.SLSharp.Translation
 
             result.Append(")");
 
-            result.Append(Environment.NewLine).Append("{");
-            result.Append(Indent(forStatement.EmbeddedStatement.AcceptVisitor(this, data)));
-            result.Append(Environment.NewLine).Append("}");
+            var stmt = forStatement.EmbeddedStatement;
+            result.Append(Indent(stmt, stmt.AcceptVisitor(this, data)));
 
             return result;
         }
