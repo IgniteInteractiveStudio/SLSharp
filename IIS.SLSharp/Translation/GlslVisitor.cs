@@ -285,7 +285,7 @@ namespace IIS.SLSharp.Translation
                 result.Append(s).Append("u");
                 return result;
             }
-            
+
             return result.Append(primitiveExpression.Value.ToString());
         }
 
