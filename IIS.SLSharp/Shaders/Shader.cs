@@ -188,9 +188,8 @@ namespace IIS.SLSharp.Shaders
 
             if (compileResult != 1)
             {
-                // TODO: Throw a proper informative exception
                 //Dump(type, src);
-                throw new Exception(info);
+                throw new SLSharpException("Shader compilation failed: " + info);
             }
 
             if (info != string.Empty)
@@ -332,7 +331,6 @@ namespace IIS.SLSharp.Shaders
         /// </summary>
         private static readonly Dictionary<int, PropInfo> _typeMap = new Dictionary<int, PropInfo>
         {
-            // TODO: what do we do for double? ...
             { typeof(float).MetadataToken, new PropInfo("float", typeof(GL).GetMethod("Uniform1", new[] { typeof(int), typeof(float) })) },
             { typeof(vec2).MetadataToken, new PropInfo("vec2", GetHandler(ReflectionToken.ShaderVec2Helper)) },
             { typeof(vec3).MetadataToken, new PropInfo("vec3", GetHandler(ReflectionToken.ShaderVec3Helper)) },
