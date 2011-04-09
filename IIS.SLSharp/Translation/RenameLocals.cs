@@ -14,6 +14,9 @@ namespace IIS.SLSharp.Translation
 
         public void Run(AstNode node)
         {
+            if (node == null)
+                throw new ArgumentNullException("node");
+
             var initializer = node as VariableInitializer;
             if (initializer != null)
             {

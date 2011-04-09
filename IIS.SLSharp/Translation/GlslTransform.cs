@@ -29,6 +29,15 @@ namespace IIS.SLSharp.Translation
         /// <returns>The translated GLSL shader source</returns>
         public string Transform(TypeDefinition s, MethodDefinition m, CustomAttribute attr)
         {
+            if (s == null)
+                throw new ArgumentNullException("s");
+
+            if (m == null)
+                throw new ArgumentNullException("m");
+
+            if (attr == null)
+                throw new ArgumentNullException("attr");
+
             var d = AstMethodBodyBuilder.CreateMethodBody(m, new DecompilerContext
             {
                 CurrentType = s,
