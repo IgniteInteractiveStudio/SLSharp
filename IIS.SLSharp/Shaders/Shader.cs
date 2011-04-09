@@ -493,13 +493,6 @@ namespace IIS.SLSharp.Shaders
             return GetGlobalName(fullName);
         }
 
-        public static string GetMethodName(MethodInfo prop)
-        {
-            var fullName = "M@" + prop.DeclaringType.FullName + "." + prop.Name;
-            return GetGlobalName(fullName);
-        }
-
-
         /// <summary>
         /// Builds a string containing all uniform declarations.
         /// </summary>
