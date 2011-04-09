@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.NRefactory.CSharp;
-using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Shaders;
 using Mono.Cecil;
 
@@ -61,6 +60,18 @@ namespace IIS.SLSharp.Translation
             }
         }
 
+        public static string ToGlslParamType(ParameterDefinition p)
+        {
+            var t = ToGlslType(p.ParameterType.Resolve());
+            if (p.ParameterType.IsByReference)
+            {
+                if (p.IsOut)
+                    return "out " + t;
+                return "inout " + t;
+            }
+            return t;
+        }
+
         public string Result { get; private set; }
 
         public static string GetParameterString(MethodDefinition m)
@@ -71,10 +82,10 @@ namespace IIS.SLSharp.Translation
             if (parameters.Count > 0)
             {
                 sig = parameters.Take(parameters.Count - 1).Aggregate(sig, (current, v) =>
-                    current + ToGlslType(v.ParameterType) + " " + v.Name + ", ");
+                    current + ToGlslParamType(v) + " " + v.Name + ", ");
 
                 var l = parameters.Last();
-                sig += ToGlslType(l.ParameterType) + " " + l.Name;
+                sig += ToGlslParamType(l) + " " + l.Name;
             }
 
             return sig;
@@ -582,6 +593,13 @@ namespace IIS.SLSharp.Translation
             result.Append(Indent(stmt, stmt.AcceptVisitor(this, data)));
 
             return result;
+        }
+
+        public StringBuilder VisitDirectionExpression(DirectionExpression directionExpression, int data)
+        {
+            // at invocation time we wont pass out or inout keywords so
+            // this just passes through
+            return directionExpression.Expression.AcceptVisitor(this, data);
         }
     }
 }

@@ -33,11 +33,6 @@ namespace IIS.SLSharp.Translation
             throw new NotImplementedException();
         }
 
-        public StringBuilder VisitDirectionExpression(DirectionExpression directionExpression, int data)
-        {
-            throw new NotImplementedException();
-        }
-
         public StringBuilder VisitIndexerExpression(IndexerExpression indexerExpression, int data)
         {
             throw new NotImplementedException();
