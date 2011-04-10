@@ -50,6 +50,21 @@
     <Compile Include="Annotations\VertexShaderAttribute.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="GpuStopwatch.cs" />
+    <Compile Include="Math\Vectors\Vector2B.cs" />
+    <Compile Include="Math\Vectors\Vector2D.cs" />
+    <Compile Include="Math\Vectors\Vector2F.cs" />
+    <Compile Include="Math\Vectors\Vector2I.cs" />
+    <Compile Include="Math\Vectors\Vector2U.cs" />
+    <Compile Include="Math\Vectors\Vector3B.cs" />
+    <Compile Include="Math\Vectors\Vector3D.cs" />
+    <Compile Include="Math\Vectors\Vector3F.cs" />
+    <Compile Include="Math\Vectors\Vector3I.cs" />
+    <Compile Include="Math\Vectors\Vector3U.cs" />
+    <Compile Include="Math\Vectors\Vector4B.cs" />
+    <Compile Include="Math\Vectors\Vector4D.cs" />
+    <Compile Include="Math\Vectors\Vector4F.cs" />
+    <Compile Include="Math\Vectors\Vector4I.cs" />
+    <Compile Include="Math\Vectors\Vector4U.cs" />
     <Compile Include="Reflection\ReflectionMarkerAttribute.cs" />
     <Compile Include="Reflection\ReflectionToken.cs" />
     <Compile Include="Runtime\ResourceManager.cs" />
@@ -112,6 +127,7 @@
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if not "$(ConfigurationName)" == "Release" goto :skip
