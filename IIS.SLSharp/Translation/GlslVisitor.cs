@@ -64,11 +64,8 @@ namespace IIS.SLSharp.Translation
         {
             var t = ToGlslType(p.ParameterType.Resolve());
             if (p.ParameterType.IsByReference)
-            {
-                if (p.IsOut)
-                    return "out " + t;
-                return "inout " + t;
-            }
+                return p.IsOut ? "out " + t : "inout " + t;
+
             return t;
         }
 
