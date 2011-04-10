@@ -72,9 +72,9 @@ namespace IIS.SLSharp.Examples.Complex
         private Matrix4 SetupCamera()
         {
             const float r = 4.0f;
-            var eyeX = (float)Math.Cos(_time * MathHelper.TwoPi) * r;
-            var eyeZ = (float)Math.Sin(_time * MathHelper.TwoPi) * r;
-            var eyeY = (float)Math.Sin(_time * MathHelper.TwoPi * 3) * 1.5f;
+            var eyeX = (float)System.Math.Cos(_time * MathHelper.TwoPi) * r;
+            var eyeZ = (float)System.Math.Sin(_time * MathHelper.TwoPi) * r;
+            var eyeY = (float)System.Math.Sin(_time * MathHelper.TwoPi * 3) * 1.5f;
 
             var lookAt = Matrix4.LookAt(eyeX, eyeY, eyeZ, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
             var projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), _aspect, 0.01f, 6.0f);

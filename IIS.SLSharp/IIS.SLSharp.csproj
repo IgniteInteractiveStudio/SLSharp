@@ -50,11 +50,26 @@
     <Compile Include="Annotations\VertexShaderAttribute.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="GpuStopwatch.cs" />
+    <Compile Include="Math\Vectors\Vector2B.cs" />
+    <Compile Include="Math\Vectors\Vector2D.cs" />
+    <Compile Include="Math\Vectors\Vector2F.cs" />
+    <Compile Include="Math\Vectors\Vector2I.cs" />
+    <Compile Include="Math\Vectors\Vector2U.cs" />
+    <Compile Include="Math\Vectors\Vector3B.cs" />
+    <Compile Include="Math\Vectors\Vector3D.cs" />
+    <Compile Include="Math\Vectors\Vector3F.cs" />
+    <Compile Include="Math\Vectors\Vector3I.cs" />
+    <Compile Include="Math\Vectors\Vector3U.cs" />
+    <Compile Include="Math\Vectors\Vector4B.cs" />
+    <Compile Include="Math\Vectors\Vector4D.cs" />
+    <Compile Include="Math\Vectors\Vector4F.cs" />
+    <Compile Include="Math\Vectors\Vector4I.cs" />
+    <Compile Include="Math\Vectors\Vector4U.cs" />
     <Compile Include="Reflection\ReflectionMarkerAttribute.cs" />
     <Compile Include="Reflection\ReflectionToken.cs" />
     <Compile Include="Runtime\ResourceManager.cs" />
     <Compile Include="Shaders\Shader.cs" />
-    <Compile Include="Shaders\ShaderDefinition.BoolVector.cs" />
+    <Compile Include="Shaders\ShaderDefinition.BooleanVector.cs" />
     <Compile Include="Shaders\ShaderDefinition.Common.cs" />
     <Compile Include="Shaders\ShaderDefinition.cs" />
     <Compile Include="Annotations\ShaderVariableAttribute.cs" />
@@ -65,16 +80,16 @@
     <Compile Include="Shaders\ShaderDefinition.Geometric.cs" />
     <Compile Include="Shaders\ShaderDefinition.Integer.cs" />
     <Compile Include="Shaders\ShaderDefinition.Interpolation.cs" />
-    <Compile Include="Shaders\ShaderDefinition.IntVector.cs" />
+    <Compile Include="Shaders\ShaderDefinition.Int32Vector.cs" />
     <Compile Include="Shaders\ShaderDefinition.Matrix.cs" />
     <Compile Include="Shaders\ShaderDefinition.MatrixFunctions.cs" />
     <Compile Include="Shaders\ShaderDefinition.Noise.cs" />
     <Compile Include="Shaders\ShaderDefinition.Sampler.cs" />
     <Compile Include="Shaders\ShaderDefinition.Texture.cs" />
     <Compile Include="Shaders\ShaderDefinition.Trigonometry.cs" />
-    <Compile Include="Shaders\ShaderDefinition.UIntVector.cs" />
+    <Compile Include="Shaders\ShaderDefinition.UInt32Vector.cs" />
     <Compile Include="Shaders\ShaderDefinition.Packing.cs" />
-    <Compile Include="Shaders\ShaderDefinition.Vector.cs" />
+    <Compile Include="Shaders\ShaderDefinition.SingleVector.cs" />
     <Compile Include="Shaders\ShaderHelpers.cs" />
     <Compile Include="SLSharpException.cs" />
     <Compile Include="Textures\TextureBase.cs" />
@@ -113,6 +128,7 @@
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if not "$(ConfigurationName)" == "Release" goto :skip
