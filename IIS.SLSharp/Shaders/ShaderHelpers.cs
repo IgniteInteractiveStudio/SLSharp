@@ -113,7 +113,6 @@ namespace IIS.SLSharp.Shaders
             GL.Uniform4(location, i0, i1, i2, i3);
         }
 
-
         [ReflectionMarker(ReflectionToken.ShaderUniformMatrix2X2Helper)]
         public static void UniformMatrix2Helper(int location)
         {
@@ -166,6 +165,60 @@ namespace IIS.SLSharp.Shaders
         public static void UniformMatrix4Helper(int location)
         {
             GL.UniformMatrix4(location, false, ref ShaderDefinition.mat4.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUniformDMatrix2X2Helper)]
+        public static void UniformDMatrix2Helper(int location)
+        {
+            GL.UniformMatrix2(location, 1, false, ShaderDefinition.dmat2.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUniformDMatrix2X3Helper)]
+        public static void UniformDMatrix2X3Helper(int location)
+        {
+            GL.UniformMatrix2x3(location, 1, false, ShaderDefinition.dmat2x3.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUniformDMatrix2X4Helper)]
+        public static void UniformDMatrix2X4Helper(int location)
+        {
+            GL.UniformMatrix2x4(location, 1, false, ShaderDefinition.dmat2x4.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUniformDMatrix3X2Helper)]
+        public static void UniformDMatrix3X2Helper(int location)
+        {
+            GL.UniformMatrix3x2(location, 1, false, ShaderDefinition.dmat3x2.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUniformDMatrix3X3Helper)]
+        public static void UniformDMatrix3Helper(int location)
+        {
+            GL.UniformMatrix3(location, 1, false, ShaderDefinition.dmat3.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUniformDMatrix3X4Helper)]
+        public static void UniformDMatrix3X4Helper(int location)
+        {
+            GL.UniformMatrix3x4(location, 1, false, ShaderDefinition.dmat3x4.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUniformDMatrix4X2Helper)]
+        public static void UniformDMatrix4X2Helper(int location)
+        {
+            GL.UniformMatrix4x2(location, 1, false, ShaderDefinition.dmat4x2.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUniformDMatrix4X3Helper)]
+        public static void UniformDMatrix4X3Helper(int location)
+        {
+            GL.UniformMatrix4x3(location, 1, false, ShaderDefinition.dmat4x3.value);
+        }
+
+        [ReflectionMarker(ReflectionToken.ShaderUniformDMatrix4X4Helper)]
+        public static void UniformDMatrix4Helper(int location)
+        {
+            GL.UniformMatrix4(location, 1, false, ShaderDefinition.dmat4.value);
         }
 
         [ReflectionMarker(ReflectionToken.ShaderSamplerHelper)]

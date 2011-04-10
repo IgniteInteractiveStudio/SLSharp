@@ -508,10 +508,16 @@ namespace IIS.SLSharp.Shaders
         
         public sealed class dmat4
         {
-            public static Matrix4d value;
+            internal static double[] value = new double[4*4];
 
             public static implicit operator dmat4(Matrix4d v)
-            { value = v; return null; }
+            {
+                value[0] = v.M11; value[1] = v.M12; value[2] = v.M13; value[3] = v.M14;
+                value[4] = v.M21; value[5] = v.M22; value[6] = v.M23; value[7] = v.M24;
+                value[8] = v.M31; value[9] = v.M32; value[10] = v.M33; value[11] = v.M34;
+                value[12] = v.M41; value[13] = v.M42; value[14] = v.M43; value[15] = v.M44;
+                return null;
+            }
 
             #region .ctor
 

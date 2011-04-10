@@ -59,6 +59,7 @@
     <Compile Include="Shaders\ShaderDefinition.cs" />
     <Compile Include="Annotations\ShaderVariableAttribute.cs" />
     <Compile Include="Shaders\ShaderDefinition.Derivative.cs" />
+    <Compile Include="Shaders\ShaderDefinition.DoubleMatrix.cs" />
     <Compile Include="Shaders\ShaderDefinition.DoubleVector.cs" />
     <Compile Include="Shaders\ShaderDefinition.Exponential.cs" />
     <Compile Include="Shaders\ShaderDefinition.Geometric.cs" />
