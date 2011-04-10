@@ -1133,6 +1133,78 @@ namespace IIS.SLSharp.Shaders
 
         #endregion
 
+        #region genBType isnan (genType x)
+
+        /// <summary>Returns true if x holds a NaN. Returns false otherwise.</summary>
+        protected static bool isnan(float x) { throw _invalidAccess; }
+
+        /// <summary>Returns true if x holds a NaN. Returns false otherwise.</summary>
+        protected static bvec2 isnan(vec2 x) { throw _invalidAccess; }
+
+        /// <summary>Returns true if x holds a NaN. Returns false otherwise.</summary>
+        protected static bvec3 isnan(vec3 x) { throw _invalidAccess; }
+
+        /// <summary>Returns true if x holds a NaN. Returns false otherwise.</summary>
+        protected static bvec4 isnan(vec4 x) { throw _invalidAccess; }
+
+        #endregion
+
+        #region genBType isnan (genDType x)
+
+        /// <summary>Returns true if x holds a NaN. Returns false otherwise.</summary>
+        protected static bool isnan(double x) { throw _invalidAccess; }
+
+        /// <summary>Returns true if x holds a NaN. Returns false otherwise.</summary>
+        protected static bvec2 isnan(dvec2 x) { throw _invalidAccess; }
+
+        /// <summary>Returns true if x holds a NaN. Returns false otherwise.</summary>
+        protected static bvec3 isnan(dvec3 x) { throw _invalidAccess; }
+
+        /// <summary>Returns true if x holds a NaN. Returns false otherwise.</summary>
+        protected static bvec4 isnan(dvec4 x) { throw _invalidAccess; }
+
+        #endregion
+
+        #region genBType isinf (genType x)
+
+        /// <summary>Returns true if x holds a positive infinity or negative infinity. 
+        /// Returns false otherwise.</summary>
+        protected static bool isinf(float x) { throw _invalidAccess; }
+
+        /// <summary>Returns true if x holds a positive infinity or negative infinity. 
+        /// Returns false otherwise.</summary>
+        protected static bvec2 isinf(vec2 x) { throw _invalidAccess; }
+
+        /// <summary>Returns true if x holds a positive infinity or negative infinity. 
+        /// Returns false otherwise.</summary>
+        protected static bvec3 isinf(vec3 x) { throw _invalidAccess; }
+
+        /// <summary>Returns true if x holds a positive infinity or negative infinity. 
+        /// Returns false otherwise.</summary>
+        protected static bvec4 isinf(vec4 x) { throw _invalidAccess; }
+
+        #endregion
+
+        #region genBType isinf (genDType x)
+
+        /// <summary>Returns true if x holds a positive infinity or negative infinity. 
+        /// Returns false otherwise.</summary>
+        protected static bool isinf(double x) { throw _invalidAccess; }
+
+        /// <summary>Returns true if x holds a positive infinity or negative infinity. 
+        /// Returns false otherwise.</summary>
+        protected static bvec2 isinf(dvec2 x) { throw _invalidAccess; }
+
+        /// <summary>Returns true if x holds a positive infinity or negative infinity. 
+        /// Returns false otherwise.</summary>
+        protected static bvec3 isinf(dvec3 x) { throw _invalidAccess; }
+
+        /// <summary>Returns true if x holds a positive infinity or negative infinity. 
+        /// Returns false otherwise.</summary>
+        protected static bvec4 isinf(dvec4 x) { throw _invalidAccess; }
+
+        #endregion
+
         #region genIType floatBitsToInt (genType value)
 
         /// <summary>
