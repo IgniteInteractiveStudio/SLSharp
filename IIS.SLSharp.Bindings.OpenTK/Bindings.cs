@@ -41,34 +41,42 @@ namespace IIS.SLSharp.Bindings.OpenTK
         };
 
         #region Uniform Local Storage
-        private static Vector2 _f2;
-        private static Vector3 _f3;
-        private static Vector4 _f4;
-        private static Vector2d _d2;
-        private static Vector3d _d3;
-        private static Vector4d _d4;
-        private static Matrix4 _f4X4;
+
+        internal struct UniformStorage
+        {
+            public Vector2 F2;
+            public Vector3 F3;
+            public Vector4 F4;
+            public Vector2d D2;
+            public Vector3d D3;
+            public Vector4d D4;
+            public Matrix4 F4X4;
+        }
+
+        // use ThreadStatic when multiple render contexts are planned
+        //[ThreadStatic]
+        private static UniformStorage _storage;
 
         public static ShaderDefinition.vec2 ToVector2F(this Vector2 v)
-        { _f2 = v; return null; }
+        { _storage.F2 = v; return null; }
 
         public static ShaderDefinition.vec3 ToVector3F(this Vector3 v)
-        { _f3 = v; return null; }
+        { _storage.F3 = v; return null; }
 
         public static ShaderDefinition.vec4 ToVector4F(this Vector4 v)
-        { _f4 = v; return null; }
+        { _storage.F4 = v; return null; }
 
         public static ShaderDefinition.dvec2 ToVector2D(this Vector2d v)
-        { _d2 = v; return null; }
+        { _storage.D2 = v; return null; }
 
         public static ShaderDefinition.dvec3 ToVector3D(this Vector3d v)
-        { _d3 = v; return null; }
+        { _storage.D3 = v; return null; }
 
         public static ShaderDefinition.dvec4 ToVector4D(this Vector4d v)
-        { _d4 = v; return null; }
+        { _storage.D4 = v; return null; }
 
         public static ShaderDefinition.mat4 ToMatrix4F(this Matrix4 v)
-        { _f4X4 = v; return null; }
+        { _storage.F4X4 = v; return null; }
 
         #endregion
 
@@ -85,17 +93,17 @@ namespace IIS.SLSharp.Bindings.OpenTK
 
         public static void Uniform2F(int location)
         {
-            GL.Uniform2(location, ref _f2);
+            GL.Uniform2(location, ref _storage.F2);
         }
 
         public static void Uniform3F(int location)
         {
-            GL.Uniform3(location, ref _f3);
+            GL.Uniform3(location, ref _storage.F3);
         }
 
         public static void Uniform4F(int location)
         {
-            GL.Uniform4(location, ref _f4);
+            GL.Uniform4(location, ref _storage.F4);
         }
 
         public static void Uniform1D(int location, double value)
@@ -105,22 +113,25 @@ namespace IIS.SLSharp.Bindings.OpenTK
 
         public static void Uniform2D(int location)
         {
-            GL.Uniform2(location, _d2.X, _d2.Y);
+            var d2L = _storage.D2;
+            GL.Uniform2(location, d2L.X, d2L.Y);
         }
 
         public static void Uniform3D(int location)
         {
-            GL.Uniform3(location, _d3.X, _d3.Y, _d3.Z);
+            var d3L = _storage.D3;
+            GL.Uniform3(location, d3L.X, d3L.Y, d3L.Z);
         }
 
         public static void Uniform4D(int location)
         {
-            GL.Uniform4(location, _d4.X, _d4.Y, _d4.Z, _d4.W);
+            var d4L = _storage.D4;
+            GL.Uniform4(location, d4L.X, d4L.Y, d4L.Z, d4L.W);
         }
 
         public static void UniformMatrix4X4(int location)
         {
-            GL.UniformMatrix4(location, false, ref _f4X4);
+            GL.UniformMatrix4(location, false, ref _storage.F4X4);
         }
 
         public static void UniformSampler(int location)
