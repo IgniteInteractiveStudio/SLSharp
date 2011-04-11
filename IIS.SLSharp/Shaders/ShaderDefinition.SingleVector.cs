@@ -9,11 +9,6 @@ namespace IIS.SLSharp.Shaders
     {
         public sealed class vec2
         {
-            public static Vector2 value;
-
-            public static implicit operator vec2(Vector2 v)
-            { value = v; return null; }
-
             public float x, y;
 
             public float r, g;
@@ -61,9 +56,6 @@ namespace IIS.SLSharp.Shaders
         public sealed class vec3
         {
             public static Vector3 value;
-
-            public static implicit operator vec3(Vector3 v)
-            { value = v; return null; }
 
             public float x, y, z;
 
@@ -150,11 +142,6 @@ namespace IIS.SLSharp.Shaders
 
         public sealed class vec4
         {
-            public static Vector4 value;
-
-            public static implicit operator vec4(Vector4 v)
-            { value = v; return null; }
-
             public float x, y, z, w;
 
             public float r, g, b, a;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using IIS.SLSharp.Bindings.OpenTK;
 using IIS.SLSharp.Examples.Complex.Shaders;
 using IIS.SLSharp.Shaders;
 using OpenTK;
@@ -23,6 +24,7 @@ namespace IIS.SLSharp.Examples.Complex
 
         protected override void OnLoad(EventArgs e)
         {
+            Bindings.OpenTK.SLSharp.Init();
             _backdropShader = Shader.CreateSharedShader<BackdropShader>();
             Console.WriteLine("Vertex Shader");
             Console.WriteLine("=============");
@@ -98,7 +100,7 @@ namespace IIS.SLSharp.Examples.Complex
             _backdropShader.End();
 
             _cubeShader.Begin();
-            _cubeShader.ModelViewProjectionMatrix = SetupCamera();
+            _cubeShader.ModelViewProjectionMatrix = SetupCamera().ToMatrix4F();
             _cube.Render(Shader.AttributeLocation(_cubeShader, () => _cubeShader.Vertex));
             _cubeShader.End();
 

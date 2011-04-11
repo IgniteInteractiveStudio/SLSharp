@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using IIS.SLSharp.Bindings.OpenTK;
 using IIS.SLSharp.Examples.Simple.Shaders;
 using IIS.SLSharp.Shaders;
 using OpenTK;
@@ -13,6 +14,7 @@ namespace IIS.SLSharp.Examples.Simple
 
         protected override void OnLoad(EventArgs e)
         {
+            Bindings.OpenTK.SLSharp.Init();
             _myShader = Shader.CreateSharedShader<MyShader>();
             Console.WriteLine("Vertex Shader");
             Console.WriteLine("=============");
@@ -39,7 +41,7 @@ namespace IIS.SLSharp.Examples.Simple
 
             _myShader.Begin();
             _myShader.Blue = 0.5f;
-            _myShader.Invert.Channels = new Vector4(0.0f, 1.0f, 0.0f, 0.0f);
+            _myShader.Invert.Channels = (new Vector4(0.0f, 1.0f, 0.0f, 0.0f)).ToVector4F();
             _myShader.RenderQuad();
             _myShader.End();
 

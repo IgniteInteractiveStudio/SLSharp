@@ -86,6 +86,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\IIS.SLSharp.Bindings.OpenTK\IIS.SLSharp.Bindings.OpenTK.csproj">
+      <Project>{8A901280-C858-4018-AD66-45255EFEC519}</Project>
+      <Name>IIS.SLSharp.Bindings.OpenTK</Name>
+    </ProjectReference>
     <ProjectReference Include="..\IIS.SLSharp\IIS.SLSharp.csproj">
       <Project>{ECF58025-4591-4708-8EC9-4B95A5673DDA}</Project>
       <Name>IIS.SLSharp</Name>

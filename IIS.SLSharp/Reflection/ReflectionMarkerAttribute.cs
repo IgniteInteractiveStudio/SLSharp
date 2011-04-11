@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace IIS.SLSharp.Reflection
 {
-    internal sealed class ReflectionMarkerAttribute : Attribute
+    public sealed class ReflectionMarkerAttribute : Attribute
     {
         public ReflectionToken Token { get; private set; }
 
@@ -26,6 +26,7 @@ namespace IIS.SLSharp.Reflection
                     select p).Single();
         }
 
+        [Obsolete]
         public static MethodInfo FindMethod(Type t, ReflectionToken token)
         {
             if (t == null)

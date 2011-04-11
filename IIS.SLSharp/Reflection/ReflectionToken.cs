@@ -3,10 +3,11 @@ using System;
 namespace IIS.SLSharp.Reflection
 {
     [Serializable]
-    internal enum ReflectionToken
+    public enum ReflectionToken
     {
         ShaderName,
         ShaderActivate,
+        ShaderVec1Helper,
         ShaderVec2Helper,
         ShaderVec3Helper,
         ShaderVec4Helper,
@@ -22,12 +23,15 @@ namespace IIS.SLSharp.Reflection
         ShaderBegin,
         ResourceHelperRelease,
         ShaderSamplerHelper,
+        ShaderIvec1Helper,
         ShaderIvec2Helper,
         ShaderIvec3Helper,
         ShaderIvec4Helper,
+        ShaderUvec1Helper,
         ShaderUvec2Helper,
         ShaderUvec3Helper,
         ShaderUvec4Helper,
+        ShaderDvec1Helper,
         ShaderDvec2Helper,
         ShaderDvec3Helper,
         ShaderDvec4Helper,

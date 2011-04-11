@@ -1,8 +1,8 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Reflection;
 using System.Resources;
 using IIS.SLSharp.Annotations;
+using IIS.SLSharp.Bindings.OpenTK;
 using IIS.SLSharp.Examples.Complex.Textures;
 using IIS.SLSharp.Shaders;
 using IIS.SLSharp.Textures;
@@ -75,7 +75,7 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
         {
             MaxScale = 2.0f;
             var s = (float)(System.Math.Cos(time * MathHelper.TwoPi) + 1.0f) * 0.5f + 0.05f;
-            Scale = new Vector2(s * aspect, s);
+            Scale = (new Vector2(s * aspect, s).ToVector2F());
             RenderQuad(this, () => GlVertex);
         }
     }
