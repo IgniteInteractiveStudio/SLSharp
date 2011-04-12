@@ -2,7 +2,7 @@
 using System.Linq;
 using OpenTK.Graphics.OpenGL;
 
-namespace IIS.SLSharp.Bindings.OpenTK
+namespace IIS.SLSharp
 {
     public static class Utilities
     {

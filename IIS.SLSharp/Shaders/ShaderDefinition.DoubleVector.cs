@@ -1,6 +1,4 @@
-﻿using OpenTK;
-
-// ReSharper disable InconsistentNaming
+﻿// ReSharper disable InconsistentNaming
 // ReSharper disable UnusedParameter.Local
 
 namespace IIS.SLSharp.Shaders
@@ -9,11 +7,6 @@ namespace IIS.SLSharp.Shaders
     {
         public sealed class dvec2
         {
-            public static Vector2d value;
-
-            public static implicit operator dvec2(Vector2d v)
-            { value = v; return null; }
-
             public float x, y;
 
             public float r, g;
@@ -60,11 +53,6 @@ namespace IIS.SLSharp.Shaders
 
         public sealed class dvec3
         {
-            public static Vector3d value;
-
-            public static implicit operator dvec3(Vector3d v)
-            { value = v; return null; }
-
             public float x, y, z;
 
             public float r, g, b;
@@ -150,11 +138,6 @@ namespace IIS.SLSharp.Shaders
 
         public sealed class dvec4
         {
-            public static Vector4d value;
-
-            public static implicit operator dvec4(Vector4d v)
-            { value = v; return null; }
-
             public float x, y, z, w;
 
             public float r, g, b, a;

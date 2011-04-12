@@ -42,6 +42,8 @@
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="GpuStopwatch.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Quad.cs" />
     <Compile Include="Textures\Externals\LoaderDDS.cs" />
     <Compile Include="Textures\Externals\LoaderStatics.cs" />
     <Compile Include="Textures\FramebufferObject.cs" />

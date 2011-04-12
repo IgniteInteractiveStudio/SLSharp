@@ -30,6 +30,11 @@ namespace IIS.SLSharp.Bindings.OpenTK
             Utilities.CheckGL();
         }
 
+        public void Finish()
+        {
+            GL.UseProgram(0);
+        }
+
         public int GetUniformIndex(string name)
         {
             var result = GL.GetUniformLocation(_name, name);

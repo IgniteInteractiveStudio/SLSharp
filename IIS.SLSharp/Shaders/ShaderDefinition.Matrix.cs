@@ -1,5 +1,3 @@
-using OpenTK;
-
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedParameter.Local
 

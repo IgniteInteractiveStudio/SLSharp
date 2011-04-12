@@ -1,6 +1,4 @@
-﻿using OpenTK;
-
-// ReSharper disable InconsistentNaming
+﻿// ReSharper disable InconsistentNaming
 // ReSharper disable UnusedParameter.Local
 
 namespace IIS.SLSharp.Shaders
@@ -55,8 +53,6 @@ namespace IIS.SLSharp.Shaders
 
         public sealed class vec3
         {
-            public static Vector3 value;
-
             public float x, y, z;
 
             public float r, g, b;

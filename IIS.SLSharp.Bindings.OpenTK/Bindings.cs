@@ -11,6 +11,8 @@ namespace IIS.SLSharp.Bindings.OpenTK
 {
     sealed class SLSharpBinding: ISLSharpBinding
     {
+        private Quad _quad;
+
         public Dictionary<ReflectionToken, MethodInfo> PassiveMethods
         {
             get { return SLSharp.Handlers; }
@@ -30,6 +32,10 @@ namespace IIS.SLSharp.Bindings.OpenTK
             ((ITexture)tex).Finish();
         }
 
+        public void TexReset()
+        {
+            GL.ActiveTexture(TextureUnit.Texture0);
+        }
 
         public object Compile(ShaderType type, string source)
         {
@@ -70,8 +76,24 @@ namespace IIS.SLSharp.Bindings.OpenTK
         public IProgram Link(IEnumerable<object> units)
         {
             return new Program(units);
-
         }
+
+        public void Initialize()
+        {
+            _quad = new Quad();
+        }
+
+        public void Cleanup()
+        {
+            _quad.Dispose();
+            _quad = null;
+        }
+
+        public void FullscreenQuad(int vertexLocation, bool positive)
+        {
+            _quad.Render(vertexLocation, positive);
+        }
+
         #endregion
     }
 

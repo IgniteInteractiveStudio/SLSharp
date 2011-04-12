@@ -1,5 +1,3 @@
-using OpenTK;
-
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedParameter.Local
 
@@ -9,26 +7,7 @@ namespace IIS.SLSharp.Shaders
     {
         public sealed class dmat2
         {
-            #region .net uniform glue
-
-            internal static double []value = new double[2*2];
-
-            public static implicit operator dmat2(Matrix4d v)
-            { 
-                value[0] = v.M11; value[1] = v.M12;
-                value[2] = v.M21; value[3] = v.M22; 
-                return null; 
-            }
-
-            public static implicit operator dmat2(Vector4d v)
-            {
-                value[0] = v.X; value[1] = v.Y;
-                value[2] = v.Z; value[3] = v.W;
-                return null; 
-            }
-
-            #endregion
-
+            
             #region .ctor
             /// <summary>  Initialized all diogonal entries to scale </summary>
             public dmat2(double scale) { throw _invalidAccess; }
@@ -78,20 +57,6 @@ namespace IIS.SLSharp.Shaders
 
         public sealed class dmat2x3
         {
-            #region .net uniform glue
-
-            internal static double[] value = new double[2*3];
-
-            public static implicit operator dmat2x3(Matrix4d v)
-            {                
-                value[0] = v.M11; value[1] = v.M12;
-                value[2] = v.M21; value[3] = v.M22;
-                value[4] = v.M31; value[5] = v.M32;
-                return null;
-            }
-
-            #endregion
-
             #region .ctor
 
             /// <summary>  Initialized all diogonal entries to scale </summary>
@@ -137,21 +102,6 @@ namespace IIS.SLSharp.Shaders
 
         public sealed class dmat2x4
         {
-            #region .net uniform glue
-
-            internal static double[] value = new double[2*4];
-
-            public static implicit operator dmat2x4(Matrix4d v)
-            {
-                value[0] = v.M11; value[1] = v.M12;
-                value[2] = v.M21; value[3] = v.M22;
-                value[4] = v.M31; value[5] = v.M32;
-                value[6] = v.M31; value[7] = v.M32;
-                return null;
-            }
-
-            #endregion
-
             #region .ctor
 
             /// <summary>  Initialized all diogonal entries to scale </summary>
@@ -199,19 +149,6 @@ namespace IIS.SLSharp.Shaders
 
         public sealed class dmat3x2
         {
-            #region .net uniform glue
-
-            internal static double[] value = new double[3*2];
-
-            public static implicit operator dmat3x2(Matrix4d v)
-            {
-                value[0] = v.M11; value[1] = v.M12; value[2] = v.M13;
-                value[3] = v.M21; value[4] = v.M22; value[5] = v.M23;
-                return null;
-            }
-
-            #endregion
-
             #region .ctor
 
             /// <summary>  Initialized all diogonal entries to scale </summary>
@@ -257,20 +194,6 @@ namespace IIS.SLSharp.Shaders
 
         public sealed class dmat3
         {
-            #region .net uniform glue
-
-            internal static double[] value = new double[3*3];
-
-            public static implicit operator dmat3(Matrix4d v)
-            {
-                value[0] = v.M11; value[1] = v.M12; value[2] = v.M13;
-                value[3] = v.M21; value[4] = v.M22; value[5] = v.M23;
-                value[6] = v.M31; value[7] = v.M32; value[8] = v.M33;
-                return null;
-            }
-
-            #endregion
-
             #region .ctor
 
             /// <summary>  Initialized all diogonal entries to scale </summary>
@@ -318,21 +241,6 @@ namespace IIS.SLSharp.Shaders
 
         public sealed class dmat3x4
         {
-            #region .net uniform glue
-
-            internal static double[] value = new double[3*4];
-
-            public static implicit operator dmat3x4(Matrix4d v)
-            {
-                value[0] = v.M11; value[1] = v.M12; value[2] = v.M13;
-                value[3] = v.M21; value[4] = v.M22; value[5] = v.M23;
-                value[6] = v.M31; value[7] = v.M32; value[8] = v.M33;
-                value[9] = v.M41; value[10] = v.M42; value[11] = v.M43;
-                return null;
-            }
-
-            #endregion
-
             #region .ctor
 
             /// <summary>  Initialized all diogonal entries to scale </summary>
@@ -382,19 +290,6 @@ namespace IIS.SLSharp.Shaders
 
         public sealed class dmat4x2
         {
-            #region .net uniform glue
-
-            internal static double[] value = new double[4*2];
-
-            public static implicit operator dmat4x2(Matrix4d v)
-            {
-                value[0] = v.M11; value[1] = v.M12; value[2] = v.M13; value[3] = v.M14;
-                value[4] = v.M21; value[5] = v.M22; value[6] = v.M23; value[7] = v.M24;
-                return null;
-            }
-
-            #endregion
-
             #region .ctor
 
             /// <summary>  Initialized all diogonal entries to scale </summary>
@@ -444,20 +339,6 @@ namespace IIS.SLSharp.Shaders
 
         public sealed class dmat4x3
         {
-            #region .net uniform glue
-
-            internal static double[] value = new double[4*3];
-
-            public static implicit operator dmat4x3(Matrix4d v)
-            {
-                value[0] = v.M11; value[1] = v.M12; value[2] = v.M13; value[3] = v.M14;
-                value[4] = v.M21; value[5] = v.M22; value[6] = v.M23; value[7] = v.M24;
-                value[8] = v.M31; value[9] = v.M32; value[10] = v.M33; value[11] = v.M34;
-                return null;
-            }
-
-            #endregion
-
             #region .ctor
 
             /// <summary>  Initialized all diogonal entries to scale </summary>
@@ -508,17 +389,6 @@ namespace IIS.SLSharp.Shaders
         
         public sealed class dmat4
         {
-            internal static double[] value = new double[4*4];
-
-            public static implicit operator dmat4(Matrix4d v)
-            {
-                value[0] = v.M11; value[1] = v.M12; value[2] = v.M13; value[3] = v.M14;
-                value[4] = v.M21; value[5] = v.M22; value[6] = v.M23; value[7] = v.M24;
-                value[8] = v.M31; value[9] = v.M32; value[10] = v.M33; value[11] = v.M34;
-                value[12] = v.M41; value[13] = v.M42; value[14] = v.M43; value[15] = v.M44;
-                return null;
-            }
-
             #region .ctor
 
             /// <summary>  Initialized all diogonal entries to scale </summary>

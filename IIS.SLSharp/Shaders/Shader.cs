@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Collections;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Runtime.InteropServices;
 using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Bindings;
 using IIS.SLSharp.Reflection;
 using IIS.SLSharp.Runtime;
 using IIS.SLSharp.Translation;
 using Mono.Cecil;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
 using System.Collections.Generic;
 using FieldAttributes = System.Reflection.FieldAttributes;
 using MethodAttributes = System.Reflection.MethodAttributes;
@@ -54,30 +49,11 @@ namespace IIS.SLSharp.Shaders
 
         private bool _fsCompiled;
 
-        private static int _quadVbo;
-
         private static int _refCount;
 
         private readonly List<object> _objects = new List<object>();
 
         private readonly TypeDefinition _shader;
-
-#if DEBUG
-
-        /// <summary>
-        /// Dumps the GLSL shader to a file for debugging purposes
-        /// </summary>
-        /// <param name="type">The shader type that is to be dumped</param>
-        /// <param name="s">The shader source to be dumped</param>
-        private void Dump(ShaderType type, string s)
-        {
-            var fn = GetType().Name + "." + type;
-
-            using (var f = new StreamWriter(fn, false))
-                f.Write(s);
-        }
-
-#endif
 
         private Type GetImplementingType()
         {
@@ -272,15 +248,13 @@ namespace IIS.SLSharp.Shaders
             for (var i = 0; i < _textures.Length; i++ )
             {
                 if (_textures[i] != null)
-                {
                     Binding.Active.TexFinish(i, _textures[i]);
-                }
 
                 _textures[i] = null;
             }
 
             _currentTextureUnit = 0;
-            GL.ActiveTexture(TextureUnit.Texture0);
+            Binding.Active.TexReset();
         }
 
         private sealed class PropInfo
@@ -488,7 +462,7 @@ namespace IIS.SLSharp.Shaders
         private string CollectUniforms()
         {
             return (from prop in _shader.Properties
-                    let attrs = prop.CustomAttributes.Where((a) => a.AttributeType.Resolve().MetadataToken.ToInt32() ==
+                    let attrs = prop.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() ==
                         typeof(UniformAttribute).MetadataToken)
                     where attrs.Count() != 0
                     let attr = attrs.First()
@@ -507,7 +481,7 @@ namespace IIS.SLSharp.Shaders
         private string CollectVaryings()
         {
             return (from field in _shader.Fields
-                    let attrs = field.CustomAttributes.Where((a) => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(VaryingAttribute).MetadataToken)
+                    let attrs = field.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(VaryingAttribute).MetadataToken)
                     where attrs.Count() != 0
                     let attr = attrs.First()
                     let glslType = GlslVisitor.ToGlslType(field.FieldType)
@@ -524,7 +498,7 @@ namespace IIS.SLSharp.Shaders
         private string CollectIns()
         {
             var s1 = (from field in _shader.Fields
-                      let attrs = field.CustomAttributes.Where((a) => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(VertexInAttribute).MetadataToken)
+                      let attrs = field.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(VertexInAttribute).MetadataToken)
                       where attrs.Count() != 0
                       let attr = attrs.First()
                       let glslType = GlslVisitor.ToGlslType(field.FieldType)
@@ -536,7 +510,7 @@ namespace IIS.SLSharp.Shaders
             // TODO: what was this supposed to be good for?
             // should have documented might be bugged?
             var s2 = (from prop in _shader.Properties
-                      let attrs = prop.CustomAttributes.Where((a) => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(VertexInAttribute).MetadataToken)
+                      let attrs = prop.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(VertexInAttribute).MetadataToken)
                       where attrs.Count() != 0
                       let attr = attrs.First()
                       let glslType = _typeMap[prop.PropertyType.Resolve().MetadataToken.ToInt32()].Name
@@ -555,7 +529,7 @@ namespace IIS.SLSharp.Shaders
         private string CollectOuts()
         {
             return (from field in _shader.Fields
-                    let attrs = field.CustomAttributes.Where((a) => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(FragmentOutAttribute).MetadataToken)
+                    let attrs = field.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(FragmentOutAttribute).MetadataToken)
                     where attrs.Count() != 0
                     let attr = attrs.First()
                     let glslType = GlslVisitor.ToGlslType(field.FieldType)
@@ -628,7 +602,7 @@ namespace IIS.SLSharp.Shaders
             // depending on DebugMode
 
             UnbindTextures();
-            GL.UseProgram(0);
+            Program.Finish();
         }
 
         public virtual void Dispose()
@@ -852,8 +826,7 @@ namespace IIS.SLSharp.Shaders
         private static void RefShaders()
         {
             if (_refCount == 0)
-                StaticInit();
-
+                Binding.Active.Initialize();
             _refCount++;
         }
 
@@ -861,65 +834,29 @@ namespace IIS.SLSharp.Shaders
         {
             _refCount--;
             if (_refCount == 0)
-                StaticDispose();
-        }
-
-        private static void StaticInit()
-        {
-            var data = new[]
-            {
-                new Vector2(-1.0f, -1.0f),
-                new Vector2(1.0f, -1.0f),
-                new Vector2(1.0f, 1.0f),
-                new Vector2(-1.0f, 1.0f),
-                new Vector2(0.0f, 0.0f),
-                new Vector2(1.0f, 0.0f),
-                new Vector2(1.0f, 1.0f),
-                new Vector2(0.0f, 1.0f),
-            };
-
-            GL.GenBuffers(1, out _quadVbo);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _quadVbo);
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(Marshal.SizeOf(typeof(Vector2)) * data.Length), 
-                data, BufferUsageHint.StaticDraw);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-        }
-
-        private static void StaticDispose()
-        {
-            GL.DeleteBuffers(1, ref _quadVbo);
-        }
-
-        private static void RenderQuad(int loca, int startIdx)
-        {
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _quadVbo);
-            GL.VertexAttribPointer(loca, 2, VertexAttribPointerType.Float, false, 0, 0);
-            GL.EnableVertexAttribArray(loca);
-            GL.DrawArrays(BeginMode.Quads, startIdx, 4);
-            GL.DisableVertexAttribArray(loca);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+                Binding.Active.Cleanup();
         }
 
         public static void RenderQuad(Shader shader, int location)
         {
-            RenderQuad(location, 0);
+            Binding.Active.FullscreenQuad(location, false);
         }
 
         public static void RenderQuad<T>(Shader shader, Expression<Func<T>> vertexLocation)
         {
             var loca = AttributeLocation(shader, vertexLocation);
-            RenderQuad(loca, 0);
+            Binding.Active.FullscreenQuad(loca, false);
         }
 
         public static void RenderPositiveQuad(Shader shader, int location)
         {
-            RenderQuad(location, 4);
+            Binding.Active.FullscreenQuad(location, true);
         }
 
         public static void RenderPositiveQuad<T>(Shader shader, Expression<Func<T>> vertexLocation)
         {
             var loca = AttributeLocation(shader, vertexLocation);
-            RenderQuad(loca, 4);
+            Binding.Active.FullscreenQuad(loca, true);
         }
     }
 }

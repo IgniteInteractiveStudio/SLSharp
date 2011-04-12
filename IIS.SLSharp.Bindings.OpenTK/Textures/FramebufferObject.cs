@@ -54,7 +54,7 @@ namespace IIS.SLSharp.Bindings.OpenTK.Textures
         /// </summary>
         /// <param name="texture">The texture to associate</param>
         /// <param name="index">The channel to asscociate</param>
-        public void SetTexture(Bindings.OpenTK.Textures.Texture2D texture, int index = 0)
+        public void SetTexture(Texture2D texture, int index = 0)
         {
             if (texture == null)
                 throw new ArgumentNullException("texture");
