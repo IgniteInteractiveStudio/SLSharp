@@ -3,7 +3,7 @@
 
 using System;
 using System.Drawing;
-using IIS.SLSharp.Textures;
+using IIS.SLSharp.Bindings.OpenTK.Textures;
 using OpenTK.Graphics.OpenGL;
 
 ///////////////////////////////////////////////////////////////

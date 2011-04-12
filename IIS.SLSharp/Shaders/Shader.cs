@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -9,7 +10,6 @@ using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Bindings;
 using IIS.SLSharp.Reflection;
 using IIS.SLSharp.Runtime;
-using IIS.SLSharp.Textures;
 using IIS.SLSharp.Translation;
 using Mono.Cecil;
 using OpenTK;
@@ -30,7 +30,7 @@ namespace IIS.SLSharp.Shaders
             BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 
         [ReflectionMarker(ReflectionToken.ShaderName)]
-        public int Name { get; private set; }
+        public IProgram Program { get; private set; }
 
         public static bool DebugMode { get; set; }
 
@@ -58,7 +58,7 @@ namespace IIS.SLSharp.Shaders
 
         private static int _refCount;
 
-        private readonly List<int> _objects = new List<int>();
+        private readonly List<object> _objects = new List<object>();
 
         private readonly TypeDefinition _shader;
 
@@ -168,30 +168,7 @@ namespace IIS.SLSharp.Shaders
                     throw new NotImplementedException();
             }
 
-            var shader = GL.CreateShader(type);
-            Utilities.CheckGL();
-
-            GL.ShaderSource(shader, src);
-            GL.CompileShader(shader);
-            int compileResult;
-            GL.GetShader(shader, ShaderParameter.CompileStatus, out compileResult);
-            string info;
-            GL.GetShaderInfoLog(shader, out info);
-
-#if DEBUG
-
-            Dump(type, src);
-
-#endif
-
-            if (compileResult != 1)
-            {
-                //Dump(type, src);
-                throw new SLSharpException("Shader compilation failed: " + info);
-            }
-
-            if (info != string.Empty)
-                Console.WriteLine(info);
+            var shader = Binding.Active.Compile(type, src);
 
             _objects.Add(shader);
         }
@@ -223,22 +200,25 @@ namespace IIS.SLSharp.Shaders
         /// <param name="version">The GLSL version to use to compile this shader</param>
         protected void Link(Shader[] libaries = null, int version = 130)
         {
-            Compile(version);
-            Name = GL.CreateProgram();
+            var e = Enumerable.Empty<object>();
 
+            // Compile all dependencies)
             if (libaries != null)
             {
                 foreach (var lib in libaries)
+                {
                     lib.Compile();
+                    e = e.Concat(lib._objects);
+                }
+            }
 
-                foreach (var obj in libaries.SelectMany(lib => lib._objects))
-                    GL.AttachShader(Name, obj);
-            }           
+            // compile main unit
+            Compile(version);
+            e = e.Concat(_objects);
 
-            foreach (var obj in _objects)
-                GL.AttachShader(Name, obj);
-
-            GL.LinkProgram(Name);
+            Program = Binding.Active.Link(e);
+            
+            
 
             // now we can pull and cache uniform locations
             CacheUniforms();
@@ -246,7 +226,7 @@ namespace IIS.SLSharp.Shaders
 
         private static readonly Dictionary<string, string> _globalNames = new Dictionary<string, string>();
 
-        private static readonly ITexture[] _textures = new ITexture[32];
+        private static readonly object[] _textures = new object[32];
 
         private static int _currentTextureUnit;
 
@@ -255,7 +235,7 @@ namespace IIS.SLSharp.Shaders
         /// </summary>
         /// <param name="tex">The texture to bind</param>
         /// <returns>The texture unit reserved. Pass this to a sampler uniform.</returns>
-        protected static int BindTexture(ITexture tex)
+        protected static int BindTexture(object tex)
         {
             var idx = _currentTextureUnit++;
             BindTexture(tex, idx);
@@ -268,11 +248,10 @@ namespace IIS.SLSharp.Shaders
         /// </summary>
         /// <param name="tex">The texture to bind</param>
         /// <param name="slot">The unit to use</param>
-        protected static void BindTexture(ITexture tex, int slot)
+        protected static void BindTexture(object tex, int slot)
         {
-            GL.ActiveTexture(TextureUnit.Texture0 + slot);
             _textures[slot] = tex;
-            tex.Activate();
+            Binding.Active.TexActivate(slot, tex);
         }
 
         /// <summary>
@@ -294,8 +273,7 @@ namespace IIS.SLSharp.Shaders
             {
                 if (_textures[i] != null)
                 {
-                    GL.ActiveTexture(TextureUnit.Texture0 + i);
-                    _textures[i].Finish();
+                    Binding.Active.TexFinish(i, _textures[i]);
                 }
 
                 _textures[i] = null;
@@ -614,11 +592,9 @@ namespace IIS.SLSharp.Shaders
         [ReflectionMarker(ReflectionToken.ShaderActivate)]
         protected void Activate()
         {
-            if (Name == 0)
+            if (Program == null)
                 return; // it's a lib
-
-            GL.UseProgram(Name); 
-            Utilities.CheckGL();
+            Program.Activate();
         }
 
         /// <summary>
@@ -628,7 +604,7 @@ namespace IIS.SLSharp.Shaders
         /// <param name="main"></param>
         public void BeginLibrary(Shader main)
         {
-            Name = main.Name;
+            Program = main.Program;
             CacheUniforms();
             Begin();
         }
@@ -657,12 +633,12 @@ namespace IIS.SLSharp.Shaders
 
         public virtual void Dispose()
         {
-            if (Name == 0) 
+            if (Program == null) 
                 return;
 
             DerefShaders();
-            GL.DeleteProgram(Name);
-            Name = 0;
+            Program.Dispose();
+            Program = null;
         }
 
         private static readonly Dictionary<Type, ConstructorInfo> _ctors = new Dictionary<Type, ConstructorInfo>();
@@ -683,7 +659,7 @@ namespace IIS.SLSharp.Shaders
                     throw new Exception("Could not retrieve uniform implementation!");
 
                 var name = GetUniformName(prop);
-                var loc = GL.GetUniformLocation(Name, name);
+                var loc = Program.GetUniformIndex(name);
                 f.SetValue(this, loc);
 
                 //var f = typeBuilder.DefineField("m_" + prop.Name, typeof(int), FieldAttributes.Private);
@@ -869,8 +845,7 @@ namespace IIS.SLSharp.Shaders
         {
             var body = ((MemberExpression)expr.Body);
             var globalName = GetVaryingName(body.Member as FieldInfo);
-            var loc = GL.GetAttribLocation(shader.Name, globalName);
-            Utilities.CheckGL();
+            var loc = shader.Program.GetAttributeIndex(globalName);
             return loc;
         }
 

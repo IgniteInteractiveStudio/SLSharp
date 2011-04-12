@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using IIS.SLSharp.Bindings.OpenTK.Textures;
 using IIS.SLSharp.Reflection;
 using IIS.SLSharp.Shaders;
 using OpenTK;
@@ -8,14 +9,82 @@ using OpenTK.Graphics.OpenGL;
 
 namespace IIS.SLSharp.Bindings.OpenTK
 {
+    sealed class SLSharpBinding: ISLSharpBinding
+    {
+        public Dictionary<ReflectionToken, MethodInfo> PassiveMethods
+        {
+            get { return SLSharp.Handlers; }
+        }
+
+        #region Active Methods
+
+        public void TexActivate(int textureUnit, object tex)
+        {
+            GL.ActiveTexture(TextureUnit.Texture0 + textureUnit);
+            ((ITexture)tex).Activate();
+        }
+
+        public void TexFinish(int textureUnit, object tex)
+        {
+            GL.ActiveTexture(TextureUnit.Texture0 + textureUnit);
+            ((ITexture)tex).Finish();
+        }
+
+
+        public object Compile(ShaderType type, string source)
+        {
+            int shader;
+            switch (type)
+            {
+                case ShaderType.FragmentShader:
+                    shader = GL.CreateShader(global::OpenTK.Graphics.OpenGL.ShaderType.FragmentShader);
+                    break;
+                case ShaderType.VertexShader:
+                    shader = GL.CreateShader(global::OpenTK.Graphics.OpenGL.ShaderType.VertexShader);
+                    break;
+                default:
+                    throw new SLSharpException("Binding does not support " + type);
+            }
+
+            Utilities.CheckGL();
+
+            GL.ShaderSource(shader, source);
+            GL.CompileShader(shader);
+            int compileResult;
+            GL.GetShader(shader, ShaderParameter.CompileStatus, out compileResult);
+            string info;
+            GL.GetShaderInfoLog(shader, out info);
+
+            if (compileResult != 1)
+            {
+                //Dump(type, src);
+                throw new SLSharpException("Shader compilation failed: " + info);
+            }
+
+            if (info != string.Empty)
+                Console.WriteLine(info);
+
+            return shader;
+        }
+
+        public IProgram Link(IEnumerable<object> units)
+        {
+            return new Program(units);
+
+        }
+        #endregion
+    }
+
+
 
     public static class SLSharp
     {
         public static void Init()
         {
-            Binding.Register(Handlers);
+            Binding.Register(new SLSharpBinding());
         }
 
+        #region Passive Methods
         private static MethodInfo GetMethod(Action<int> a)
         {
             return a.Method;
@@ -51,9 +120,13 @@ namespace IIS.SLSharp.Bindings.OpenTK
             public Vector3d D3;
             public Vector4d D4;
             public Matrix4 F4X4;
+            public Matrix4d D4X4;
         }
 
         // use ThreadStatic when multiple render contexts are planned
+        // if speed is a concern cache with UniformStorage[64] or so
+        // and access as UniformStorage[CurrentThreadID] as long the tid 
+        // is < 64, otherwise fallback to TLS var
         //[ThreadStatic]
         private static UniformStorage _storage;
 
@@ -77,6 +150,9 @@ namespace IIS.SLSharp.Bindings.OpenTK
 
         public static ShaderDefinition.mat4 ToMatrix4F(this Matrix4 v)
         { _storage.F4X4 = v; return null; }
+
+        public static ShaderDefinition.dmat4 ToMatrix4D(this Matrix4d v)
+        { _storage.D4X4 = v; return null; }
 
         #endregion
 
@@ -134,10 +210,17 @@ namespace IIS.SLSharp.Bindings.OpenTK
             GL.UniformMatrix4(location, false, ref _storage.F4X4);
         }
 
+        public static unsafe void UniformDMatrix4X4(int location)
+        {
+            fixed (Matrix4d* v = &_storage.D4X4)
+                GL.UniformMatrix4(location, 1, false, (double*) v);
+        }
+
         public static void UniformSampler(int location)
         {
             GL.Uniform1(location, ShaderDefinition.Sampler.value);
         }
+        #endregion
     }
 
     

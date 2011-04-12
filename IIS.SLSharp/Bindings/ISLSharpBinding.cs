@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using IIS.SLSharp.Reflection;
 
 namespace IIS.SLSharp.Bindings
 {
-    public interface IProgram: IDisposable
-    {
-        void Activate();
-        int GetUniformIndex(string name);
-        int GetAttributeIndex(string name);
-
-    }
-
     public interface ISLSharpBinding
     {
         Dictionary<ReflectionToken, MethodInfo> PassiveMethods { get; }

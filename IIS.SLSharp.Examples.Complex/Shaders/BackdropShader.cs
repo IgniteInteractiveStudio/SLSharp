@@ -3,9 +3,9 @@ using System.Reflection;
 using System.Resources;
 using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Bindings.OpenTK;
+using IIS.SLSharp.Bindings.OpenTK.Textures;
 using IIS.SLSharp.Examples.Complex.Textures;
 using IIS.SLSharp.Shaders;
-using IIS.SLSharp.Textures;
 using OpenTK;
 
 namespace IIS.SLSharp.Examples.Complex.Shaders

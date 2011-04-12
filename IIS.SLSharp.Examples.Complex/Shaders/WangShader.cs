@@ -1,6 +1,6 @@
 ﻿using IIS.SLSharp.Annotations;
+using IIS.SLSharp.Bindings.OpenTK.Textures;
 using IIS.SLSharp.Shaders;
-using IIS.SLSharp.Textures;
 
 namespace IIS.SLSharp.Examples.Complex.Shaders
 {

@@ -41,12 +41,25 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="GpuStopwatch.cs" />
+    <Compile Include="Textures\Externals\LoaderDDS.cs" />
+    <Compile Include="Textures\Externals\LoaderStatics.cs" />
+    <Compile Include="Textures\FramebufferObject.cs" />
+    <Compile Include="Textures\ITexture.cs" />
+    <Compile Include="Textures\RenderbufferObject.cs" />
+    <Compile Include="Textures\RenderToTexture.cs" />
+    <Compile Include="Textures\Texture1D.cs" />
+    <Compile Include="Textures\Texture2D.cs" />
+    <Compile Include="Textures\TextureBase.cs" />
+    <Compile Include="Textures\TextureCube.cs" />
+    <Compile Include="Utilities.cs" />
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dependencies\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -61,6 +74,9 @@
       <Project>{ECF58025-4591-4708-8EC9-4B95A5673DDA}</Project>
       <Name>IIS.SLSharp</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Program\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

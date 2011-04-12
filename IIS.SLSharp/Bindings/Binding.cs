@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using IIS.SLSharp.Reflection;
 
@@ -19,17 +18,20 @@ namespace IIS.SLSharp.Bindings
 
         private static Dictionary<ReflectionToken, MethodInfo> _handlers;
 
-        public static void Register(Dictionary<ReflectionToken, MethodInfo> handlers)
+        public static void Register(ISLSharpBinding binding)
         {
-            _handlers = handlers;
+            _handlers = binding.PassiveMethods;
+            Active = binding;
         }
 
         public static MethodInfo Resolve(ReflectionToken token)
         {
             MethodInfo result;
             if (!Methods.TryGetValue(token, out result))
-                    throw new SLSharpException("Binding does not support " + token.ToString());
+                    throw new SLSharpException("Binding does not support " + token);
             return result;
         }
+
+        public static ISLSharpBinding Active;
     }
 }
