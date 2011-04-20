@@ -815,11 +815,15 @@ namespace IIS.SLSharp.Shaders
             return member.Name;
         }
 
-        public static int AttributeLocation<T>(Shader shader, Expression<Func<T>> expr)
+        public static string AttributeName<T>(Expression<Func<T>> expr)
         {
             var body = ((MemberExpression)expr.Body);
-            var globalName = GetVaryingName(body.Member as FieldInfo);
-            var loc = shader.Program.GetAttributeIndex(globalName);
+            return GetVaryingName(body.Member as FieldInfo);
+        }
+        
+        public static int AttributeLocation<T>(Shader shader, Expression<Func<T>> expr)
+        {
+            var loc = shader.Program.GetAttributeIndex(AttributeName(expr));
             return loc;
         }
 
