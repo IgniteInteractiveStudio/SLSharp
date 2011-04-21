@@ -91,6 +91,7 @@
     <Compile Include="Translation\HLSL\HlslVisitor.Unsupported.cs" />
     <Compile Include="Translation\HLSL\HlslVisitor.cs" />
     <Compile Include="Translation\HLSL\HlslTransform.cs" />
+    <Compile Include="Translation\ITransform.cs" />
     <Compile Include="Translation\RenameLocals.cs" />
   </ItemGroup>
   <ItemGroup>

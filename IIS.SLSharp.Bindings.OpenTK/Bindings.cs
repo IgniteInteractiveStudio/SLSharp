@@ -4,6 +4,8 @@ using System.Reflection;
 using IIS.SLSharp.Bindings.OpenTK.Textures;
 using IIS.SLSharp.Reflection;
 using IIS.SLSharp.Shaders;
+using IIS.SLSharp.Translation;
+using IIS.SLSharp.Translation.GLSL;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
@@ -16,6 +18,13 @@ namespace IIS.SLSharp.Bindings.OpenTK
         public Dictionary<ReflectionToken, MethodInfo> PassiveMethods
         {
             get { return SLSharp.Handlers; }
+        }
+
+        private readonly ITransform _transform = new GlslTransform();
+
+        public ITransform Transform
+        {
+            get { return _transform; }
         }
 
         #region Active Methods

@@ -7,13 +7,13 @@ using Mono.Cecil;
 
 namespace IIS.SLSharp.Translation.HLSL
 {
-    public sealed class HlslTransform
+    public sealed class HlslTransform: ITransform
     {
         private readonly HashSet<Tuple<string, string>> _functions = new HashSet<Tuple<string, string>>();
 
-        public IEnumerable<Tuple<string, string>> Functions
+        public void ResetState()
         {
-            get { return _functions; }
+            _functions.Clear();
         }
 
         /// <summary>
@@ -49,6 +49,14 @@ namespace IIS.SLSharp.Translation.HLSL
             var sig = entry ? "void main()" : HlslVisitor.GetSignature(m);
             var code = hlsl.Result;
             return sig + code;
+        }
+
+        public string ForwardDeclare(bool debugInfo)
+        {
+            return _functions.Aggregate(string.Empty, (a, b) =>
+                a + b.Item1 + ";" +
+                (debugInfo ? " // " + b.Item2 : string.Empty) +
+                Environment.NewLine) + Environment.NewLine;
         }
     }
 }

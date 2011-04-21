@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using IIS.SLSharp.Reflection;
+using IIS.SLSharp.Translation;
 
 namespace IIS.SLSharp.Bindings
 {
     public interface ISLSharpBinding
     {
         Dictionary<ReflectionToken, MethodInfo> PassiveMethods { get; }
+        ITransform Transform { get; }
 
         void TexActivate(int textureUnit, object tex);
         void TexFinish(int textureUnit, object tex);

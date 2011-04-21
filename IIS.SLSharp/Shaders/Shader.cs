@@ -336,19 +336,6 @@ namespace IIS.SLSharp.Shaders
         };
 
         /// <summary>
-        /// Generates a string that forward declarates all functions used within a shader.
-        /// </summary>
-        /// <param name="functions"></param>
-        /// <returns></returns>
-        private static string ForwardDeclare(IEnumerable<Tuple<string, string>> functions)
-        {
-            return functions.Aggregate(string.Empty, (a, b) => 
-                a + b.Item1 + ";" +
-                (DebugMode ? " // " + b.Item2 : string.Empty) +
-                Environment.NewLine) + Environment.NewLine;
-        }
-
-        /// <summary>
         /// Collects the sources of all functions within this shader
         /// </summary>
         /// <param name="entryPoint">Returns the name of the function flagged as entrypoint</param>
@@ -360,8 +347,8 @@ namespace IIS.SLSharp.Shaders
             var body = string.Empty;
             var hasEntry = false;
 
-            var trans = new GlslTransform();
-
+            var trans = Binding.Active.Transform;
+            trans.ResetState();
             foreach (var m in _shader.Methods)
             {
                 //var attrs = m.GetCustomAttributes(typeof(T), false);
@@ -384,12 +371,7 @@ namespace IIS.SLSharp.Shaders
 
                 body += trans.Transform(_shader, m, attr) + Environment.NewLine;
             }
-
-            //var body = (from m in GetType().GetMethods(BindingFlagsAny)
-            //            let attrs = m.GetCustomAttributes(typeof(T), false)
-            //            where attrs.Length != 0
-            //            select m).Aggregate(string.Empty, (current, m) => current + trans.Transform(m));
-            return ForwardDeclare(trans.Functions) + body;
+            return trans.ForwardDeclare(DebugMode) + body;
         }
 
         /// <summary>

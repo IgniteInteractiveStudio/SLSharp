@@ -7,6 +7,8 @@ using Axiom.RenderSystems.OpenGL.GLSL;
 using IIS.SLSharp.Reflection;
 using Axiom.Math;
 using IIS.SLSharp.Shaders;
+using IIS.SLSharp.Translation;
+using IIS.SLSharp.Translation.GLSL;
 
 namespace IIS.SLSharp.Bindings.Axiom
 {
@@ -15,6 +17,12 @@ namespace IIS.SLSharp.Bindings.Axiom
         public Dictionary<ReflectionToken, MethodInfo> PassiveMethods
         {
             get { return SLSharp.Handlers; }
+        }
+
+        public ITransform Transform
+        {
+            // TODO: chose target dynamically on current axiom operation mode
+            get { return new GlslTransform(); }
         }
 
         #region Active Methods

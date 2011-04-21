@@ -11,7 +11,8 @@
     <RootNamespace>IIS.SLSharp.Examples.XNA</RootNamespace>
     <AssemblyName>IIS.SLSharp.Examples.XNA</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -24,6 +25,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\bin\Debug\IIS.SLSharp.Examples.XNA.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -34,6 +36,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\bin\Release\IIS.SLSharp.Examples.XNA.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0" />
@@ -56,6 +59,17 @@
     </Compile>
     <Compile Include="DemoWindow.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Shaders\SimpleShader.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IIS.SLSharp.Bindings.XNA\IIS.SLSharp.Bindings.XNA.csproj">
+      <Project>{31C6D7EC-615F-4A19-8079-967B10A8FA3E}</Project>
+      <Name>IIS.SLSharp.Bindings.XNA</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IIS.SLSharp\IIS.SLSharp.csproj">
+      <Project>{ECF58025-4591-4708-8EC9-4B95A5673DDA}</Project>
+      <Name>IIS.SLSharp</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

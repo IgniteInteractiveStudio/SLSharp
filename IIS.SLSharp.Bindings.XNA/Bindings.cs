@@ -3,15 +3,58 @@ using System.Collections.Generic;
 using System.Reflection;
 using IIS.SLSharp.Reflection;
 using IIS.SLSharp.Shaders;
+using IIS.SLSharp.Translation;
+using IIS.SLSharp.Translation.HLSL;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content.Pipeline;
+using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
+using Microsoft.Xna.Framework.Content.Pipeline.Processors;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace IIS.SLSharp.Bindings.XNA
 {
+    sealed class SLContentBuildLogger : ContentBuildLogger
+    {
+        public override void LogMessage(string message, params object[] messageArgs) { }
+        public override void LogImportantMessage(string message, params object[] messageArgs) { }
+        public override void LogWarning(string helpLink, ContentIdentity contentIdentity, string message, params object[] messageArgs) { }
+    }
+
+    sealed class SLContentProcessorContext: ContentProcessorContext
+    {
+        public override TargetPlatform TargetPlatform { get { return TargetPlatform.Windows; } }
+        public override GraphicsProfile TargetProfile { get { return GraphicsProfile.Reach; } }
+        public override string BuildConfiguration { get { return string.Empty; } }
+        public override string IntermediateDirectory { get { return string.Empty; } }
+        public override string OutputDirectory { get { return string.Empty; } }
+        public override string OutputFilename { get { return string.Empty; } }
+
+        public override OpaqueDataDictionary Parameters { get { return _parameters; } }
+        readonly OpaqueDataDictionary _parameters = new OpaqueDataDictionary();
+
+        public override ContentBuildLogger Logger { get { return _logger; } }
+        readonly ContentBuildLogger _logger = new SLContentBuildLogger();
+
+        public override void AddDependency(string filename) { }
+        public override void AddOutputFile(string filename) { }
+
+        public override TOutput Convert<TInput, TOutput>(TInput input, string processorName, OpaqueDataDictionary processorParameters) { throw new NotImplementedException(); }
+        public override TOutput BuildAndLoadAsset<TInput, TOutput>(ExternalReference<TInput> sourceAsset, string processorName, OpaqueDataDictionary processorParameters, string importerName) { throw new NotImplementedException(); }
+        public override ExternalReference<TOutput> BuildAsset<TInput, TOutput>(ExternalReference<TInput> sourceAsset, string processorName, OpaqueDataDictionary processorParameters, string importerName, string assetName) { throw new NotImplementedException(); }
+    }
+
     sealed class SLSharpBinding: ISLSharpBinding
     {
         public Dictionary<ReflectionToken, MethodInfo> PassiveMethods
         {
             get { return SLSharp.Handlers; }
+        }
+
+        private readonly ITransform _transform = new HlslTransform();
+
+        public ITransform Transform
+        {
+            get { return _transform; }
         }
 
         #region Active Methods
@@ -38,6 +81,26 @@ namespace IIS.SLSharp.Bindings.XNA
 
         public object Compile(ShaderType type, string source)
         {
+            var cp = new SLContentProcessorContext();
+            var ep = new EffectProcessor();
+            var ec = new EffectContent();
+            ec.EffectCode =
+@"
+float4 MakeItPink() : COLOR0
+{
+    return float4(1, 0, 1, 1);
+}
+
+technique Technique1
+{
+    pass Pass1
+    {
+        PixelShader = compile ps_2_0 MakeItPink();
+    }
+}
+        ";
+            //var effect = ep.Process(ec, cp);
+
             throw new NotImplementedException();
             /*
             var glsl = new GLSLProgram(null, "", 0, "", false, null);

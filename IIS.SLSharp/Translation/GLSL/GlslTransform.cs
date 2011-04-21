@@ -7,13 +7,13 @@ using Mono.Cecil;
 
 namespace IIS.SLSharp.Translation.GLSL
 {
-    public sealed class GlslTransform
+    public sealed class GlslTransform: ITransform
     {
         private readonly HashSet<Tuple<string, string>> _functions = new HashSet<Tuple<string, string>>();
 
-        public IEnumerable<Tuple<string, string>> Functions
+        public void ResetState()
         {
-            get { return _functions; }
+            _functions.Clear();
         }
 
         /// <summary>
@@ -49,6 +49,14 @@ namespace IIS.SLSharp.Translation.GLSL
             var sig = entry ? "void main()" : GlslVisitor.GetSignature(m);
             var code = glsl.Result;
             return sig + code;
+        }
+
+        public string ForwardDeclare(bool debugInfo)
+        {
+            return _functions.Aggregate(string.Empty, (a, b) =>
+                a + b.Item1 + ";" +
+                (debugInfo ? " // " + b.Item2 : string.Empty) +
+                Environment.NewLine) + Environment.NewLine;
         }
     }
 }
