@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using ICSharpCode.Decompiler.Ast.Transforms;
-using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
 
 namespace IIS.SLSharp.Translation

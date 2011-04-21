@@ -8,6 +8,7 @@ using IIS.SLSharp.Bindings;
 using IIS.SLSharp.Reflection;
 using IIS.SLSharp.Runtime;
 using IIS.SLSharp.Translation;
+using IIS.SLSharp.Translation.GLSL;
 using Mono.Cecil;
 using System.Collections.Generic;
 using FieldAttributes = System.Reflection.FieldAttributes;

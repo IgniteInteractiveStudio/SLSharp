@@ -8,9 +8,9 @@ using ICSharpCode.NRefactory.CSharp;
 using IIS.SLSharp.Shaders;
 using Mono.Cecil;
 
-namespace IIS.SLSharp.Translation
+namespace IIS.SLSharp.Translation.HLSL
 {
-    internal sealed partial class GlslVisitor : IAstVisitor<int, StringBuilder>
+    internal sealed partial class HlslVisitor : IAstVisitor<int, StringBuilder>
     {
         private readonly HashSet<Tuple<string, string>> _functions = new HashSet<Tuple<string, string>>();
 
@@ -35,10 +35,10 @@ namespace IIS.SLSharp.Translation
         public static void ValidateType(TypeReference t)
         {
             // ToGlslType returns normally if it's a correct type
-            ToGlslType(t);
+            ToHlslType(t);
         }
 
-        public static string ToGlslType(TypeReference t)
+        public static string ToHlslType(TypeReference t)
         {
             switch (t.FullName)
             {
@@ -60,9 +60,9 @@ namespace IIS.SLSharp.Translation
             }
         }
 
-        public static string ToGlslParamType(ParameterDefinition p)
+        public static string ToHlslParamType(ParameterDefinition p)
         {
-            var t = ToGlslType(p.ParameterType.Resolve());
+            var t = ToHlslType(p.ParameterType.Resolve());
             if (p.ParameterType.IsByReference)
                 return p.IsOut ? "out " + t : "inout " + t;
 
@@ -79,10 +79,10 @@ namespace IIS.SLSharp.Translation
             if (parameters.Count > 0)
             {
                 sig = parameters.Take(parameters.Count - 1).Aggregate(sig, (current, v) =>
-                    current + ToGlslParamType(v) + " " + v.Name + ", ");
+                    current + ToHlslParamType(v) + " " + v.Name + ", ");
 
                 var l = parameters.Last();
-                sig += ToGlslParamType(l) + " " + l.Name;
+                sig += ToHlslParamType(l) + " " + l.Name;
             }
 
             return sig;
@@ -90,7 +90,7 @@ namespace IIS.SLSharp.Translation
 
         internal static string GetSignature(MethodDefinition m)
         {
-            return ToGlslType(m.ReturnType) + " " +
+            return ToHlslType(m.ReturnType) + " " +
                 Shader.GetMethodName(m) + "(" +
                 GetParameterString(m) + ")";
         }
@@ -139,7 +139,7 @@ namespace IIS.SLSharp.Translation
             return res;
         }
 
-        public GlslVisitor(BlockStatement block, CustomAttribute attr)
+        public HlslVisitor(BlockStatement block, CustomAttribute attr)
         {
             _attr = attr;
 
@@ -245,7 +245,7 @@ namespace IIS.SLSharp.Translation
             var m = mref != null ? mref.Resolve() : invocationExpression.Annotation<MethodDefinition>();
 
             if (m.DeclaringType.MetadataToken.ToInt32() == typeof(ShaderDefinition).MetadataToken)
-                return result.Append(m.Name).Append("(").Append(ArgsToString(invocationExpression.Arguments)).Append(")");
+                return VisitShaderDefCall(m, invocationExpression);
 
             RegisterMethod(m);
             result.Append(Shader.GetMethodName(m));

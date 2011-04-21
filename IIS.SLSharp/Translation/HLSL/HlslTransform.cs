@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
-using IIS.SLSharp.Annotations;
-using IIS.SLSharp.Reflection;
 using Mono.Cecil;
 
-namespace IIS.SLSharp.Translation
+namespace IIS.SLSharp.Translation.HLSL
 {
-    public sealed class GlslTransform
+    public sealed class HlslTransform
     {
         private readonly HashSet<Tuple<string, string>> _functions = new HashSet<Tuple<string, string>>();
 
@@ -21,7 +18,7 @@ namespace IIS.SLSharp.Translation
 
         /// <summary>
         /// Public translation interface.
-        /// Translates the given method to GLSL
+        /// Translates the given method to HLSL
         /// </summary>
         /// <param name="s">Shader type definition.</param>
         /// <param name="m">A method representing a shader to translate.</param>
@@ -44,13 +41,13 @@ namespace IIS.SLSharp.Translation
                 CurrentMethod = m,
             });
 
-            var glsl = new GlslVisitor(d, attr);
+            var hlsl = new HlslVisitor(d, attr);
 
-            _functions.UnionWith(glsl.Functions);
+            _functions.UnionWith(hlsl.Functions);
 
             var entry = (bool)attr.ConstructorArguments.FirstOrDefault().Value;
-            var sig = entry ? "void main()" : GlslVisitor.GetSignature(m);
-            var code = glsl.Result;
+            var sig = entry ? "void main()" : HlslVisitor.GetSignature(m);
+            var code = hlsl.Result;
             return sig + code;
         }
     }

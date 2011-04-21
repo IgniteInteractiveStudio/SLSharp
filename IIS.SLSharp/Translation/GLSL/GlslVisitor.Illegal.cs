@@ -1,8 +1,7 @@
-using System;
 using System.Text;
 using ICSharpCode.NRefactory.CSharp;
 
-namespace IIS.SLSharp.Translation
+namespace IIS.SLSharp.Translation.GLSL
 {
     internal sealed partial class GlslVisitor
     {

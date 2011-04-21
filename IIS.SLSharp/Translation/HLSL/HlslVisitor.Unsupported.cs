@@ -2,9 +2,9 @@ using System;
 using System.Text;
 using ICSharpCode.NRefactory.CSharp;
 
-namespace IIS.SLSharp.Translation
+namespace IIS.SLSharp.Translation.HLSL
 {
-    internal sealed partial class GlslVisitor
+    internal sealed partial class HlslVisitor
     {
         public StringBuilder VisitDelegateDeclaration(DelegateDeclaration delegateDeclaration, int data)
         {
