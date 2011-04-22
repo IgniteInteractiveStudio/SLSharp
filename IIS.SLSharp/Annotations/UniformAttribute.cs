@@ -8,15 +8,5 @@ namespace IIS.SLSharp.Annotations
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class UniformAttribute : ShaderVariableAttribute
     {
-        public string ExplicitName { get; private set; }
-
-        public UniformAttribute()
-        {
-        }
-
-        public UniformAttribute(string explicitName)
-        {
-            ExplicitName = explicitName;
-        }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
+using IIS.SLSharp.Descriptions;
 using Mono.Cecil;
 
 namespace IIS.SLSharp.Translation.HLSL
@@ -24,8 +25,10 @@ namespace IIS.SLSharp.Translation.HLSL
         /// <param name="m">A method representing a shader to translate.</param>
         /// <param name="attr">The shader type pass either (FragmentShaderAttribute or VertexShaderAttribute) </param>
         /// <returns>The translated GLSL shader source</returns>
-        public string Transform(TypeDefinition s, MethodDefinition m, CustomAttribute attr)
+        public FunctionDescription Transform(TypeDefinition s, MethodDefinition m, CustomAttribute attr)
         {
+            throw new NotImplementedException();
+            /*
             if (s == null)
                 throw new ArgumentNullException("s");
 
@@ -49,14 +52,12 @@ namespace IIS.SLSharp.Translation.HLSL
             var sig = entry ? "void main()" : HlslVisitor.GetSignature(m);
             var code = hlsl.Result;
             return sig + code;
+             */
         }
 
-        public string ForwardDeclare(bool debugInfo)
+        public List<string> ForwardDeclare(bool debugInfo)
         {
-            return _functions.Aggregate(string.Empty, (a, b) =>
-                a + b.Item1 + ";" +
-                (debugInfo ? " // " + b.Item2 : string.Empty) +
-                Environment.NewLine) + Environment.NewLine;
+            return _functions.Select(f => f.Item1 + ";" + (debugInfo ? " // " + f.Item2 : string.Empty)).ToList();
         }
     }
 }

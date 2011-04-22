@@ -5,9 +5,9 @@ using System.Reflection;
 using System.Reflection.Emit;
 using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Bindings;
+using IIS.SLSharp.Descriptions;
 using IIS.SLSharp.Reflection;
 using IIS.SLSharp.Runtime;
-using IIS.SLSharp.Translation;
 using IIS.SLSharp.Translation.GLSL;
 using Mono.Cecil;
 using System.Collections.Generic;
@@ -30,17 +30,21 @@ namespace IIS.SLSharp.Shaders
 
         public static bool DebugMode { get; set; }
 
-        private readonly string _uniforms;
+        private readonly List<VariableDescription> _uniforms;
 
-        private readonly string _varyings;
+        private readonly List<VariableDescription> _varyings;
 
-        private readonly string _ins;
+        private readonly List<VariableDescription> _ins;
 
-        private readonly string _outs;
+        private readonly List<VariableDescription> _outs;
 
-        private readonly string _ffuns;
+        private readonly List<FunctionDescription> _ffuns;
 
-        private readonly string _vfuns;
+        private readonly List<FunctionDescription> _vfuns;
+
+        private readonly List<string> _fdeclFrag;
+
+        private readonly List<string> _fdeclVert;
 
         private readonly string _fentry;
 
@@ -81,34 +85,6 @@ namespace IIS.SLSharp.Shaders
             return t;
         }
 
-        public string VertexShader
-        {
-            get
-            {
-                var src = _uniforms;
-                src += _varyings.Replace("varying ", "out ");
-                src += _ins;
-                //src += _outs;
-                src += _vfuns;
-                src += _ventry;
-                return src;
-            }
-        }
-
-        public string FragmentShader
-        {
-            get
-            {
-                var src = _uniforms;
-                src += _varyings.Replace("varying ", "in ");
-                //src += _ins;
-                src += _outs;
-                src += _ffuns;
-                src += _fentry;
-                return src;
-            }
-        }
-
         /// <summary>
         /// Compiles the shader as GLSL shader.
         /// </summary>
@@ -125,6 +101,8 @@ namespace IIS.SLSharp.Shaders
                 if (type == ShaderType.FragmentShader)
                     src += "precision highp float;" + Environment.NewLine;
 
+            List<FunctionDescription> funcs;
+            List<string> fdecl;
             switch (type)
             {
                 case ShaderType.VertexShader:
@@ -132,20 +110,25 @@ namespace IIS.SLSharp.Shaders
                         return;
 
                     _vsCompiled = true;
-                    src += VertexShader;
+                    funcs = _vfuns;
+                    fdecl =_fdeclVert;
                     break;
                 case ShaderType.FragmentShader:
                     if (_fsCompiled)
                         return;
 
                     _fsCompiled = true;
-                    src += FragmentShader;
+                    funcs = _ffuns;
+                    fdecl = _fdeclFrag;
                     break;
                 default:
                     throw new NotImplementedException();
             }
 
-            var shader = Binding.Active.Compile(type, src);
+            var tmp = new List<VariableDescription>();
+            var desc = new SourceDescription(funcs, _uniforms, tmp, _varyings, _ins, _outs, fdecl);
+
+            var shader = Binding.Active.Compile(type, desc);
 
             _objects.Add(shader);
         }
@@ -340,11 +323,12 @@ namespace IIS.SLSharp.Shaders
         /// </summary>
         /// <param name="entryPoint">Returns the name of the function flagged as entrypoint</param>
         /// <param name="metaToken"></param>
+        /// <param name="forwardDecl">Forward declaration of referenced functions</param>
         /// <returns>A string containing the GLSL code for all collected functions</returns>
-        private string CollectFuncs(out string entryPoint, int metaToken)
+        private List<FunctionDescription> CollectFuncs(out string entryPoint, int metaToken, out List<string> forwardDecl)
         {
+            var desc = new List<FunctionDescription>();
             entryPoint = string.Empty;
-            var body = string.Empty;
             var hasEntry = false;
 
             var trans = Binding.Active.Transform;
@@ -369,9 +353,12 @@ namespace IIS.SLSharp.Shaders
                     hasEntry = true;
                 }
 
-                body += trans.Transform(_shader, m, attr) + Environment.NewLine;
+
+                desc.Add(trans.Transform(_shader, m, attr));
             }
-            return trans.ForwardDeclare(DebugMode) + body;
+
+            forwardDecl = trans.ForwardDeclare(DebugMode);
+            return desc;
         }
 
         /// <summary>
@@ -442,26 +429,23 @@ namespace IIS.SLSharp.Shaders
         /// Builds a string containing all uniform declarations.
         /// </summary>
         /// <returns>A string containing all uniform declarations.</returns>
-        private string CollectUniforms()
+        private List<VariableDescription> CollectUniforms()
         {
             return (from prop in _shader.Properties
-                    let attrs = prop.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() ==
-                        typeof(UniformAttribute).MetadataToken)
+                    let attrs = prop.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof (UniformAttribute).MetadataToken)
                     where attrs.Count() != 0
                     let attr = attrs.First()
-                    let glslType = attr.ConstructorArguments.FirstOrDefault().Value as string ??
-                        _typeMap[prop.PropertyType.Resolve().MetadataToken.ToInt32()].Name
+                    let glslType = _typeMap[prop.PropertyType.Resolve().MetadataToken.ToInt32()].Name
                     let name = GetUniformName(prop)
                     let comment = DebugMode ? " // " + prop.DeclaringType.FullName + "." + prop.Name : string.Empty
-                    select "uniform " + glslType + " " + name + ";" + comment).Aggregate(string.Empty, (current, glslVar) =>
-                        current + (glslVar + Environment.NewLine));
+                    select new VariableDescription(glslType, name, VariableSemantic.Unspecified, comment)).ToList();
         }
 
         /// <summary>
         /// Builds a string containing all varying declarations.
         /// </summary>
         /// <returns>A string containing all varying declarations.</returns>
-        private string CollectVaryings()
+        private List<VariableDescription> CollectVaryings()
         {
             return (from field in _shader.Fields
                     let attrs = field.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(VaryingAttribute).MetadataToken)
@@ -470,28 +454,25 @@ namespace IIS.SLSharp.Shaders
                     let glslType = GlslVisitor.ToGlslType(field.FieldType)
                     let name = GetVaryingName(field)
                     let comment = DebugMode ? " // " + field.DeclaringType.FullName + "." + field.Name : string.Empty
-                    select "varying " + glslType + " " + name + ";" + comment).Aggregate(string.Empty, (current, glslVar) =>
-                        current + (glslVar + Environment.NewLine));
+                    select new VariableDescription(glslType, name, VariableSemantic.Unspecified, comment)).ToList();
         }
 
         /// <summary>
         /// Builds a string containing all in declarations.
         /// </summary>
         /// <returns>A string containing all in declarations.</returns>
-        private string CollectIns()
+        private List<VariableDescription> CollectIns()
         {
             var s1 = (from field in _shader.Fields
-                      let attrs = field.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(VertexInAttribute).MetadataToken)
-                      where attrs.Count() != 0
-                      let attr = attrs.First()
-                      let glslType = GlslVisitor.ToGlslType(field.FieldType)
-                      let name = GetVaryingName(field)
-                      let comment = DebugMode ? " // " + field.DeclaringType.FullName + "." + field.Name : string.Empty
-                      select "in " + glslType + " " + name + ";" + comment).Aggregate(string.Empty, (current, glslVar) =>
-                        current + (glslVar + Environment.NewLine));
+                    let attrs = field.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(VertexInAttribute).MetadataToken)
+                    where attrs.Count() != 0
+                    let attr = attrs.First()
+                    let glslType = GlslVisitor.ToGlslType(field.FieldType)
+                    let name = GetVaryingName(field)
+                    let comment = DebugMode ? " // " + field.DeclaringType.FullName + "." + field.Name : string.Empty
+                    select new VariableDescription(glslType, name, VariableSemantic.Unspecified, comment));
 
             // TODO: what was this supposed to be good for?
-            // should have documented might be bugged?
             var s2 = (from prop in _shader.Properties
                       let attrs = prop.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(VertexInAttribute).MetadataToken)
                       where attrs.Count() != 0
@@ -499,17 +480,16 @@ namespace IIS.SLSharp.Shaders
                       let glslType = _typeMap[prop.PropertyType.Resolve().MetadataToken.ToInt32()].Name
                       let name = GetUniformName(prop)
                       let comment = DebugMode ? " // " + prop.DeclaringType.FullName + "." + prop.Name : string.Empty
-                      select "uniform " + glslType + " " + name + ";" + comment).Aggregate(string.Empty, (current, glslVar) =>
-                            current + (glslVar + Environment.NewLine));
+                      select new VariableDescription(glslType, name, VariableSemantic.Unspecified, comment)).ToList();
 
-            return s1 + s2;
+            return s1.Concat(s2).ToList();
         }
 
         /// <summary>
         /// Builds a string containing all out declarations.
         /// </summary>
         /// <returns>A string containing all out declarations.</returns>
-        private string CollectOuts()
+        private List<VariableDescription> CollectOuts()
         {
             return (from field in _shader.Fields
                     let attrs = field.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(FragmentOutAttribute).MetadataToken)
@@ -518,8 +498,7 @@ namespace IIS.SLSharp.Shaders
                     let glslType = GlslVisitor.ToGlslType(field.FieldType)
                     let name = GetVaryingName(field)
                     let comment = DebugMode ? " // " + field.DeclaringType.FullName + "." + field.Name : string.Empty
-                    select "out " + glslType + " " + name + ";" + comment).Aggregate(string.Empty, (current, glslVar) =>
-                        current + (glslVar + Environment.NewLine));
+                    select new VariableDescription(glslType, name, VariableSemantic.Unspecified, comment)).ToList();
         }
 
         private TypeDefinition LoadReflection()
@@ -534,8 +513,8 @@ namespace IIS.SLSharp.Shaders
         {
             RefShaders();
             _shader = LoadReflection();
-            _ffuns = CollectFuncs(out _fentry, typeof(FragmentShaderAttribute).MetadataToken);
-            _vfuns = CollectFuncs(out _ventry, typeof(VertexShaderAttribute).MetadataToken);
+            _ffuns = CollectFuncs(out _fentry, typeof(FragmentShaderAttribute).MetadataToken, out _fdeclFrag);
+            _vfuns = CollectFuncs(out _ventry, typeof(VertexShaderAttribute).MetadataToken, out _fdeclVert);
             _varyings = CollectVaryings();
             _uniforms = CollectUniforms();
             _ins = CollectIns();

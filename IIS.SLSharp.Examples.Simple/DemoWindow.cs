@@ -16,12 +16,6 @@ namespace IIS.SLSharp.Examples.Simple
         {
             Bindings.OpenTK.SLSharp.Init();
             _myShader = Shader.CreateSharedShader<MyShader>();
-            Console.WriteLine("Vertex Shader");
-            Console.WriteLine("=============");
-            Console.WriteLine(_myShader.VertexShader);
-            Console.WriteLine("Fragment Shader");
-            Console.WriteLine("===============");
-            Console.WriteLine(_myShader.FragmentShader);  
         }
 
         protected override void OnUnload(EventArgs e)

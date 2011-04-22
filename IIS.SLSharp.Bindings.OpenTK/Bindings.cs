@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Reflection;
 using IIS.SLSharp.Bindings.OpenTK.Textures;
+using IIS.SLSharp.Descriptions;
 using IIS.SLSharp.Reflection;
 using IIS.SLSharp.Shaders;
 using IIS.SLSharp.Translation;
 using IIS.SLSharp.Translation.GLSL;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+
 
 namespace IIS.SLSharp.Bindings.OpenTK
 {
@@ -46,8 +48,10 @@ namespace IIS.SLSharp.Bindings.OpenTK
             GL.ActiveTexture(TextureUnit.Texture0);
         }
 
-        public object Compile(ShaderType type, string source)
+        public object Compile(ShaderType type, SourceDescription source)
         {
+            var src = source.ToGlsl(type);
+
             int shader;
             switch (type)
             {
@@ -63,7 +67,7 @@ namespace IIS.SLSharp.Bindings.OpenTK
 
             Utilities.CheckGL();
 
-            GL.ShaderSource(shader, source);
+            GL.ShaderSource(shader, src);
             GL.CompileShader(shader);
             int compileResult;
             GL.GetShader(shader, ShaderParameter.CompileStatus, out compileResult);

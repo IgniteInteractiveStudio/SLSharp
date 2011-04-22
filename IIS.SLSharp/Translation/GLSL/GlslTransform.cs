@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
+using IIS.SLSharp.Descriptions;
+using IIS.SLSharp.Shaders;
 using Mono.Cecil;
 
 namespace IIS.SLSharp.Translation.GLSL
@@ -24,8 +26,10 @@ namespace IIS.SLSharp.Translation.GLSL
         /// <param name="m">A method representing a shader to translate.</param>
         /// <param name="attr">The shader type pass either (FragmentShaderAttribute or VertexShaderAttribute) </param>
         /// <returns>The translated GLSL shader source</returns>
-        public string Transform(TypeDefinition s, MethodDefinition m, CustomAttribute attr)
+        public FunctionDescription Transform(TypeDefinition s, MethodDefinition m, CustomAttribute attr)
         {
+            
+
             if (s == null)
                 throw new ArgumentNullException("s");
 
@@ -47,16 +51,17 @@ namespace IIS.SLSharp.Translation.GLSL
 
             var entry = (bool)attr.ConstructorArguments.FirstOrDefault().Value;
             var sig = entry ? "void main()" : GlslVisitor.GetSignature(m);
+            
             var code = glsl.Result;
-            return sig + code;
+            var desc = new FunctionDescription(entry ? "main" : Shader.GetMethodName(m), sig + code);
+
+
+            return desc;
         }
 
-        public string ForwardDeclare(bool debugInfo)
+        public List<string> ForwardDeclare(bool debugInfo)
         {
-            return _functions.Aggregate(string.Empty, (a, b) =>
-                a + b.Item1 + ";" +
-                (debugInfo ? " // " + b.Item2 : string.Empty) +
-                Environment.NewLine) + Environment.NewLine;
+            return _functions.Select(f => f.Item1 + ";" + (debugInfo ? " // " + f.Item2 : string.Empty)).ToList();
         }
     }
 }

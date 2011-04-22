@@ -1,4 +1,6 @@
-﻿using Mono.Cecil;
+﻿using System.Collections.Generic;
+using IIS.SLSharp.Descriptions;
+using Mono.Cecil;
 
 namespace IIS.SLSharp.Translation
 {
@@ -16,13 +18,13 @@ namespace IIS.SLSharp.Translation
         /// <param name="m">The method to translate</param>
         /// <param name="attr">The shader type either (FragmentShaderAttribute or VertexShaderAttribute</param>
         /// <returns>The source for the translated function</returns>
-        string Transform(TypeDefinition s, MethodDefinition m, CustomAttribute attr);
+        FunctionDescription Transform(TypeDefinition s, MethodDefinition m, CustomAttribute attr);
 
         /// <summary>
         /// Generates a string that forward declarates all functions used within a shader.
         /// </summary>
         /// <param name="debugInfo">Include descriptive elements</param>
         /// <returns></returns>
-        string ForwardDeclare(bool debugInfo);
+        List<string> ForwardDeclare(bool debugInfo);
     }
 }

@@ -51,6 +51,9 @@
     <Compile Include="Bindings\Binding.cs" />
     <Compile Include="Bindings\IProgram.cs" />
     <Compile Include="Bindings\ISLSharpBinding.cs" />
+    <Compile Include="Descriptions\FunctionDescription.cs" />
+    <Compile Include="Descriptions\SourceDescription.cs" />
+    <Compile Include="Descriptions\VariableDescription.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Reflection\ReflectionMarkerAttribute.cs" />
     <Compile Include="Reflection\ReflectionToken.cs" />
@@ -79,6 +82,7 @@
     <Compile Include="Shaders\ShaderDefinition.SingleVector.cs" />
     <Compile Include="ShaderType.cs" />
     <Compile Include="SLSharpException.cs" />
+    <Compile Include="Translation\GLSL\GlslSourceBuilder.cs" />
     <Compile Include="Translation\GLSL\GlslTransform.cs" />
     <Compile Include="Translation\GLSL\GlslVisitor.cs" />
     <Compile Include="Translation\GLSL\GlslVisitor.Illegal.cs" />

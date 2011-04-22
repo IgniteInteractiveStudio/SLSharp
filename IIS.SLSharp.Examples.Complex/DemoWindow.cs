@@ -26,35 +26,7 @@ namespace IIS.SLSharp.Examples.Complex
         {
             Bindings.OpenTK.SLSharp.Init();
             _backdropShader = Shader.CreateSharedShader<BackdropShader>();
-            Console.WriteLine("Vertex Shader");
-            Console.WriteLine("=============");
-            Console.WriteLine(_backdropShader.VertexShader);
-            Console.WriteLine("Fragment Shader");
-            Console.WriteLine("===============");
-            Console.WriteLine(_backdropShader.FragmentShader);
-
-            Console.WriteLine("Vertex Shader");
-            Console.WriteLine("=============");
-            Console.WriteLine(_backdropShader.Wang.VertexShader);
-            Console.WriteLine("Fragment Shader");
-            Console.WriteLine("===============");
-            Console.WriteLine(_backdropShader.Wang.FragmentShader);
-
             _cubeShader = Shader.CreateSharedShader<CubeShader>();
-            Console.WriteLine("Vertex Shader");
-            Console.WriteLine("=============");
-            Console.WriteLine(_cubeShader.VertexShader);
-            Console.WriteLine("Fragment Shader");
-            Console.WriteLine("===============");
-            Console.WriteLine(_cubeShader.FragmentShader);
-
-            Console.WriteLine("Vertex Shader");
-            Console.WriteLine("=============");
-            Console.WriteLine(_cubeShader.Noise.VertexShader);
-            Console.WriteLine("Fragment Shader");
-            Console.WriteLine("===============");
-            Console.WriteLine(_cubeShader.Noise.FragmentShader);
-
             _cube = new Cube();
             _timer.Start();
         }
