@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Axiom.Graphics;
 using Axiom.RenderSystems.OpenGL.GLSL;
+using IIS.SLSharp.Descriptions;
 using IIS.SLSharp.Reflection;
 using Axiom.Math;
 using IIS.SLSharp.Shaders;
@@ -47,11 +48,11 @@ namespace IIS.SLSharp.Bindings.Axiom
             //GL.ActiveTexture(TextureUnit.Texture0);
         }
 
-        public object Compile(ShaderType type, string source)
+        public object Compile(ShaderType type, SourceDescription source)
         {            
             var glsl = new GLSLProgram(null, "", 0, "", false, null);
             var prog = new GLSLGpuProgram(glsl);
-            prog.GLSLProgram.Source = source;
+            prog.GLSLProgram.Source = source.ToGlsl(type);
 
             switch (type)
             {

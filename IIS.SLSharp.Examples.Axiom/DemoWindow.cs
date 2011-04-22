@@ -33,12 +33,6 @@ namespace IIS.SLSharp.Examples.Axiom
         {
             Bindings.Axiom.SLSharp.Init();
             _shader = Shader.CreateSharedShader<SimpleShader>();
-            Console.WriteLine("Vertex Shader");
-            Console.WriteLine("=============");
-            Console.WriteLine(_shader.VertexShader);
-            Console.WriteLine("Fragment Shader");
-            Console.WriteLine("===============");
-            Console.WriteLine(_shader.FragmentShader);
 
             // Create patch with positions, normals, and 1 set of texcoords
             var patchDeclaration = HardwareBufferManager.Instance.CreateVertexDeclaration();
