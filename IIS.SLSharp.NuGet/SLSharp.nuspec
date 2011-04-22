@@ -2,7 +2,7 @@
 <package> 
   <metadata> 
     <id>SLSharp</id> 
-    <version>1.4</version> 
+    <version>2.0</version> 
     <authors>Ignite Interactive Studio</authors>
     <description>Runtime IL-to-GLSL translator, allowing developers to write OpenGL shaders in C#.</description> 
     <language>en-US</language>
