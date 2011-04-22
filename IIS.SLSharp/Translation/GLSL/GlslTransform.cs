@@ -28,8 +28,6 @@ namespace IIS.SLSharp.Translation.GLSL
         /// <returns>The translated GLSL shader source</returns>
         public FunctionDescription Transform(TypeDefinition s, MethodDefinition m, CustomAttribute attr)
         {
-            
-
             if (s == null)
                 throw new ArgumentNullException("s");
 
@@ -54,7 +52,6 @@ namespace IIS.SLSharp.Translation.GLSL
             
             var code = glsl.Result;
             var desc = new FunctionDescription(entry ? "main" : Shader.GetMethodName(m), sig + code);
-
 
             return desc;
         }

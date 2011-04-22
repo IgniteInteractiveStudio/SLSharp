@@ -4,6 +4,7 @@ using System.Linq;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using IIS.SLSharp.Descriptions;
+using IIS.SLSharp.Shaders;
 using Mono.Cecil;
 
 namespace IIS.SLSharp.Translation.HLSL
@@ -27,8 +28,6 @@ namespace IIS.SLSharp.Translation.HLSL
         /// <returns>The translated GLSL shader source</returns>
         public FunctionDescription Transform(TypeDefinition s, MethodDefinition m, CustomAttribute attr)
         {
-            throw new NotImplementedException();
-            /*
             if (s == null)
                 throw new ArgumentNullException("s");
 
@@ -44,15 +43,17 @@ namespace IIS.SLSharp.Translation.HLSL
                 CurrentMethod = m,
             });
 
-            var hlsl = new HlslVisitor(d, attr);
+            var glsl = new HlslVisitor(d, attr);
 
-            _functions.UnionWith(hlsl.Functions);
+            _functions.UnionWith(glsl.Functions);
 
             var entry = (bool)attr.ConstructorArguments.FirstOrDefault().Value;
-            var sig = entry ? "void main()" : HlslVisitor.GetSignature(m);
-            var code = hlsl.Result;
-            return sig + code;
-             */
+            var sig = HlslVisitor.GetSignature(m);
+
+            var code = glsl.Result;
+            var desc = new FunctionDescription(Shader.GetMethodName(m), sig + code);
+
+            return desc;
         }
 
         public List<string> ForwardDeclare(bool debugInfo)

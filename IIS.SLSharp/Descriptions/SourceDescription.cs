@@ -66,23 +66,37 @@ namespace IIS.SLSharp.Descriptions
             //var funs = Functions.Union(other.Functions, Compare<FunctionDescription>((a, b) => a.Name == b.Name)).ToList();
             //Functions.Except(other.Functions, )
 
-            var funcComparer = new Comparer<FunctionDescription>((a, b) => a.Name == b.Name);
-            var doubles = Functions.Except(other.Functions, funcComparer);
-            if (doubles.Count() != 0)
-                throw new SLSharpException("Method declared twice: " + doubles.First().Name);
-            var funcs = Functions.Concat(other.Functions).ToList();
-
-            var variableComparer = new Comparer<VariableDescription>(
+            var funcComparer = new Comparer<FunctionDescription>(
                 (a, b) =>
                     {
-                        if (a != b)
+                        if (a.Name != b.Name)
                             return false;
-                        if (a.Type != b.Type)
-                            throw new SLSharpException("Type mismatch during variable merge");
-                        if (a.Semantic != b.Semantic)
-                            throw new SLSharpException("Semantic mismatch during variable merge");
+                        if (a.Body != b.Body)
+                            throw new SLSharpException(a.Name + " has been redeclared with different body");
                         return true;
                     });
+            var variableComparer = new Comparer<VariableDescription>(
+                (a, b) =>
+                {
+                    if (a != b)
+                        return false;
+                    if (a.Type != b.Type)
+                        throw new SLSharpException("Type mismatch during variable merge");
+                    if (a.Semantic != b.Semantic)
+                        throw new SLSharpException("Semantic mismatch during variable merge");
+                    return true;
+                });
+            
+            
+            // duplicate def actually occurs when a func has been defined as
+            // vertex as well as fragment code
+            //
+            //var doubles = Functions.Except(other.Functions, funcComparer);
+            //if (doubles.Count() != 0)
+            //    throw new SLSharpException("Method declared twice: " + doubles.First().Name);
+            //var funcs = Functions.Concat(other.Functions).ToList();
+
+            var funcs = Functions.Union(other.Functions, funcComparer).ToList();
 
             // union global vars
             var uniforms = Uniforms.Union(other.Uniforms, variableComparer).ToList();
@@ -90,6 +104,8 @@ namespace IIS.SLSharp.Descriptions
             var attribs = Attributes.Union(other.Attributes, variableComparer).ToList();
             var ins = VertexIns.Union(other.VertexIns, variableComparer).ToList();
             var outs = FragmentOuts.Union(other.FragmentOuts, variableComparer).ToList();
+            
+            // union forward declartations
             var fdecl = ForwardDecl.Union(other.ForwardDecl).ToList();
 
             return new SourceDescription(funcs, uniforms, attribs, varyings, ins, outs, fdecl);

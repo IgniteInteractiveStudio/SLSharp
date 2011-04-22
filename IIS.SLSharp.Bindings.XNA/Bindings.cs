@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Linq;
+using System.Text;
+using IIS.SLSharp.Descriptions;
 using IIS.SLSharp.Reflection;
 using IIS.SLSharp.Shaders;
 using IIS.SLSharp.Translation;
@@ -79,49 +82,13 @@ namespace IIS.SLSharp.Bindings.XNA
             //GL.ActiveTexture(TextureUnit.Texture0);
         }
 
-        public object Compile(ShaderType type, string source)
+
+        public object Compile(ShaderType type, SourceDescription source)
         {
-            var cp = new SLContentProcessorContext();
-            var ep = new EffectProcessor();
-            var ec = new EffectContent();
-            ec.EffectCode =
-@"
-float4 MakeItPink() : COLOR0
-{
-    return float4(1, 0, 1, 1);
-}
-
-technique Technique1
-{
-    pass Pass1
-    {
-        PixelShader = compile ps_2_0 MakeItPink();
-    }
-}
-        ";
-            //var effect = ep.Process(ec, cp);
-
-            throw new NotImplementedException();
-            /*
-            var glsl = new GLSLProgram(null, "", 0, "", false, null);
-            var prog = new GLSLGpuProgram(glsl);
-            prog.GLSLProgram.Source = source;
-
-            switch (type)
-            {
-                case ShaderType.FragmentShader:
-                    prog.GLSLProgram.Type = GpuProgramType.Fragment;
-                    break;
-                case ShaderType.VertexShader:
-                    prog.GLSLProgram.Type = GpuProgramType.Vertex;
-                    break;
-                default:
-                    throw new SLSharpException("Binding does not support " + type);
-            }
-            
-            prog.GLSLProgram.Load();
-            return prog;
-             */
+            // HLSL design is kinda screwed up, it only allows us to use one
+            // shared source, so we pass through the source and build a
+            // merged sourcecode at linktime
+            return source;
         }
 
         internal class Program : IProgram
@@ -169,6 +136,36 @@ technique Technique1
 
         public IProgram Link(IEnumerable<object> units)
         {
+            var sources = units.Cast<SourceDescription>();
+            var merged = sources.Skip(1).Aggregate(sources.First(), (current, d) => current.Merge(d));
+            var s = new StringBuilder();
+
+
+            // XNA doesnt support shader compilation so we have to generate a .fx file
+            s.AppendLine(merged.ToHlsl());
+            
+            var src = s;
+            Console.WriteLine(src);
+
+            var cp = new SLContentProcessorContext();
+            var ep = new EffectProcessor();
+            var ec = new EffectContent();
+
+            ec.EffectCode =
+@"
+float4 MakeItPink() : COLOR0
+{
+    return float4(1, 0, 1, 1);
+}
+
+technique Technique1
+{
+    pass Pass1
+    {
+        PixelShader = compile ps_2_0 MakeItPink();
+    }
+}
+        ";
             return new Program(units);
         }
 

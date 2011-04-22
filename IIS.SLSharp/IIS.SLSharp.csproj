@@ -89,6 +89,7 @@
     <Compile Include="Translation\GLSL\GlslVisitor.ShaderDef.cs" />
     <Compile Include="Translation\GLSL\GlslVisitor.Unimplemented.cs" />
     <Compile Include="Translation\GLSL\GlslVisitor.Unsupported.cs" />
+    <Compile Include="Translation\HLSL\HlslSourceBuilder.cs" />
     <Compile Include="Translation\HLSL\HlslVisitor.Unimplemented.cs" />
     <Compile Include="Translation\HLSL\HlslVisitor.ShaderDef.cs" />
     <Compile Include="Translation\HLSL\HlslVisitor.Illegal.cs" />

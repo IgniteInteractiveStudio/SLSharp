@@ -21,12 +21,6 @@ namespace IIS.SLSharp.Examples.XNA
         {
             Bindings.XNA.SLSharp.Init();
             _shader = Shader.CreateSharedShader<SimpleShader>();
-            Console.WriteLine("Vertex Shader");
-            Console.WriteLine("=============");
-            Console.WriteLine(_shader.VertexShader);
-            Console.WriteLine("Fragment Shader");
-            Console.WriteLine("===============");
-            Console.WriteLine(_shader.FragmentShader);
         }
 
         protected override void UnloadContent()
