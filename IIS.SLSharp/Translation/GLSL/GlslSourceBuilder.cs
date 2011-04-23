@@ -11,6 +11,7 @@ namespace IIS.SLSharp.Translation.GLSL
     {
         private static readonly Dictionary<Type, string> _complexTypeName = new Dictionary<Type, string>
         {
+            { typeof(void), "void" },
             { typeof(float), "float" },
             { typeof(ShaderDefinition.vec2), "vec2" },
             { typeof(ShaderDefinition.vec3), "vec3" },
@@ -72,11 +73,6 @@ namespace IIS.SLSharp.Translation.GLSL
         internal static string ToGlsl(this TypeReference t)
         {
             var typeDef = t.Resolve();
-            var declType = typeDef.DeclaringType;
-
-            if (!(declType != null && declType.MetadataToken.ToInt32() == typeof(ShaderDefinition).MetadataToken))
-                throw new SLSharpException(t.FullName + " is invalid in a shader program.");
-
             return Shader.TypeMap[typeDef.MetadataToken.ToInt32()].Type.ToGlsl();
         }
 

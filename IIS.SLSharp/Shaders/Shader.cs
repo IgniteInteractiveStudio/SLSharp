@@ -259,6 +259,7 @@ namespace IIS.SLSharp.Shaders
         /// </summary>
         internal static readonly Dictionary<int, PropInfo> TypeMap = new Dictionary<int, PropInfo>
         {
+            { typeof(void).MetadataToken, new PropInfo(typeof(void), ReflectionToken.NullToken) },
             { typeof(float).MetadataToken, new PropInfo(typeof(float), ReflectionToken.ShaderVec1Helper) },
             { typeof(vec2).MetadataToken, new PropInfo(typeof(vec2), ReflectionToken.ShaderVec2Helper) },
             { typeof(vec3).MetadataToken, new PropInfo(typeof(vec3), ReflectionToken.ShaderVec3Helper) },

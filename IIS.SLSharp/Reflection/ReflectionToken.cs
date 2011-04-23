@@ -5,6 +5,7 @@ namespace IIS.SLSharp.Reflection
     [Serializable]
     public enum ReflectionToken
     {
+        NullToken,
         ShaderName,
         ShaderActivate,
         ShaderVec1Helper,
