@@ -641,7 +641,7 @@ namespace IIS.SLSharp.Shaders
             var getName = ReflectionMarkerAttribute.FindProperty(
                 typeof(Shader), ReflectionToken.ShaderName).GetGetMethod();
 
-            var nameIndex = ilBeg.DeclareLocal(typeof(int)).LocalIndex;
+            var nameIndex = ilBeg.DeclareLocal(typeof(IProgram)).LocalIndex;
 
             var shaderActivate = ReflectionMarkerAttribute.FindMethod(
                 typeof(Shader), ReflectionToken.ShaderActivate);
@@ -719,6 +719,7 @@ namespace IIS.SLSharp.Shaders
             var timpl = typeBuilder.CreateType();
             ctor = timpl.GetConstructor(Type.EmptyTypes);
             _ctors[type] = ctor;
+
             return ctor;
         }
 

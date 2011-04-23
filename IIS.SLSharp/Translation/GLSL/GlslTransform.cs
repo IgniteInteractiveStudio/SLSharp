@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using IIS.SLSharp.Descriptions;
@@ -41,6 +42,7 @@ namespace IIS.SLSharp.Translation.GLSL
             {
                 CurrentType = s,
                 CurrentMethod = m,
+                CancellationToken = CancellationToken.None
             });
 
             var glsl = new GlslVisitor(d, attr);
