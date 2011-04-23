@@ -20,6 +20,7 @@ namespace IIS.SLSharp.Examples.XNA
         protected override void LoadContent()
         {
             Bindings.XNA.SLSharp.Init();
+            Shader.DebugMode = true;
             _shader = Shader.CreateSharedShader<SimpleShader>();
         }
 

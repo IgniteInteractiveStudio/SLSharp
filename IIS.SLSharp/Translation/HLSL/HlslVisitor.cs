@@ -34,35 +34,13 @@ namespace IIS.SLSharp.Translation.HLSL
 
         public static void ValidateType(TypeReference t)
         {
-            // ToGlslType returns normally if it's a correct type
-            ToHlslType(t);
+            t.ToHlsl(); // throws when t is invalid
         }
-
-        public static string ToHlslType(TypeReference t)
-        {
-            switch (t.FullName)
-            {
-                case "System.Single":
-                    return "float";
-                case "System.Double":
-                    return "double";
-                case "System.Void":
-                    return "void";
-                case "System.Int32":
-                    return "int";
-                case "System.UInt32":
-                    return "uint";
-                case "System.Boolean":
-                    return "bool";
-                default:
-                    ValidateComplexType(t);
-                    return t.Name;
-            }
-        }
+      
 
         public static string ToHlslParamType(ParameterDefinition p)
         {
-            var t = ToHlslType(p.ParameterType.Resolve());
+            var t = p.ParameterType.Resolve().ToHlsl();
             if (p.ParameterType.IsByReference)
                 return p.IsOut ? "out " + t : "inout " + t;
 
@@ -90,7 +68,7 @@ namespace IIS.SLSharp.Translation.HLSL
 
         internal static string GetSignature(MethodDefinition m)
         {
-            return ToHlslType(m.ReturnType) + " " +
+            return m.ReturnType.ToHlsl() + " " +
                 Shader.GetMethodName(m) + "(" +
                 GetParameterString(m) + ")";
         }

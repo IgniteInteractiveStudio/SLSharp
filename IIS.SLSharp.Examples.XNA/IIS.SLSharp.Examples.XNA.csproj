@@ -6,7 +6,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{83127CAD-D3FB-473C-A798-3599AD5BD459}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IIS.SLSharp.Examples.XNA</RootNamespace>
     <AssemblyName>IIS.SLSharp.Examples.XNA</AssemblyName>
@@ -37,6 +37,9 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\bin\Release\IIS.SLSharp.Examples.XNA.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0" />
