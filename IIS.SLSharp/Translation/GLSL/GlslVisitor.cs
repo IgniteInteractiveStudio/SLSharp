@@ -21,48 +21,14 @@ namespace IIS.SLSharp.Translation.GLSL
             get { return _functions; }
         }
 
-        private static void ValidateComplexType(TypeReference type)
-        {
-            var typeDef = type.Resolve();
-            var declType = typeDef.DeclaringType;
-
-            if (declType != null && declType.MetadataToken.ToInt32() == typeof(ShaderDefinition).MetadataToken)
-                return;
-
-            throw new SLSharpException(type.FullName + " is invalid in a shader program.");
-        }
-
         public static void ValidateType(TypeReference t)
         {
-            // ToGlslType returns normally if it's a correct type
-            ToGlslType(t);
-        }
-
-        public static string ToGlslType(TypeReference t)
-        {
-            switch (t.FullName)
-            {
-                case "System.Single":
-                    return "float";
-                case "System.Double":
-                    return "double";
-                case "System.Void":
-                    return "void";
-                case "System.Int32":
-                    return "int";
-                case "System.UInt32":
-                    return "uint";
-                case "System.Boolean":
-                    return "bool";
-                default:
-                    ValidateComplexType(t);
-                    return t.Name;
-            }
+            t.ToGlsl(); // throws if t is not valid
         }
 
         public static string ToGlslParamType(ParameterDefinition p)
         {
-            var t = ToGlslType(p.ParameterType.Resolve());
+            var t = p.ParameterType.Resolve().ToGlsl();
             if (p.ParameterType.IsByReference)
                 return p.IsOut ? "out " + t : "inout " + t;
 
@@ -90,7 +56,7 @@ namespace IIS.SLSharp.Translation.GLSL
 
         internal static string GetSignature(MethodDefinition m)
         {
-            return ToGlslType(m.ReturnType) + " " +
+            return m.ReturnType.ToGlsl() + " " +
                 Shader.GetMethodName(m) + "(" +
                 GetParameterString(m) + ")";
         }

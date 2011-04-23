@@ -8,7 +8,6 @@ using IIS.SLSharp.Bindings;
 using IIS.SLSharp.Descriptions;
 using IIS.SLSharp.Reflection;
 using IIS.SLSharp.Runtime;
-using IIS.SLSharp.Translation.GLSL;
 using Mono.Cecil;
 using System.Collections.Generic;
 using FieldAttributes = System.Reflection.FieldAttributes;
@@ -241,15 +240,15 @@ namespace IIS.SLSharp.Shaders
             Binding.Active.TexReset();
         }
 
-        private sealed class PropInfo
+        internal sealed class PropInfo
         {
-            public string Name { get; private set; }
+            public Type Type { get; private set; }
 
             public ReflectionToken Token { get; private set; }
 
-            public PropInfo(string name, ReflectionToken token)
+            public PropInfo(Type type, ReflectionToken token)
             {
-                Name = name;
+                Type = type;
                 Token = token;
             }
         }
@@ -258,64 +257,64 @@ namespace IIS.SLSharp.Shaders
         /// This map holds handlers to be called as uniform setters by the runtime derived
         /// shaders.
         /// </summary>
-        private static readonly Dictionary<int, PropInfo> _typeMap = new Dictionary<int, PropInfo>
+        internal static readonly Dictionary<int, PropInfo> TypeMap = new Dictionary<int, PropInfo>
         {
-            { typeof(float).MetadataToken, new PropInfo("float", ReflectionToken.ShaderVec1Helper) },
-            { typeof(vec2).MetadataToken, new PropInfo("vec2", ReflectionToken.ShaderVec2Helper) },
-            { typeof(vec3).MetadataToken, new PropInfo("vec3", ReflectionToken.ShaderVec3Helper) },
-            { typeof(vec4).MetadataToken, new PropInfo("vec4", ReflectionToken.ShaderVec4Helper) },
-            { typeof(mat2).MetadataToken, new PropInfo("mat2", ReflectionToken.ShaderUniformMatrix2X2Helper) },
-            { typeof(mat2x3).MetadataToken, new PropInfo("mat2x3", ReflectionToken.ShaderUniformMatrix2X3Helper) },
-            { typeof(mat2x4).MetadataToken, new PropInfo("mat2x4", ReflectionToken.ShaderUniformMatrix2X4Helper) },
-            { typeof(mat3x2).MetadataToken, new PropInfo("mat3x2", ReflectionToken.ShaderUniformMatrix3X2Helper) },
-            { typeof(mat3).MetadataToken, new PropInfo("mat3", ReflectionToken.ShaderUniformMatrix3X3Helper) },
-            { typeof(mat3x4).MetadataToken, new PropInfo("mat3x4", ReflectionToken.ShaderUniformMatrix3X4Helper) },
-            { typeof(mat4x2).MetadataToken, new PropInfo("mat4x2", ReflectionToken.ShaderUniformMatrix4X2Helper) },
-            { typeof(mat4x3).MetadataToken, new PropInfo("mat4x3", ReflectionToken.ShaderUniformMatrix4X3Helper) },
-            { typeof(mat4).MetadataToken, new PropInfo("mat4", ReflectionToken.ShaderUniformMatrix4X4Helper) },
-            { typeof(sampler1D).MetadataToken, new PropInfo("sampler1D", ReflectionToken.ShaderSamplerHelper) },
-            { typeof(sampler2D).MetadataToken, new PropInfo("sampler2D", ReflectionToken.ShaderSamplerHelper) },
-            { typeof(sampler3D).MetadataToken, new PropInfo("sampler3D", ReflectionToken.ShaderSamplerHelper) },
-            { typeof(samplerCube).MetadataToken, new PropInfo("samplerCube", ReflectionToken.ShaderSamplerHelper) },
-            { typeof(sampler1DShadow).MetadataToken, new PropInfo("sampler1DShadow", ReflectionToken.ShaderSamplerHelper) },
-            { typeof(sampler2DShadow).MetadataToken, new PropInfo("sampler2DShadow", ReflectionToken.ShaderSamplerHelper) },
-            { typeof(isampler1D).MetadataToken, new PropInfo("isampler1D", ReflectionToken.ShaderSamplerHelper) },
-            { typeof(isampler2D).MetadataToken, new PropInfo("isampler2D", ReflectionToken.ShaderSamplerHelper) },
-            { typeof(isampler3D).MetadataToken, new PropInfo("isampler3D", ReflectionToken.ShaderSamplerHelper) },
-            { typeof(isamplerCube).MetadataToken, new PropInfo("isamplerCube", ReflectionToken.ShaderSamplerHelper) },
-            { typeof(usampler1D).MetadataToken, new PropInfo("usampler1D", ReflectionToken.ShaderSamplerHelper) },
-            { typeof(usampler2D).MetadataToken, new PropInfo("usampler2D", ReflectionToken.ShaderSamplerHelper) },
-            { typeof(usampler3D).MetadataToken, new PropInfo("usampler3D", ReflectionToken.ShaderSamplerHelper) },
-            { typeof(usamplerCube).MetadataToken, new PropInfo("usamplerCube", ReflectionToken.ShaderSamplerHelper) },
-            { typeof(sampler2DRect).MetadataToken, new PropInfo("sampler2DRect", ReflectionToken.ShaderSamplerHelper) },
-            { typeof(sampler2DRectShadow).MetadataToken, new PropInfo("sampler2DRectShadow", ReflectionToken.ShaderSamplerHelper) },
-            { typeof(isampler2DRect).MetadataToken, new PropInfo("isampler2DRect", ReflectionToken.ShaderSamplerHelper) },
-            { typeof(usampler2DRect).MetadataToken, new PropInfo("usampler2DRect", ReflectionToken.ShaderSamplerHelper) },
-            { typeof(int).MetadataToken, new PropInfo("int", ReflectionToken.ShaderIvec1Helper) },
-            { typeof(ivec2).MetadataToken, new PropInfo("ivec2", ReflectionToken.ShaderIvec2Helper) },
-            { typeof(ivec3).MetadataToken, new PropInfo("ivec3", ReflectionToken.ShaderIvec3Helper) },
-            { typeof(ivec4).MetadataToken, new PropInfo("ivec4", ReflectionToken.ShaderIvec4Helper) },
-            { typeof(uint).MetadataToken, new PropInfo("uint", ReflectionToken.ShaderUvec1Helper) },
-            { typeof(uvec2).MetadataToken, new PropInfo("uvec2", ReflectionToken.ShaderUvec2Helper) },
-            { typeof(uvec3).MetadataToken, new PropInfo("uvec3", ReflectionToken.ShaderUvec3Helper) },
-            { typeof(uvec4).MetadataToken, new PropInfo("uvec4", ReflectionToken.ShaderUvec4Helper) },
-            { typeof(double).MetadataToken, new PropInfo("double", ReflectionToken.ShaderDvec1Helper) },
-            { typeof(dvec2).MetadataToken, new PropInfo("dvec2", ReflectionToken.ShaderDvec2Helper) },
-            { typeof(dvec3).MetadataToken, new PropInfo("dvec3", ReflectionToken.ShaderDvec3Helper) },
-            { typeof(dvec4).MetadataToken, new PropInfo("dvec4", ReflectionToken.ShaderDvec4Helper) },
-            { typeof(dmat2).MetadataToken, new PropInfo("dmat2", ReflectionToken.ShaderUniformDMatrix2X2Helper) },
-            { typeof(dmat2x3).MetadataToken, new PropInfo("dmat2x3", ReflectionToken.ShaderUniformDMatrix2X3Helper) },
-            { typeof(dmat2x4).MetadataToken, new PropInfo("dmat2x4", ReflectionToken.ShaderUniformDMatrix2X4Helper) },
-            { typeof(dmat3x2).MetadataToken, new PropInfo("dmat3x2", ReflectionToken.ShaderUniformDMatrix3X2Helper) },
-            { typeof(dmat3).MetadataToken, new PropInfo("dmat3", ReflectionToken.ShaderUniformDMatrix3X3Helper) },
-            { typeof(dmat3x4).MetadataToken, new PropInfo("dmat3x4", ReflectionToken.ShaderUniformDMatrix3X4Helper) },
-            { typeof(dmat4x2).MetadataToken, new PropInfo("dmat4x2", ReflectionToken.ShaderUniformDMatrix4X2Helper) },
-            { typeof(dmat4x3).MetadataToken, new PropInfo("dmat4x3", ReflectionToken.ShaderUniformDMatrix4X3Helper) },
-            { typeof(dmat4).MetadataToken, new PropInfo("dmat4", ReflectionToken.ShaderUniformDMatrix4X4Helper) },
-            { typeof(bool).MetadataToken, new PropInfo("bool",  ReflectionToken.ShaderBvec1Helper) },
-            { typeof(bvec2).MetadataToken, new PropInfo("bvec2", ReflectionToken.ShaderBvec2Helper) },
-            { typeof(bvec3).MetadataToken, new PropInfo("bvec3", ReflectionToken.ShaderBvec3Helper) },
-            { typeof(bvec4).MetadataToken, new PropInfo("bvec4", ReflectionToken.ShaderBvec4Helper) },
+            { typeof(float).MetadataToken, new PropInfo(typeof(float), ReflectionToken.ShaderVec1Helper) },
+            { typeof(vec2).MetadataToken, new PropInfo(typeof(vec2), ReflectionToken.ShaderVec2Helper) },
+            { typeof(vec3).MetadataToken, new PropInfo(typeof(vec3), ReflectionToken.ShaderVec3Helper) },
+            { typeof(vec4).MetadataToken, new PropInfo(typeof(vec4), ReflectionToken.ShaderVec4Helper) },
+            { typeof(mat2).MetadataToken, new PropInfo(typeof(mat2), ReflectionToken.ShaderUniformMatrix2X2Helper) },
+            { typeof(mat2x3).MetadataToken, new PropInfo(typeof(mat2x3), ReflectionToken.ShaderUniformMatrix2X3Helper) },
+            { typeof(mat2x4).MetadataToken, new PropInfo(typeof(mat2x4), ReflectionToken.ShaderUniformMatrix2X4Helper) },
+            { typeof(mat3x2).MetadataToken, new PropInfo(typeof(mat3x2), ReflectionToken.ShaderUniformMatrix3X2Helper) },
+            { typeof(mat3).MetadataToken, new PropInfo(typeof(mat3), ReflectionToken.ShaderUniformMatrix3X3Helper) },
+            { typeof(mat3x4).MetadataToken, new PropInfo(typeof(mat3x4), ReflectionToken.ShaderUniformMatrix3X4Helper) },
+            { typeof(mat4x2).MetadataToken, new PropInfo(typeof(mat4x2), ReflectionToken.ShaderUniformMatrix4X2Helper) },
+            { typeof(mat4x3).MetadataToken, new PropInfo(typeof(mat4x3), ReflectionToken.ShaderUniformMatrix4X3Helper) },
+            { typeof(mat4).MetadataToken, new PropInfo(typeof(mat4), ReflectionToken.ShaderUniformMatrix4X4Helper) },
+            { typeof(sampler1D).MetadataToken, new PropInfo(typeof(sampler1D), ReflectionToken.ShaderSamplerHelper) },
+            { typeof(sampler2D).MetadataToken, new PropInfo(typeof(sampler2D), ReflectionToken.ShaderSamplerHelper) },
+            { typeof(sampler3D).MetadataToken, new PropInfo(typeof(sampler3D), ReflectionToken.ShaderSamplerHelper) },
+            { typeof(samplerCube).MetadataToken, new PropInfo(typeof(samplerCube), ReflectionToken.ShaderSamplerHelper) },
+            { typeof(sampler1DShadow).MetadataToken, new PropInfo(typeof(sampler1DShadow), ReflectionToken.ShaderSamplerHelper) },
+            { typeof(sampler2DShadow).MetadataToken, new PropInfo(typeof(sampler2DShadow), ReflectionToken.ShaderSamplerHelper) },
+            { typeof(isampler1D).MetadataToken, new PropInfo(typeof(isampler1D), ReflectionToken.ShaderSamplerHelper) },
+            { typeof(isampler2D).MetadataToken, new PropInfo(typeof(isampler2D), ReflectionToken.ShaderSamplerHelper) },
+            { typeof(isampler3D).MetadataToken, new PropInfo(typeof(isampler3D), ReflectionToken.ShaderSamplerHelper) },
+            { typeof(isamplerCube).MetadataToken, new PropInfo(typeof(isamplerCube), ReflectionToken.ShaderSamplerHelper) },
+            { typeof(usampler1D).MetadataToken, new PropInfo(typeof(usampler1D), ReflectionToken.ShaderSamplerHelper) },
+            { typeof(usampler2D).MetadataToken, new PropInfo(typeof(usampler2D), ReflectionToken.ShaderSamplerHelper) },
+            { typeof(usampler3D).MetadataToken, new PropInfo(typeof(usampler3D), ReflectionToken.ShaderSamplerHelper) },
+            { typeof(usamplerCube).MetadataToken, new PropInfo(typeof(usamplerCube), ReflectionToken.ShaderSamplerHelper) },
+            { typeof(sampler2DRect).MetadataToken, new PropInfo(typeof(sampler2DRect), ReflectionToken.ShaderSamplerHelper) },
+            { typeof(sampler2DRectShadow).MetadataToken, new PropInfo(typeof(sampler2DRectShadow), ReflectionToken.ShaderSamplerHelper) },
+            { typeof(isampler2DRect).MetadataToken, new PropInfo(typeof(isampler2DRect), ReflectionToken.ShaderSamplerHelper) },
+            { typeof(usampler2DRect).MetadataToken, new PropInfo(typeof(usampler2DRect), ReflectionToken.ShaderSamplerHelper) },
+            { typeof(int).MetadataToken, new PropInfo(typeof(int), ReflectionToken.ShaderIvec1Helper) },
+            { typeof(ivec2).MetadataToken, new PropInfo(typeof(ivec2), ReflectionToken.ShaderIvec2Helper) },
+            { typeof(ivec3).MetadataToken, new PropInfo(typeof(ivec3), ReflectionToken.ShaderIvec3Helper) },
+            { typeof(ivec4).MetadataToken, new PropInfo(typeof(ivec4), ReflectionToken.ShaderIvec4Helper) },
+            { typeof(uint).MetadataToken, new PropInfo(typeof(uint), ReflectionToken.ShaderUvec1Helper) },
+            { typeof(uvec2).MetadataToken, new PropInfo(typeof(uvec2), ReflectionToken.ShaderUvec2Helper) },
+            { typeof(uvec3).MetadataToken, new PropInfo(typeof(uvec3), ReflectionToken.ShaderUvec3Helper) },
+            { typeof(uvec4).MetadataToken, new PropInfo(typeof(uvec4), ReflectionToken.ShaderUvec4Helper) },
+            { typeof(double).MetadataToken, new PropInfo(typeof(double), ReflectionToken.ShaderDvec1Helper) },
+            { typeof(dvec2).MetadataToken, new PropInfo(typeof(dvec2), ReflectionToken.ShaderDvec2Helper) },
+            { typeof(dvec3).MetadataToken, new PropInfo(typeof(dvec3), ReflectionToken.ShaderDvec3Helper) },
+            { typeof(dvec4).MetadataToken, new PropInfo(typeof(dvec4), ReflectionToken.ShaderDvec4Helper) },
+            { typeof(dmat2).MetadataToken, new PropInfo(typeof(dmat2), ReflectionToken.ShaderUniformDMatrix2X2Helper) },
+            { typeof(dmat2x3).MetadataToken, new PropInfo(typeof(dmat2x3), ReflectionToken.ShaderUniformDMatrix2X3Helper) },
+            { typeof(dmat2x4).MetadataToken, new PropInfo(typeof(dmat2x4), ReflectionToken.ShaderUniformDMatrix2X4Helper) },
+            { typeof(dmat3x2).MetadataToken, new PropInfo(typeof(dmat3x2), ReflectionToken.ShaderUniformDMatrix3X2Helper) },
+            { typeof(dmat3).MetadataToken, new PropInfo(typeof(dmat3), ReflectionToken.ShaderUniformDMatrix3X3Helper) },
+            { typeof(dmat3x4).MetadataToken, new PropInfo(typeof(dmat3x4), ReflectionToken.ShaderUniformDMatrix3X4Helper) },
+            { typeof(dmat4x2).MetadataToken, new PropInfo(typeof(dmat4x2), ReflectionToken.ShaderUniformDMatrix4X2Helper) },
+            { typeof(dmat4x3).MetadataToken, new PropInfo(typeof(dmat4x3), ReflectionToken.ShaderUniformDMatrix4X3Helper) },
+            { typeof(dmat4).MetadataToken, new PropInfo(typeof(dmat4), ReflectionToken.ShaderUniformDMatrix4X4Helper) },
+            { typeof(bool).MetadataToken, new PropInfo(typeof(bool),  ReflectionToken.ShaderBvec1Helper) },
+            { typeof(bvec2).MetadataToken, new PropInfo(typeof(bvec2), ReflectionToken.ShaderBvec2Helper) },
+            { typeof(bvec3).MetadataToken, new PropInfo(typeof(bvec3), ReflectionToken.ShaderBvec3Helper) },
+            { typeof(bvec4).MetadataToken, new PropInfo(typeof(bvec4), ReflectionToken.ShaderBvec4Helper) },
         };
 
         /// <summary>
@@ -435,10 +434,10 @@ namespace IIS.SLSharp.Shaders
                     let attrs = prop.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof (UniformAttribute).MetadataToken)
                     where attrs.Count() != 0
                     let attr = attrs.First()
-                    let glslType = _typeMap[prop.PropertyType.Resolve().MetadataToken.ToInt32()].Name
+                    let type = TypeMap[prop.PropertyType.Resolve().MetadataToken.ToInt32()].Type
                     let name = GetUniformName(prop)
                     let comment = DebugMode ? " // " + prop.DeclaringType.FullName + "." + prop.Name : string.Empty
-                    select new VariableDescription(glslType, name, VariableSemantic.Unspecified, comment)).ToList();
+                    select new VariableDescription(type, name, VariableSemantic.Unspecified, comment)).ToList();
         }
 
         /// <summary>
@@ -451,10 +450,10 @@ namespace IIS.SLSharp.Shaders
                     let attrs = field.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(VaryingAttribute).MetadataToken)
                     where attrs.Count() != 0
                     let attr = attrs.First()
-                    let glslType = GlslVisitor.ToGlslType(field.FieldType)
+                    let type = TypeMap[field.FieldType.Resolve().MetadataToken.ToInt32()].Type
                     let name = GetVaryingName(field)
                     let comment = DebugMode ? " // " + field.DeclaringType.FullName + "." + field.Name : string.Empty
-                    select new VariableDescription(glslType, name, VariableSemantic.Unspecified, comment)).ToList();
+                    select new VariableDescription(type, name, VariableSemantic.Unspecified, comment)).ToList();
         }
 
         /// <summary>
@@ -467,20 +466,20 @@ namespace IIS.SLSharp.Shaders
                     let attrs = field.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(VertexInAttribute).MetadataToken)
                     where attrs.Count() != 0
                     let attr = attrs.First()
-                    let glslType = GlslVisitor.ToGlslType(field.FieldType)
+                    let type = TypeMap[field.FieldType.Resolve().MetadataToken.ToInt32()].Type
                     let name = GetVaryingName(field)
                     let comment = DebugMode ? " // " + field.DeclaringType.FullName + "." + field.Name : string.Empty
-                    select new VariableDescription(glslType, name, VariableSemantic.Unspecified, comment));
+                    select new VariableDescription(type, name, VariableSemantic.Unspecified, comment));
 
             // TODO: what was this supposed to be good for?
             var s2 = (from prop in _shader.Properties
                       let attrs = prop.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(VertexInAttribute).MetadataToken)
                       where attrs.Count() != 0
                       let attr = attrs.First()
-                      let glslType = _typeMap[prop.PropertyType.Resolve().MetadataToken.ToInt32()].Name
+                      let type = TypeMap[prop.PropertyType.Resolve().MetadataToken.ToInt32()].Type
                       let name = GetUniformName(prop)
                       let comment = DebugMode ? " // " + prop.DeclaringType.FullName + "." + prop.Name : string.Empty
-                      select new VariableDescription(glslType, name, VariableSemantic.Unspecified, comment)).ToList();
+                      select new VariableDescription(type, name, VariableSemantic.Unspecified, comment)).ToList();
 
             return s1.Concat(s2).ToList();
         }
@@ -495,10 +494,10 @@ namespace IIS.SLSharp.Shaders
                     let attrs = field.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(FragmentOutAttribute).MetadataToken)
                     where attrs.Count() != 0
                     let attr = attrs.First()
-                    let glslType = GlslVisitor.ToGlslType(field.FieldType)
+                    let type = TypeMap[field.FieldType.Resolve().MetadataToken.ToInt32()].Type
                     let name = GetVaryingName(field)
                     let comment = DebugMode ? " // " + field.DeclaringType.FullName + "." + field.Name : string.Empty
-                    select new VariableDescription(glslType, name, VariableSemantic.Unspecified, comment)).ToList();
+                    select new VariableDescription(type, name, VariableSemantic.Unspecified, comment)).ToList();
         }
 
         private TypeDefinition LoadReflection()
@@ -658,7 +657,7 @@ namespace IIS.SLSharp.Shaders
                 if (attr.Length == 0)
                     continue;
 
-                var info = _typeMap[prop.PropertyType.MetadataToken];
+                var info = TypeMap[prop.PropertyType.MetadataToken];
                 
                 MethodInfo uniformCall = Binding.Resolve(info.Token);
                 
