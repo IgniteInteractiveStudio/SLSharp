@@ -118,15 +118,17 @@ namespace IIS.SLSharp.Translation.HLSL
 
             // define uniforms
             desc.Uniforms.ForEach(
-                v => s.AppendFormat("uniform extern {0} {1}{2};", v.Type.ToHlsl(), v.Name, v.Comment).Append(Environment.NewLine));
+                v => s.AppendFormat("uniform extern {0} {1};{2}", v.Type.ToHlsl(), v.Name, v.Comment).Append(Environment.NewLine));
 
             // expose varyings inputs and outputs as globals for unified access
             // through all functions
+
+            s.AppendLine("static float4 gl_Position;");
             var statics = desc.Varyings.Concat(desc.VertexIns).Concat(desc.FragmentOuts);
             foreach (var v in statics)
-                s.AppendFormat("uniform static {0} {1}{2};", v.Type.ToHlsl(), v.Name, v.Comment).Append(Environment.NewLine);
+                s.AppendFormat("static {0} {1};{2}", v.Type.ToHlsl(), v.Name, v.Comment).Append(Environment.NewLine);
 
-            s.AppendLine("{");
+            s.AppendLine();
 
             // generate vertex input struct
             s.AppendLine("struct VertexIn");
@@ -137,14 +139,13 @@ namespace IIS.SLSharp.Translation.HLSL
 
             s.AppendLine("struct VertexOut");
             s.AppendLine("{");
+            s.AppendLine("    float4 gl_Position: POSITION;");
             var i = 0;
             desc.Varyings.ForEach(v => s.AppendFormat("    {0} {1}: TEXCOORD{2};", v.Type.ToHlsl(), v.Name, i++).AppendLine());
             if (i > 15)
                 throw new NotImplementedException("more than 16 varyings not supported yet");
             s.AppendLine("};");
-            s.AppendLine();
 
-            s.AppendLine();
             desc.ForwardDecl.ForEach(v => s.AppendLine(v));
 
             s.AppendLine();
@@ -159,6 +160,8 @@ namespace IIS.SLSharp.Translation.HLSL
             s.AppendFormat("    {0}();", desc.Functions.First(f => f.EntryPoint).Name).AppendLine();
             // write back results from globals
             desc.Varyings.ForEach(v => s.AppendFormat("    output.{0} = {1};", v.Name, v.Name).AppendLine());
+            s.AppendLine("    output.gl_Position = gl_Position;");
+            s.AppendLine("    return output;");
             s.AppendLine("}");
 
             var src = s.ToString();

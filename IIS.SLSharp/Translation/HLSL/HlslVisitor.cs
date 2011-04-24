@@ -295,6 +295,26 @@ namespace IIS.SLSharp.Translation.HLSL
 
         public StringBuilder VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, int data)
         {
+            if (binaryOperatorExpression.Operator == BinaryOperatorType.Multiply)
+            {
+                // need some consistent way to figure the type somehow ...
+
+                // if lhs is a matrix type and rhs is a vector type or other way around use mul
+                var lhs = binaryOperatorExpression.Left.Annotation<MemberReference>();
+                var rhs = binaryOperatorExpression.Right.Annotation<MemberReference>();
+                /*
+                if (lhs != null && rhs != null)
+                {
+                    var lhsn = lhs.DeclaringType.Name;
+                    var rhsn = rhs.DeclaringType.Name;
+                    if ((lhsn.StartsWith("mat") && rhsn.StartsWith("vec")) ||
+                        (rhsn.StartsWith("mat") && lhsn.StartsWith("vec")))
+                    {
+                        Console.Write(".");
+                    }
+                }*/
+            }
+
             var result = new StringBuilder("(");
 
             result.Append(binaryOperatorExpression.Left.AcceptVisitor(this, data));
