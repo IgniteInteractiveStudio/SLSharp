@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
+using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.CSharp.Resolver;
 using IIS.SLSharp.Descriptions;
 using IIS.SLSharp.Shaders;
 using Mono.Cecil;
@@ -38,6 +40,16 @@ namespace IIS.SLSharp.Translation.HLSL
             if (attr == null)
                 throw new ArgumentNullException("attr");
 
+            var sbase = s.BaseType.Resolve();
+            while (sbase.MetadataToken.ToInt32() != typeof(Shader).MetadataToken)
+                sbase = sbase.BaseType.Resolve();
+
+            
+            var ctx = new CecilTypeResolveContext(sbase.Module);
+            var resolver = new CSharpResolver(ctx);
+            var rv = new ResolveVisitor(resolver, null, null);
+            
+
             var d = AstMethodBodyBuilder.CreateMethodBody(m, new DecompilerContext
             {
                 CurrentType = s,
@@ -45,7 +57,9 @@ namespace IIS.SLSharp.Translation.HLSL
                 CancellationToken = CancellationToken.None
             });
 
-            var glsl = new HlslVisitor(d, attr);
+            rv.Scan(d);
+
+            var glsl = new HlslVisitor(d, attr, rv);
 
             _functions.UnionWith(glsl.Functions);
 

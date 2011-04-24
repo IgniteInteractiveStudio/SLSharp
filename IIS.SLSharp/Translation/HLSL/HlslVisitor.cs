@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.CSharp.Resolver;
 using IIS.SLSharp.Shaders;
 using Mono.Cecil;
 
@@ -15,6 +16,7 @@ namespace IIS.SLSharp.Translation.HLSL
         private readonly HashSet<Tuple<string, string>> _functions = new HashSet<Tuple<string, string>>();
 
         private readonly CustomAttribute _attr;
+        private ResolveVisitor _resolver;
 
         public IEnumerable<Tuple<string, string>> Functions
         {
@@ -117,9 +119,10 @@ namespace IIS.SLSharp.Translation.HLSL
             return res;
         }
 
-        public HlslVisitor(BlockStatement block, CustomAttribute attr)
+        public HlslVisitor(BlockStatement block, CustomAttribute attr, ResolveVisitor resolver)
         {
             _attr = attr;
+            _resolver = resolver;
 
             var trans1 = new ReplaceMethodCallsWithOperators();
             var trans2 = new RenameLocals();
@@ -297,11 +300,14 @@ namespace IIS.SLSharp.Translation.HLSL
         {
             if (binaryOperatorExpression.Operator == BinaryOperatorType.Multiply)
             {
+                var lhs = _resolver.Resolve(binaryOperatorExpression.Left);
+                var rhs = _resolver.Resolve(binaryOperatorExpression.Right);
+
                 // need some consistent way to figure the type somehow ...
 
                 // if lhs is a matrix type and rhs is a vector type or other way around use mul
-                var lhs = binaryOperatorExpression.Left.Annotation<MemberReference>();
-                var rhs = binaryOperatorExpression.Right.Annotation<MemberReference>();
+                //var lhs = binaryOperatorExpression.Left.Annotation<MemberReference>();
+                //var rhs = binaryOperatorExpression.Right.Annotation<MemberReference>();
                 /*
                 if (lhs != null && rhs != null)
                 {
