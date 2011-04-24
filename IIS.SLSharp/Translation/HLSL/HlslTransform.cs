@@ -53,7 +53,7 @@ namespace IIS.SLSharp.Translation.HLSL
             var sig = HlslVisitor.GetSignature(m);
 
             var code = glsl.Result;
-            var desc = new FunctionDescription(Shader.GetMethodName(m), sig + code);
+            var desc = new FunctionDescription(Shader.GetMethodName(m), sig + code, entry);
 
             return desc;
         }

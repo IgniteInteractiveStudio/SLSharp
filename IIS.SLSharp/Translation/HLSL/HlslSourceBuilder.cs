@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Descriptions;
 using IIS.SLSharp.Shaders;
 using Mono.Cecil;
@@ -86,6 +87,31 @@ namespace IIS.SLSharp.Translation.HLSL
             return glslName;
         }
 
+        public static string ToHlsl(this UsageSemantic semantic)
+        {
+            switch (semantic)
+            {
+                case UsageSemantic.Position0: return "POSITION0";
+                case UsageSemantic.Position1: return "POSITION1";
+                case UsageSemantic.Position2: return "POSITION2";
+                case UsageSemantic.Position3: return "POSITION3";
+                case UsageSemantic.Position4: return "POSITION4";
+                case UsageSemantic.Position5: return "POSITION5";
+                case UsageSemantic.Position6: return "POSITION6";
+                case UsageSemantic.Position7: return "POSITION7";
+                case UsageSemantic.Position8: return "POSITION8";
+                case UsageSemantic.Position9: return "POSITION9";
+                case UsageSemantic.Position10: return "POSITION10";
+                case UsageSemantic.Position11: return "POSITION11";
+                case UsageSemantic.Position12: return "POSITION12";
+                case UsageSemantic.Position13: return "POSITION13";
+                case UsageSemantic.Position14: return "POSITION14";
+                case UsageSemantic.Position15: return "POSITION15";
+            }
+
+            throw new SLSharpException("Usage semantic " + semantic + " currently not supported");
+        }
+
         public static string ToHlsl(this SourceDescription desc)
         {
             var s = new StringBuilder();
@@ -99,15 +125,41 @@ namespace IIS.SLSharp.Translation.HLSL
             var statics = desc.Varyings.Concat(desc.VertexIns).Concat(desc.FragmentOuts);
             foreach (var v in statics)
                 s.AppendFormat("uniform static {0} {1}{2};", v.Type.ToHlsl(), v.Name, v.Comment).Append(Environment.NewLine);
-            
-            // define inputs as globals
 
+            s.AppendLine("{");
+
+            // generate vertex input struct
+            s.AppendLine("struct VertexIn");
+            s.AppendLine("{");
+            desc.VertexIns.ForEach(v => s.AppendFormat("    {0} {1}: {2};", v.Type.ToHlsl(), v.Name, v.Semantic.ToHlsl()).AppendLine());
+            s.AppendLine("};");
+            s.AppendLine();
+
+            s.AppendLine("struct VertexOut");
+            s.AppendLine("{");
+            var i = 0;
+            desc.Varyings.ForEach(v => s.AppendFormat("    {0} {1}: TEXCOORD{2};", v.Type.ToHlsl(), v.Name, i++).AppendLine());
+            if (i > 15)
+                throw new NotImplementedException("more than 16 varyings not supported yet");
+            s.AppendLine("};");
+            s.AppendLine();
 
             s.AppendLine();
             desc.ForwardDecl.ForEach(v => s.AppendLine(v));
 
             s.AppendLine();
             desc.Functions.ForEach(v => s.AppendLine(v.Body));
+
+            s.AppendLine("VertexOut SLSharp_VertexMain(VertexIn input)");
+            s.AppendLine("{");
+            s.AppendLine("    VertexOut output;");
+            // initialize globals from input
+            desc.VertexIns.ForEach(v => s.AppendFormat("    {0} = input.{1};", v.Name, v.Name).AppendLine());
+            // call entrypoint
+            s.AppendFormat("    {0}();", desc.Functions.First(f => f.EntryPoint).Name).AppendLine();
+            // write back results from globals
+            desc.Varyings.ForEach(v => s.AppendFormat("    output.{0} = {1};", v.Name, v.Name).AppendLine());
+            s.AppendLine("}");
 
             var src = s.ToString();
             Console.WriteLine(src);

@@ -438,7 +438,7 @@ namespace IIS.SLSharp.Shaders
                     let type = TypeMap[prop.PropertyType.Resolve().MetadataToken.ToInt32()].Type
                     let name = GetUniformName(prop)
                     let comment = DebugMode ? " // " + prop.DeclaringType.FullName + "." + prop.Name : string.Empty
-                    select new VariableDescription(type, name, VariableSemantic.Unspecified, comment)).ToList();
+                    select new VariableDescription(type, name, UsageSemantic.Unknown, comment)).ToList();
         }
 
         /// <summary>
@@ -454,7 +454,7 @@ namespace IIS.SLSharp.Shaders
                     let type = TypeMap[field.FieldType.Resolve().MetadataToken.ToInt32()].Type
                     let name = GetVaryingName(field)
                     let comment = DebugMode ? " // " + field.DeclaringType.FullName + "." + field.Name : string.Empty
-                    select new VariableDescription(type, name, VariableSemantic.Unspecified, comment)).ToList();
+                    select new VariableDescription(type, name, UsageSemantic.Unknown, comment)).ToList();
         }
 
         /// <summary>
@@ -464,13 +464,14 @@ namespace IIS.SLSharp.Shaders
         private List<VariableDescription> CollectIns()
         {
             var s1 = (from field in _shader.Fields
-                    let attrs = field.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(VertexInAttribute).MetadataToken)
-                    where attrs.Count() != 0
-                    let attr = attrs.First()
-                    let type = TypeMap[field.FieldType.Resolve().MetadataToken.ToInt32()].Type
-                    let name = GetVaryingName(field)
-                    let comment = DebugMode ? " // " + field.DeclaringType.FullName + "." + field.Name : string.Empty
-                    select new VariableDescription(type, name, VariableSemantic.Unspecified, comment));
+                      let attrs = field.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(VertexInAttribute).MetadataToken)
+                      where attrs.Count() != 0
+                      let attr = attrs.First()
+                      let type = TypeMap[field.FieldType.Resolve().MetadataToken.ToInt32()].Type
+                      let name = GetVaryingName(field)
+                      let comment = DebugMode ? " // " + field.DeclaringType.FullName + "." + field.Name : string.Empty
+                      let semantic = (UsageSemantic)attr.ConstructorArguments[0].Value
+                      select new VariableDescription(type, name, semantic, comment));
 
             // TODO: what was this supposed to be good for?
             var s2 = (from prop in _shader.Properties
@@ -480,7 +481,8 @@ namespace IIS.SLSharp.Shaders
                       let type = TypeMap[prop.PropertyType.Resolve().MetadataToken.ToInt32()].Type
                       let name = GetUniformName(prop)
                       let comment = DebugMode ? " // " + prop.DeclaringType.FullName + "." + prop.Name : string.Empty
-                      select new VariableDescription(type, name, VariableSemantic.Unspecified, comment)).ToList();
+                      let semantic = (UsageSemantic)attr.ConstructorArguments[0].Value
+                      select new VariableDescription(type, name, semantic, comment)).ToList();
 
             return s1.Concat(s2).ToList();
         }
@@ -498,7 +500,7 @@ namespace IIS.SLSharp.Shaders
                     let type = TypeMap[field.FieldType.Resolve().MetadataToken.ToInt32()].Type
                     let name = GetVaryingName(field)
                     let comment = DebugMode ? " // " + field.DeclaringType.FullName + "." + field.Name : string.Empty
-                    select new VariableDescription(type, name, VariableSemantic.Unspecified, comment)).ToList();
+                    select new VariableDescription(type, name, UsageSemantic.Unknown, comment)).ToList();
         }
 
         private TypeDefinition LoadReflection()

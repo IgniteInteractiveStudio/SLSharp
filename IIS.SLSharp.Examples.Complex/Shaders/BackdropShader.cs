@@ -24,7 +24,7 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
         [FragmentOut]
         protected vec4 Color;
 
-        [VertexIn]
+        [VertexIn(UsageSemantic.Position0)]
         public vec4 GlVertex;
 
         // demonstrate using a shared library

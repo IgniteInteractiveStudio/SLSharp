@@ -8,7 +8,7 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
         [Varying]
         private vec3 _uvw;
 
-        [VertexIn]
+        [VertexIn(UsageSemantic.Position0)]
         public vec4 Vertex;
 
         [FragmentOut]
