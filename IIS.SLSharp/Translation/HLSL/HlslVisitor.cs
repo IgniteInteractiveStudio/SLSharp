@@ -243,8 +243,7 @@ namespace IIS.SLSharp.Translation.HLSL
 
         public StringBuilder VisitMemberType(MemberType memberType, int data)
         {
-            ValidateType(memberType.Annotation<TypeReference>());
-            return new StringBuilder(memberType.MemberName);
+            return new StringBuilder(memberType.Annotation<TypeReference>().ToHlsl());
         }
 
         public StringBuilder VisitSimpleType(SimpleType simpleType, int data)

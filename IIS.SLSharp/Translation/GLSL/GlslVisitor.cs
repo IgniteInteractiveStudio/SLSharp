@@ -6,6 +6,7 @@ using System.Text;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.NRefactory.CSharp;
 using IIS.SLSharp.Shaders;
+using IIS.SLSharp.Translation.HLSL;
 using Mono.Cecil;
 
 namespace IIS.SLSharp.Translation.GLSL
@@ -228,8 +229,7 @@ namespace IIS.SLSharp.Translation.GLSL
 
         public StringBuilder VisitMemberType(MemberType memberType, int data)
         {
-            ValidateType(memberType.Annotation<TypeReference>());
-            return new StringBuilder(memberType.MemberName);
+            return new StringBuilder(memberType.Annotation<TypeReference>().ToGlsl());
         }
 
         public StringBuilder VisitSimpleType(SimpleType simpleType, int data)

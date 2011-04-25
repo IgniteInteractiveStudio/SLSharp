@@ -88,7 +88,7 @@ namespace IIS.SLSharp.Bindings.XNA
             // HLSL design is kinda screwed up, it only allows us to use one
             // shared source, so we pass through the source and build a
             // merged sourcecode at linktime
-            return source;
+            return new Tuple<ShaderType, SourceDescription>(type, source);
         }
 
         internal class Program : IProgram
@@ -136,8 +136,12 @@ namespace IIS.SLSharp.Bindings.XNA
 
         public IProgram Link(IEnumerable<object> units)
         {
-            var sources = units.Cast<SourceDescription>();
-            var merged = sources.Skip(1).Aggregate(sources.First(), (current, d) => current.Merge(d));
+            var sources = units.Cast<Tuple<ShaderType, SourceDescription>>();
+            //var frag = sources.Where(t => t.Item1 == ShaderType.FragmentShader).Select(t => t.Item2);
+            //var vert = sources.Where(t => t.Item1 == ShaderType.VertexShader).Select(t => t.Item2);
+            var all = sources.Select(t => t.Item2);
+
+            var merged = all.Skip(1).Aggregate(all.First(), (current, d) => current.Merge(d));
             var s = new StringBuilder();
 
 
