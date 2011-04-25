@@ -6,6 +6,8 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp.Resolver;
+using ICSharpCode.NRefactory.TypeSystem;
+using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using IIS.SLSharp.Descriptions;
 using IIS.SLSharp.Shaders;
 using Mono.Cecil;
@@ -45,9 +47,7 @@ namespace IIS.SLSharp.Translation.HLSL
                 sbase = sbase.BaseType.Resolve();
 
             
-            var ctx = new CecilTypeResolveContext(sbase.Module);
-            var resolver = new CSharpResolver(ctx);
-            var rv = new ResolveVisitor(resolver, null, null);
+            
             
 
             var d = AstMethodBodyBuilder.CreateMethodBody(m, new DecompilerContext
@@ -57,6 +57,21 @@ namespace IIS.SLSharp.Translation.HLSL
                 CancellationToken = CancellationToken.None
             });
 
+            //var ctx = new CecilTypeResolveContext(sbase.Module);
+
+            var loader = new CecilLoader();
+            var mscorlib = loader.LoadAssemblyFile(typeof(object).Assembly.Location);
+            var slsharp = loader.LoadAssembly(sbase.Module.Assembly); 
+            var project = loader.LoadAssembly(s.Module.Assembly);
+            //var typ = loader.LoadType(sbase.BaseType.Resolve().NestedTypes.First(t => t.Name == "vec4"), slsharp);
+            
+            var ctx = new CompositeTypeResolveContext(new[] { project, slsharp, mscorlib });
+            var resolver = new CSharpResolver(ctx, CancellationToken.None) {UsingScope = new UsingScope(project)};
+
+            //var navigator = new NodeListResolveVisitorNavigator(new AstNode[] { d });
+            //var f = new ParsedFile("test.cs", resolver.UsingScope);
+
+            var rv = new ResolveVisitor(resolver, null, null);
             rv.Scan(d);
 
             var glsl = new HlslVisitor(d, attr, rv);
