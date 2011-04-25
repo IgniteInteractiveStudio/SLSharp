@@ -124,9 +124,53 @@ namespace IIS.SLSharp.Translation.HLSL
                 case UsageSemantic.Color13: return "COLOR13";
                 case UsageSemantic.Color14: return "COLOR14";
                 case UsageSemantic.Color15: return "COLOR15";
+
+                case UsageSemantic.Texcoord0: return "COLOR0";
+                case UsageSemantic.Texcoord1: return "COLOR1";
+                case UsageSemantic.Texcoord2: return "COLOR2";
+                case UsageSemantic.Texcoord3: return "COLOR3";
+                case UsageSemantic.Texcoord4: return "COLOR4";
+                case UsageSemantic.Texcoord5: return "COLOR5";
+                case UsageSemantic.Texcoord6: return "COLOR6";
+                case UsageSemantic.Texcoord7: return "COLOR7";
+                case UsageSemantic.Texcoord8: return "COLOR8";
+                case UsageSemantic.Texcoord9: return "COLOR9";
+                case UsageSemantic.Texcoord10: return "COLOR10";
+                case UsageSemantic.Texcoord11: return "COLOR11";
+                case UsageSemantic.Texcoord12: return "COLOR12";
+                case UsageSemantic.Texcoord13: return "COLOR13";
+                case UsageSemantic.Texcoord14: return "COLOR14";
+                case UsageSemantic.Texcoord15: return "COLOR15";
+
+                case UsageSemantic.Normal0: return "NORMAL0";
+                case UsageSemantic.Normal1: return "NORMAL1";
+                case UsageSemantic.Normal2: return "NORMAL2";
+                case UsageSemantic.Normal3: return "NORMAL3";
+                case UsageSemantic.Normal4: return "NORMAL4";
+                case UsageSemantic.Normal5: return "NORMAL5";
+                case UsageSemantic.Normal6: return "NORMAL6";
+                case UsageSemantic.Normal7: return "NORMAL7";
+                case UsageSemantic.Normal8: return "NORMAL8";
+                case UsageSemantic.Normal9: return "NORMAL9";
+                case UsageSemantic.Normal10: return "NORMAL10";
+                case UsageSemantic.Normal11: return "NORMAL11";
+                case UsageSemantic.Normal12: return "NORMAL12";
+                case UsageSemantic.Normal13: return "NORMAL13";
+                case UsageSemantic.Normal14: return "NORMAL14";
+                case UsageSemantic.Normal15: return "NORMAL15";
             }
 
             throw new SLSharpException("Usage semantic " + semantic + " currently not supported");
+        }
+
+        private static FunctionDescription VertexMain(this SourceDescription desc)
+        {
+            return desc.Functions.FirstOrDefault(f => f.EntryPoint && f.Type == ShaderType.VertexShader);
+        }
+
+        private static FunctionDescription FragmentMain(this SourceDescription desc)
+        {
+            return desc.Functions.FirstOrDefault(f => f.EntryPoint && f.Type == ShaderType.FragmentShader);
         }
 
         public static string ToHlsl(this SourceDescription desc)
@@ -148,8 +192,8 @@ namespace IIS.SLSharp.Translation.HLSL
             s.AppendLine();
 
 
-            var vmain = desc.Functions.FirstOrDefault(f => f.EntryPoint && f.Type == ShaderType.VertexShader);
-            var fmain = desc.Functions.FirstOrDefault(f => f.EntryPoint && f.Type == ShaderType.FragmentShader);
+            var vmain = desc.VertexMain();
+            var fmain = desc.FragmentMain();
 
             desc.ForwardDecl.ForEach(v => s.AppendLine(v));
             s.AppendLine();
@@ -219,11 +263,23 @@ namespace IIS.SLSharp.Translation.HLSL
                 s.AppendLine("    return output;");
                 s.AppendLine("}");
             }
+            return s.ToString();
+        }
 
-            var src = s.ToString();
-            Console.WriteLine(src);
-
-            return src;
+        public static string ToHlslFx(this SourceDescription desc)
+        {
+            var s = new StringBuilder(desc.ToHlsl());
+            s.AppendLine(@"
+technique t0
+{
+    pass p0
+    {
+        VertexShader = compile vs_2_0 SLSharp_VertexMain();
+        PixelShader = compile ps_2_0 SLSharp_FragmentMain();
+    }
+}
+");
+            return s.ToString();
         }
     }
 }

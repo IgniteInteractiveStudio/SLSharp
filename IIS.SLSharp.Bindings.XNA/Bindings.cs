@@ -18,9 +18,20 @@ namespace IIS.SLSharp.Bindings.XNA
 {
     sealed class SLContentBuildLogger : ContentBuildLogger
     {
-        public override void LogMessage(string message, params object[] messageArgs) { }
-        public override void LogImportantMessage(string message, params object[] messageArgs) { }
-        public override void LogWarning(string helpLink, ContentIdentity contentIdentity, string message, params object[] messageArgs) { }
+        public override void LogMessage(string message, params object[] messageArgs)
+        {
+            throw new SLSharpException(string.Format(message, messageArgs));
+        }
+
+        public override void LogImportantMessage(string message, params object[] messageArgs)
+        {
+            throw new SLSharpException(string.Format(message, messageArgs));
+        }
+
+        public override void LogWarning(string helpLink, ContentIdentity contentIdentity, string message, params object[] messageArgs)
+        {
+            throw new SLSharpException(string.Format(message, messageArgs));
+        }
     }
 
     sealed class SLContentProcessorContext: ContentProcessorContext
@@ -64,21 +75,21 @@ namespace IIS.SLSharp.Bindings.XNA
 
         public void TexActivate(int textureUnit, object tex)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
             //GL.ActiveTexture(TextureUnit.Texture0 + textureUnit);
             //((ITexture)tex).Activate();
         }
 
         public void TexFinish(int textureUnit, object tex)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
             //GL.ActiveTexture(TextureUnit.Texture0 + textureUnit);
             //((ITexture)tex).Finish();
         }
 
         public void TexReset()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
             //GL.ActiveTexture(TextureUnit.Texture0);
         }
 
@@ -93,29 +104,35 @@ namespace IIS.SLSharp.Bindings.XNA
 
         internal class Program : IProgram
         {
-            public Program(IEnumerable<object> units)
+            private Effect _effect;
+            private readonly EffectPass _pass;
+            internal static Effect CurrentProgram;
+
+            public Program(CompiledEffectContent compiledEffect)
             {
-                throw new NotImplementedException();
-                /*
-                foreach (var u in units.Cast<GLSLGpuProgram>())
-                    u.GLSLProgram.AttachToProgramObject(GLHandle);
-                Activate(); // compiles the program
-                 */
+                var code = compiledEffect.GetEffectCode();
+                _effect = new Effect(SLSharp.Device, code);
+                _pass = _effect.Techniques.First().Passes.First();
             }
 
             public void Activate()
             {
-                throw new NotImplementedException();
+                _pass.Apply();
+                CurrentProgram = _effect;
             }
 
             public void Finish()
             {
-                throw new NotImplementedException();
+                // XNA doesnt allow to deactive the shader so we have to keep it current
+                CurrentProgram = null;
             }
 
             public int GetUniformIndex(string name)
             {
-                throw new NotImplementedException();
+                for (var i = 0; i < _effect.Parameters.Count; i++)
+                    if (_effect.Parameters[i].Name == name)
+                        return i;
+                throw new SLSharpException("Could not locate uniform: " + name);
             }
 
             public string GetUniformName(int idx)
@@ -130,7 +147,11 @@ namespace IIS.SLSharp.Bindings.XNA
 
             public void Dispose()
             {
-                throw new NotImplementedException();
+                if (_effect != null)
+                {
+                    _effect.Dispose();
+                    _effect = null;
+                }
             }
         }
 
@@ -142,35 +163,17 @@ namespace IIS.SLSharp.Bindings.XNA
             var all = sources.Select(t => t.Item2);
 
             var merged = all.Skip(1).Aggregate(all.First(), (current, d) => current.Merge(d));
-            var s = new StringBuilder();
 
 
             // XNA doesnt support shader compilation so we have to generate a .fx file
-            s.AppendLine(merged.ToHlsl());
-            
-            var src = s;
-            Console.WriteLine(src);
+            // with everything merged
 
             var cp = new SLContentProcessorContext();
             var ep = new EffectProcessor();
-            var ec = new EffectContent();
+            var ec = new EffectContent {EffectCode = merged.ToHlslFx()};
 
-            ec.EffectCode =
-@"
-float4 MakeItPink() : COLOR0
-{
-    return float4(1, 0, 1, 1);
-}
-
-technique Technique1
-{
-    pass Pass1
-    {
-        PixelShader = compile ps_2_0 MakeItPink();
-    }
-}
-        ";
-            return new Program(units);
+            var compiledEffect = ep.Process(ec, cp);
+            return new Program(compiledEffect);
         }
 
         public void Initialize()
@@ -191,8 +194,11 @@ technique Technique1
 
     public static class SLSharp
     {
-        public static void Init()
+        internal static GraphicsDevice Device;
+
+        public static void Init(GraphicsDevice device)
         {
+            Device = device;
             Binding.Register(new SLSharpBinding());
         }
 
@@ -261,26 +267,22 @@ technique Technique1
 
         public static void Uniform1F(int location, float value)
         {
-            throw new NotImplementedException();
-            //GL.Uniform1(location, value);
+            SLSharpBinding.Program.CurrentProgram.Parameters[location].SetValue(value); 
         }
 
         public static void Uniform2F(int location)
         {
-            throw new NotImplementedException();
-            //GL.Uniform2(location, ref _storage.F2);
+            SLSharpBinding.Program.CurrentProgram.Parameters[location].SetValue(_storage.F2); 
         }
 
         public static void Uniform3F(int location)
         {
-            throw new NotImplementedException();
-            //GL.Uniform3(location, ref _storage.F3);
+            SLSharpBinding.Program.CurrentProgram.Parameters[location].SetValue(_storage.F3); 
         }
 
         public static void Uniform4F(int location)
         {
-            throw new NotImplementedException();
-            //GL.Uniform4(location, ref _storage.F4);
+            SLSharpBinding.Program.CurrentProgram.Parameters[location].SetValue(_storage.F4); 
         }
 
         public static void Uniform1D(int location, double value)
@@ -312,13 +314,7 @@ technique Technique1
 
         public static void UniformMatrix4X4(int location)
         {
-            throw new NotImplementedException();
-
-            // HACK: Axiom doesnt know about glUniformMatrix* -_-
-
-            //fixed (Matrix* v = &_storage.F4X4)
-            //    Tao.OpenGl.Gl.glUniformMatrix4fv(location, 1, 0, new IntPtr(v));
-            //Tao.OpenGl.Gl.glUniformMatrix4fv(location, 1, false, storage.F4X4);
+            SLSharpBinding.Program.CurrentProgram.Parameters[location].SetValue(_storage.F4X4); 
         }
 
         public static void UniformDMatrix4X4(int location)
