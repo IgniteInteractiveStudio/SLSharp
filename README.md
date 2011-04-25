@@ -1,15 +1,16 @@
-SL#: Runtime IL -> GLSL Translator
-==================================
+SL#: Runtime IL -> GLSL/HLSL Translator
+======================================
 
 Introduction
 ------------
 
-SL# is a runtime IL-to-GLSL translation engine, written in pure C#. It takes
-the compiled IL of a shader definition written in a managed language (usually
-C#), and generates GLSL code from it. The GLSL is automatically uploaded to
-the GPU, and you can use the shader object as any other object in .NET. Shaders
-can have properties that map directly to uniform/varying variables in the GLSL
-code, allowing you to easily interact with your GPU code from the CPU.
+SL# is a runtime IL-to-GLSL/HLSL translation engine, written in pure C#. 
+It takes the compiled IL of a shader definition written in a managed language 
+(usually C#), and generates GLSL code from it. The GLSL is automatically 
+uploaded to the GPU, and you can use the shader object as any other object in 
+.NET. Shaders can have properties that map directly to uniform/varying 
+variables in the GLSL code, allowing you to easily interact with your GPU code
+from the CPU.
 
 Please note that SL# is currently a very experimental library. The syntax and
 usage may be subject to change at any time, as we further research what design
@@ -32,11 +33,8 @@ There are quite a few advantages to this approach:
 Dependencies
 ------------
 
-SL# currently depends on OpenTK and Mono.Reflection, as well as System.Drawing
-for certain drawing primitives.
-
-We plan to abstract shader language generation so that we can support both
-OpenTK and XNA (that is, GLSL and HLSL) in the future.
+SL# currently depends Mono.Cecil and ICSharpCode, as well as additional 
+dependencies for the Bindings.
 
 Issues
 ------
@@ -49,6 +47,7 @@ Known problems:
 * Support for other .NET languages (such as F#) is currently up in the air. We
   haven't had time to test SL# with F# yet, but we would definitely like to add
   support for it in the future (perhaps using quotations).
+* HLSL support is currently at a bare minimum
 
 Donations
 ---------
