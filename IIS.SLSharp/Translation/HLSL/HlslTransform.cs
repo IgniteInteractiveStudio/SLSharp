@@ -28,9 +28,11 @@ namespace IIS.SLSharp.Translation.HLSL
         /// </summary>
         /// <param name="s">Shader type definition.</param>
         /// <param name="m">A method representing a shader to translate.</param>
-        /// <param name="attr">The shader type pass either (FragmentShaderAttribute or VertexShaderAttribute) </param>
+        /// <param name="attr">The shader type as attribute (either FragmentShaderAttribute or VertexShaderAttribute</param>
+        /// <param name="type">The shader type as ShaderType</param>
         /// <returns>The translated GLSL shader source</returns>
-        public FunctionDescription Transform(TypeDefinition s, MethodDefinition m, CustomAttribute attr)
+        public FunctionDescription Transform(TypeDefinition s, MethodDefinition m, CustomAttribute attr,
+            ShaderType type)
         {
             if (s == null)
                 throw new ArgumentNullException("s");
@@ -77,7 +79,7 @@ namespace IIS.SLSharp.Translation.HLSL
             var sig = HlslVisitor.GetSignature(m);
 
             var code = glsl.Result;
-            var desc = new FunctionDescription(Shader.GetMethodName(m), sig + code, entry);
+            var desc = new FunctionDescription(Shader.GetMethodName(m), sig + code, entry, type);
 
             return desc;
         }

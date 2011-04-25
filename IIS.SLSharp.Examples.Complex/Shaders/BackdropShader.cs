@@ -21,7 +21,7 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
         [Varying]
         private vec2 _uv;
 
-        [FragmentOut]
+        [FragmentOut(UsageSemantic.Color0)]
         protected vec4 Color;
 
         [VertexIn(UsageSemantic.Position0)]

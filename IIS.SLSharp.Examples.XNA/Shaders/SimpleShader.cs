@@ -18,7 +18,7 @@ namespace IIS.SLSharp.Examples.XNA.Shaders
         [VertexIn(UsageSemantic.Position0)]
         public vec4 Vertex;
 
-        [FragmentOut]
+        [FragmentOut(UsageSemantic.Color0)]
         public vec4 Color;
 
         [FragmentShader(true)]

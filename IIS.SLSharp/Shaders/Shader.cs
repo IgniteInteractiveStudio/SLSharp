@@ -324,8 +324,10 @@ namespace IIS.SLSharp.Shaders
         /// <param name="entryPoint">Returns the name of the function flagged as entrypoint</param>
         /// <param name="metaToken"></param>
         /// <param name="forwardDecl">Forward declaration of referenced functions</param>
+        /// <param name="type">The shadertype currently being collected for</param>
         /// <returns>A string containing the GLSL code for all collected functions</returns>
-        private List<FunctionDescription> CollectFuncs(out string entryPoint, int metaToken, out List<string> forwardDecl)
+        private List<FunctionDescription> CollectFuncs(out string entryPoint, int metaToken, out List<string> forwardDecl,
+            ShaderType type)
         {
             var desc = new List<FunctionDescription>();
             entryPoint = string.Empty;
@@ -354,7 +356,7 @@ namespace IIS.SLSharp.Shaders
                 }
 
 
-                desc.Add(trans.Transform(_shader, m, attr));
+                desc.Add(trans.Transform(_shader, m, attr, type));
             }
 
             forwardDecl = trans.ForwardDeclare(DebugMode);
@@ -500,7 +502,8 @@ namespace IIS.SLSharp.Shaders
                     let type = TypeMap[field.FieldType.Resolve().MetadataToken.ToInt32()].Type
                     let name = GetVaryingName(field)
                     let comment = DebugMode ? " // " + field.DeclaringType.FullName + "." + field.Name : string.Empty
-                    select new VariableDescription(type, name, UsageSemantic.Unknown, comment)).ToList();
+                    let semantic = (UsageSemantic)attr.ConstructorArguments[0].Value
+                    select new VariableDescription(type, name, semantic, comment)).ToList();
         }
 
         private TypeDefinition LoadReflection()
@@ -515,8 +518,8 @@ namespace IIS.SLSharp.Shaders
         {
             RefShaders();
             _shader = LoadReflection();
-            _ffuns = CollectFuncs(out _fentry, typeof(FragmentShaderAttribute).MetadataToken, out _fdeclFrag);
-            _vfuns = CollectFuncs(out _ventry, typeof(VertexShaderAttribute).MetadataToken, out _fdeclVert);
+            _ffuns = CollectFuncs(out _fentry, typeof(FragmentShaderAttribute).MetadataToken, out _fdeclFrag, ShaderType.FragmentShader);
+            _vfuns = CollectFuncs(out _ventry, typeof(VertexShaderAttribute).MetadataToken, out _fdeclVert, ShaderType.VertexShader);
             _varyings = CollectVaryings();
             _uniforms = CollectUniforms();
             _ins = CollectIns();

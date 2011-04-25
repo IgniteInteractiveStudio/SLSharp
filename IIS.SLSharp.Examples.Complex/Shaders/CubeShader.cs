@@ -11,7 +11,7 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
         [VertexIn(UsageSemantic.Position0)]
         public vec4 Vertex;
 
-        [FragmentOut]
+        [FragmentOut(UsageSemantic.Color0)]
         public vec4 Color;
 
         [Uniform]

@@ -107,6 +107,23 @@ namespace IIS.SLSharp.Translation.HLSL
                 case UsageSemantic.Position13: return "POSITION13";
                 case UsageSemantic.Position14: return "POSITION14";
                 case UsageSemantic.Position15: return "POSITION15";
+
+                case UsageSemantic.Color0: return "COLOR0";
+                case UsageSemantic.Color1: return "COLOR1";
+                case UsageSemantic.Color2: return "COLOR2";
+                case UsageSemantic.Color3: return "COLOR3";
+                case UsageSemantic.Color4: return "COLOR4";
+                case UsageSemantic.Color5: return "COLOR5";
+                case UsageSemantic.Color6: return "COLOR6";
+                case UsageSemantic.Color7: return "COLOR7";
+                case UsageSemantic.Color8: return "COLOR8";
+                case UsageSemantic.Color9: return "COLOR9";
+                case UsageSemantic.Color10: return "COLOR10";
+                case UsageSemantic.Color11: return "COLOR11";
+                case UsageSemantic.Color12: return "COLOR12";
+                case UsageSemantic.Color13: return "COLOR13";
+                case UsageSemantic.Color14: return "COLOR14";
+                case UsageSemantic.Color15: return "COLOR15";
             }
 
             throw new SLSharpException("Usage semantic " + semantic + " currently not supported");
@@ -130,39 +147,78 @@ namespace IIS.SLSharp.Translation.HLSL
 
             s.AppendLine();
 
-            // generate vertex input struct
-            s.AppendLine("struct VertexIn");
-            s.AppendLine("{");
-            desc.VertexIns.ForEach(v => s.AppendFormat("    {0} {1}: {2};", v.Type.ToHlsl(), v.Name, v.Semantic.ToHlsl()).AppendLine());
-            s.AppendLine("};");
-            s.AppendLine();
 
-            s.AppendLine("struct VertexOut");
-            s.AppendLine("{");
-            s.AppendLine("    float4 gl_Position: POSITION;");
-            var i = 0;
-            desc.Varyings.ForEach(v => s.AppendFormat("    {0} {1}: TEXCOORD{2};", v.Type.ToHlsl(), v.Name, i++).AppendLine());
-            if (i > 15)
-                throw new NotImplementedException("more than 16 varyings not supported yet");
-            s.AppendLine("};");
+            var vmain = desc.Functions.FirstOrDefault(f => f.EntryPoint && f.Type == ShaderType.VertexShader);
+            var fmain = desc.Functions.FirstOrDefault(f => f.EntryPoint && f.Type == ShaderType.FragmentShader);
 
             desc.ForwardDecl.ForEach(v => s.AppendLine(v));
-
             s.AppendLine();
             desc.Functions.ForEach(v => s.AppendLine(v.Body));
 
-            s.AppendLine("VertexOut SLSharp_VertexMain(VertexIn input)");
-            s.AppendLine("{");
-            s.AppendLine("    VertexOut output;");
-            // initialize globals from input
-            desc.VertexIns.ForEach(v => s.AppendFormat("    {0} = input.{1};", v.Name, v.Name).AppendLine());
-            // call entrypoint
-            s.AppendFormat("    {0}();", desc.Functions.First(f => f.EntryPoint).Name).AppendLine();
-            // write back results from globals
-            desc.Varyings.ForEach(v => s.AppendFormat("    output.{0} = {1};", v.Name, v.Name).AppendLine());
-            s.AppendLine("    output.gl_Position = gl_Position;");
-            s.AppendLine("    return output;");
-            s.AppendLine("}");
+            // generate vertex input struct
+            if (vmain != null)
+            {
+                s.AppendLine("struct SLSharp_VertexIn");
+                s.AppendLine("{");
+                desc.VertexIns.ForEach(
+                    v => s.AppendFormat("    {0} {1}: {2};", v.Type.ToHlsl(), v.Name, v.Semantic.ToHlsl()).AppendLine());
+                s.AppendLine("};");
+                s.AppendLine();
+
+                s.AppendLine("struct SLSharp_VertexOut");
+                s.AppendLine("{");
+                s.AppendLine("    float4 gl_Position: POSITION;");
+                var i = 0;
+                desc.Varyings.ForEach(
+                    v => s.AppendFormat("    {0} {1}: TEXCOORD{2};", v.Type.ToHlsl(), v.Name, i++).AppendLine());
+                if (i > 15)
+                    throw new NotImplementedException("more than 16 varyings not supported yet");
+                s.AppendLine("};");
+                s.AppendLine();
+
+                s.AppendLine("SLSharp_VertexOut SLSharp_VertexMain(SLSharp_VertexIn input)");
+                s.AppendLine("{");
+                s.AppendLine("    SLSharp_VertexOut output;");
+                // initialize globals from input
+                desc.VertexIns.ForEach(v => s.AppendFormat("    {0} = input.{1};", v.Name, v.Name).AppendLine());
+                // call entrypoint
+                s.AppendFormat("    {0}();", vmain.Name).AppendLine();
+                // write back results from globals
+                desc.Varyings.ForEach(v => s.AppendFormat("    output.{0} = {1};", v.Name, v.Name).AppendLine());
+                s.AppendLine("    output.gl_Position = gl_Position;");
+                s.AppendLine("    return output;");
+                s.AppendLine("}");
+            }
+
+            if (fmain != null)
+            {
+                s.AppendLine("struct SLSharp_FragmentIn");
+                s.AppendLine("{");
+                var i = 0;
+                desc.Varyings.ForEach(
+                    v => s.AppendFormat("    {0} {1}: TEXCOORD{2};", v.Type.ToHlsl(), v.Name, i++).AppendLine());
+                s.AppendLine("};");
+                s.AppendLine();
+
+                s.AppendLine("struct SLSharp_FragmentOut");
+                s.AppendLine("{");
+                desc.FragmentOuts.ForEach(
+                    v => s.AppendFormat("    {0} {1}: {2};", v.Type.ToHlsl(), v.Name, v.Semantic.ToHlsl()).AppendLine());
+                s.AppendLine("};");
+                s.AppendLine();
+
+                s.AppendLine("SLSharp_FragmentOut SLSharp_FragmentMain(SLSharp_FragmentIn input)");
+                s.AppendLine("{");
+                s.AppendLine("    SLSharp_FragmentOut output;");
+                // initialize globals from input
+                desc.Varyings.ForEach(v => s.AppendFormat("    {0} = input.{1};", v.Name, v.Name).AppendLine());
+                // call entrypoint
+                s.AppendFormat("    {0}();", fmain.Name).AppendLine();
+                // write back results from globals
+                desc.FragmentOuts.ForEach(v => s.AppendFormat("    output.{0} = {1};", v.Name, v.Name).AppendLine());
+                s.AppendLine("    return output;");
+                s.AppendLine("}");
+            }
 
             var src = s.ToString();
             Console.WriteLine(src);

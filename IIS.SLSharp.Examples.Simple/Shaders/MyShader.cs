@@ -15,7 +15,7 @@ namespace IIS.SLSharp.Examples.Simple.Shaders
         [VertexIn(UsageSemantic.Position0)]
         public vec4 Vertex;
 
-        [FragmentOut]
+        [FragmentOut(UsageSemantic.Color0)]
         public vec4 Color;
 
         // demonstrate using a shared library
