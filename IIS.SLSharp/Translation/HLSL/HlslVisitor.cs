@@ -237,6 +237,31 @@ namespace IIS.SLSharp.Translation.HLSL
 
         public StringBuilder VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, int data)
         {
+            var typ = objectCreateExpression.Type.Annotation<TypeReference>().ToHlsl();
+            if ("1234".Contains(typ.Last()))
+            {
+                // either vector or matrix type
+                var numRows = int.Parse(typ.Last().ToString());
+                if (typ[typ.Length - 2] == 'x')
+                {
+                    // its a matrix type
+                }
+                else
+                {
+                    // its a vector type
+                    if ((objectCreateExpression.Arguments.Count == 1) && (numRows > 1))
+                    {
+                        // scalar intialize all elements to a const
+                        var args = new List<Expression>();
+                        for (var i = 0; i < numRows; i++)
+                            args.Add(objectCreateExpression.Arguments.First());
+                        return
+                            objectCreateExpression.Type.AcceptVisitor(this, data).Append("(").Append(
+                                ArgsToString(args).Append(")"));
+                    }
+                }
+            }
+
             return objectCreateExpression.Type.AcceptVisitor(this, data).Append("(").Append(
                 ArgsToString(objectCreateExpression.Arguments)).Append(")");
         }
@@ -306,7 +331,7 @@ namespace IIS.SLSharp.Translation.HLSL
                 if ((lhs.Type.Name.StartsWith("mat") && rhs.Type.Name.StartsWith("vec")) ||
                     (rhs.Type.Name.StartsWith("mat") && lhs.Type.Name.StartsWith("vec")))
                 {
-                    result.AppendFormat("mul({0}, {1})",
+                    result.AppendFormat("mul({1}, {0})",
                         binaryOperatorExpression.Left.AcceptVisitor(this, data),
                         binaryOperatorExpression.Right.AcceptVisitor(this, data));
 
