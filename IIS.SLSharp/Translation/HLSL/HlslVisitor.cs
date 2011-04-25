@@ -298,31 +298,24 @@ namespace IIS.SLSharp.Translation.HLSL
 
         public StringBuilder VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, int data)
         {
+            var result = new StringBuilder();
             if (binaryOperatorExpression.Operator == BinaryOperatorType.Multiply)
             {
                 var lhs = _resolver.Resolve(binaryOperatorExpression.Left);
                 var rhs = _resolver.Resolve(binaryOperatorExpression.Right);
 
-                // need some consistent way to figure the type somehow ...
-
-                // if lhs is a matrix type and rhs is a vector type or other way around use mul
-                //var lhs = binaryOperatorExpression.Left.Annotation<MemberReference>();
-                //var rhs = binaryOperatorExpression.Right.Annotation<MemberReference>();
-                /*
-                if (lhs != null && rhs != null)
+                if ((lhs.Type.Name.StartsWith("mat") && rhs.Type.Name.StartsWith("vec")) ||
+                    (rhs.Type.Name.StartsWith("mat") && lhs.Type.Name.StartsWith("vec")))
                 {
-                    var lhsn = lhs.DeclaringType.Name;
-                    var rhsn = rhs.DeclaringType.Name;
-                    if ((lhsn.StartsWith("mat") && rhsn.StartsWith("vec")) ||
-                        (rhsn.StartsWith("mat") && lhsn.StartsWith("vec")))
-                    {
-                        Console.Write(".");
-                    }
-                }*/
+                    result.AppendFormat("mul({0}, {1})",
+                        binaryOperatorExpression.Left.AcceptVisitor(this, data),
+                        binaryOperatorExpression.Right.AcceptVisitor(this, data));
+
+                    return result;
+                }
             }
 
-            var result = new StringBuilder("(");
-
+            result.Append("(");
             result.Append(binaryOperatorExpression.Left.AcceptVisitor(this, data));
 
             switch (binaryOperatorExpression.Operator)

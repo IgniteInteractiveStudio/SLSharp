@@ -46,10 +46,6 @@ namespace IIS.SLSharp.Translation.HLSL
             while (sbase.MetadataToken.ToInt32() != typeof(Shader).MetadataToken)
                 sbase = sbase.BaseType.Resolve();
 
-            
-            
-            
-
             var d = AstMethodBodyBuilder.CreateMethodBody(m, new DecompilerContext
             {
                 CurrentType = s,
@@ -63,17 +59,17 @@ namespace IIS.SLSharp.Translation.HLSL
             var mscorlib = loader.LoadAssemblyFile(typeof(object).Assembly.Location);
             var slsharp = loader.LoadAssembly(sbase.Module.Assembly); 
             var project = loader.LoadAssembly(s.Module.Assembly);
-            //var typ = loader.LoadType(sbase.BaseType.Resolve().NestedTypes.First(t => t.Name == "vec4"), slsharp);
-            
+
             var ctx = new CompositeTypeResolveContext(new[] { project, slsharp, mscorlib });
             var resolver = new CSharpResolver(ctx, CancellationToken.None) {UsingScope = new UsingScope(project)};
 
-            //var navigator = new NodeListResolveVisitorNavigator(new AstNode[] { d });
-            //var f = new ParsedFile("test.cs", resolver.UsingScope);
+            // TODO: need a more sane way to get the correct class + member
+            var ss = ctx.GetAllClasses().First(c => c.FullName == s.FullName);
+            resolver.CurrentTypeDefinition = ss;
+            resolver.CurrentMember = ss.Members.First(n => m.Name == n.Name);
 
             var rv = new ResolveVisitor(resolver, null, null);
-            rv.Scan(d);
-
+            
             var glsl = new HlslVisitor(d, attr, rv);
 
             _functions.UnionWith(glsl.Functions);
