@@ -1,8 +1,8 @@
-﻿using System;
+﻿using System.IO;
+using System.Linq;
 using Axiom.Core;
 using Axiom.Graphics;
 using Axiom.Math;
-using IIS.SLSharp.Bindings.Axiom;
 using IIS.SLSharp.Examples.Axiom.Shaders;
 using IIS.SLSharp.Shaders;
 
@@ -31,7 +31,7 @@ namespace IIS.SLSharp.Examples.Axiom
 
         public void OnLoad()
         {
-            Bindings.Axiom.SLSharp.Init();
+            Bindings.Axiom.GLSL.SLSharp.Init();
             _shader = Shader.CreateSharedShader<SimpleShader>();
 
             // Create patch with positions, normals, and 1 set of texcoords
@@ -132,6 +132,42 @@ namespace IIS.SLSharp.Examples.Axiom
             _patchEntity = _scene.CreateEntity("Entity1", "Bezier1");
             _camera = _scene.CreateCamera("MainCamera");
 
+
+
+            //var mat = (Material)MaterialManager.Instance.Resources.First(m => m.Name == "BaseWhiteNoLighting");
+            var mat = (Material)MaterialManager.Instance.Create("test", ResourceGroupManager.DefaultResourceGroupName);
+            var pass = mat.GetTechnique(0).GetPass(0);
+            pass.LightingEnabled = false;
+            //pass.CreateTextureUnitState("test.png");
+
+            var prog = (Bindings.Axiom.GLSL.Program) _shader.Program;
+
+            pass.SetVertexProgram(prog.VertexShader.Name);
+            pass.SetFragmentProgram(prog.PixelShader.Name);
+
+            //pass.VertexProgramParameters.SetAutoConstant(0, GpuProgramParameters.AutoConstantType.VertexWinding);
+
+            var cd = new DirectoryInfo(Directory.GetCurrentDirectory());
+            var dir = cd.Parent.Parent.CreateSubdirectory("IIS.SLSharp.Examples.Axiom").FullName;
+            //pass.FragmentProgram = 
+
+
+           
+            //var prog = GpuProgramManager.Instance.Create("slshader", ResourceGroupManager.DefaultResourceGroupName);
+            
+            
+            ResourceGroupManager.Instance.AddResourceLocation(dir, "Folder");
+
+            
+
+            _patchEntity.MaterialName = "test";
+
+            var light = _scene.CreateLight("Light0");
+            light.Position = new Vector3(100.0f, 0.0f, 0.0f);
+            light.Diffuse = new ColorEx(1.0f, 1.0f, 1.0f);
+            light.Specular = new ColorEx(1.0f, 0.0f, 0.0f);
+            light.Type = LightType.Point;
+
             _scene.RootSceneNode.AttachObject(_patchEntity);
 
             _camera.Position = new Vector3(500, 500, 1500);
@@ -140,7 +176,7 @@ namespace IIS.SLSharp.Examples.Axiom
             _camera.AutoAspectRatio = true;
 
             var vp = _root.AutoWindow.AddViewport(_camera, 0, 0, 1.0f, 1.0f, 100);
-            vp.BackgroundColor = ColorEx.Aqua;
+            vp.BackgroundColor = ColorEx.CornflowerBlue;
 
         }
 
@@ -154,12 +190,16 @@ namespace IIS.SLSharp.Examples.Axiom
 
             var mvp = _camera.ViewMatrix*_camera.ProjectionMatrix;
 
+            /*
             var vname = Shader.AttributeName(() => _shader.Vertex);
             int prog;
             Tao.OpenGl.Gl.glGetIntegerv(Tao.OpenGl.Gl.GL_CURRENT_PROGRAM, out prog);
             Tao.OpenGl.Gl.glBindAttribLocation(prog, 0, vname);
 
+            _shader.Begin();
             _shader.ModelviewProjection = mvp.ToMatrix4F();
+            _shader.End();
+             */
         }
       
     }

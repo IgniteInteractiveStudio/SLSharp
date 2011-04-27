@@ -94,7 +94,7 @@ namespace IIS.SLSharp.Bindings.XNA
         }
 
 
-        public object Compile(ShaderType type, SourceDescription source)
+        public object Compile(Shader shader, ShaderType type, SourceDescription source)
         {
             // HLSL design is kinda screwed up, it only allows us to use one
             // shared source, so we pass through the source and build a
@@ -155,7 +155,7 @@ namespace IIS.SLSharp.Bindings.XNA
             }
         }
 
-        public IProgram Link(IEnumerable<object> units)
+        public IProgram Link(Shader shader, IEnumerable<object> units)
         {
             var sources = units.Cast<Tuple<ShaderType, SourceDescription>>();
             //var frag = sources.Where(t => t.Item1 == ShaderType.FragmentShader).Select(t => t.Item2);

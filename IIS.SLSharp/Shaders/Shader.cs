@@ -127,7 +127,7 @@ namespace IIS.SLSharp.Shaders
             var tmp = new List<VariableDescription>();
             var desc = new SourceDescription(funcs, _uniforms, tmp, _varyings, _ins, _outs, fdecl);
 
-            var shader = Binding.Active.Compile(type, desc);
+            var shader = Binding.Active.Compile(this, type, desc);
 
             _objects.Add(shader);
         }
@@ -175,7 +175,7 @@ namespace IIS.SLSharp.Shaders
             Compile(version);
             e = e.Concat(_objects);
 
-            Program = Binding.Active.Link(e);
+            Program = Binding.Active.Link(this, e);
             
             
 

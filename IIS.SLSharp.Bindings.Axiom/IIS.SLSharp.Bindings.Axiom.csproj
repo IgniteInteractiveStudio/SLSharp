@@ -62,7 +62,8 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="Bindings.cs" />
+    <Compile Include="GLSL\Bindings.cs" />
+    <Compile Include="HLSL\Bindings.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IIS.SLSharp\IIS.SLSharp.csproj">

@@ -15,10 +15,10 @@ namespace IIS.SLSharp.Examples.Axiom.Shaders
         [Varying]
         private vec2 _uv;
 
-        [VertexIn]
+        [VertexIn(UsageSemantic.Position0)]
         public vec4 Vertex;
 
-        [FragmentOut]
+        [FragmentOut(UsageSemantic.Color0)]
         public vec4 Color;
 
         [FragmentShader(true)]

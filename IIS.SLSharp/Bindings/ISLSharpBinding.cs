@@ -2,6 +2,7 @@
 using System.Reflection;
 using IIS.SLSharp.Descriptions;
 using IIS.SLSharp.Reflection;
+using IIS.SLSharp.Shaders;
 using IIS.SLSharp.Translation;
 
 namespace IIS.SLSharp.Bindings
@@ -15,8 +16,8 @@ namespace IIS.SLSharp.Bindings
         void TexFinish(int textureUnit, object tex);
         void TexReset();
 
-        object Compile(ShaderType typ, SourceDescription source);
-        IProgram Link(IEnumerable<object> units);
+        object Compile(Shader shader, ShaderType typ, SourceDescription source);
+        IProgram Link(Shader shader, IEnumerable<object> units);
 
         /// <summary>
         /// Called back as resources are needed.

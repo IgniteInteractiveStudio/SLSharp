@@ -11,7 +11,7 @@ using IIS.SLSharp.Shaders;
 using IIS.SLSharp.Translation;
 using IIS.SLSharp.Translation.GLSL;
 
-namespace IIS.SLSharp.Bindings.Axiom
+namespace IIS.SLSharp.Bindings.Axiom.HLSL
 {
     sealed class SLSharpBinding: ISLSharpBinding
     {
@@ -48,7 +48,7 @@ namespace IIS.SLSharp.Bindings.Axiom
             //GL.ActiveTexture(TextureUnit.Texture0);
         }
 
-        public object Compile(ShaderType type, SourceDescription source)
+        public object Compile(Shader shader, ShaderType type, SourceDescription source)
         {            
             var glsl = new GLSLProgram(null, "", 0, "", false, null);
             var prog = new GLSLGpuProgram(glsl);
@@ -115,7 +115,7 @@ namespace IIS.SLSharp.Bindings.Axiom
             }
         }
 
-        public IProgram Link(IEnumerable<object> units)
+        public IProgram Link(Shader shader, IEnumerable<object> units)
         {
             return new Program(units);
         }
@@ -279,7 +279,7 @@ namespace IIS.SLSharp.Bindings.Axiom
             // HACK: Axiom doesnt know about glUniformMatrix* -_-
 
             fixed (Matrix4* v = &_storage.F4X4)
-                Tao.OpenGl.Gl.glUniformMatrix4fv(location, 1, 0, new IntPtr(v));
+                Tao.OpenGl.Gl.glUniformMatrix4fv(location, 1, 1, new IntPtr(v));
             //Tao.OpenGl.Gl.glUniformMatrix4fv(location, 1, false, storage.F4X4);
         }
 
