@@ -48,7 +48,7 @@ namespace IIS.SLSharp.Bindings.OpenTK
             GL.ActiveTexture(TextureUnit.Texture0);
         }
 
-        public object Compile(ShaderType type, SourceDescription source)
+        public object Compile(Shader s, ShaderType type, SourceDescription source)
         {
             var src = source.ToGlsl(type);
 
@@ -86,7 +86,7 @@ namespace IIS.SLSharp.Bindings.OpenTK
             return shader;
         }
 
-        public IProgram Link(IEnumerable<object> units)
+        public IProgram Link(Shader shader, IEnumerable<object> units)
         {
             return new Program(units);
         }
