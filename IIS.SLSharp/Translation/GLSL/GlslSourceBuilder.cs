@@ -97,22 +97,22 @@ namespace IIS.SLSharp.Translation.GLSL
             s.AppendLine("// " + type);
             
             desc.Uniforms.ForEach(
-                v => s.AppendFormat("uniform {0} {1}{2};", v.Type.ToGlsl(), v.Name, v.Comment).Append(Environment.NewLine));
+                v => s.AppendFormat("uniform {0} {1};{2}", v.Type.ToGlsl(), v.Name, v.Comment).Append(Environment.NewLine));
 
             var varyingDirection = type == ShaderType.VertexShader ? "out" : "in";
             desc.Varyings.ForEach(
                 v =>
-                s.AppendFormat("{0} {1} {2}{3};", varyingDirection, v.Type.ToGlsl(), v.Name, v.Comment).Append(
+                s.AppendFormat("{0} {1} {2};{3}", varyingDirection, v.Type.ToGlsl(), v.Name, v.Comment).Append(
                     Environment.NewLine));
 
 
             if (type == ShaderType.VertexShader)
                 desc.VertexIns.ForEach(
-                    v => s.AppendFormat("in {0} {1}{2};", v.Type.ToGlsl(), v.Name, v.Comment).Append(Environment.NewLine));
+                    v => s.AppendFormat("in {0} {1};{2}", v.Type.ToGlsl(), v.Name, v.Comment).Append(Environment.NewLine));
 
             if (type == ShaderType.FragmentShader)
                 desc.FragmentOuts.ForEach(
-                    v => s.AppendFormat("out {0} {1}{2};", v.Type.ToGlsl(), v.Name, v.Comment).Append(Environment.NewLine));
+                    v => s.AppendFormat("out {0} {1};{2}", v.Type.ToGlsl(), v.Name, v.Comment).Append(Environment.NewLine));
 
             s.AppendLine();
             desc.ForwardDecl.ForEach(v => s.AppendLine(v));
