@@ -131,7 +131,7 @@ namespace IIS.SLSharp.Shaders
         /// Compiles Fragment as well as Vertex shader any exists.
         /// </summary>
         /// <param name="version">The GLSL version to use</param>
-        public void Compile(int version = 130)
+        protected void Compile(int version = 130)
         {
             if (HasType(typeof(FragmentShaderAttribute)))
                 CompileShader(ShaderType.FragmentShader, version);
@@ -169,9 +169,6 @@ namespace IIS.SLSharp.Shaders
             
             // now we can pull and cache uniform locations
             CacheUniforms();
-
-            // and set up attribute bindings
-            SetupAttributeBindings();
         }
 
         private static readonly Dictionary<string, string> _globalNames = new Dictionary<string, string>();
@@ -462,6 +459,7 @@ namespace IIS.SLSharp.Shaders
                       select new VariableDescription(type, name, semantic, comment));
 
             // TODO: what was this supposed to be good for?
+            /*
             var s2 = (from prop in _shader.Properties
                       let attrs = prop.CustomAttributes.Where(a => a.AttributeType.IsVertexIn())
                       where attrs.Count() != 0
@@ -473,6 +471,8 @@ namespace IIS.SLSharp.Shaders
                       select new VariableDescription(type, name, semantic, comment)).ToList();
 
             return s1.Concat(s2).ToList();
+             */
+            return s1.ToList();
         }
 
         /// <summary>
@@ -529,7 +529,7 @@ namespace IIS.SLSharp.Shaders
         /// shader that is going to be accessed.
         /// </summary>
         /// <param name="main"></param>
-        public void BeginLibrary(Shader main)
+        protected void BeginLibrary(Shader main)
         {
             Program = main.Program;
             CacheUniforms();
@@ -597,16 +597,6 @@ namespace IIS.SLSharp.Shaders
 
                 //var f = typeBuilder.DefineField("m_" + prop.Name, typeof(int), FieldAttributes.Private);
             }
-        }
-
-
-        /// <summary>
-        /// Invokes the SLSharp binding to set up attribute usage.
-        /// the purpose of this is to associate [VertexIn] fields with mesh data streams        
-        /// </summary>
-        private void SetupAttributeBindings()
-        {
-            // TODO: going to implement this next
         }
 
         /// <summary>
