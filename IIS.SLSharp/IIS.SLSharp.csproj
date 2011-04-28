@@ -58,6 +58,7 @@
     <Compile Include="Reflection\ReflectionMarkerAttribute.cs" />
     <Compile Include="Reflection\ReflectionToken.cs" />
     <Compile Include="Runtime\ResourceManager.cs" />
+    <Compile Include="Shaders\AttributeHelper.cs" />
     <Compile Include="Shaders\Shader.cs" />
     <Compile Include="Shaders\ShaderDefinition.BooleanVector.cs" />
     <Compile Include="Shaders\ShaderDefinition.Common.cs" />

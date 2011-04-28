@@ -90,6 +90,10 @@ namespace IIS.SLSharp.Translation.GLSL
             var s = new StringBuilder();
 
             s.AppendLine("#version 130");
+
+            if (type == ShaderType.FragmentShader)
+                s.AppendLine("precision highp float;");
+
             s.AppendLine("// " + type);
             
             desc.Uniforms.ForEach(

@@ -144,6 +144,7 @@ namespace IIS.SLSharp.Examples.Axiom
 
             pass.SetVertexProgram(prog.VertexShader.Name);
             pass.SetFragmentProgram(prog.PixelShader.Name);
+            pass.VertexProgramParameters.SetAutoConstant(1, GpuProgramParameters.AutoConstantType.WorldViewProjMatrix);
 
             //pass.VertexProgramParameters.SetAutoConstant(0, GpuProgramParameters.AutoConstantType.VertexWinding);
 

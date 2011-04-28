@@ -45,10 +45,6 @@ namespace IIS.SLSharp.Shaders
 
         private readonly List<string> _fdeclVert;
 
-        private readonly string _fentry;
-
-        private readonly string _ventry;
-
         private bool _vsCompiled;
 
         private bool _fsCompiled;
@@ -93,13 +89,7 @@ namespace IIS.SLSharp.Shaders
         {
             if (version < 130)
                 throw new Exception("Versions < 130 are deprecated");
-
-            var src = "#version " + version + Environment.NewLine;
-
-            if (version >= 130)
-                if (type == ShaderType.FragmentShader)
-                    src += "precision highp float;" + Environment.NewLine;
-
+  
             List<FunctionDescription> funcs;
             List<string> fdecl;
             switch (type)
@@ -177,10 +167,11 @@ namespace IIS.SLSharp.Shaders
 
             Program = Binding.Active.Link(this, e);
             
-            
-
             // now we can pull and cache uniform locations
             CacheUniforms();
+
+            // and set up attribute bindings
+            SetupAttributeBindings();
         }
 
         private static readonly Dictionary<string, string> _globalNames = new Dictionary<string, string>();
@@ -257,6 +248,7 @@ namespace IIS.SLSharp.Shaders
         /// This map holds handlers to be called as uniform setters by the runtime derived
         /// shaders.
         /// </summary>
+        // TODO: could need some simplifications ...
         internal static readonly Dictionary<int, PropInfo> TypeMap = new Dictionary<int, PropInfo>
         {
             { typeof(void).MetadataToken, new PropInfo(typeof(void), ReflectionToken.NullToken) },
@@ -321,25 +313,19 @@ namespace IIS.SLSharp.Shaders
         /// <summary>
         /// Collects the sources of all functions within this shader
         /// </summary>
-        /// <param name="entryPoint">Returns the name of the function flagged as entrypoint</param>
-        /// <param name="metaToken"></param>
         /// <param name="forwardDecl">Forward declaration of referenced functions</param>
         /// <param name="type">The shadertype currently being collected for</param>
         /// <returns>A string containing the GLSL code for all collected functions</returns>
-        private List<FunctionDescription> CollectFuncs(out string entryPoint, int metaToken, out List<string> forwardDecl,
-            ShaderType type)
+        private List<FunctionDescription> CollectFuncs<T>(out List<string> forwardDecl, ShaderType type)
         {
             var desc = new List<FunctionDescription>();
-            entryPoint = string.Empty;
             var hasEntry = false;
 
             var trans = Binding.Active.Transform;
             trans.ResetState();
             foreach (var m in _shader.Methods)
             {
-                //var attrs = m.GetCustomAttributes(typeof(T), false);
-                var attrs = m.CustomAttributes.Where(a =>
-                    a.AttributeType.Resolve().MetadataToken.ToInt32() == metaToken);
+                var attrs = m.CustomAttributes.Where(a => a.AttributeType.Is<T>());
                 if (attrs.Count() == 0)
                     continue;
 
@@ -434,7 +420,7 @@ namespace IIS.SLSharp.Shaders
         private List<VariableDescription> CollectUniforms()
         {
             return (from prop in _shader.Properties
-                    let attrs = prop.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof (UniformAttribute).MetadataToken)
+                    let attrs = prop.CustomAttributes.Where(a => a.AttributeType.IsUniform())
                     where attrs.Count() != 0
                     let attr = attrs.First()
                     let type = TypeMap[prop.PropertyType.Resolve().MetadataToken.ToInt32()].Type
@@ -450,7 +436,7 @@ namespace IIS.SLSharp.Shaders
         private List<VariableDescription> CollectVaryings()
         {
             return (from field in _shader.Fields
-                    let attrs = field.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(VaryingAttribute).MetadataToken)
+                    let attrs = field.CustomAttributes.Where(a => a.AttributeType.IsVarying())
                     where attrs.Count() != 0
                     let attr = attrs.First()
                     let type = TypeMap[field.FieldType.Resolve().MetadataToken.ToInt32()].Type
@@ -466,7 +452,7 @@ namespace IIS.SLSharp.Shaders
         private List<VariableDescription> CollectIns()
         {
             var s1 = (from field in _shader.Fields
-                      let attrs = field.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(VertexInAttribute).MetadataToken)
+                      let attrs = field.CustomAttributes.Where(a => a.AttributeType.IsVertexIn())
                       where attrs.Count() != 0
                       let attr = attrs.First()
                       let type = TypeMap[field.FieldType.Resolve().MetadataToken.ToInt32()].Type
@@ -477,7 +463,7 @@ namespace IIS.SLSharp.Shaders
 
             // TODO: what was this supposed to be good for?
             var s2 = (from prop in _shader.Properties
-                      let attrs = prop.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(VertexInAttribute).MetadataToken)
+                      let attrs = prop.CustomAttributes.Where(a => a.AttributeType.IsVertexIn())
                       where attrs.Count() != 0
                       let attr = attrs.First()
                       let type = TypeMap[prop.PropertyType.Resolve().MetadataToken.ToInt32()].Type
@@ -496,7 +482,7 @@ namespace IIS.SLSharp.Shaders
         private List<VariableDescription> CollectOuts()
         {
             return (from field in _shader.Fields
-                    let attrs = field.CustomAttributes.Where(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(FragmentOutAttribute).MetadataToken)
+                    let attrs = field.CustomAttributes.Where(a => a.AttributeType.IsFragmentOut())
                     where attrs.Count() != 0
                     let attr = attrs.First()
                     let type = TypeMap[field.FieldType.Resolve().MetadataToken.ToInt32()].Type
@@ -518,8 +504,8 @@ namespace IIS.SLSharp.Shaders
         {
             RefShaders();
             _shader = LoadReflection();
-            _ffuns = CollectFuncs(out _fentry, typeof(FragmentShaderAttribute).MetadataToken, out _fdeclFrag, ShaderType.FragmentShader);
-            _vfuns = CollectFuncs(out _ventry, typeof(VertexShaderAttribute).MetadataToken, out _fdeclVert, ShaderType.VertexShader);
+            _ffuns = CollectFuncs<FragmentShaderAttribute>(out _fdeclFrag, ShaderType.FragmentShader);
+            _vfuns = CollectFuncs<VertexShaderAttribute>(out _fdeclVert, ShaderType.VertexShader);
             _varyings = CollectVaryings();
             _uniforms = CollectUniforms();
             _ins = CollectIns();
@@ -584,6 +570,12 @@ namespace IIS.SLSharp.Shaders
 
         private static readonly Dictionary<Type, ConstructorInfo> _ctors = new Dictionary<Type, ConstructorInfo>();
 
+        /// <summary>
+        /// Caches uniform indices associated to a uniform with each
+        /// [uniform] attributed property. The data is stored in a field
+        /// named m_PropertyName which is defined within the runtime
+        /// derived shader class
+        /// </summary>
         private void CacheUniforms()
         {
             var typ = GetShaderType();
@@ -605,6 +597,16 @@ namespace IIS.SLSharp.Shaders
 
                 //var f = typeBuilder.DefineField("m_" + prop.Name, typeof(int), FieldAttributes.Private);
             }
+        }
+
+
+        /// <summary>
+        /// Invokes the SLSharp binding to set up attribute usage.
+        /// the purpose of this is to associate [VertexIn] fields with mesh data streams        
+        /// </summary>
+        private void SetupAttributeBindings()
+        {
+            // TODO: going to implement this next
         }
 
         /// <summary>
@@ -760,24 +762,16 @@ namespace IIS.SLSharp.Shaders
             }
         }
 
-        private static readonly string[] _attribStrings = new[]
-        {
-            typeof(VaryingAttribute).FullName,
-            typeof(VertexInAttribute).FullName,
-            typeof(FragmentOutAttribute).FullName,
-        };
-
-        private static readonly string _uniformString = typeof (UniformAttribute).FullName;
 
         public static string ResolveName(IMemberDefinition member)
         {
             if (member is MethodDefinition)
                 return GetMethodName(member);
 
-            if (member.CustomAttributes.Any(x => _attribStrings.Contains(x.AttributeType.FullName)))
+            if (member.CustomAttributes.Any(x => x.AttributeType.IsAttribute()))
                 return GetVaryingName(member);
 
-            if (member.CustomAttributes.Any(x => x.AttributeType.FullName == _uniformString))
+            if (member.CustomAttributes.Any(x => x.AttributeType.IsUniform()))
                 return GetUniformName(member);
 
             return member.Name;
