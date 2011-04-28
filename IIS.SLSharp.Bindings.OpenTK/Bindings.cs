@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Linq;
 using IIS.SLSharp.Bindings.OpenTK.Textures;
 using IIS.SLSharp.Descriptions;
 using IIS.SLSharp.Reflection;
@@ -83,12 +84,12 @@ namespace IIS.SLSharp.Bindings.OpenTK
             if (info != string.Empty)
                 Console.WriteLine(info);
 
-            return shader;
+            return new Tuple<int, SourceDescription>(shader, source);
         }
 
         public IProgram Link(Shader shader, IEnumerable<object> units)
         {
-            return new Program(units);
+            return new Program(units.Cast<Tuple<int, SourceDescription>>());
         }
 
         public void Initialize()

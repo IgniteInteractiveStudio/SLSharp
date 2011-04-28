@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using IIS.SLSharp.Descriptions;
 using OpenTK.Graphics.OpenGL;
 
 namespace IIS.SLSharp.Bindings.OpenTK
@@ -7,12 +9,20 @@ namespace IIS.SLSharp.Bindings.OpenTK
     {
         private int _name;
 
-        public Program(IEnumerable<object> units)
+        public List<VariableDescription> VertexIns { get; private set; }
+
+        public Program(IEnumerable<Tuple<int, SourceDescription>> units)
         {
             _name = GL.CreateProgram();
 
+            var merged = SourceDescription.Empty;
             foreach (var unit in units)
-                GL.AttachShader(_name, (int)unit);
+            {
+                GL.AttachShader(_name, unit.Item1);
+                merged = merged.Merge(unit.Item2);
+            }
+            VertexIns = merged.VertexIns;
+
             GL.LinkProgram(_name);
             Utilities.CheckGL();
         }

@@ -5,6 +5,7 @@ using System.Reflection;
 using Axiom.Core;
 using Axiom.Graphics;
 using Axiom.RenderSystems.OpenGL.GLSL;
+using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Descriptions;
 using IIS.SLSharp.Reflection;
 using Axiom.Math;
@@ -59,7 +60,8 @@ namespace IIS.SLSharp.Bindings.Axiom.GLSL
 
             unit.Source = source.ToGlsl(type);
 
-            return new System.Tuple<ShaderType, GLSLProgram>(type, (GLSLProgram)unit);
+            return new System.Tuple<ShaderType, GLSLProgram, SourceDescription>(
+                type, (GLSLProgram)unit, source);
         }
 
 
@@ -68,11 +70,14 @@ namespace IIS.SLSharp.Bindings.Axiom.GLSL
             GLSLProgram vs;
             GLSLProgram ps;
 
-            var units = u.Cast<System.Tuple<ShaderType, GLSLProgram>>();
+            var units = u.Cast<System.Tuple<ShaderType, GLSLProgram, SourceDescription>>();
             var name = shader.GetType().FullName;
 
             const string group = ResourceGroupManager.DefaultResourceGroupName;
-            
+
+            var vertexIns = units.Where(v => v.Item1 == ShaderType.VertexShader).Aggregate(
+                SourceDescription.Empty, (current, vu) => current.Merge(vu.Item3)).VertexIns;
+
             var verts = units.Where(v => v.Item1 == ShaderType.VertexShader).Select(v => v.Item2);
             if (verts.Count() > 1)
             {
@@ -100,7 +105,7 @@ namespace IIS.SLSharp.Bindings.Axiom.GLSL
             else
                 ps = frags.FirstOrDefault(); 
 
-            return new Program(vs, ps);
+            return new Program(vs, ps, vertexIns);
         }
 
         public void Initialize()
@@ -135,8 +140,12 @@ namespace IIS.SLSharp.Bindings.Axiom.GLSL
 
         private readonly GLSLLinkProgram.UniformReferenceList _uniforms;
 
-        public Program(GLSLProgram vs, GLSLProgram ps)
+        private readonly List<VariableDescription> _vertexIns;
+
+        public Program(GLSLProgram vs, GLSLProgram ps, List<VariableDescription> vertexIns)
         {
+            _vertexIns = vertexIns;
+
             VertexShader = vs;
             PixelShader = ps;
 
@@ -157,6 +166,32 @@ namespace IIS.SLSharp.Bindings.Axiom.GLSL
 
         public void Activate()
         {
+            // HACK: assign attribute semantics
+            // axiom doesnt know about attributes yet :(
+
+            foreach (var v in _vertexIns)
+            {
+                //var id = Gl.glGetAttribLocationARB(Prog.GLHandle, v.Name);
+                int id;
+                switch (v.Semantic)
+                {
+                    case UsageSemantic.Position0: id = 0; break;
+                    case UsageSemantic.Normal0: id = 2; break;
+                    case UsageSemantic.Color0: id = 3; break;
+                    case UsageSemantic.Color1: id = 4; break;
+                    case UsageSemantic.Texcoord0: id = 8; break;
+                    case UsageSemantic.Texcoord1: id = 9; break;
+                    case UsageSemantic.Texcoord2: id = 10; break;
+                    case UsageSemantic.Texcoord3: id = 11; break;
+                    case UsageSemantic.Texcoord4: id = 12; break;
+                    case UsageSemantic.Texcoord5: id = 13; break;
+                    case UsageSemantic.Texcoord6: id = 14; break;
+                    case UsageSemantic.Texcoord7: id = 15; break;
+                    default:
+                        throw new SLSharpException("Axiom does not support " + v.Semantic + " yet for OpenGL.");
+                }
+                Gl.glBindAttribLocation(Prog.GLHandle, id, v.Name);
+            }
             CurrentProgram = this;
         }
 
@@ -284,7 +319,7 @@ namespace IIS.SLSharp.Bindings.Axiom.GLSL
 
         public static void Uniform1F(int location, float value)
         {
-            throw new NotImplementedException();
+            Tao.OpenGl.Gl.glUniform1f(location, value);
             //GL.Uniform1(location, value);
         }
 
@@ -346,7 +381,7 @@ namespace IIS.SLSharp.Bindings.Axiom.GLSL
             // HACK: Axiom doesnt know about glUniformMatrix* -_-
 
             fixed (Matrix4* v = &_storage.F4X4)
-                Tao.OpenGl.Gl.glUniformMatrix4fv(location, 1, 0, new IntPtr(v));
+                Tao.OpenGl.Gl.glUniformMatrix4fv(location, 1, 1, new IntPtr(v));
             //Tao.OpenGl.Gl.glUniformMatrix4fv(location, 1, false, storage.F4X4);
         }
 

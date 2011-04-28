@@ -22,6 +22,12 @@ namespace IIS.SLSharp.Descriptions
 
         public readonly List<string> ForwardDecl;
 
+        public static readonly SourceDescription Empty = new SourceDescription(
+            new List<FunctionDescription>(), new List<VariableDescription>(), 
+            new List<VariableDescription>(), new List<VariableDescription>(), 
+            new List<VariableDescription>(), new List<VariableDescription>(), 
+            new List<string>());
+
         public SourceDescription(List<FunctionDescription> functions, 
             List<VariableDescription> uniforms, List<VariableDescription> attributes, 
             List<VariableDescription> varyings, List<VariableDescription> vertexIns, 

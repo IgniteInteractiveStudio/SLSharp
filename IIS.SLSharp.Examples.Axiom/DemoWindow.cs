@@ -1,8 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using Axiom.Core;
 using Axiom.Graphics;
 using Axiom.Math;
+using IIS.SLSharp.Bindings.Axiom.GLSL;
 using IIS.SLSharp.Examples.Axiom.Shaders;
 using IIS.SLSharp.Shaders;
 
@@ -32,6 +34,8 @@ namespace IIS.SLSharp.Examples.Axiom
         public void OnLoad()
         {
             Bindings.Axiom.GLSL.SLSharp.Init();
+            Shader.DebugMode = true;
+
             _shader = Shader.CreateSharedShader<SimpleShader>();
 
             // Create patch with positions, normals, and 1 set of texcoords
@@ -140,11 +144,16 @@ namespace IIS.SLSharp.Examples.Axiom
             pass.LightingEnabled = false;
             //pass.CreateTextureUnitState("test.png");
 
-            var prog = (Bindings.Axiom.GLSL.Program) _shader.Program;
 
+            var prog = (Bindings.Axiom.GLSL.Program)_shader.Program;
             pass.SetVertexProgram(prog.VertexShader.Name);
             pass.SetFragmentProgram(prog.PixelShader.Name);
-            pass.VertexProgramParameters.SetAutoConstant(1, GpuProgramParameters.AutoConstantType.WorldViewProjMatrix);
+
+            // var mvp = Shader.UniformName(() => _shader.ModelviewProjection);
+            // var idx = pass.VertexProgramParameters.GetParamIndex(mvp);
+
+            var mvpIdx = Shader.UniformLocation(_shader, () => _shader.ModelviewProjection);
+            pass.VertexProgramParameters.SetAutoConstant(mvpIdx, GpuProgramParameters.AutoConstantType.WorldViewProjMatrix);
 
             //pass.VertexProgramParameters.SetAutoConstant(0, GpuProgramParameters.AutoConstantType.VertexWinding);
 
@@ -171,8 +180,9 @@ namespace IIS.SLSharp.Examples.Axiom
 
             _scene.RootSceneNode.AttachObject(_patchEntity);
 
-            _camera.Position = new Vector3(500, 500, 1500);
-            _camera.LookAt(new Vector3(0, 200, -300));
+            //_camera.Position = new Vector3(500, 500, 1500);
+            //_camera.LookAt(new Vector3(0, 200, -300));
+            _camera.LookAt(Vector3.Zero);
             _camera.Near = 5;
             _camera.AutoAspectRatio = true;
 
@@ -188,19 +198,18 @@ namespace IIS.SLSharp.Examples.Axiom
 
         public void OnRenderFrame(object s, FrameEventArgs e)
         {
+            var angle = Utility.DegreesToRadians((DateTime.Now.Millisecond / 1000.0f + DateTime.Now.Second) * 6 * 4);
+            var cam = new Vector3((float)Math.Sin(angle), 0.0f, (float)Math.Cos(angle));
+            var look = new Vector3(0, 300, 0);
 
-            var mvp = _camera.ViewMatrix*_camera.ProjectionMatrix;
+            cam *= 1600.0f;
+            cam.y += 100.0f;
+            _camera.LookAt(look);
+            _camera.Position = cam + look;
 
-            /*
-            var vname = Shader.AttributeName(() => _shader.Vertex);
-            int prog;
-            Tao.OpenGl.Gl.glGetIntegerv(Tao.OpenGl.Gl.GL_CURRENT_PROGRAM, out prog);
-            Tao.OpenGl.Gl.glBindAttribLocation(prog, 0, vname);
-
-            _shader.Begin();
+            var mvp = _camera.ProjectionMatrix * _camera.ViewMatrix;
             _shader.ModelviewProjection = mvp.ToMatrix4F();
-            _shader.End();
-             */
+            _shader.Blue = (float)Math.Sin(angle * 8.0f);
         }
       
     }

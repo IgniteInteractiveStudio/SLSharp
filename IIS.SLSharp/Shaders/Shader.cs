@@ -529,7 +529,7 @@ namespace IIS.SLSharp.Shaders
         /// shader that is going to be accessed.
         /// </summary>
         /// <param name="main"></param>
-        protected void BeginLibrary(Shader main)
+        public void BeginLibrary(Shader main)
         {
             Program = main.Program;
             CacheUniforms();
@@ -772,10 +772,22 @@ namespace IIS.SLSharp.Shaders
             var body = ((MemberExpression)expr.Body);
             return GetVaryingName(body.Member as FieldInfo);
         }
-        
+
         public static int AttributeLocation<T>(Shader shader, Expression<Func<T>> expr)
         {
             var loc = shader.Program.GetAttributeIndex(AttributeName(expr));
+            return loc;
+        }
+
+        public static string UniformName<T>(Expression<Func<T>> expr)
+        {
+            var body = ((MemberExpression)expr.Body);
+            return GetUniformName(body.Member as PropertyInfo);
+        }
+
+        public static int UniformLocation<T>(Shader shader, Expression<Func<T>> expr)
+        {
+            var loc = shader.Program.GetUniformIndex(UniformName(expr));
             return loc;
         }
 

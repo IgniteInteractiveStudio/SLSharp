@@ -31,7 +31,7 @@ namespace IIS.SLSharp.Examples.Axiom.Shaders
         [VertexShader(true)]
         public void VertexMain()
         {
-            _uv = (Vertex.xy + new vec2(1.0f)) * 0.5f;
+            _uv = (Vertex.xy + new vec2(1.0f)) * 0.5f * 0.005f;
             gl_Position = ModelviewProjection * Vertex;
         }
 
