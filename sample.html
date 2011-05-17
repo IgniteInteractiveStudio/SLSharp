@@ -52,6 +52,34 @@
 						
 					}
 				}
+				// the request was completed.
+				for (f in data.blobs)
+				{
+					if (f.startsWith('IIS.SLSharp.Examples.Simple/DemoWindow.cs'))
+					{
+						var JSONP3 = new Request.JSONP(
+						{
+							url: 'http://github.com/api/v2/json/blob/show/IgniteInteractiveStudio/SLSharp/' + tree + '/'+ f,
+							onComplete: function(data)
+							{ 
+								var sha = data.blob.sha;
+								var div  = new Element('div');
+								var ref = new Element('a', 
+								{
+									href: 'https://github.com/IgniteInteractiveStudio/SLSharp/tree/master/' + f,
+									html: f
+								});
+								var pre = new Element('pre', {html: sha, class: 'brush: csharp;'});
+								ref.inject(div);
+								pre.inject(div);
+								div.inject(mye);
+								pre.set('text', data.blob.data);
+								SyntaxHighlighter.highlight({}, pre);
+							},
+						}).send();
+						
+					}
+				}
 			}
 			}).send();
 		}
