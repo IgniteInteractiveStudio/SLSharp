@@ -10,23 +10,32 @@ using IIS.SLSharp.Reflection;
 using IIS.SLSharp.Shaders;
 using IIS.SLSharp.Translation;
 using IIS.SLSharp.Translation.GLSL;
+using IIS.SLSharp.Translation.HLSL;
 using Mogre;
 using SceneQueryListener = Ogre.SceneQueryListener;
 
 namespace IIS.SLSharp.Bindings.MOGRE.GLSL
 {
+    public enum ShaderLanguage
+    {
+        GLSL,
+        HLSL,
+        CG
+    }
+
     sealed class SLSharpBinding: ISLSharpBinding
     {
+        public SLSharpBinding(ITransform trans)
+        {
+            Transform = trans;
+        }
+
         public Dictionary<ReflectionToken, MethodInfo> PassiveMethods
         {
             get { return SLSharp.Handlers; }
         }
 
-        public ITransform Transform
-        {
-            // TODO: chose target dynamically on current axiom operation mode
-            get { return new GlslTransform(); }
-        }
+        public ITransform Transform { get; private set; }
 
         #region Active Methods
 
@@ -71,22 +80,56 @@ namespace IIS.SLSharp.Bindings.MOGRE.GLSL
             HighLevelGpuProgramPtr ps = null;
             if (combinedFrags.Functions.Count > 0)
             {
-                ps = HighLevelGpuProgramManager.Singleton.CreateProgram(name + "_ps", group, "glsl", GpuProgramType.GPT_FRAGMENT_PROGRAM);
-                ps.Source = combinedFrags.ToGlsl(ShaderType.FragmentShader);
+                switch (SLSharp.Language)
+                {
+                    case ShaderLanguage.GLSL:
+                        ps = HighLevelGpuProgramManager.Singleton.CreateProgram(name + "_ps", group, "glsl", GpuProgramType.GPT_FRAGMENT_PROGRAM);
+                        ps.Source = combinedFrags.ToGlsl(ShaderType.FragmentShader);
+                        break;
+                    case ShaderLanguage.HLSL:
+                        ps = HighLevelGpuProgramManager.Singleton.CreateProgram(name + "_ps", group, "hlsl", GpuProgramType.GPT_FRAGMENT_PROGRAM);
+                        ps.SetParameter("entry_point", "SLSharp_FragmentMain");
+                        ps.SetParameter("target", "ps_3_0");
+                        ps.Source = combinedFrags.ToHlsl();
+                        break;
+                    case ShaderLanguage.CG:
+                        ps = HighLevelGpuProgramManager.Singleton.CreateProgram(name + "_ps", group, "cg", GpuProgramType.GPT_FRAGMENT_PROGRAM);
+                        ps.SetParameter("entry_point", "SLSharp_FragmentMain");
+                        ps.SetParameter("target", "ps_3_0");
+                        ps.Source = combinedFrags.ToHlsl();
+                        break;
+                }
             }
 
             HighLevelGpuProgramPtr vs = null;
             if (combinedVerts.Functions.Count > 0)
             {
-                vs = HighLevelGpuProgramManager.Singleton.CreateProgram(name + "_vs", group, "glsl", GpuProgramType.GPT_VERTEX_PROGRAM);
-                var vsSource = combinedVerts.ToGlsl(ShaderType.VertexShader);
-
-                foreach (var vin in combinedVerts.VertexIns)
+                switch (SLSharp.Language)
                 {
-                    var sem = SemanticToMogre(vin.Semantic);
-                    vsSource = vsSource.Replace(vin.Name, sem);
+                    case ShaderLanguage.GLSL:
+                        vs = HighLevelGpuProgramManager.Singleton.CreateProgram(name + "_vs", group, "glsl", GpuProgramType.GPT_VERTEX_PROGRAM);
+                        var vsSource = combinedVerts.ToGlsl(ShaderType.VertexShader);
+
+                        foreach (var vin in combinedVerts.VertexIns)
+                        {
+                            var sem = SemanticToMogre(vin.Semantic);
+                            vsSource = vsSource.Replace(vin.Name, sem);
+                        }
+                        vs.Source = vsSource;
+                        break;
+                    case ShaderLanguage.HLSL:
+                        vs = HighLevelGpuProgramManager.Singleton.CreateProgram(name + "_vs", group, "hlsl", GpuProgramType.GPT_VERTEX_PROGRAM);
+                        vs.SetParameter("entry_point", "SLSharp_VertexMain");
+                        vs.SetParameter("target", "vs_3_0");
+                        vs.Source = combinedVerts.ToHlsl();
+                        break;
+                    case ShaderLanguage.CG:
+                        vs = HighLevelGpuProgramManager.Singleton.CreateProgram(name + "_vs", group, "cg", GpuProgramType.GPT_VERTEX_PROGRAM);
+                        vs.SetParameter("entry_point", "SLSharp_VertexMain");
+                        vs.SetParameter("target", "vs_3_0");
+                        vs.Source = combinedVerts.ToHlsl();
+                        break;
                 }
-                vs.Source = vsSource;
             }
 
             return new Program(name, vs, ps);
@@ -194,14 +237,13 @@ namespace IIS.SLSharp.Bindings.MOGRE.GLSL
             var vpp = Pass.GetVertexProgramParameters();
             var vd = vpp._findNamedConstantDefinition(name, false);
             if (!vd.IsNull)
-                return (int)vd.physicalIndex;
+                return (int)vd.logicalIndex;
 
-            /*
-            var fpp = _pass.GetFragmentProgramParameters();
+            
+            var fpp = Pass.GetFragmentProgramParameters();
             var fd = fpp._findNamedConstantDefinition(name, false);
             if (!fd.IsNull)
-                return (int)fd.physicalIndex;
-            */
+                return (int)(fd.logicalIndex | 0x80000000);
 
             throw new NotImplementedException();
         }
@@ -237,7 +279,18 @@ namespace IIS.SLSharp.Bindings.MOGRE.GLSL
     {
         public static void Init()
         {
-            Binding.Register(new SLSharpBinding());
+            if (HighLevelGpuProgramManager.Singleton.IsLanguageSupported("glsl"))
+                Language = ShaderLanguage.GLSL;
+            else if (HighLevelGpuProgramManager.Singleton.IsLanguageSupported("hlsl"))
+                Language = ShaderLanguage.HLSL;
+            else if (HighLevelGpuProgramManager.Singleton.IsLanguageSupported("cg"))
+                Language = ShaderLanguage.CG;
+            else
+                throw new SLSharpException("MOGRE neither supports GLSL nor HLSL nor CG");
+
+            var trans = Language == ShaderLanguage.GLSL ? (ITransform)new GlslTransform() : new HlslTransform();
+
+            Binding.Register(new SLSharpBinding(trans));
 
             MaterialManager.Singleton.AddListener(new SLSharpListener());
             ResourceGroupManager.Singleton.CreateResourceGroup("SLSharp");
@@ -314,6 +367,8 @@ namespace IIS.SLSharp.Bindings.MOGRE.GLSL
         //[ThreadStatic]
         private static UniformStorage _storage;
 
+        public static ShaderLanguage Language { get; private set; }
+
         public static ShaderDefinition.vec2 ToVector2F(this Vector2 v)
         { _storage.F2 = v; return null; }
 
@@ -338,9 +393,17 @@ namespace IIS.SLSharp.Bindings.MOGRE.GLSL
             //return GL.GetUniformLocation(program, name);
         }
 
+        private static GpuProgramParameters GetParams(ref int location)
+        {
+            if ((location & 0x80000000) == 0)
+                return Program.CurrentProgram.Pass.GetVertexProgramParameters();
+            location &= 0x7FFFFFFF;
+            return Program.CurrentProgram.Pass.GetFragmentProgramParameters();
+        }
+
         public static void Uniform1F(int location, float value)
         {
-            Program.CurrentProgram.Pass.GetVertexProgramParameters().SetConstant((uint)location, value);
+            GetParams(ref location).SetConstant((uint)location, value);
         }
 
         public static void Uniform2F(int location)
@@ -350,12 +413,12 @@ namespace IIS.SLSharp.Bindings.MOGRE.GLSL
 
         public static void Uniform3F(int location)
         {
-            Program.CurrentProgram.Pass.GetVertexProgramParameters().SetConstant((uint)location, _storage.F3);
+            GetParams(ref location).SetConstant((uint)location, _storage.F3);
         }
 
         public static void Uniform4F(int location)
         {
-            Program.CurrentProgram.Pass.GetVertexProgramParameters().SetConstant((uint)location, _storage.F4);
+            GetParams(ref location).SetConstant((uint)location, _storage.F4);
         }
 
         public static void Uniform1D(int location, double value)
@@ -387,7 +450,7 @@ namespace IIS.SLSharp.Bindings.MOGRE.GLSL
 
         public static void UniformMatrix4X4(int location)
         {
-            Program.CurrentProgram.Pass.GetVertexProgramParameters().SetConstant((uint)location, _storage.F4X4);
+            GetParams(ref location).SetConstant((uint)location, _storage.F4X4);
         }
 
         public static void UniformDMatrix4X4(int location)
@@ -397,7 +460,7 @@ namespace IIS.SLSharp.Bindings.MOGRE.GLSL
 
         public static void UniformSampler(int location)
         {
-            Program.CurrentProgram.Pass.GetVertexProgramParameters().SetConstant((uint)location, ShaderDefinition.Sampler.value);
+            GetParams(ref location).SetConstant((uint)location, ShaderDefinition.Sampler.value);
         }
         #endregion
     }
