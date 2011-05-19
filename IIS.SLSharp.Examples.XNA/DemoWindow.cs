@@ -51,7 +51,7 @@ namespace IIS.SLSharp.Examples.XNA
             foreach (var mesh in _model.Meshes)
             {
                 var modelview = world * view * mesh.ParentBone.Transform;
-                var mvp = modelview*proj;
+                var mvp = Matrix.Transpose(modelview*proj);
 
                 _shader.Blue = (float)Math.Sin(angle * 8.0f);
                 _shader.ModelviewProjection = mvp.ToMatrix4F();

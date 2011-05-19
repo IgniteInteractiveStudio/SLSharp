@@ -331,7 +331,7 @@ namespace IIS.SLSharp.Translation.HLSL
                 if ((lhs.Type.Name.StartsWith("mat") && rhs.Type.Name.StartsWith("vec")) ||
                     (rhs.Type.Name.StartsWith("mat") && lhs.Type.Name.StartsWith("vec")))
                 {
-                    result.AppendFormat("mul({1}, {0})",
+                    result.AppendFormat("mul({0}, {1})",
                         binaryOperatorExpression.Left.AcceptVisitor(this, data),
                         binaryOperatorExpression.Right.AcceptVisitor(this, data));
 
