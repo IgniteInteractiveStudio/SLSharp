@@ -1,5 +1,7 @@
+using System;
 using System.Text;
 using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.PatternMatching;
 
 namespace IIS.SLSharp.Translation.GLSL
 {
@@ -8,6 +10,11 @@ namespace IIS.SLSharp.Translation.GLSL
         public StringBuilder VisitAnonymousMethodExpression(AnonymousMethodExpression anonymousMethodExpression, int data)
         {
             throw new SLSharpException("GLSL does not understand anonymous methods.");
+        }
+
+        public StringBuilder VisitUndocumentedExpression(UndocumentedExpression undocumentedExpression, int data)
+        {
+            throw new SLSharpException("Unsupported nonstandard language extension encountered.");
         }
 
         public StringBuilder VisitAsExpression(AsExpression asExpression, int data)
@@ -33,6 +40,11 @@ namespace IIS.SLSharp.Translation.GLSL
         public StringBuilder VisitNullReferenceExpression(NullReferenceExpression nullReferenceExpression, int data)
         {
             throw new SLSharpException("GLSL has no notion of NULL.");
+        }
+
+        public StringBuilder VisitAnonymousTypeCreateExpression(AnonymousTypeCreateExpression anonymousTypeCreateExpression, int data)
+        {
+            throw new SLSharpException("GLSL does not understand anonymous types");
         }
 
         public StringBuilder VisitPointerReferenceExpression(PointerReferenceExpression pointerReferenceExpression, int data)
@@ -203,6 +215,11 @@ namespace IIS.SLSharp.Translation.GLSL
         public StringBuilder VisitFixedVariableInitializer(FixedVariableInitializer fixedVariableInitializer, int data)
         {
             throw new SLSharpException("GLSL does not understand the fixed keyword.");
+        }
+
+        public StringBuilder VisitPatternPlaceholder(AstNode placeholder, Pattern pattern, int data)
+        {
+            throw new SLSharpException("GLSL does not support pattern placeholders.");
         }
 
         public StringBuilder VisitNamedArgumentExpression(NamedArgumentExpression namedArgumentExpression, int data)
