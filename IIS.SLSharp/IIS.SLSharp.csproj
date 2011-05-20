@@ -101,10 +101,11 @@
     <Compile Include="Translation\RenameLocals.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ICSharpCode.Decompiler, Version=1.0.0.674, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ICSharpCode.Decompiler, Version=1.0.0.832, Culture=neutral, PublicKeyToken=1beefbfdfd5fca14, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dependencies\ICSharpCode.Decompiler.dll</HintPath>
     </Reference>
-    <Reference Include="ICSharpCode.NRefactory, Version=1.0.4110.1435, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ICSharpCode.NRefactory, Version=1.0.4157.16067, Culture=neutral, PublicKeyToken=1beefbfdfd5fca14, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dependencies\ICSharpCode.NRefactory.dll</HintPath>
     </Reference>

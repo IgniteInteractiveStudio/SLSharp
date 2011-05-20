@@ -40,7 +40,7 @@ namespace IIS.SLSharp.Translation.GLSL
             if (attr == null)
                 throw new ArgumentNullException("attr");
 
-            var d = AstMethodBodyBuilder.CreateMethodBody(m, new DecompilerContext
+            var d = AstMethodBodyBuilder.CreateMethodBody(m, new DecompilerContext(s.Module)
             {
                 CurrentType = s,
                 CurrentMethod = m,

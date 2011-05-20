@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Text;
 using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.PatternMatching;
 
 namespace IIS.SLSharp.Translation.HLSL
 {
     internal sealed partial class HlslVisitor
     {
+        public StringBuilder VisitUndocumentedExpression(UndocumentedExpression undocumentedExpression, int data)
+        {
+            throw new NotImplementedException();
+        }
+
         public StringBuilder VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression, int data)
         {
             throw new NotImplementedException();
@@ -32,6 +38,11 @@ namespace IIS.SLSharp.Translation.HLSL
         }
 
         public StringBuilder VisitIndexerExpression(IndexerExpression indexerExpression, int data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public StringBuilder VisitAnonymousTypeCreateExpression(AnonymousTypeCreateExpression anonymousTypeCreateExpression, int data)
         {
             throw new NotImplementedException();
         }
@@ -87,6 +98,11 @@ namespace IIS.SLSharp.Translation.HLSL
         }
 
         public StringBuilder VisitIdentifier(Identifier identifier, int data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public StringBuilder VisitPatternPlaceholder(AstNode placeholder, Pattern pattern, int data)
         {
             throw new NotImplementedException();
         }

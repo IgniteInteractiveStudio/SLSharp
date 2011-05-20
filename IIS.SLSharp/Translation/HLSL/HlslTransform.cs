@@ -47,7 +47,7 @@ namespace IIS.SLSharp.Translation.HLSL
             while (sbase.MetadataToken.ToInt32() != typeof(Shader).MetadataToken)
                 sbase = sbase.BaseType.Resolve();
 
-            var d = AstMethodBodyBuilder.CreateMethodBody(m, new DecompilerContext
+            var d = AstMethodBodyBuilder.CreateMethodBody(m, new DecompilerContext(s.Module)
             {
                 CurrentType = s,
                 CurrentMethod = m,

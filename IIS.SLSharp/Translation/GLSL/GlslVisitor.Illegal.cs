@@ -10,11 +10,6 @@ namespace IIS.SLSharp.Translation.GLSL
             throw new SLSharpException("GLSL does not understand anonymous methods.");
         }
 
-        public StringBuilder VisitArgListExpression(ArgListExpression argListExpression, int data)
-        {
-            throw new SLSharpException("Unsupported proprietary C# feature detected.");
-        }
-
         public StringBuilder VisitAsExpression(AsExpression asExpression, int data)
         {
             throw new SLSharpException("GLSL does not have reflection-supported casts.");

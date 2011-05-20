@@ -26,6 +26,16 @@
             This recursion stops at 'start'. The modified version of start is returned.
             </summary>
         </member>
+        <member name="T:ICSharpCode.Decompiler.Ast.Transforms.CombineQueryExpressions">
+            <summary>
+            Combines query expressions and removes transparent identifiers.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.Ast.Transforms.CombineQueryExpressions.RemoveTransparentIdentifierReferences(ICSharpCode.NRefactory.CSharp.AstNode)">
+            <summary>
+            Removes all occurrences of transparent identifiers
+            </summary>
+        </member>
         <member name="T:ICSharpCode.Decompiler.FlowAnalysis.SsaOptimization">
             <summary>
             Contains some very simple optimizations that work on the SSA form.
@@ -39,6 +49,11 @@
             after locals instead of keeping the temps as using only the simple copy propagation would do.
             </summary>
         </member>
+        <member name="T:ICSharpCode.Decompiler.Ast.Transforms.DecimalConstantTransform">
+            <summary>
+            Description of DecimalConstantTransform.
+            </summary>
+        </member>
         <member name="T:ICSharpCode.Decompiler.Ast.CommentStatement">
             <summary>
             Allows storing comments inside IEnumerable{Statement}. Used in the AstMethodBuilder.
@@ -47,6 +62,120 @@
         </member>
         <member name="F:ICSharpCode.Decompiler.ILAst.ILBasicBlock.Body">
             <remarks> Body has to start with a label and end with unconditional control flow </remarks>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:ICSharpCode.Decompiler.ICodeMappings" -->
+        <member name="P:ICSharpCode.Decompiler.ICodeMappings.CodeMappings">
+            <summary>
+            Gets the code mappings.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.SourceCodeMapping">
+            <summary>
+            Maps the source code to IL.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.SourceCodeMapping.ToArray(System.Boolean)">
+            <summary>
+            Retrieves the array that contains the IL range and the missing gaps between ranges.
+            </summary>
+            <returns>The array representation of the step aranges.</returns>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.SourceCodeMapping.SourceCodeLine">
+            <summary>
+            Gets or sets the source code line number in the output.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.SourceCodeMapping.ILInstructionOffset">
+            <summary>
+            Gets or sets IL Range offset for the source code line. E.g.: 13-19 &lt;-&gt; 135.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.SourceCodeMapping.MemberMapping">
+            <summary>
+            Gets or sets the member mapping this source code mapping belongs to.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.MemberMapping">
+            <summary>
+            Stores the method information and its source code mappings.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.MemberMapping.MemberReference">
+            <summary>
+            Gets or sets the type of the mapping.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.MemberMapping.MetadataToken">
+            <summary>
+            Metadata token of the method.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.MemberMapping.CodeSize">
+            <summary>
+            Gets or sets the code size for the member mapping.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.MemberMapping.MemberCodeMappings">
+            <summary>
+            Gets or sets the source code mappings.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.MemberMapping.InvertedList">
+            <summary>
+            Gets the inverted IL Ranges.<br/>
+            E.g.: for (0-9, 11-14, 14-18, 21-25) => (9-11,18-21).
+            </summary>
+            <returns>IL Range inverted list.</returns>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.CodeMappings">
+            <summary>
+            Code mappings helper class.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.CodeMappings.CreateCodeMapping(Mono.Cecil.MethodDefinition,System.Tuple{System.String,System.Collections.Generic.List{ICSharpCode.Decompiler.MemberMapping}})">
+            <summary>
+            Create code mapping for a method.
+            </summary>
+            <param name="method">Method to create the mapping for.</param>
+            <param name="sourceCodeMappings">Source code mapping storage.</param>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.CodeMappings.GetInstructionByTypeAndLine(System.Tuple{System.String,System.Collections.Generic.List{ICSharpCode.Decompiler.MemberMapping}},System.String,System.Int32,System.UInt32@)">
+            <summary>
+            Gets source code mapping and metadata token based on type name and line number.
+            </summary>
+            <param name="codeMappings">Code mappings storage.</param>
+            <param name="typeName">Type name.</param>
+            <param name="lineNumber">Line number.</param>
+            <param name="metadataToken">Metadata token.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.CodeMappings.GetInstructionByTypeTokenAndOffset(System.Tuple{System.String,System.Collections.Generic.List{ICSharpCode.Decompiler.MemberMapping}},System.String,System.UInt32,System.Int32,System.Boolean@)">
+            <summary>
+            Gets a mapping given a type, a token and an IL offset.
+            </summary>
+            <param name="codeMappings">Code mappings storage.</param>
+            <param name="typeName">Type name.</param>
+            <param name="token">Token.</param>
+            <param name="ilOffset">IL offset.</param>
+            <param name="isMatch">True, if perfect match.</param>
+            <returns>A code mapping.</returns>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.CodeMappings.GetSourceCodeFromMetadataTokenAndOffset(System.Tuple{System.String,System.Collections.Generic.List{ICSharpCode.Decompiler.MemberMapping}},System.String,System.UInt32,System.Int32,Mono.Cecil.MemberReference@,System.Int32@)">
+            <summary>
+            Gets the source code and type name from metadata token and offset.
+            </summary>
+            <param name="codeMappings">Code mappings storage.</param>
+            <param name="typeName">Current type name.</param>
+            <param name="token">Metadata token.</param>
+            <param name="ilOffset">IL offset.</param>
+            <param name="typeName">Type definition.</param>
+            <param name="line">Line number.</param>
+            <remarks>It is possible to exist to different types from different assemblies with the same metadata token.</remarks>
+        </member>
+        <member name="F:ICSharpCode.Decompiler.DecompilerContext.ReservedVariableNames">
+            <summary>
+            Used to pass variable names from a method to its anonymous methods.
+            </summary>
         </member>
         <member name="T:ICSharpCode.Decompiler.FlowAnalysis.SsaFormBuilder">
             <summary>
@@ -199,6 +328,61 @@
             Decompile lock statements.
             </summary>
         </member>
+        <member name="P:ICSharpCode.Decompiler.DecompilerSettings.UseDebugSymbols">
+            <summary>
+            Gets/Sets whether to use variable names from debug symbols, if available.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.DecompilerSettings.ObjectOrCollectionInitializers">
+            <summary>
+            Gets/Sets whether to use C# 3.0 object/collection initializers
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.DecompilerSettings.ShowXmlDocumentation">
+            <summary>
+            Gets/Sets whether to include XML documentation comments in the decompiled code
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.Ast.TypesHierarchyHelpers.IsBaseMethod(Mono.Cecil.MethodDefinition,Mono.Cecil.MethodDefinition)">
+            <summary>
+            Determines whether one method overrides or hides another method.
+            </summary>
+            <param name="parentMethod">The method declared in a base type.</param>
+            <param name="childMethod">The method declared in a derived type.</param>
+            <returns>true if <paramref name="childMethod"/> hides or overrides <paramref name="parentMethod"/>,
+            otherwise false.</returns>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.Ast.TypesHierarchyHelpers.IsBaseProperty(Mono.Cecil.PropertyDefinition,Mono.Cecil.PropertyDefinition)">
+            <summary>
+            Determines whether a property overrides or hides another property.
+            </summary>
+            <param name="parentProperty">The property declared in a base type.</param>
+            <param name="childProperty">The property declared in a derived type.</param>
+            <returns>true if the <paramref name="childProperty"/> hides or overrides <paramref name="parentProperty"/>,
+            otherwise false.</returns>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.Ast.TypesHierarchyHelpers.FindBaseMethods(Mono.Cecil.MethodDefinition)">
+            <summary>
+            Finds all methods from base types overridden or hidden by the specified method.
+            </summary>
+            <param name="method">The method which overrides or hides methods from base types.</param>
+            <returns>Methods overriden or hidden by the specified method.</returns>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.Ast.TypesHierarchyHelpers.FindBaseProperties(Mono.Cecil.PropertyDefinition)">
+            <summary>
+            Finds all properties from base types overridden or hidden by the specified property.
+            </summary>
+            <param name="property">The property which overrides or hides properties from base types.</param>
+            <returns>Properties overriden or hidden by the specified property.</returns>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.Ast.TypesHierarchyHelpers.IsVisibleFromDerived(Mono.Cecil.IMemberDefinition,Mono.Cecil.TypeDefinition)">
+            <summary>
+            Determinates whether member of the base type is visible from a derived type.
+            </summary>
+            <param name="baseMember">The member which visibility is checked.</param>
+            <param name="derivedType">The derived type.</param>
+            <returns>true if the member is visible from derived type, othewise false.</returns>
+        </member>
         <member name="F:ICSharpCode.Decompiler.FlowAnalysis.SpecialOpCode.None">
             <summary>
             No special op code: SsaInstruction has a normal IL instruction
@@ -280,6 +464,36 @@
             <summary>
             Base class for AST visitors that need the current type/method context info.
             </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.ReferenceResolvingException">
+            <summary>
+            Represents an error while resolving a reference to a type or a member.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ReferenceResolvingException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:ResolveException"/> class
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ReferenceResolvingException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ResolveException"/> class
+            </summary>
+            <param name="message">A <see cref="T:System.String"/> that describes the error. The content of message is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ReferenceResolvingException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ResolveException"/> class
+            </summary>
+            <param name="message">A <see cref="T:System.String"/> that describes the error. The content of message is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+            <param name="inner">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ReferenceResolvingException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ResolveException"/> class
+            </summary>
+            <param name="info">The object that holds the serialized object data.</param>
+            <param name="context">The contextual information about the source or destination.</param>
         </member>
         <member name="T:ICSharpCode.Decompiler.FlowAnalysis.ControlFlowGraph">
             <summary>
@@ -379,6 +593,20 @@
             <summary>
             Desctiption of DecompilerException.
             </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.Ast.Transforms.IntroduceQueryExpressions">
+            <summary>
+            Decompiles query expressions.
+            Based on C# 4.0 spec, §7.16.2 Query expression translation
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.Ast.Transforms.IntroduceQueryExpressions.ValidateThenByChain(ICSharpCode.NRefactory.CSharp.InvocationExpression,System.String)">
+            <summary>
+            Ensure that all ThenBy's are correct, and that the list of ThenBy's is terminated by an 'OrderBy' invocation.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.Ast.Transforms.IntroduceQueryExpressions.MatchSimpleLambda(ICSharpCode.NRefactory.CSharp.Expression,System.String@,ICSharpCode.NRefactory.CSharp.Expression@)">
+            <summary>Matches simple lambdas of the form "a => b"</summary>
         </member>
         <member name="M:ICSharpCode.Decompiler.ILAst.YieldReturnDecompiler.AnalyzeCtor">
             <summary>
@@ -494,6 +722,9 @@
             Disassembles type and member definitions.
             </summary>
         </member>
+        <member name="P:ICSharpCode.Decompiler.Disassembler.ReflectionDisassembler.CodeMappings">
+            <inheritdoc/>
+        </member>
         <member name="T:ICSharpCode.Decompiler.Ast.Transforms.DelegateConstruction">
             <summary>
             Converts "new Action(obj, ldftn(func))" into "new Action(obj.func)".
@@ -603,7 +834,7 @@
             Gets the (exclusive) end offset of this instruction.
             </summary>
         </member>
-        <member name="M:ICSharpCode.Decompiler.Ast.AstMethodBodyBuilder.CreateMethodBody(Mono.Cecil.MethodDefinition,ICSharpCode.Decompiler.DecompilerContext,System.Collections.Generic.IEnumerable{ICSharpCode.NRefactory.CSharp.ParameterDeclaration})">
+        <member name="M:ICSharpCode.Decompiler.Ast.AstMethodBodyBuilder.CreateMethodBody(Mono.Cecil.MethodDefinition,ICSharpCode.Decompiler.DecompilerContext,System.Collections.Generic.IEnumerable{ICSharpCode.NRefactory.CSharp.ParameterDeclaration},System.Collections.Concurrent.ConcurrentDictionary{System.Int32,System.Collections.Generic.IEnumerable{ICSharpCode.Decompiler.ILAst.ILVariable}})">
             <summary>
             Creates the body for the method definition.
             </summary>
@@ -611,6 +842,7 @@
             <param name="context">Decompilation context.</param>
             <param name="parameters">Parameter declarations of the method being decompiled.
             These are used to update the parameter names when the decompiler generates names for the parameters.</param>
+            <param name="localVariables">Local variables storage that will be filled/updated with the local variables.</param>
             <returns>Block for the method body</returns>
         </member>
         <member name="M:ICSharpCode.Decompiler.Ast.AstMethodBodyBuilder.DivideBySize(ICSharpCode.NRefactory.CSharp.Expression,Mono.Cecil.TypeReference)">
@@ -631,6 +863,16 @@
             cannot be guaranteed otherwise (see CheckedUnchecked.ForWithCheckedInitializerAndUncheckedIterator test)
             </summary>
         </member>
+        <member name="T:ICSharpCode.Decompiler.Ast.Transforms.IntroduceExtensionMethods">
+            <summary>
+            Converts extension method calls into infix syntax.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.Decompiler.ILAst.ILAstOptimizer">
+            <summary>
+            IL AST transformation that introduces array, object and collection initializers.
+            </summary>
+        </member>
         <member name="M:ICSharpCode.Decompiler.ILAst.ILAstOptimizer.RemoveRedundantCode(ICSharpCode.Decompiler.ILAst.ILBlock)">
             <summary>
             Removes redundatant Br, Nop, Dup, Pop
@@ -643,7 +885,7 @@
             Moves ILRanges to the branch argument
             </summary>
         </member>
-        <member name="M:ICSharpCode.Decompiler.ILAst.ILAstOptimizer.IntroducePropertyAccessInstructions(ICSharpCode.Decompiler.ILAst.ILBlock)">
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILAstOptimizer.IntroducePropertyAccessInstructions(ICSharpCode.Decompiler.ILAst.ILNode)">
             <summary>
             Converts call and callvirt instructions that read/write properties into CallGetter/CallSetter instructions.
             
@@ -667,6 +909,40 @@
             Reduce the nesting of conditions.
             It should be done on flat data that already had most gotos removed
             </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILAstOptimizer.TransformObjectInitializers(System.Collections.Generic.List{ICSharpCode.Decompiler.ILAst.ILNode},ICSharpCode.Decompiler.ILAst.ILExpression,System.Int32)">
+            <summary>
+            Handles both object and collection initializers.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILAstOptimizer.IsCollectionType(Mono.Cecil.TypeReference)">
+            <summary>
+            Gets whether the type supports collection initializers.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILAstOptimizer.IsSetterInObjectInitializer(ICSharpCode.Decompiler.ILAst.ILExpression)">
+            <summary>
+            Gets whether 'expr' represents a setter in an object initializer.
+            ('CallvirtSetter(Property, v, value)')
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILAstOptimizer.IsAddMethodCall(ICSharpCode.Decompiler.ILAst.ILExpression)">
+            <summary>
+            Gets whether 'expr' represents the invocation of an 'Add' method in a collection initializer.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILAstOptimizer.ParseObjectInitializer(System.Collections.Generic.List{ICSharpCode.Decompiler.ILAst.ILNode},System.Int32@,ICSharpCode.Decompiler.ILAst.ILVariable,ICSharpCode.Decompiler.ILAst.ILExpression,System.Boolean)">
+            <summary>
+            Parses an object initializer.
+            </summary>
+            <param name="body">ILAst block</param>
+            <param name="pos">
+            Input: position of the instruction assigning to 'v'.
+            Output: first position after the object initializer
+            </param>
+            <param name="v">The variable that holds the object being initialized</param>
+            <param name="newObjExpr">The newobj instruction</param>
+            <returns>InitObject instruction</returns>
         </member>
         <member name="M:ICSharpCode.Decompiler.ILAst.ILAstOptimizerExtensionMethods.RunOptimization(ICSharpCode.Decompiler.ILAst.ILBlock,System.Func{System.Collections.Generic.List{ICSharpCode.Decompiler.ILAst.ILNode},ICSharpCode.Decompiler.ILAst.ILBasicBlock,System.Int32,System.Boolean})">
             <summary>
@@ -905,7 +1181,7 @@
         </member>
         <member name="F:ICSharpCode.Decompiler.Ast.Transforms.PatternStatementTransform.variableAssignPattern">
             <summary>
-            $type $variable = $initializer;
+            $variable = $initializer;
             </summary>
         </member>
         <member name="M:ICSharpCode.Decompiler.Ast.Transforms.PatternStatementTransform.TransformTryCatchFinally(ICSharpCode.NRefactory.CSharp.TryCatchStatement)">
@@ -914,15 +1190,21 @@
             This transformation must run after the using/lock tranformations.
             </summary>
         </member>
-        <member name="T:ICSharpCode.Decompiler.ILAst.Initializers">
-            <summary>
-            IL AST transformation that introduces array, object and collection initializers.
-            </summary>
-        </member>
         <member name="T:ICSharpCode.Decompiler.Ast.CecilTypeResolveContext">
             <summary>
             ITypeResolveContext implementation that lazily loads types from Cecil.
             </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.Ast.AstBuilder.RunTransformations">
+            <summary>
+            Runs the C# transformations on the compilation unit.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.Ast.AstBuilder.GenerateCode(ICSharpCode.Decompiler.ITextOutput)">
+            <summary>
+            Generates C# code from the abstract source tree.
+            </summary>
+            <remarks>This method adds ParenthesizedExpressions into the AST, and will run transformations if <see cref="M:ICSharpCode.Decompiler.Ast.AstBuilder.RunTransformations"/> was not called explicitly</remarks>
         </member>
         <member name="M:ICSharpCode.Decompiler.Ast.AstBuilder.CreateType(Mono.Cecil.TypeDefinition)">
             <summary>
@@ -940,12 +1222,35 @@
             <param name="typeAttributes">Attributes associated with the Cecil type reference.
             This is used to support the 'dynamic' type.</param>
         </member>
-        <member name="M:ICSharpCode.Decompiler.Ast.AstBuilder.GetDefaultMember(Mono.Cecil.TypeDefinition)">
+        <member name="M:ICSharpCode.Decompiler.Ast.AstBuilder.SetNewModifier(ICSharpCode.NRefactory.CSharp.AttributedNode)">
             <summary>
-            Gets the name of the default member of the type pointed by the <see cref="T:System.Reflection.DefaultMemberAttribute"/> attribute.
+            Sets new modifier if the member hides some other member from a base type.
             </summary>
-            <param name="type">The type definition.</param>
-            <returns>The name of the default member or null if no <see cref="T:System.Reflection.DefaultMemberAttribute"/> attribute has been found.</returns>
+            <param name="member">The node of the member which new modifier state should be determined.</param>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.Ast.AstBuilder.HidesByName(Mono.Cecil.IMemberDefinition,System.Boolean)">
+            <summary>
+            Determines whether any base class member has the same name as the given member.
+            </summary>
+            <param name="member">The derived type's member.</param>
+            <param name="includeBaseMethods">true if names of methods declared in base types should also be checked.</param>
+            <returns>true if any base member has the same name as given member, otherwise false.</returns>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.Ast.AstBuilder.CompilationUnit">
+            <summary>
+            Gets the abstract source tree.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.Ast.AstBuilder.CodeMappings">
+            <summary>
+            <inheritdoc/>
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.Decompiler.Ast.AstBuilder.LocalVariables">
+            <summary>
+            Gets the local variables for the current decompiled type, method, etc.
+            <remarks>The key is the metadata token.</remarks>
+            </summary>
         </member>
         <member name="T:ICSharpCode.Decompiler.ILAst.ILInlining">
             <summary>
@@ -976,6 +1281,24 @@
             <summary>
             Inlines 'expr' into 'next', if possible.
             </summary>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILInlining.IsGeneratedValueTypeTemporary(ICSharpCode.Decompiler.ILAst.ILExpression,ICSharpCode.Decompiler.ILAst.ILExpression,System.Int32,ICSharpCode.Decompiler.ILAst.ILVariable,ICSharpCode.Decompiler.ILAst.ILExpression)">
+            <summary>
+            Is this a temporary variable generated by the C# compiler for instance method calls on value type values
+            </summary>
+            <param name="next">The next top-level expression</param>
+            <param name="parent">The direct parent of the load within 'next'</param>
+            <param name="pos">Index of the load within 'parent'</param>
+            <param name="v">The variable being inlined.</param>
+            <param name="inlinedExpression">The expression being inlined</param>
+        </member>
+        <member name="M:ICSharpCode.Decompiler.ILAst.ILInlining.NonAggressiveInlineInto(ICSharpCode.Decompiler.ILAst.ILExpression,ICSharpCode.Decompiler.ILAst.ILExpression,ICSharpCode.Decompiler.ILAst.ILExpression)">
+            <summary>
+            Determines whether a variable should be inlined in non-aggressive mode, even though it is not a generated variable.
+            </summary>
+            <param name="next">The next top-level expression</param>
+            <param name="parent">The direct parent of the load within 'next'</param>
+            <param name="inlinedExpression">The expression being inlined</param>
         </member>
         <member name="M:ICSharpCode.Decompiler.ILAst.ILInlining.CanInlineInto(ICSharpCode.Decompiler.ILAst.ILExpression,ICSharpCode.Decompiler.ILAst.ILVariable,ICSharpCode.Decompiler.ILAst.ILExpression)">
             <summary>
@@ -1038,9 +1361,12 @@
         <member name="F:ICSharpCode.Decompiler.ILAst.ILCode.CallvirtSetter">
             <summary>Calls the setter of a instance property (or indexer)</summary>
         </member>
-        <member name="F:ICSharpCode.Decompiler.ILAst.ILCode.PropertyAddress">
-            <summary>Simulates getting the address of a property. Used as prefix on CallGetter or CallvirtGetter.</summary>
-            <remarks>Used for postincrement for properties, and to represent the Address() method on multi-dimensional arrays</remarks>
+        <member name="F:ICSharpCode.Decompiler.ILAst.ILCode.AddressOf">
+            <summary>Simulates getting the address of the argument instruction.</summary>
+            <remarks>
+            Used for postincrement for properties, and to represent the Address() method on multi-dimensional arrays.
+            Also used when inlining a method call on a value type: "stloc(v, ...); call(M, ldloca(v));" becomes "call(M, AddressOf(...))"
+            </remarks>
         </member>
         <member name="T:ICSharpCode.Decompiler.ILAst.DefaultDictionary`2">
             <summary>

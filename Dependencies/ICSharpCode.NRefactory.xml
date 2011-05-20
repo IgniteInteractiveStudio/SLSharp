@@ -9,13 +9,18 @@
             get/set/add/remove
             </summary>
         </member>
-        <member name="M:ICSharpCode.NRefactory.CSharp.AstNode.GetChildByRole``1(ICSharpCode.NRefactory.CSharp.Role{``0})">
+        <member name="T:ICSharpCode.NRefactory.PatternMatching.INode">
+            <summary>
+            AST node that supports pattern matching.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.NRefactory.CSharp.AstNode.GetChildByRole``1(ICSharpCode.NRefactory.Role{``0})">
             <summary>
             Gets the first child with the specified role.
             Returns the role's null object if the child is not found.
             </summary>
         </member>
-        <member name="M:ICSharpCode.NRefactory.CSharp.AstNode.AddChildUnsafe(ICSharpCode.NRefactory.CSharp.AstNode,ICSharpCode.NRefactory.CSharp.Role)">
+        <member name="M:ICSharpCode.NRefactory.CSharp.AstNode.AddChildUnsafe(ICSharpCode.NRefactory.CSharp.AstNode,ICSharpCode.NRefactory.Role)">
             <summary>
             Adds a child without performing any safety checks.
             </summary>
@@ -34,22 +39,7 @@
             <summary>
             Clones the whole subtree starting at this AST node.
             </summary>
-            <remarks>Annotations are copied over to the new nodes; and any annotations implementating ICloneable will be cloned.</remarks>
-        </member>
-        <member name="M:ICSharpCode.NRefactory.CSharp.AstNode.Match(ICSharpCode.NRefactory.CSharp.AstNode)">
-            <summary>
-            Performs a pattern matching operation.
-            <c>this</c> is the pattern, <paramref name="other"/> is the AST that is being matched.
-            </summary>
-            <returns>
-            If successful, a match object containing the matched groups.
-            If the match failed, returns <c>null</c>.
-            </returns>
-            <remarks>
-            Patterns are ASTs that contain special pattern nodes (from the PatternMatching namespace).
-            However, it is also possible to match two ASTs without any pattern nodes - doing so will produce an empty match object
-            if the two ASTs are structurally identical; or will return <c>null</c> if the ASTs are not identical.
-            </remarks>
+            <remarks>Annotations are copied over to the new nodes; and any annotations implementing ICloneable will be cloned.</remarks>
         </member>
         <member name="P:ICSharpCode.NRefactory.CSharp.AstNode.Ancestors">
             <summary>
@@ -237,7 +227,7 @@
             Returns true if MemberCore is explicitly marked with CLSCompliantAttribute
             </summary>
         </member>
-        <member name="M:Mono.CSharp.InterfaceMemberBase.FindBaseMember(Mono.CSharp.MemberSpec@)">
+        <member name="M:Mono.CSharp.InterfaceMemberBase.FindBaseMember(Mono.CSharp.MemberSpec@,System.Boolean@)">
             <summary>
             Gets base method and its return type
             </summary>
@@ -728,18 +718,6 @@
             It can be used to communicate more information in APIs, e.g. "this subnode will always be a statement"
             </remarks>
         </member>
-        <member name="P:ICSharpCode.NRefactory.CSharp.Statement.PreviousStatement">
-            <summary>
-            Gets the previous statement within the current block.
-            This is usually equivalent to <see cref="!:PrevSibling"/>, but will skip any non-statements (e.g. comments)
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.NRefactory.CSharp.Statement.NextStatement">
-            <summary>
-            Gets the next statement within the current block.
-            This is usually equivalent to <see cref="!:NextSibling"/>, but will skip any non-statements (e.g. comments)
-            </summary>
-        </member>
         <member name="T:ICSharpCode.NRefactory.CSharp.CatchClause">
             <summary>
             catch (Type VariableName) { Body }
@@ -747,7 +725,7 @@
         </member>
         <member name="T:ICSharpCode.NRefactory.CSharp.CheckedStatement">
             <summary>
-            checked { Body }
+            checked BodyBlock
             </summary>
         </member>
         <member name="T:ICSharpCode.NRefactory.CSharp.PrimitiveExpression">
@@ -855,7 +833,7 @@
             Indexer has special handling in constrast to other AddXXX because the name can be driven by IndexerNameAttribute
             </summary>
         </member>
-        <member name="M:Mono.CSharp.TypeContainer.ResolveBaseTypes(Mono.CSharp.TypeExpr@)">
+        <member name="M:Mono.CSharp.TypeContainer.ResolveBaseTypes(Mono.CSharp.FullNamedExpression@)">
             <summary>
               This function computes the Base class and also the
               list of interfaces that the class or struct @c implements.
@@ -1134,17 +1112,18 @@
             Returns the namespace that is referenced; or null if no such namespace is found.
             </summary>
         </member>
+        <member name="M:ICSharpCode.NRefactory.CSharp.Resolver.MemberTypeOrNamespaceReference.AddSuffix(System.String)">
+            <summary>
+            Adds a suffix to the identifier.
+            Does not modify the existing type reference, but returns a new one.
+            </summary>
+        </member>
         <member name="T:ICSharpCode.NRefactory.CSharp.SwitchStatement">
             <summary>
             switch (Expression) { SwitchSections }
             </summary>
         </member>
-        <member name="T:ICSharpCode.NRefactory.CSharp.PatternMatching.NamedNode">
-            <summary>
-            Represents a named node within a pattern.
-            </summary>
-        </member>
-        <member name="T:ICSharpCode.NRefactory.CSharp.PatternMatching.Pattern">
+        <member name="T:ICSharpCode.NRefactory.PatternMatching.Pattern">
             <summary>
             Base class for all patterns.
             </summary>
@@ -1162,6 +1141,24 @@
         <member name="T:ICSharpCode.NRefactory.CSharp.AstType">
             <summary>
             A type reference in the C# AST.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.NRefactory.CSharp.AstType.MakePointerType">
+            <summary>
+            Creates a pointer type from this type by nesting it in a <see cref="T:ICSharpCode.NRefactory.CSharp.ComposedType"/>.
+            If this type already is a pointer type, this method just increases the PointerRank of the existing pointer type.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.NRefactory.CSharp.AstType.MakeArrayType(System.Int32)">
+            <summary>
+            Creates an array type from this type by nesting it in a <see cref="T:ICSharpCode.NRefactory.CSharp.ComposedType"/>.
+            If this type already is an array type, the additional rank is prepended to the existing array specifier list.
+            Thus, <c>new SimpleType("T").MakeArrayType(1).MakeArrayType(2)</c> will result in "T[,][]".
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.NRefactory.CSharp.AstType.MakeNullableType">
+            <summary>
+            Creates a nullable type from this type by nesting it in a <see cref="T:ICSharpCode.NRefactory.CSharp.ComposedType"/>.
             </summary>
         </member>
         <member name="M:ICSharpCode.NRefactory.CSharp.AstType.Member(System.String)">
@@ -1206,12 +1203,12 @@
               (both interfaces and abstract methods in base class)
             </summary>
         </member>
-        <member name="M:Mono.CSharp.PendingImplementation.IsInterfaceMethod(Mono.CSharp.MemberName,Mono.CSharp.TypeSpec,Mono.CSharp.MethodData)">
+        <member name="M:Mono.CSharp.PendingImplementation.IsInterfaceMethod(Mono.CSharp.MemberName,Mono.CSharp.TypeSpec,Mono.CSharp.MethodData,Mono.CSharp.MethodSpec@)">
             <summary>
               Whether the specified method is an interface method implementation
             </summary>
         </member>
-        <member name="M:Mono.CSharp.PendingImplementation.InterfaceMethod(Mono.CSharp.MemberName,Mono.CSharp.TypeSpec,Mono.CSharp.MethodData,Mono.CSharp.PendingImplementation.Operation)">
+        <member name="M:Mono.CSharp.PendingImplementation.InterfaceMethod(Mono.CSharp.MemberName,Mono.CSharp.TypeSpec,Mono.CSharp.MethodData,Mono.CSharp.PendingImplementation.Operation,Mono.CSharp.MethodSpec@)">
              <remarks>
                If a method in Type `t' (or null to look in all interfaces
                and the base abstract class) with name `Name', return type `ret_type' and
@@ -1248,7 +1245,7 @@
               implementation in a base
             </summary>
         </member>
-        <member name="M:Mono.CSharp.PendingImplementation.VerifyPendingMethods(Mono.CSharp.Report)">
+        <member name="M:Mono.CSharp.PendingImplementation.VerifyPendingMethods">
             <summary>
               Verifies that any pending abstract methods or interface methods
               were implemented.
@@ -1332,14 +1329,6 @@
             and in such case no optimization is possible
             </summary>
         </member>
-        <member name="T:Mono.CSharp.Namespace">
-             <summary>
-               Keeps track of the namespaces defined in the C# code.
-            
-               This is an Expression to allow it to be referenced in the
-               compiler parse/intermediate tree during name resolution.
-             </summary>
-        </member>
         <member name="M:Mono.CSharp.Namespace.#ctor(Mono.CSharp.Namespace,System.String)">
             <summary>
               Constructor Takes the current namespace and the
@@ -1363,12 +1352,12 @@
               the current namespace declaration
             </summary>
         </member>
-        <member name="M:Mono.CSharp.NamespaceEntry.AddUsing(Mono.CSharp.MemberName,Mono.CSharp.Location)">
+        <member name="M:Mono.CSharp.NamespaceContainer.AddUsing(Mono.CSharp.MemberName,Mono.CSharp.Location)">
             <summary>
               Records a new namespace for resolving name references
             </summary>
         </member>
-        <member name="M:Mono.CSharp.NamespaceEntry.Resolve">
+        <member name="M:Mono.CSharp.NamespaceContainer.Resolve">
             <summary>
               Used to validate that all the using clauses are correct
               after we are finished parsing all the files.  
@@ -1491,6 +1480,16 @@
             Represents an attribute.
             </summary>
         </member>
+        <member name="M:ICSharpCode.NRefactory.TypeSystem.IAttribute.GetPositionalArguments(ICSharpCode.NRefactory.TypeSystem.ITypeResolveContext)">
+            <summary>
+            Gets the positional arguments passed to the attribute.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.NRefactory.TypeSystem.IAttribute.GetNamedArguments(ICSharpCode.NRefactory.TypeSystem.ITypeResolveContext)">
+            <summary>
+            Gets the named arguments passed to the attribute.
+            </summary>
+        </member>
         <member name="M:ICSharpCode.NRefactory.TypeSystem.IAttribute.ResolveConstructor(ICSharpCode.NRefactory.TypeSystem.ITypeResolveContext)">
             <summary>
             Resolves the constructor method used for this attribute invocation.
@@ -1507,20 +1506,14 @@
             Gets the type of the attribute.
             </summary>
         </member>
-        <member name="P:ICSharpCode.NRefactory.TypeSystem.IAttribute.PositionalArguments">
-            <summary>
-            Gets the positional arguments passed to the attribute.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.NRefactory.TypeSystem.IAttribute.NamedArguments">
-            <summary>
-            Gets the named arguments passed to the attribute.
-            </summary>
-        </member>
         <member name="T:ICSharpCode.NRefactory.Documentation.XmlDocumentationProvider">
             <summary>
             Provides documentation from an .xml file (as generated by the Microsoft C# compiler).
             </summary>
+            <remarks>
+            This class first creates an in-memory index of the .xml file, and then uses that to read only the requested members.
+            This way, we avoid keeping all the documentation in memory.
+            </remarks>
         </member>
         <member name="T:ICSharpCode.NRefactory.TypeSystem.IDocumentationProvider">
             <summary>
@@ -1532,9 +1525,39 @@
             Gets the XML documentation for the specified entity.
             </summary>
         </member>
-        <member name="P:ICSharpCode.NRefactory.Documentation.XmlDocumentationProvider.XmlDocumentation">
+        <member name="M:ICSharpCode.NRefactory.Documentation.XmlDocumentationProvider.#ctor(System.String)">
             <summary>
-            Gets all entries in the documentation file.
+            Creates a new XmlDocumentationProvider.
+            </summary>
+            <param name="fileName">Name of the .xml file.</param>
+        </member>
+        <member name="M:ICSharpCode.NRefactory.Documentation.XmlDocumentationProvider.SaveIndex(System.IO.BinaryWriter)">
+            <summary>
+            Saves the index into a binary file.
+            Use <see cref="M:ICSharpCode.NRefactory.Documentation.XmlDocumentationProvider.LoadFromIndex(System.IO.BinaryReader)"/> to load the saved file.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.NRefactory.Documentation.XmlDocumentationProvider.LoadFromIndex(System.IO.BinaryReader)">
+            <summary>
+            Restores XmlDocumentationProvider from the index file (created by <see cref="M:ICSharpCode.NRefactory.Documentation.XmlDocumentationProvider.SaveIndex(System.IO.BinaryWriter)"/>).
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.NRefactory.Documentation.XmlDocumentationProvider.GetDocumentation(ICSharpCode.NRefactory.TypeSystem.IEntity)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.NRefactory.Documentation.XmlDocumentationProvider.GetDocumentation(System.String)">
+            <summary>
+            Get the documentation for the member with the specified documentation key.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.NRefactory.Documentation.XmlDocumentationProvider.IndexEntry.HashCode">
+            <summary>
+            Hash code of the documentation tag
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.NRefactory.Documentation.XmlDocumentationProvider.IndexEntry.PositionInFile">
+            <summary>
+            Position in the .xml file where the documentation starts
             </summary>
         </member>
         <member name="P:ICSharpCode.NRefactory.CSharp.ConstructorDeclaration.Name">
@@ -1551,7 +1574,7 @@
         </member>
         <member name="T:ICSharpCode.NRefactory.CSharp.UncheckedStatement">
             <summary>
-            unchecked { Body }
+            unchecked BodyBlock
             </summary>
         </member>
         <member name="T:ICSharpCode.NRefactory.CSharp.ContinueStatement">
@@ -1563,6 +1586,20 @@
             <summary>
             [AttributeTarget: Attributes]
             </summary>
+        </member>
+        <member name="M:ICSharpCode.NRefactory.PatternMatching.PatternExtensions.Match(ICSharpCode.NRefactory.PatternMatching.INode,ICSharpCode.NRefactory.PatternMatching.INode)">
+            <summary>
+            Performs a pattern matching operation.
+            <c>this</c> is the pattern, <paramref name="other"/> is the AST that is being matched.
+            </summary>
+            <returns>
+            A match object. Check <see cref="!:Match.Success"/> to see whether the match was successful.
+            </returns>
+            <remarks>
+            Patterns are ASTs that contain special pattern nodes (from the PatternMatching namespace).
+            However, it is also possible to match two ASTs without any pattern nodes -
+            doing so will produce a successful match if the two ASTs are structurally identical.
+            </remarks>
         </member>
         <member name="T:ICSharpCode.NRefactory.CSharp.TypeParameterDeclaration">
             <summary>
@@ -1779,9 +1816,9 @@
             Attribute(Arguments)
             </summary>
         </member>
-        <member name="T:ICSharpCode.NRefactory.CSharp.ArgListExpression">
+        <member name="T:ICSharpCode.NRefactory.PatternMatching.NamedNode">
             <summary>
-            Represents the undocumented __arglist keyword.
+            Represents a named node within a pattern.
             </summary>
         </member>
         <member name="T:ICSharpCode.NRefactory.CSharp.IAstVisitor`2">
@@ -2109,6 +2146,11 @@
             new(), struct and class constraints are represented using a PrimitiveType "new", "struct" or "class"
             </remarks>
         </member>
+        <member name="T:ICSharpCode.NRefactory.CSharp.UndocumentedExpression">
+            <summary>
+            Represents undocumented expressions.
+            </summary>
+        </member>
         <member name="T:Mono.CSharp.FixedField">
             <summary>
             Fixed buffer implementation
@@ -2139,9 +2181,19 @@
             Adds the 'Invoke', 'BeginInvoke', 'EndInvoke' methods, and a constructor, to the <paramref name="delegateType"/>.
             </summary>
         </member>
-        <member name="T:ICSharpCode.NRefactory.CSharp.PatternMatching.IPatternAstVisitor`2">
+        <member name="T:ICSharpCode.NRefactory.PatternMatching.IPatternAstVisitor`2">
             <summary>
-            Extended AST visitor that works for patterns.
+            AST visitor that works for patterns.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.NRefactory.PatternMatching.Backreference">
+            <summary>
+            Matches the last entry in the specified named group.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.NRefactory.PatternMatching.IdentifierExpressionBackreference">
+            <summary>
+            Matches identifier expressions that have the same identifier as the referenced variable/type definition/method definition.
             </summary>
         </member>
         <member name="T:ICSharpCode.NRefactory.CSharp.UncheckedExpression">
@@ -2893,6 +2945,11 @@
             fixed (Type Variables) EmbeddedStatement
             </summary>
         </member>
+        <member name="P:ICSharpCode.NRefactory.CSharp.Identifier.IsVerbatim">
+            <summary>
+            True if this is a verbatim identifier (starting with '@')
+            </summary>
+        </member>
         <member name="T:ICSharpCode.NRefactory.CSharp.CheckedExpression">
             <summary>
             checked(Expression)
@@ -2907,11 +2964,6 @@
             <summary>
             Represents an AstType as an expression.
             This is used when calling a method on a primitive type: "int.Parse()"
-            </summary>
-        </member>
-        <member name="T:Mono.CSharp.ParameterBase">
-            <summary>
-              Abstract Base class for parameters of a method.
             </summary>
         </member>
         <member name="T:ICSharpCode.NRefactory.CSharp.Resolver.MethodGroupResolveResult">
@@ -3103,6 +3155,21 @@
             </summary>
             <returns>0 = neither is better; 1 = t1 is better; 2 = t2 is better</returns>
         </member>
+        <member name="M:ICSharpCode.NRefactory.CSharp.OperatorDeclaration.GetOperatorType(System.String)">
+            <summary>
+            Gets the operator type from the method name, or null, if the method does not represent one of the known operator types.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.NRefactory.CSharp.OperatorDeclaration.GetName(ICSharpCode.NRefactory.CSharp.OperatorType)">
+            <summary>
+            Gets the method name for the operator type. ("op_Addition", "op_Implicit", etc.)
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.NRefactory.CSharp.OperatorDeclaration.GetToken(ICSharpCode.NRefactory.CSharp.OperatorType)">
+            <summary>
+            Gets the token for the operator type ("+", "implicit", etc.)
+            </summary>
+        </member>
         <member name="T:ICSharpCode.NRefactory.CSharp.ThrowStatement">
             <summary>
             throw Expression;
@@ -3156,7 +3223,11 @@
             <summary>Dereferencing (*a)</summary>
         </member>
         <!-- Badly formed XML comment ignored for member "F:ICSharpCode.NRefactory.CSharp.UnaryOperatorType.AddressOf" -->
-        <!-- Badly formed XML comment ignored for member "T:ICSharpCode.NRefactory.CSharp.FixedVariableInitializer" -->
+        <member name="T:ICSharpCode.NRefactory.CSharp.FixedVariableInitializer">
+            <summary>
+            Name [ CountExpression ]
+            </summary>
+        </member>
         <member name="M:Mono.CSharp.TypeManager.CSharpName(Mono.CSharp.TypeSpec)">
             <summary>
               Returns the C# name of a type if possible, or the full type name otherwise
@@ -3221,9 +3292,9 @@
             using Alias = Import;
             </summary>
         </member>
-        <member name="T:ICSharpCode.NRefactory.CSharp.PatternMatching.Choice">
+        <member name="T:ICSharpCode.NRefactory.PatternMatching.Match">
             <summary>
-            Matches one of several alternatives.
+            Represents the result of a pattern matching operation.
             </summary>
         </member>
         <member name="T:ICSharpCode.NRefactory.CSharp.AssignmentExpression">
@@ -3358,6 +3429,11 @@
         <member name="M:ICSharpCode.NRefactory.CSharp.Analysis.ControlFlowGraphBuilder.NodeCreationVisitor.CreateConnectedEndNode(ICSharpCode.NRefactory.CSharp.Statement,ICSharpCode.NRefactory.CSharp.Analysis.ControlFlowNode)">
             <summary>
             Creates an end node for <c>stmt</c> and connects <c>from</c> with the new node.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.NRefactory.CSharp.AnonymousTypeCreateExpression">
+            <summary>
+            new { [ExpressionList] }
             </summary>
         </member>
         <member name="T:ICSharpCode.NRefactory.CSharp.ArrayCreateExpression">
@@ -3539,6 +3615,12 @@
             Type parameter of a generic class/method.
             </summary>
         </member>
+        <member name="P:ICSharpCode.NRefactory.TypeSystem.ITypeParameter.OwnerType">
+            <summary>
+            Get the type of this type parameter's owner.
+            </summary>
+            <returns>EntityType.TypeDefinition or EntityType.Method</returns>
+        </member>
         <member name="P:ICSharpCode.NRefactory.TypeSystem.ITypeParameter.Index">
             <summary>
             Gets the index of the type parameter in the type parameter list of the owning method/class.
@@ -3549,27 +3631,9 @@
             Gets the list of attributes declared on this type parameter.
             </summary>
         </member>
-        <member name="P:ICSharpCode.NRefactory.TypeSystem.ITypeParameter.Parent">
-            <summary>
-            Gets the class or method for which this type parameter is defined.
-            This property never returns null.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.NRefactory.TypeSystem.ITypeParameter.ParentMethod">
-            <summary>
-            The method this type parameter is defined for.
-            This property returns null if the type parameter belongs to a class.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.NRefactory.TypeSystem.ITypeParameter.ParentClass">
-            <summary>
-            The class this type parameter is defined for.
-            This property returns null if the type parameter belongs to a method.
-            </summary>
-        </member>
         <member name="P:ICSharpCode.NRefactory.TypeSystem.ITypeParameter.Constraints">
             <summary>
-            Gets the contraints of this type parameter.
+            Gets the constraints of this type parameter.
             </summary>
         </member>
         <member name="P:ICSharpCode.NRefactory.TypeSystem.ITypeParameter.HasDefaultConstructorConstraint">
@@ -3602,6 +3666,11 @@
         <member name="P:ICSharpCode.NRefactory.TypeSystem.ITypeParameter.UnboundTypeParameter">
             <summary>
             If this type parameter was bound, returns the unbound version of it.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.NRefactory.TypeSystem.ITypeParameter.Region">
+            <summary>
+            Gets the region where the type parameter is defined.
             </summary>
         </member>
         <member name="T:ICSharpCode.NRefactory.CSharp.Resolver.ResolveVisitorNavigationMode">
@@ -3693,6 +3762,11 @@
             Handles #pragma warning
             </summary>
         </member>
+        <member name="T:Mono.CSharp.ParameterBase">
+            <summary>
+              Abstract Base class for parameters of a method.
+            </summary>
+        </member>
         <member name="T:Mono.CSharp.ReturnParameter">
             <summary>
             Class for applying custom attributes on the return type
@@ -3753,6 +3827,12 @@
             Represents a simple C# name. (a single non-qualified identifier with an optional list of type arguments)
             </summary>
         </member>
+        <member name="M:ICSharpCode.NRefactory.CSharp.Resolver.SimpleTypeOrNamespaceReference.AddSuffix(System.String)">
+            <summary>
+            Adds a suffix to the identifier.
+            Does not modify the existing type reference, but returns a new one.
+            </summary>
+        </member>
         <member name="T:ICSharpCode.NRefactory.CSharp.ExpressionStatement">
             <summary>
             Expression;
@@ -3766,16 +3846,6 @@
         <member name="T:ICSharpCode.NRefactory.CSharp.TypeDeclaration">
             <summary>
             class Name&lt;TypeParameters&gt; : BaseTypes where Constraints;
-            </summary>
-        </member>
-        <member name="T:ICSharpCode.NRefactory.CSharp.PatternMatching.Backreference">
-            <summary>
-            Matches the last entry in the specified named group.
-            </summary>
-        </member>
-        <member name="T:ICSharpCode.NRefactory.CSharp.PatternMatching.IdentifierExpressionBackreference">
-            <summary>
-            Matches identifier expressions that have the same identifier as the referenced variable/type definition/method definition.
             </summary>
         </member>
         <member name="T:ICSharpCode.NRefactory.CSharp.StackAllocExpression">
@@ -3849,11 +3919,6 @@
         <member name="T:ICSharpCode.NRefactory.CSharp.ForeachStatement">
             <summary>
             foreach (Type VariableName in InExpression) EmbeddedStatement
-            </summary>
-        </member>
-        <member name="T:ICSharpCode.NRefactory.CSharp.PatternMatching.Repeat">
-            <summary>
-            Represents an optional node.
             </summary>
         </member>
         <member name="T:ICSharpCode.NRefactory.CSharp.ParenthesizedExpression">
@@ -4053,29 +4118,10 @@
                target_type or null if an implicit conversion is not possible.
              </summary>
         </member>
-        <member name="M:Mono.CSharp.Convert.ImplicitConversionExists(Mono.CSharp.ResolveContext,Mono.CSharp.Expression,Mono.CSharp.TypeSpec)">
-            <summary>
-             Same as ImplicitStandardConversionExists except that it also looks at
-             implicit user defined conversions - needed for overload resolution
-            </summary>
-        </member>
-        <member name="M:Mono.CSharp.Convert.ImplicitStandardConversionExists(Mono.CSharp.Expression,Mono.CSharp.TypeSpec)">
-             <summary>
-              Determines if a standard implicit conversion exists from
-              expr_type to target_type
-            
-             </summary>
-        </member>
         <member name="M:Mono.CSharp.Convert.FindMostEncompassedType(System.Collections.Generic.IEnumerable{Mono.CSharp.TypeSpec})">
             <summary>
              Finds "most encompassed type" according to the spec (13.4.2)
              amongst the methods in the MethodGroupExpr
-            </summary>
-        </member>
-        <member name="M:Mono.CSharp.Convert.FindMostEncompassingType(System.Collections.Generic.IList{Mono.CSharp.TypeSpec})">
-            <summary>
-             Finds "most encompassing type" according to the spec (13.4.2)
-             amongst the types in the given set
             </summary>
         </member>
         <member name="M:Mono.CSharp.Convert.FindMostSpecificTarget(System.Collections.Generic.IList{Mono.CSharp.MethodSpec},Mono.CSharp.TypeSpec,System.Boolean)">
@@ -4291,34 +4337,6 @@
             Gets the default accessor with the specified accessibility (and without attributes or region).
             </summary>
         </member>
-        <member name="T:ICSharpCode.NRefactory.Documentation.BinaryDocumentationProvider">
-            <summary>
-            Provides xml documentation from a binary cache file.
-            This allows providing XML documentation without having to read the whole documentation into memory.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.NRefactory.Documentation.BinaryDocumentationProvider.Save(System.String,System.DateTime,System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
-            <summary>
-            Saves the xml documentation into a on-disk database file.
-            </summary>
-            <param name="fileName">Filename of the database</param>
-            <param name="fileDate">Last-modified date of the .xml file</param>
-            <param name="xmlDocumentation">The xml documentation that should be written to disk.</param>
-        </member>
-        <member name="M:ICSharpCode.NRefactory.Documentation.BinaryDocumentationProvider.Load(System.String,System.DateTime)">
-            <summary>
-            Loads binary documentation.
-            </summary>
-            <remarks>
-            Don't forget to dispose the BinaryDocumentationProvider.
-            </remarks>
-            <param name="fileName">The name of the binary cache file.</param>
-            <param name="fileDate">The file date of the original XML file. Loading will fail if the cached data was generated
-            from a different file date than the original XML file.</param>
-            <returns>
-            The BinaryDocumentationProvider representing the file's content; or null if loading failed.
-            </returns>
-        </member>
         <member name="T:ICSharpCode.NRefactory.CSharp.Resolver.ErrorResolveResult">
             <summary>
             Represents a resolve error.
@@ -4336,6 +4354,23 @@
         <member name="F:ICSharpCode.NRefactory.CSharp.Modifiers.Any">
             <summary>
             Special value used to match any modifiers during pattern matching.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.NRefactory.PatternMatching.AnyNode">
+            <summary>
+            Matches any node.
+            </summary>
+            <remarks>Does not match null nodes.</remarks>
+        </member>
+        <member name="T:ICSharpCode.NRefactory.PatternMatching.Choice">
+            <summary>
+            Matches one of several alternatives.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.NRefactory.CSharp.Resolver.AttributeTypeReference">
+            <summary>
+            Type reference used within an attribute.
+            Looks up both 'withoutSuffix' and 'withSuffix' and returns the type that exists.
             </summary>
         </member>
         <member name="T:ICSharpCode.NRefactory.CSharp.QueryContinuationClause">
@@ -4574,7 +4609,7 @@
             Writes all specials from start to end (exclusive). Does not touch the positionStack.
             </summary>
         </member>
-        <member name="M:ICSharpCode.NRefactory.CSharp.OutputVisitor.WriteSpecialsUpToRole(ICSharpCode.NRefactory.CSharp.Role)">
+        <member name="M:ICSharpCode.NRefactory.CSharp.OutputVisitor.WriteSpecialsUpToRole(ICSharpCode.NRefactory.Role)">
             <summary>
             Writes all specials between the current position (in the positionStack) and the next
             node with the specified role. Advances the current position.
@@ -4593,7 +4628,7 @@
             <param name="nextNode">The next node after the comma.</param>
             <param name="noSpacesAfterComma">When set prevents printing a space after comma.</param>
         </member>
-        <member name="M:ICSharpCode.NRefactory.CSharp.OutputVisitor.WriteKeyword(System.String,ICSharpCode.NRefactory.CSharp.Role{ICSharpCode.NRefactory.CSharp.CSharpTokenNode})">
+        <member name="M:ICSharpCode.NRefactory.CSharp.OutputVisitor.WriteKeyword(System.String,ICSharpCode.NRefactory.Role{ICSharpCode.NRefactory.CSharp.CSharpTokenNode})">
             <summary>
             Writes a keyword, and all specials up to
             </summary>
@@ -4613,23 +4648,23 @@
             Determines whether the specified identifier is a keyword in the given context.
             </summary>
         </member>
-        <member name="T:ICSharpCode.NRefactory.CSharp.Role">
+        <member name="T:ICSharpCode.NRefactory.Role">
             <summary>
             Represents the role a node plays within its parent.
             </summary>
         </member>
-        <member name="M:ICSharpCode.NRefactory.CSharp.Role.IsValid(ICSharpCode.NRefactory.CSharp.AstNode)">
+        <member name="M:ICSharpCode.NRefactory.Role.IsValid(System.Object)">
             <summary>
             Gets whether the specified node is valid in this role.
             </summary>
         </member>
-        <member name="T:ICSharpCode.NRefactory.CSharp.Role`1">
+        <member name="T:ICSharpCode.NRefactory.Role`1">
             <summary>
             Represents the role a node plays within its parent.
             All nodes with this role have type T.
             </summary>
         </member>
-        <member name="P:ICSharpCode.NRefactory.CSharp.Role`1.NullObject">
+        <member name="P:ICSharpCode.NRefactory.Role`1.NullObject">
             <summary>
             Gets the null object used when there's no node with this role.
             Not every role has a null object; this property returns null for roles without a null object.
@@ -4638,6 +4673,21 @@
             Roles used for non-collections should always have a null object, so that no AST property returns null.
             However, roles used for collections only may leave out the null object.
             </remarks>
+        </member>
+        <member name="T:ICSharpCode.NRefactory.PatternMatching.BacktrackingInfo">
+            <summary>
+            Container for the backtracking info.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.NRefactory.CSharp.Resolver.ConstantValues.PrimitiveConstantExpression">
+            <summary>
+            C#'s equivalent to the SimpleConstantValue.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.NRefactory.CSharp.Resolver.ConstantValues.ConstantArrayCreation">
+            <summary>
+            Represents an array creation (as used within an attribute argument)
+            </summary>
         </member>
         <member name="T:ICSharpCode.NRefactory.Utils.CacheManager">
             <summary>
@@ -4841,6 +4891,11 @@
         <member name="F:ICSharpCode.NRefactory.CSharp.NodeType.TypeDeclaration">
             <summary>
             Type or delegate declaration
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.NRefactory.CSharp.NodeType.Pattern">
+            <summary>
+            Placeholder for a pattern
             </summary>
         </member>
         <member name="T:Mono.CSharp.EmitContext">
@@ -5097,6 +5152,16 @@
             or "goto default;"
             </summary>
         </member>
+        <member name="T:ICSharpCode.NRefactory.PatternMatching.Repeat">
+            <summary>
+            Represents an optional node.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.NRefactory.CSharp.Resolver.MapTypeIntoNewContext">
+            <summary>
+            Converts a type by replacing all type definitions with the equivalent definitions in the new context.
+            </summary>
+        </member>
         <member name="T:ICSharpCode.NRefactory.CSharp.NamedArgumentExpression">
             <summary>
             Represents a named argument passed to a method or attribute.
@@ -5193,16 +5258,6 @@
         <member name="T:ICSharpCode.NRefactory.CSharp.LockStatement">
             <summary>
             lock (Expression) EmbeddedStatement;
-            </summary>
-        </member>
-        <member name="T:ICSharpCode.NRefactory.CSharp.PatternMatching.Match">
-            <summary>
-            Represents the result of a pattern matching operation.
-            </summary>
-        </member>
-        <member name="T:ICSharpCode.NRefactory.CSharp.PatternMatching.AnyNode">
-            <summary>
-            Matches any node.
             </summary>
         </member>
         <member name="T:ICSharpCode.NRefactory.CSharp.SizeOfExpression">
