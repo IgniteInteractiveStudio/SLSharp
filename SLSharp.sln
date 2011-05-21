@@ -34,7 +34,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIS.SLSharp.Bindings.XNA", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIS.SLSharp.Examples.XNA", "IIS.SLSharp.Examples.XNA\IIS.SLSharp.Examples.XNA.csproj", "{83127CAD-D3FB-473C-A798-3599AD5BD459}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIS.SlSharp.Bindings.SlimDX", "IIS.SlSharp.Bindings.SlimDX\IIS.SlSharp.Bindings.SlimDX.csproj", "{63CF8750-EBA9-40A7-9556-2F4EBF9EF922}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIS.SLSharp.Bindings.SlimDX", "IIS.SLSharp.Bindings.SlimDX\IIS.SLSharp.Bindings.SlimDX.csproj", "{63CF8750-EBA9-40A7-9556-2F4EBF9EF922}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIS.SLSharp.Bindings.MOGRE", "IIS.SLSharp.Bindings.MOGRE\IIS.SLSharp.Bindings.MOGRE.csproj", "{08922A61-B3E4-4A4D-8476-59F1937254A2}"
 EndProject
