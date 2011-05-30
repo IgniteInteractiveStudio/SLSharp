@@ -4,7 +4,7 @@ using System.Linq;
 using Axiom.Core;
 using Axiom.Graphics;
 using Axiom.Math;
-using IIS.SLSharp.Bindings.Axiom.GLSL;
+using IIS.SLSharp.Bindings.Axiom;
 using IIS.SLSharp.Examples.Axiom.Shaders;
 using IIS.SLSharp.Shaders;
 
@@ -33,7 +33,7 @@ namespace IIS.SLSharp.Examples.Axiom
 
         public void OnLoad()
         {
-            Bindings.Axiom.GLSL.SLSharp.Init();
+            Bindings.Axiom.SLSharp.Init();
             Shader.DebugMode = true;
 
             _shader = Shader.CreateSharedShader<SimpleShader>();
@@ -137,46 +137,15 @@ namespace IIS.SLSharp.Examples.Axiom
             _camera = _scene.CreateCamera("MainCamera");
 
 
+            var mat = _shader.ToMaterial();
 
-            //var mat = (Material)MaterialManager.Instance.Resources.First(m => m.Name == "BaseWhiteNoLighting");
-            var mat = (Material)MaterialManager.Instance.Create("test", ResourceGroupManager.DefaultResourceGroupName);
-            var pass = mat.GetTechnique(0).GetPass(0);
-            pass.LightingEnabled = false;
-            //pass.CreateTextureUnitState("test.png");
+            // SL# on OGRE: bind auto semantic to a uniform!
+            // (we might automate this via semantic attributes within the SL# shaders in future!)
+            _shader.SetAuto(() => _shader.ModelviewProjection, GpuProgramParameters.AutoConstantType.WorldViewProjMatrix);
 
-
-            var prog = (Bindings.Axiom.GLSL.Program)_shader.Program;
-            pass.SetVertexProgram(prog.VertexShader.Name);
-            pass.SetFragmentProgram(prog.PixelShader.Name);
-
-            // var mvp = Shader.UniformName(() => _shader.ModelviewProjection);
-            // var idx = pass.VertexProgramParameters.GetParamIndex(mvp);
-
-            var mvpIdx = Shader.UniformLocation(_shader, () => _shader.ModelviewProjection);
-            pass.VertexProgramParameters.SetAutoConstant(mvpIdx, GpuProgramParameters.AutoConstantType.WorldViewProjMatrix);
-
-            //pass.VertexProgramParameters.SetAutoConstant(0, GpuProgramParameters.AutoConstantType.VertexWinding);
-
-            var cd = new DirectoryInfo(Directory.GetCurrentDirectory());
-            var dir = cd.Parent.Parent.CreateSubdirectory("IIS.SLSharp.Examples.Axiom").FullName;
-            //pass.FragmentProgram = 
-
-
+            _patchEntity.MaterialName = mat.Name;
+            //_patchEntity.Material = mat;
            
-            //var prog = GpuProgramManager.Instance.Create("slshader", ResourceGroupManager.DefaultResourceGroupName);
-            
-            
-            ResourceGroupManager.Instance.AddResourceLocation(dir, "Folder");
-
-            
-
-            _patchEntity.MaterialName = "test";
-
-            var light = _scene.CreateLight("Light0");
-            light.Position = new Vector3(100.0f, 0.0f, 0.0f);
-            light.Diffuse = new ColorEx(1.0f, 1.0f, 1.0f);
-            light.Specular = new ColorEx(1.0f, 0.0f, 0.0f);
-            light.Type = LightType.Point;
 
             _scene.RootSceneNode.AttachObject(_patchEntity);
 
@@ -207,8 +176,8 @@ namespace IIS.SLSharp.Examples.Axiom
             _camera.LookAt(look);
             _camera.Position = cam + look;
 
-            var mvp = _camera.ProjectionMatrix * _camera.ViewMatrix;
-            _shader.ModelviewProjection = mvp.ToMatrix4F();
+            //var mvp = _camera.ProjectionMatrix * _camera.ViewMatrix;
+            //_shader.ModelviewProjection = mvp.ToMatrix4F();
             _shader.Blue = (float)Math.Sin(angle * 8.0f);
         }
       

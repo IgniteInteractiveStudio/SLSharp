@@ -42,19 +42,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dependencies\Axiom.dll</HintPath>
     </Reference>
-    <Reference Include="Axiom.RenderSystems.OpenGL.OpenTK, Version=0.8.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dependencies\Axiom.RenderSystems.OpenGL.OpenTK.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenTK.Compatibility, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dependencies\OpenTK.Compatibility.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -62,8 +53,7 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="GLSL\Bindings.cs" />
-    <Compile Include="HLSL\Bindings.cs" />
+    <Compile Include="Bindings.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IIS.SLSharp\IIS.SLSharp.csproj">
