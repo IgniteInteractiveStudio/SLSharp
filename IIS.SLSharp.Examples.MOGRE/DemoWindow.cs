@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using IIS.SLSharp.Bindings.MOGRE.GLSL;
+using IIS.SLSharp.Bindings.MOGRE;
 using IIS.SLSharp.Examples.Axiom.Shaders;
 using IIS.SLSharp.Shaders;
 using Mogre;
@@ -33,7 +33,7 @@ namespace IIS.SLSharp.Examples.MOGRE
             _scene = _root.CreateSceneManager("DefaultSceneManager", "SLSharpInstance");
             _scene.ClearScene();
 
-            Bindings.MOGRE.GLSL.SLSharp.Init();
+            Bindings.MOGRE.SLSharp.Init();
             //Shader.DebugMode = true;
 
             _shader = Shader.CreateSharedShader<SimpleShader>();

@@ -52,7 +52,7 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="GLSL\Bindings.cs" />
+    <Compile Include="Bindings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

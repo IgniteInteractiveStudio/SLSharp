@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Descriptions;
 using IIS.SLSharp.Reflection;
@@ -12,9 +11,8 @@ using IIS.SLSharp.Translation;
 using IIS.SLSharp.Translation.GLSL;
 using IIS.SLSharp.Translation.HLSL;
 using Mogre;
-using SceneQueryListener = Ogre.SceneQueryListener;
 
-namespace IIS.SLSharp.Bindings.MOGRE.GLSL
+namespace IIS.SLSharp.Bindings.MOGRE
 {
     public enum ShaderLanguage
     {
