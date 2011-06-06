@@ -383,7 +383,7 @@ namespace IIS.SLSharp.Shaders
         #region gvec4 texture (gsampler2D sampler, vec2 P [, float bias] )
 
         /// <summary>Use the texture coordinate P to do a texture lookup in the texture currently bound to sampler.</summary>
-        protected static vec4 texture(sampler2D sampler, vec2 P)
+        protected internal static vec4 texture(sampler2D sampler, vec2 P)
         {
             throw _invalidAccess;
         }

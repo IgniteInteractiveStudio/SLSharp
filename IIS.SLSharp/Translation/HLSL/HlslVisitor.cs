@@ -120,6 +120,7 @@ namespace IIS.SLSharp.Translation.HLSL
         }
 
         public HlslVisitor(BlockStatement block, CustomAttribute attr, ResolveVisitor resolver)
+            : this()
         {
             _attr = attr;
             _resolver = resolver;
