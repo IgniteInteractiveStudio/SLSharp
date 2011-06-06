@@ -54,7 +54,9 @@ namespace IIS.SLSharp.Translation.HLSL
         // Dispatcher
         private StringBuilder VisitShaderDefCall(MethodDefinition m, InvocationExpression invocationExpression)
         {
-            return _handlers[m.Resolve().MetadataToken.ToInt32()](m, invocationExpression);
+            Func<MethodDefinition, InvocationExpression, StringBuilder> handler;
+            return _handlers.TryGetValue(m.Resolve().MetadataToken.ToInt32(), out handler) ? 
+                handler(m, invocationExpression) : PassThrough(m, invocationExpression);
         }
     }
 }
