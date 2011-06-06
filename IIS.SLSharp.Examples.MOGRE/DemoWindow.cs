@@ -2,6 +2,7 @@
 using System.IO;
 using IIS.SLSharp.Bindings.MOGRE;
 using IIS.SLSharp.Examples.MOGRE.Shaders;
+using IIS.SLSharp.Examples.MOGRE.Textures;
 using IIS.SLSharp.Shaders;
 using Mogre;
 using Math = System.Math;
@@ -16,6 +17,7 @@ namespace IIS.SLSharp.Examples.MOGRE
         private Entity _patchEntity;
         private Camera _camera;
         private readonly RenderWindow _window;
+        private WangMap _wang;
 
         public DemoWindow(Root root, RenderWindow renderWindow)
         {
@@ -36,6 +38,8 @@ namespace IIS.SLSharp.Examples.MOGRE
             Bindings.MOGRE.SLSharp.Init();
             //Shader.DebugMode = true;
 
+            _wang = new WangMap(64, 64);
+
             _shader = Shader.CreateSharedShader<SimpleShader>();
 
             _patchEntity = _scene.CreateEntity("Entity1", "test.mesh");
@@ -48,9 +52,12 @@ namespace IIS.SLSharp.Examples.MOGRE
             _shader.SetAuto(() => _shader.ModelviewProjection, GpuProgramParameters.AutoConstantType.ACT_WORLDVIEWPROJ_MATRIX);
 
             // Set a texture
+            /*
             var smp = _shader.Sampler(() => _shader.Texture);
             smp.SetTextureName(TextureManager.Singleton.Load("test.png", ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME).Name);
+            smp.SetTextureName(_wang.AsTexture.Name);
             smp.SetTextureFiltering(FilterOptions.FO_POINT, FilterOptions.FO_POINT, FilterOptions.FO_POINT);
+             */
 
             _patchEntity.SetMaterial(mat);
 
@@ -83,7 +90,7 @@ namespace IIS.SLSharp.Examples.MOGRE
 
 
             // SL# allows direct manipulation of uniforms like this!
-            _shader.Blue = (float)Math.Sin(angle * 8.0f);
+            //_shader.Blue = (float)Math.Sin(angle * 8.0f);
           
 
             return !_window.IsClosed;

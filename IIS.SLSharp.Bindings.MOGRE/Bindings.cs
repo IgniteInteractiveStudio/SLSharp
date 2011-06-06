@@ -324,6 +324,7 @@ namespace IIS.SLSharp.Bindings.MOGRE
                 return tu;
             tu = prog.Pass.CreateTextureUnitState();
             tu.Name = name;
+            tu.TextureCoordSet = (uint)Shader.UniformLocation(shader, loc);
             return tu;
         }
 

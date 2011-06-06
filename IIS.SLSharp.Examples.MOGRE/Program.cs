@@ -28,7 +28,7 @@ namespace IIS.SLSharp.Examples.MOGRE
                     if (v > 2 || v == 0)
                         continue;
                      */
-                    const int v = 0;
+                    const int v = 1;
 
                     if (v == 1)
                     {

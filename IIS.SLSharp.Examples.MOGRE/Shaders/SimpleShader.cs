@@ -1,10 +1,16 @@
 ﻿using IIS.SLSharp.Annotations;
+using IIS.SLSharp.Examples.MOGRE.Textures;
 using IIS.SLSharp.Shaders;
+using IIS.SLSharp.Bindings.MOGRE;
+using Mogre;
 
 namespace IIS.SLSharp.Examples.MOGRE.Shaders
 {
     public abstract class SimpleShader : Shader
     {
+        // demonstrate using a shared library
+        public WangShader Wang { get; private set; }
+
         // expose a simple uniform (this can be directly accessed from client code)
         [Uniform]
         public abstract float Blue { set; get; }
@@ -30,8 +36,9 @@ namespace IIS.SLSharp.Examples.MOGRE.Shaders
         [FragmentShader(true)]
         protected void FragmentMain()
         {
-            var c = texture(Texture, _uv);
-            Color = new vec4(c.rg, Blue, 1.0f);
+            //var c = texture(Texture, _uv);
+            var c = Wang.WangAt(_uv);
+            Color = new vec4(c.rgb, 1.0f);
         }
 
         [VertexShader(true)]
@@ -44,7 +51,30 @@ namespace IIS.SLSharp.Examples.MOGRE.Shaders
         // resource setup code
         protected SimpleShader()
         {
-            Link();
+            Wang = CreateSharedShader<WangShader>();
+
+
+            var tiles = TextureManager.Singleton.Load("test.png", ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME);
+            tiles.Target.NumMipmaps = 5;
+
+            Wang.WangTable = new WangMap(64, 64).AsTexture;
+            Wang.Tiles = tiles;
+
+            Link(new[] { Wang });
         }
+
+
+        public override void Dispose()
+        {
+            Wang.Dispose();
+            base.Dispose();
+        }
+
+        public override void Begin()
+        {
+            Wang.BeginLibrary(this);
+            base.Begin();
+        }
+
     }
 }
