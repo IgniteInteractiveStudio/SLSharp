@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -201,6 +202,11 @@ namespace IIS.SLSharp.Bindings.MOGRE
             VertexShader = vs;
             PixelShader = ps;
 
+            Debug.WriteLine("VS:");
+            Debug.WriteLine(vs.Source);
+            Debug.WriteLine("PS:");
+            Debug.WriteLine(ps.Source);
+
             var mm = MaterialManager.Singleton;
 
             Material = mm.Create(name, "SLSharp");
@@ -243,7 +249,8 @@ namespace IIS.SLSharp.Bindings.MOGRE
             if (!fd.IsNull)
                 return (int)(fd.logicalIndex | 0x80000000);
 
-            throw new NotImplementedException();
+            return -1; // invalid!
+            //throw new NotImplementedException();
         }
 
         public string GetUniformName(int idx)
@@ -306,6 +313,18 @@ namespace IIS.SLSharp.Bindings.MOGRE
             var name = Shader.UniformName(loc);
             var prog = (Program)shader.Program;
             prog.SetAuto(name, ac);
+        }
+
+        public static TextureUnitState Sampler<T>(this Shader shader, Expression<Func<T>> loc)
+        {
+            var name = Shader.UniformName(loc);
+            var prog = (Program)shader.Program;
+            var tu = prog.Pass.GetTextureUnitState(name);
+            if (tu != null)
+                return tu;
+            tu = prog.Pass.CreateTextureUnitState();
+            tu.Name = name;
+            return tu;
         }
 
         #region Passive Methods
@@ -393,6 +412,8 @@ namespace IIS.SLSharp.Bindings.MOGRE
 
         private static GpuProgramParameters GetParams(ref int location)
         {
+            if (location == -1)
+                throw new NotImplementedException();
             if ((location & 0x80000000) == 0)
                 return Program.CurrentProgram.Pass.GetVertexProgramParameters();
             location &= 0x7FFFFFFF;
