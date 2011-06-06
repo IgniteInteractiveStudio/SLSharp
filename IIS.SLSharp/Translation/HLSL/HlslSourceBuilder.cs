@@ -125,22 +125,22 @@ namespace IIS.SLSharp.Translation.HLSL
                 case UsageSemantic.Color14: return "COLOR14";
                 case UsageSemantic.Color15: return "COLOR15";
 
-                case UsageSemantic.Texcoord0: return "COLOR0";
-                case UsageSemantic.Texcoord1: return "COLOR1";
-                case UsageSemantic.Texcoord2: return "COLOR2";
-                case UsageSemantic.Texcoord3: return "COLOR3";
-                case UsageSemantic.Texcoord4: return "COLOR4";
-                case UsageSemantic.Texcoord5: return "COLOR5";
-                case UsageSemantic.Texcoord6: return "COLOR6";
-                case UsageSemantic.Texcoord7: return "COLOR7";
-                case UsageSemantic.Texcoord8: return "COLOR8";
-                case UsageSemantic.Texcoord9: return "COLOR9";
-                case UsageSemantic.Texcoord10: return "COLOR10";
-                case UsageSemantic.Texcoord11: return "COLOR11";
-                case UsageSemantic.Texcoord12: return "COLOR12";
-                case UsageSemantic.Texcoord13: return "COLOR13";
-                case UsageSemantic.Texcoord14: return "COLOR14";
-                case UsageSemantic.Texcoord15: return "COLOR15";
+                case UsageSemantic.Texcoord0: return "TEXCOORD0";
+                case UsageSemantic.Texcoord1: return "TEXCOORD1";
+                case UsageSemantic.Texcoord2: return "TEXCOORD2";
+                case UsageSemantic.Texcoord3: return "TEXCOORD3";
+                case UsageSemantic.Texcoord4: return "TEXCOORD4";
+                case UsageSemantic.Texcoord5: return "TEXCOORD5";
+                case UsageSemantic.Texcoord6: return "TEXCOORD6";
+                case UsageSemantic.Texcoord7: return "TEXCOORD7";
+                case UsageSemantic.Texcoord8: return "TEXCOORD8";
+                case UsageSemantic.Texcoord9: return "TEXCOORD9";
+                case UsageSemantic.Texcoord10: return "TEXCOORD10";
+                case UsageSemantic.Texcoord11: return "TEXCOORD11";
+                case UsageSemantic.Texcoord12: return "TEXCOORD12";
+                case UsageSemantic.Texcoord13: return "TEXCOORD13";
+                case UsageSemantic.Texcoord14: return "TEXCOORD14";
+                case UsageSemantic.Texcoord15: return "TEXCOORD15";
 
                 case UsageSemantic.Normal0: return "NORMAL0";
                 case UsageSemantic.Normal1: return "NORMAL1";
