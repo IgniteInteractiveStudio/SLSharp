@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using IIS.SLSharp.Bindings.MOGRE;
-using IIS.SLSharp.Examples.Axiom.Shaders;
+using IIS.SLSharp.Examples.MOGRE.Shaders;
 using IIS.SLSharp.Shaders;
 using Mogre;
 using Math = System.Math;
@@ -47,6 +47,11 @@ namespace IIS.SLSharp.Examples.MOGRE
             // (we might automate this via semantic attributes within the SL# shaders in future!)
             _shader.SetAuto(() => _shader.ModelviewProjection, GpuProgramParameters.AutoConstantType.ACT_WORLDVIEWPROJ_MATRIX);
 
+            // Set a texture
+            var smp = _shader.Sampler(() => _shader.Texture);
+            smp.SetTextureName(TextureManager.Singleton.Load("test.png", ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME).Name);
+            smp.SetTextureFiltering(FilterOptions.FO_POINT, FilterOptions.FO_POINT, FilterOptions.FO_POINT);
+
             _patchEntity.SetMaterial(mat);
 
             _camera = _scene.CreateCamera("MainCamera");
@@ -57,9 +62,6 @@ namespace IIS.SLSharp.Examples.MOGRE
 
             var vp = _window.AddViewport(_camera);
             vp.BackgroundColour = ColourValue.Blue;
-
-            
-
         }
 
         public void OnUnload()
@@ -75,8 +77,10 @@ namespace IIS.SLSharp.Examples.MOGRE
 
             cam *= 3.0f;
             cam.y += 1.5f;
-            _camera.LookAt(look);
+            
             _camera.Position = cam + look;
+            _camera.LookAt(look);
+
 
             // SL# allows direct manipulation of uniforms like this!
             _shader.Blue = (float)Math.Sin(angle * 8.0f);

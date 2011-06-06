@@ -20,12 +20,15 @@ namespace IIS.SLSharp.Examples.MOGRE
                 Console.WriteLine("2.) Direct3D9");
                 while (true)
                 {
+                    /*
                     var k = Console.ReadKey(true);
                     int v;
                     if (!int.TryParse(k.KeyChar.ToString(), out v))
                         continue;
                     if (v > 2 || v == 0)
                         continue;
+                     */
+                    const int v = 0;
 
                     if (v == 1)
                     {
