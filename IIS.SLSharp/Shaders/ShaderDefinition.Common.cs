@@ -346,16 +346,16 @@ namespace IIS.SLSharp.Shaders
         #region genType fract(genType x)
 
         /// <summary>Returns x – floor (x).</summary>
-        protected static float fract(float x) { throw _invalidAccess; }
+        protected internal static float fract(float x) { throw _invalidAccess; }
 
         /// <summary>Returns x – floor (x).</summary>
-        protected static vec2 fract(vec2 x) { throw _invalidAccess; }
+        protected internal static vec2 fract(vec2 x) { throw _invalidAccess; }
 
         /// <summary>Returns x – floor (x).</summary>
-        protected static vec3 fract(vec3 x) { throw _invalidAccess; }
+        protected internal static vec3 fract(vec3 x) { throw _invalidAccess; }
 
         /// <summary>Returns x – floor (x).</summary>
-        protected static vec4 fract(vec4 x) { throw _invalidAccess; }
+        protected internal static vec4 fract(vec4 x) { throw _invalidAccess; }
 
         #endregion
 
@@ -378,16 +378,16 @@ namespace IIS.SLSharp.Shaders
         #region genType mod(genType x, float y)
 
         /// <summary>Modulus. Returns x – y * floor (x/y).</summary>
-        protected static float mod(float x, float y) { throw _invalidAccess; }
+        protected internal static float mod(float x, float y) { throw _invalidAccess; }
 
         /// <summary>Modulus. Returns x – y * floor (x/y).</summary>
-        protected static vec2 mod(vec2 x, float y) { throw _invalidAccess; }
+        protected internal static vec2 mod(vec2 x, float y) { throw _invalidAccess; }
 
         /// <summary>Modulus. Returns x – y * floor (x/y).</summary>
-        protected static vec3 mod(vec3 x, float y) { throw _invalidAccess; }
+        protected internal static vec3 mod(vec3 x, float y) { throw _invalidAccess; }
 
         /// <summary>Modulus. Returns x – y * floor (x/y).</summary>
-        protected static vec4 mod(vec4 x, float y) { throw _invalidAccess; }
+        protected internal static vec4 mod(vec4 x, float y) { throw _invalidAccess; }
 
         #endregion
 

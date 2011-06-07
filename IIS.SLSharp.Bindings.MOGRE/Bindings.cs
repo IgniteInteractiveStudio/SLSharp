@@ -76,9 +76,21 @@ namespace IIS.SLSharp.Bindings.MOGRE
             var combinedFrags = frags.Aggregate(SourceDescription.Empty, (x, y) => x.Merge(y));
             var combinedVerts = verts.Aggregate(SourceDescription.Empty, (x, y) => x.Merge(y));
 
+            var samplerRegs = 0;
+            var samplers = new List<VariableDescription>();
+
             HighLevelGpuProgramPtr ps = null;
             if (combinedFrags.Functions.Count > 0)
             {
+                // init default regs
+                foreach (var x in combinedFrags.Uniforms)
+                {
+                    if (!x.IsSampler() || x.DefaultRegister.HasValue)
+                        continue;
+                    x.DefaultRegister = samplerRegs++;
+                    samplers.Add(x);
+                }
+
                 switch (SLSharp.Language)
                 {
                     case ShaderLanguage.GLSL:
@@ -103,6 +115,15 @@ namespace IIS.SLSharp.Bindings.MOGRE
             HighLevelGpuProgramPtr vs = null;
             if (combinedVerts.Functions.Count > 0)
             {
+                // init default regs
+                foreach (var x in combinedVerts.Uniforms)
+                {
+                    if (!x.IsSampler() || x.DefaultRegister.HasValue)
+                        continue;
+                    x.DefaultRegister = samplerRegs++;
+                    samplers.Add(x);
+                }
+
                 switch (SLSharp.Language)
                 {
                     case ShaderLanguage.GLSL:
@@ -131,7 +152,34 @@ namespace IIS.SLSharp.Bindings.MOGRE
                 }
             }
 
-            return new Program(name, vs, ps);
+            var prog = new Program(name, vs, ps, samplers);
+
+            if (SLSharp.Language == ShaderLanguage.GLSL)
+            {
+                if (vs != null)
+                {
+                    var pars = prog.Pass.GetVertexProgramParameters();
+                    foreach (var x in combinedVerts.Uniforms)
+                    {
+                        if (!x.IsSampler())
+                            continue;
+                        pars.SetNamedConstant(x.Name, x.DefaultRegister.GetValueOrDefault());
+                    }
+                }
+
+                if (ps != null)
+                {
+                    var pars = prog.Pass.GetFragmentProgramParameters();
+                    foreach (var x in combinedFrags.Uniforms)
+                    {
+                        if (!x.IsSampler())
+                            continue;
+                        pars.SetNamedConstant(x.Name, x.DefaultRegister.GetValueOrDefault());
+                    }
+                }
+            }
+
+            return prog;
         }
 
         private string SemanticToMogre(UsageSemantic semantic)
@@ -197,7 +245,10 @@ namespace IIS.SLSharp.Bindings.MOGRE
         private readonly Technique _tech;
         internal Pass Pass;
 
-        public Program(string name, HighLevelGpuProgramPtr vs, HighLevelGpuProgramPtr ps)
+        private readonly Dictionary<string, TextureUnitState> _textureUnits = new Dictionary<string, TextureUnitState>();
+
+        public Program(string name, HighLevelGpuProgramPtr vs, HighLevelGpuProgramPtr ps,
+            IEnumerable<VariableDescription> samplers)
         {
             VertexShader = vs;
             PixelShader = ps;
@@ -220,6 +271,14 @@ namespace IIS.SLSharp.Bindings.MOGRE
                 Pass.SetVertexProgram(vs.Name);
             if (ps != null)
                 Pass.SetFragmentProgram(ps.Name);
+
+            foreach (var s in samplers)
+            {
+                var tu = Pass.CreateTextureUnitState();
+                tu.Name = s.Name;
+                _textureUnits.Add(s.Name, tu);
+            }
+
             Pass.LightingEnabled = false;
             _mat.Load();
 
@@ -278,6 +337,11 @@ namespace IIS.SLSharp.Bindings.MOGRE
             Pass.GetVertexProgramParameters().SetNamedAutoConstant(name, ac);
             //_pass.GetFragmentProgramParameters().SetNamedAutoConstant(name, ac);
         }
+
+        public TextureUnitState Sampler(string name)
+        {
+            return _textureUnits[name];
+        }
     }
 
     public static class SLSharp
@@ -317,15 +381,10 @@ namespace IIS.SLSharp.Bindings.MOGRE
 
         public static TextureUnitState Sampler<T>(this Shader shader, Expression<Func<T>> loc)
         {
+
             var name = Shader.UniformName(loc);
             var prog = (Program)shader.Program;
-            var tu = prog.Pass.GetTextureUnitState(name);
-            if (tu != null)
-                return tu;
-            tu = prog.Pass.CreateTextureUnitState();
-            tu.Name = name;
-            tu.TextureCoordSet = (uint)Shader.UniformLocation(shader, loc);
-            return tu;
+            return prog.Sampler(name);
         }
 
         #region Passive Methods

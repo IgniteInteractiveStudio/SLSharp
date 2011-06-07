@@ -28,7 +28,7 @@ namespace IIS.SLSharp.Translation.HLSL
             { typeof(ShaderDefinition.mat4x3), "float4x3" },
             { typeof(ShaderDefinition.mat4), "float4x4" },
             { typeof(ShaderDefinition.sampler1D), "sampler1D" },
-            { typeof(ShaderDefinition.sampler2D), "sampler2D" },
+            { typeof(ShaderDefinition.sampler2D), "sampler" },
             { typeof(ShaderDefinition.sampler3D), "sampler3D" },
             { typeof(ShaderDefinition.samplerCube), "samplerCube" },
             { typeof(ShaderDefinition.sampler1DShadow), "sampler1D" },
@@ -179,7 +179,16 @@ namespace IIS.SLSharp.Translation.HLSL
 
             // define uniforms
             desc.Uniforms.ForEach(
-                v => s.AppendFormat("uniform extern {0} {1};{2}", v.Type.ToHlsl(), v.Name, v.Comment).Append(Environment.NewLine));
+                v =>
+                {
+                    var typ = v.Type.ToHlsl();
+                    if (v.IsSampler() && v.DefaultRegister.HasValue)
+                    {
+                        // allocate a register for it
+                        s.AppendFormat("uniform extern {0} {1} : register(s{3});{2}", typ, v.Name, v.Comment, v.DefaultRegister.Value).Append(Environment.NewLine);
+                    } else
+                        s.AppendFormat("uniform extern {0} {1};{2}", typ, v.Name, v.Comment).Append(Environment.NewLine);
+                });
 
             // expose varyings inputs and outputs as globals for unified access
             // through all functions

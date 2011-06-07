@@ -16,7 +16,7 @@ namespace IIS.SLSharp.Translation.HLSL
         private readonly HashSet<Tuple<string, string>> _functions = new HashSet<Tuple<string, string>>();
 
         private readonly CustomAttribute _attr;
-        private ResolveVisitor _resolver;
+        private readonly ResolveVisitor _resolver;
 
         public IEnumerable<Tuple<string, string>> Functions
         {
@@ -90,13 +90,13 @@ namespace IIS.SLSharp.Translation.HLSL
             _functions.Add(new Tuple<string, string>(GetSignature(m), m.DeclaringType.FullName + "." + m.Name));
         }
 
-        private StringBuilder ArgsToString(ICollection<Expression> args)
+        private StringBuilder ArgsToString(IEnumerable<Expression> args)
         {
             var result = new StringBuilder();
-            if (args.Count <= 0)
+            if (args.Count() <= 0)
                 return result;
 
-            foreach (var v in args.Take(args.Count - 1))
+            foreach (var v in args.Take(args.Count() - 1))
             {
                 result.Append(v.AcceptVisitor(this, 0));
                 result.Append(", ");

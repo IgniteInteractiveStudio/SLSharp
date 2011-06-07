@@ -20,7 +20,6 @@ namespace IIS.SLSharp.Examples.MOGRE.Shaders
         [FragmentShader]
         public vec4 WangAt(vec2 tex)
         {
-            return texture(WangMap, tex); // debug texture
             var address = tex - mod(tex, 1.0f / 256.0f);
             var subPos = fract(tex * 256.0f) / 4.0f;
             var offset = texture(WangMap, fract(address)).xw;
@@ -33,13 +32,12 @@ namespace IIS.SLSharp.Examples.MOGRE.Shaders
         public override void Begin()
         {
             base.Begin();
-
-            var smp = this.Sampler(() => WangMap);
-            smp.SetTextureName(WangTable.Name);
-            smp.SetTextureFiltering(FilterOptions.FO_POINT, FilterOptions.FO_POINT, FilterOptions.FO_POINT);
-
-            smp = this.Sampler(() => WangTiles);
+            var smp = this.Sampler(() => WangTiles);
             smp.SetTextureName(Tiles.Name);
+
+            smp = this.Sampler(() => WangMap);
+            smp.SetTextureName(WangTable.Name);
+            smp.SetTextureFiltering(FilterOptions.FO_POINT, FilterOptions.FO_POINT, FilterOptions.FO_POINT);    
         }
     }
 }

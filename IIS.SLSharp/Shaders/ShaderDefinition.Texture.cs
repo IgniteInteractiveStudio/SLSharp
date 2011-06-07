@@ -2385,7 +2385,7 @@ namespace IIS.SLSharp.Shaders
         /// <summary> Do a texture lookup as in texture but with explicit gradients. 
         /// The partial derivatives of P are with respect to window x and window y.
         /// ∂s/∂x = ∂P.s/∂x; ∂s/∂y = ∂P.s/∂y; ∂t/∂x = ∂P.t/∂x; ∂t/∂y = ∂P.t/∂y; ∂r/∂x = 0; ∂r/∂y = 0;</summary>
-        protected static vec4 textureGrad(sampler2D sampler, vec2 P, vec2 dPdx, vec2 dPdy)
+        protected internal static vec4 textureGrad(sampler2D sampler, vec2 P, vec2 dPdx, vec2 dPdy)
         {
             throw _invalidAccess;
         }

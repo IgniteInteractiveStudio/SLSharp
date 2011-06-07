@@ -365,7 +365,7 @@ namespace IIS.SLSharp.Examples.MOGRE.Textures
 
             AsTexture = TextureManager.Singleton.CreateManual("WangMap",
                                                   ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME,
-                                                  TextureType.TEX_TYPE_2D, (uint)Width, (uint)Height, 0, PixelFormat.PF_R8G8B8).Target;
+                                                  TextureType.TEX_TYPE_2D, (uint)Width, (uint)Height, 0, PixelFormat.PF_BYTE_LA).Target;
 
             using (var buf = AsTexture.GetBuffer())
             {
@@ -374,14 +374,16 @@ namespace IIS.SLSharp.Examples.MOGRE.Textures
                 var idx = 0;
                 for (var y = 0; y < Height; y++)
                 {
-                    var scanLine = box.data + y * (int)box.rowPitch * 4;
+                    var scanLine = box.data + y * (int)box.rowPitch * 2;
                     for (var x = 0; x < Width; x++)
                     {
-                        //Marshal.WriteByte(scanLine, 0);
+                        //Marshal.WriteByte(scanLine, 3, _map[idx, 1]);
+                        //Marshal.WriteByte(scanLine, 2, _map[idx, 0]);
+
+                        Marshal.WriteByte(scanLine, 0, _map[idx, 0]);
                         Marshal.WriteByte(scanLine, 1, _map[idx, 1]);
-                        Marshal.WriteByte(scanLine, 2, _map[idx, 0]);
-                        //Marshal.WriteByte(scanLine, 3, 0);
-                        scanLine += 4;
+                        
+                        scanLine += 2;
                         idx++;
                     }
                 }

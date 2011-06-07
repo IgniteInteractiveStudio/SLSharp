@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using IIS.SLSharp.Annotations;
+using IIS.SLSharp.Shaders;
 
 namespace IIS.SLSharp.Descriptions
 {
@@ -9,6 +11,7 @@ namespace IIS.SLSharp.Descriptions
         public readonly string Name;
         public readonly UsageSemantic Semantic;
         public readonly string Comment;
+        public int? DefaultRegister { get; set; }
 
         public VariableDescription(Type type, string name, UsageSemantic semantic = UsageSemantic.Unknown, string comment = "")
         {
@@ -16,6 +19,11 @@ namespace IIS.SLSharp.Descriptions
             Comment = comment;
             Semantic = semantic;
             Name = name;
+        }
+
+        public bool IsSampler()
+        {
+            return Type.BaseType == typeof(ShaderDefinition.Sampler);
         }
     }
 }

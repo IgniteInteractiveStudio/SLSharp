@@ -11,32 +11,32 @@ namespace IIS.SLSharp.Shaders
         #region genType dFdx(genType p)
 
         /// <summary>Returns the derivative in x using local differencing for the input argument p.</summary>
-        protected static float dFdx(float p) { throw _invalidAccess; }
+        protected internal static float dFdx(float p) { throw _invalidAccess; }
 
         /// <summary>Returns the derivative in x using local differencing for the input argument p.</summary>
-        protected static vec2 dFdx(vec2 p) { throw _invalidAccess; }
+        protected internal static vec2 dFdx(vec2 p) { throw _invalidAccess; }
 
         /// <summary>Returns the derivative in x using local differencing for the input argument p.</summary>
-        protected static vec3 dFdx(vec3 p) { throw _invalidAccess; }
+        protected internal static vec3 dFdx(vec3 p) { throw _invalidAccess; }
 
         /// <summary>Returns the derivative in x using local differencing for the input argument p.</summary>
-        protected static vec4 dFdx(vec4 p) { throw _invalidAccess; }
+        protected internal static vec4 dFdx(vec4 p) { throw _invalidAccess; }
 
         #endregion
 
         #region genType dFdy(genType p)
 
         /// <summary>Returns the derivative in y using local differencing for the input argument p.</summary>
-        protected static float dFdy(float p) { throw _invalidAccess; }
+        protected internal static float dFdy(float p) { throw _invalidAccess; }
 
         /// <summary>Returns the derivative in y using local differencing for the input argument p.</summary>
-        protected static vec2 dFdy(vec2 p) { throw _invalidAccess; }
+        protected internal static vec2 dFdy(vec2 p) { throw _invalidAccess; }
 
         /// <summary>Returns the derivative in y using local differencing for the input argument p.</summary>
-        protected static vec3 dFdy(vec3 p) { throw _invalidAccess; }
+        protected internal static vec3 dFdy(vec3 p) { throw _invalidAccess; }
 
         /// <summary>Returns the derivative in y using local differencing for the input argument p.</summary>
-        protected static vec4 dFdy(vec4 p) { throw _invalidAccess; }
+        protected internal static vec4 dFdy(vec4 p) { throw _invalidAccess; }
 
         #endregion
 
