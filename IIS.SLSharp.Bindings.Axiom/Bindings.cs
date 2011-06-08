@@ -363,7 +363,7 @@ namespace IIS.SLSharp.Bindings.Axiom
 
             Binding.Register(new SLSharpBinding(trans));
 
-            MaterialManager.Instance.AddListener((x) =>
+            MaterialManager.Instance.AddListener(x =>
             {
                 if (x.OriginalMaterial.Group == "SLSharp")
                 {

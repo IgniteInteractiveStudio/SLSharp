@@ -142,6 +142,7 @@ namespace IIS.SLSharp.Examples.Axiom
 
 
             var mat = _shader.ToMaterial();
+            _shader.Begin();
 
             // SL# on OGRE: bind auto semantic to a uniform!
             // (we might automate this via semantic attributes within the SL# shaders in future!)
@@ -175,10 +176,11 @@ namespace IIS.SLSharp.Examples.Axiom
             var cam = new Vector3((float)Math.Sin(angle), 0.0f, (float)Math.Cos(angle));
             var look = new Vector3(0, 300, 0);
 
-            cam *= 1600.0f;
+            cam *= 800.0f + 400.0f * (float)Math.Sin(angle * 4.0f);
             cam.y += 100.0f;
-            _camera.LookAt(look);
             _camera.Position = cam + look;
+            _camera.LookAt(look);
+            
 
             //var mvp = _camera.ProjectionMatrix * _camera.ViewMatrix;
             //_shader.ModelviewProjection = mvp.ToMatrix4F();
