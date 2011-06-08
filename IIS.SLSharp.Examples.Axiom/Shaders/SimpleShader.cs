@@ -1,10 +1,15 @@
-﻿using IIS.SLSharp.Annotations;
+﻿using Axiom.Core;
+using IIS.SLSharp.Annotations;
+using IIS.SLSharp.Examples.Axiom.Textures;
 using IIS.SLSharp.Shaders;
 
 namespace IIS.SLSharp.Examples.Axiom.Shaders
 {
     public abstract class SimpleShader : Shader
     {
+        // demonstrate using a shared library
+        public WangShader Wang { get; private set; }
+
         // expose a simple uniform (this can be directly accessed from client code)
         [Uniform]
         public abstract float Blue { set; get; }
@@ -12,11 +17,17 @@ namespace IIS.SLSharp.Examples.Axiom.Shaders
         [Uniform]
         public abstract mat4 ModelviewProjection { set; get; }
 
+        [Uniform]
+        public abstract sampler2D Texture { set; get; }
+
         [Varying]
         private vec2 _uv;
 
         [VertexIn(UsageSemantic.Position0)]
         public vec4 Vertex;
+
+        [VertexIn(UsageSemantic.Texcoord0)]
+        public vec2 Texcoord;
 
         [FragmentOut(UsageSemantic.Color0)]
         public vec4 Color;
@@ -24,26 +35,46 @@ namespace IIS.SLSharp.Examples.Axiom.Shaders
         [FragmentShader(true)]
         protected void FragmentMain()
         {
-            //Invert.Channels = new vec4(1.0f); // invalid testcode
-            Color = new vec4(_uv, Blue, 1.0f);
+            var c = Wang.WangAt(_uv);
+            Color = new vec4(c.rg, Blue, 1.0f);
         }
 
         [VertexShader(true)]
         public void VertexMain()
         {
-            _uv = (Vertex.xy + new vec2(1.0f)) * 0.5f * 0.005f;
+            _uv = Texcoord;
             gl_Position = ModelviewProjection * Vertex;
         }
 
         // resource setup code
         protected SimpleShader()
         {
-            Link();
+            Wang = CreateSharedShader<WangShader>();
+
+
+            var tiles = TextureManager.Instance.Load("tiles.png", ResourceGroupManager.DefaultResourceGroupName);
+            tiles.MipmapCount = 5;
+
+            Wang.WangTable = new WangMap(64, 64).AsTexture;
+            Wang.Tiles = tiles;
+
+            Link(new[] { Wang });
         }
 
-        public void RenderQuad()
+
+        public override void Dispose()
         {
-            RenderQuad(this, () => Vertex);
+            Wang.WangTable.Dispose();
+            Wang.Tiles.Dispose();
+            Wang.Dispose();
+            base.Dispose();
         }
+
+        public override void Begin()
+        {
+            Wang.BeginLibrary(this);
+            base.Begin();
+        }
+
     }
 }

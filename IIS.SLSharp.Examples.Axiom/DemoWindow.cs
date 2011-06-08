@@ -33,6 +33,10 @@ namespace IIS.SLSharp.Examples.Axiom
 
         public void OnLoad()
         {
+            var dir = Directory.GetCurrentDirectory();
+            ResourceGroupManager.Instance.AddResourceLocation(dir, "Folder");
+            //MaterialManager.Instance.Initialize();
+
             Bindings.Axiom.SLSharp.Init();
             Shader.DebugMode = true;
 

@@ -62,6 +62,8 @@
     <Compile Include="DemoWindow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Shaders\SimpleShader.cs" />
+    <Compile Include="Shaders\WangShader.cs" />
+    <Compile Include="Textures\WangMap.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IIS.SLSharp.Bindings.Axiom\IIS.SLSharp.Bindings.Axiom.csproj">
@@ -79,6 +81,10 @@
   <ItemGroup>
     <Content Include="..\Dependencies\Axiom.Platforms.OpenTK.dll">
       <Link>Axiom.Platforms.OpenTK.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Dependencies\Axiom.Plugins.SystemDrawingCodecs.dll">
+      <Link>Axiom.Plugins.SystemDrawingCodecs.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\Dependencies\Axiom.RenderSystems.DirectX9.dll">
@@ -99,6 +105,10 @@
     </Content>
     <Content Include="..\Dependencies\OpenTK.GLControl.dll">
       <Link>OpenTK.GLControl.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Resources\tiles.png">
+      <Link>tiles.png</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
