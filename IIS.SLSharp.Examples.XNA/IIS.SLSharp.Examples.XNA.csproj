@@ -75,7 +75,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="xwing.xnb">
+    <Content Include="..\Resources\xwing.xnb">
+      <Link>xwing.xnb</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

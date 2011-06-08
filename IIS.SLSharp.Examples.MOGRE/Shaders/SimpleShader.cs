@@ -53,7 +53,7 @@ namespace IIS.SLSharp.Examples.MOGRE.Shaders
             Wang = CreateSharedShader<WangShader>();
 
 
-            var tiles = TextureManager.Singleton.Load("test.png", ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME);
+            var tiles = TextureManager.Singleton.Load("tiles.png", ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME);
             tiles.Target.NumMipmaps = 5;
 
             Wang.WangTable = new WangMap(64, 64).AsTexture;
@@ -65,6 +65,8 @@ namespace IIS.SLSharp.Examples.MOGRE.Shaders
 
         public override void Dispose()
         {
+            Wang.WangTable.Dispose();
+            Wang.Tiles.Dispose();
             Wang.Dispose();
             base.Dispose();
         }

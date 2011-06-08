@@ -254,8 +254,10 @@ namespace IIS.SLSharp.Bindings.MOGRE
             PixelShader = ps;
 
             Debug.WriteLine("VS:");
+            Debug.WriteLine("================================================================================");
             Debug.WriteLine(vs.Source);
             Debug.WriteLine("PS:");
+            Debug.WriteLine("================================================================================");
             Debug.WriteLine(ps.Source);
 
             var mm = MaterialManager.Singleton;

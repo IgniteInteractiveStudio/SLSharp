@@ -394,13 +394,13 @@ namespace IIS.SLSharp.Shaders
         #region genType mod(genType x, genType y)
 
         /// <summary>Modulus. Returns x – y * floor (x/y).</summary>
-        protected static vec2 mod(vec2 x, vec2 y) { throw _invalidAccess; }
+        protected internal static vec2 mod(vec2 x, vec2 y) { throw _invalidAccess; }
 
         /// <summary>Modulus. Returns x – y * floor (x/y).</summary>
-        protected static vec3 mod(vec3 x, vec3 y) { throw _invalidAccess; }
+        protected internal static vec3 mod(vec3 x, vec3 y) { throw _invalidAccess; }
 
         /// <summary>Modulus. Returns x – y * floor (x/y).</summary>
-        protected static vec4 mod(vec4 x, vec4 y) { throw _invalidAccess; }
+        protected internal static vec4 mod(vec4 x, vec4 y) { throw _invalidAccess; }
 
         #endregion
 

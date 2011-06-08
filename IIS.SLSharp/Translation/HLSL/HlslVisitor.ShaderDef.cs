@@ -39,7 +39,15 @@ namespace IIS.SLSharp.Translation.HLSL
             _handlers = new Dictionary<int, Func<MethodDefinition, InvocationExpression, StringBuilder>>
             {
                 { MetaToken(() => ShaderDefinition.texture(sampler2D, vec2)), Rename("tex2D") },
+
                 { MetaToken(() => ShaderDefinition.mod(vec2, _float)), (m, i) => ModFloat<ShaderDefinition.vec2>(m, i) },
+                { MetaToken(() => ShaderDefinition.mod(vec3, _float)), (m, i) => ModFloat<ShaderDefinition.vec2>(m, i) },
+                { MetaToken(() => ShaderDefinition.mod(vec4, _float)), (m, i) => ModFloat<ShaderDefinition.vec2>(m, i) },
+                { MetaToken(() => ShaderDefinition.mod(_float, _float)), Rename("fmod") },
+                { MetaToken(() => ShaderDefinition.mod(vec2, vec2)), Rename("fmod") },
+                { MetaToken(() => ShaderDefinition.mod(vec3, vec3)), Rename("fmod") },
+                { MetaToken(() => ShaderDefinition.mod(vec4, vec4)), Rename("fmod") },
+
 
                 { MetaToken(() => ShaderDefinition.fract(_float)), Rename("frac") },
                 { MetaToken(() => ShaderDefinition.fract(vec2)), Rename("frac") },

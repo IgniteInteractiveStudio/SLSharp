@@ -41,7 +41,7 @@ namespace IIS.SLSharp.Examples.MOGRE
 
             _shader = Shader.CreateSharedShader<SimpleShader>();
 
-            _patchEntity = _scene.CreateEntity("Entity1", "test.mesh");
+            _patchEntity = _scene.CreateEntity("Box", "box.mesh");
             _scene.RootSceneNode.AttachObject(_patchEntity);
 
             var mat = _shader.ToMaterial();

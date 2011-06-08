@@ -191,7 +191,7 @@ namespace IIS.SLSharp.Examples.MOGRE.Textures
         private readonly int _subWidth;
 
         private readonly Random _rand = new Random(123);
- 
+
         private readonly int[] _xTable = { 0, 0, 3, 3, 1, 1, 2, 2, 0, 0, 3, 3, 1, 1, 2, 2 };
 
         private readonly int[] _yTable = { 3, 2, 3, 2, 3, 2, 3, 2, 0, 1, 0, 1, 0, 1, 0, 1 };
@@ -200,13 +200,13 @@ namespace IIS.SLSharp.Examples.MOGRE.Textures
 
         private void Upload(byte[,] tile, int index)
         {
-            var startx = _xTable[index]*_subWidth;
-            var starty = _yTable[index]*_subHeight;
+            var startx = _xTable[index] * _subWidth;
+            var starty = _yTable[index] * _subHeight;
             var w = Width;
 
             for (var y = 0; y < _subHeight; y++)
                 for (var x = 0; x < _subWidth; x++)
-                    _map[startx + x + (starty + y)*w, 0] = tile[x + y*_subWidth, 0];
+                    _map[startx + x + (starty + y) * w, 0] = tile[x + y * _subWidth, 0];
         }
 
         public void Dump()
@@ -239,7 +239,7 @@ namespace IIS.SLSharp.Examples.MOGRE.Textures
             // thus it can have ompletley random side edges
 
             _map = new byte[height * width * 4 * 4, 2];
-            var basetile = new byte[height*width, 1];
+            var basetile = new byte[height * width, 1];
 #if !InvariantVersion
 
             #region Simple Version
@@ -311,25 +311,26 @@ namespace IIS.SLSharp.Examples.MOGRE.Textures
 #else
 
             // this is a far more restrictive version that is invariant under rotations
+
             #region Invariant version
 
             if (height != width)
                 throw new Exception("Width must be same as height for invariant map");
 
             var constraints = new byte[2][];
-            constraints[0] = new byte[_subWidth];  // red
-            constraints[1] = new byte[_subWidth];  // green
+            constraints[0] = new byte[_subWidth]; // red
+            constraints[1] = new byte[_subWidth]; // green
 
 #if MirrorInvariant
 
             for (var i = 0; i < _subWidth / 2; i++)
             {
                 var rnd = (byte)((_rand.Next() & 0x1) * 0xF);
-                
+
                 constraints[0][i] = rnd;
                 constraints[0][_subWidth - i - 1] = rnd;
                 rnd = (byte)((_rand.Next() & 0x1) * 0xF);
-                
+
                 constraints[1][i] = rnd;
                 constraints[1][_subWidth - i - 1] = rnd;
             }
@@ -343,16 +344,16 @@ namespace IIS.SLSharp.Examples.MOGRE.Textures
             }
 
 #endif
-  
+
             for (var map = 0; map < 16; map++)
-            {                                                 
+            {
                 var top = ((map & (int)WangHelper.Bit.Top) == 0) ? constraints[0] : constraints[1];
                 var left = ((map & (int)WangHelper.Bit.Left) == 0) ? constraints[0] : constraints[1];
                 var right = ((map & (int)WangHelper.Bit.Right) == 0) ? constraints[0] : constraints[1];
                 var bottom = ((map & (int)WangHelper.Bit.Bottom) == 0) ? constraints[0] : constraints[1];
 
                 WangHelper.GenerateTile(_subWidth, _subHeight, _rand,
-                    basetile, left, right, top, bottom);
+                                        basetile, left, right, top, bottom);
 
                 Upload(basetile, map);
             }
@@ -363,12 +364,13 @@ namespace IIS.SLSharp.Examples.MOGRE.Textures
 
             WangHelper.GenerateIndices(_map);
 
-            AsTexture = TextureManager.Singleton.CreateManual("WangMap",
-                                                  ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME,
-                                                  TextureType.TEX_TYPE_2D, (uint)Width, (uint)Height, 0, PixelFormat.PF_BYTE_LA).Target;
 
-            using (var buf = AsTexture.GetBuffer())
+            using (var tex = TextureManager.Singleton.CreateManual("WangMap",
+                                                                   ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME,
+                                                                   TextureType.TEX_TYPE_2D, (uint)Width, (uint)Height, 0, PixelFormat.PF_BYTE_LA))
+            using (var buf = tex.GetBuffer())
             {
+                AsTexture = tex.Target;
                 var box = buf.Lock(new Box(0, 0, 0, (uint)Width, (uint)Height, 1), HardwareBuffer.LockOptions.HBL_NORMAL);
 
                 var idx = 0;
@@ -382,7 +384,7 @@ namespace IIS.SLSharp.Examples.MOGRE.Textures
 
                         Marshal.WriteByte(scanLine, 0, _map[idx, 0]);
                         Marshal.WriteByte(scanLine, 1, _map[idx, 1]);
-                        
+
                         scanLine += 2;
                         idx++;
                     }
@@ -390,6 +392,8 @@ namespace IIS.SLSharp.Examples.MOGRE.Textures
 
                 buf.Unlock();
             }
+
         }
+
     }
 }
