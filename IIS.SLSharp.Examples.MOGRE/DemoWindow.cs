@@ -45,6 +45,9 @@ namespace IIS.SLSharp.Examples.MOGRE
             _scene.RootSceneNode.AttachObject(_patchEntity);
 
             var mat = _shader.ToMaterial();
+            var pass = mat.GetTechnique(0).GetPass(0);
+            pass.SetAlphaRejectSettings(CompareFunction.CMPF_GREATER_EQUAL, 128);
+            pass.CullingMode = CullingMode.CULL_NONE;
             
             // SL# on OGRE: bind auto semantic to a uniform!
             // (we might automate this via semantic attributes within the SL# shaders in future!)

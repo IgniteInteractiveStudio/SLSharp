@@ -142,6 +142,10 @@ namespace IIS.SLSharp.Examples.Axiom
 
 
             var mat = _shader.ToMaterial();
+            var pass = mat.GetTechnique(0).GetPass(0);
+            pass.SetAlphaRejectSettings(CompareFunction.GreaterEqual, 128);
+            pass.CullingMode = CullingMode.None;
+
             _shader.Begin();
 
             // SL# on OGRE: bind auto semantic to a uniform!

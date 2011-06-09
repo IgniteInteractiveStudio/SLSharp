@@ -37,7 +37,7 @@ namespace IIS.SLSharp.Examples.MOGRE.Shaders
         protected void FragmentMain()
         {
             var c = Wang.WangAt(_uv);
-            Color = new vec4(c.rg, Blue, 1.0f);
+            Color = new vec4(c.rg, Blue, c.a);
         }
 
         [VertexShader(true)]
