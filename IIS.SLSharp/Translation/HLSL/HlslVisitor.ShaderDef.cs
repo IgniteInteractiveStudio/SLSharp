@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using System.Linq;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.TypeSystem;
@@ -12,15 +12,12 @@ using IIS.SLSharp.Shaders;
 using Mono.Cecil;
 using Expression = ICSharpCode.NRefactory.CSharp.Expression;
 using InvocationExpression = ICSharpCode.NRefactory.CSharp.InvocationExpression;
+using LambdaExpression = ICSharpCode.NRefactory.CSharp.LambdaExpression;
 
 namespace IIS.SLSharp.Translation.HLSL
 {
     internal sealed partial class HlslVisitor
     {
-        public static int MetaToken<T>(Expression<Func<T>> x)
-        {
-            return ((MethodCallExpression)x.Body).Method.MetadataToken;
-        }
 
 // ReSharper disable InconsistentNaming
 #pragma warning disable 649
@@ -32,39 +29,63 @@ namespace IIS.SLSharp.Translation.HLSL
 #pragma warning restore 649
 // ReSharper restore InconsistentNaming
 
-        private readonly Dictionary<int, Func<MethodDefinition, InvocationExpression, StringBuilder>> _handlers;
-        
+        private readonly Dictionary<Expression<Action>, Func<MethodDefinition, InvocationExpression, StringBuilder>> _handlers;
+
+        internal sealed class HandlerComparer : IEqualityComparer<Expression<Action>>
+        {
+            private int IdFrom(Expression<Action> a)
+            {
+                
+                var x = a.Body as MethodCallExpression;
+                if (x != null)
+                    return x.Method.MetadataToken;
+
+                var c = (ConstantExpression)a.Body;
+                return (int)c.Value;
+            }
+
+            public bool Equals(Expression<Action> x, Expression<Action> y)
+            {
+                return IdFrom(x) == IdFrom(y);
+            }
+
+            public int GetHashCode(Expression<Action> obj)
+            {
+                return IdFrom(obj);
+            }
+        }
+
         public HlslVisitor()
         {
-            _handlers = new Dictionary<int, Func<MethodDefinition, InvocationExpression, StringBuilder>>
+            _handlers = new Dictionary<Expression<Action>, Func<MethodDefinition, InvocationExpression, StringBuilder>>(new HandlerComparer())
             {
-                { MetaToken(() => ShaderDefinition.texture(sampler2D, vec2)), Rename("tex2D") },
+                { () => ShaderDefinition.texture(sampler2D, vec2), Rename("tex2D") },
 
-                { MetaToken(() => ShaderDefinition.mod(vec2, _float)), (m, i) => ModFloat<ShaderDefinition.vec2>(m, i) },
-                { MetaToken(() => ShaderDefinition.mod(vec3, _float)), (m, i) => ModFloat<ShaderDefinition.vec2>(m, i) },
-                { MetaToken(() => ShaderDefinition.mod(vec4, _float)), (m, i) => ModFloat<ShaderDefinition.vec2>(m, i) },
-                { MetaToken(() => ShaderDefinition.mod(_float, _float)), Rename("fmod") },
-                { MetaToken(() => ShaderDefinition.mod(vec2, vec2)), Rename("fmod") },
-                { MetaToken(() => ShaderDefinition.mod(vec3, vec3)), Rename("fmod") },
-                { MetaToken(() => ShaderDefinition.mod(vec4, vec4)), Rename("fmod") },
+                { () => ShaderDefinition.mod(vec2, _float), (m, i) => ModFloat<ShaderDefinition.vec2>(m, i) },
+                { () => ShaderDefinition.mod(vec3, _float), (m, i) => ModFloat<ShaderDefinition.vec2>(m, i) },
+                { () => ShaderDefinition.mod(vec4, _float), (m, i) => ModFloat<ShaderDefinition.vec2>(m, i) },
+                { () => ShaderDefinition.mod(_float, _float), Rename("fmod") },
+                { () => ShaderDefinition.mod(vec2, vec2), Rename("fmod") },
+                { () => ShaderDefinition.mod(vec3, vec3), Rename("fmod") },
+                { () => ShaderDefinition.mod(vec4, vec4), Rename("fmod") },
 
 
-                { MetaToken(() => ShaderDefinition.fract(_float)), Rename("frac") },
-                { MetaToken(() => ShaderDefinition.fract(vec2)), Rename("frac") },
-                { MetaToken(() => ShaderDefinition.fract(vec3)), Rename("frac") },
-                { MetaToken(() => ShaderDefinition.fract(vec4)), Rename("frac") },
+                { () => ShaderDefinition.fract(_float), Rename("frac") },
+                { () => ShaderDefinition.fract(vec2), Rename("frac") },
+                { () => ShaderDefinition.fract(vec3), Rename("frac") },
+                { () => ShaderDefinition.fract(vec4), Rename("frac") },
 
-                { MetaToken(() => ShaderDefinition.dFdx(_float)), Rename("ddx") },
-                { MetaToken(() => ShaderDefinition.dFdx(vec2)), Rename("ddx") },
-                { MetaToken(() => ShaderDefinition.dFdx(vec3)), Rename("ddx") },
-                { MetaToken(() => ShaderDefinition.dFdx(vec4)), Rename("ddx") },
+                { () => ShaderDefinition.dFdx(_float), Rename("ddx") },
+                { () => ShaderDefinition.dFdx(vec2), Rename("ddx") },
+                { () => ShaderDefinition.dFdx(vec3), Rename("ddx") },
+                { () => ShaderDefinition.dFdx(vec4), Rename("ddx") },
 
-                { MetaToken(() => ShaderDefinition.dFdy(_float)), Rename("ddy") },
-                { MetaToken(() => ShaderDefinition.dFdy(vec2)), Rename("ddy") },
-                { MetaToken(() => ShaderDefinition.dFdy(vec3)), Rename("ddy") },
-                { MetaToken(() => ShaderDefinition.dFdy(vec4)), Rename("ddy") },
+                { () => ShaderDefinition.dFdy(_float), Rename("ddy") },
+                { () => ShaderDefinition.dFdy(vec2), Rename("ddy") },
+                { () => ShaderDefinition.dFdy(vec3), Rename("ddy") },
+                { () => ShaderDefinition.dFdy(vec4), Rename("ddy") },
 
-                { MetaToken(() => ShaderDefinition.textureGrad(sampler2D, vec2, vec2, vec2)), Rename("tex2Dgrad") },
+                { () => ShaderDefinition.textureGrad(sampler2D, vec2, vec2, vec2), Rename("tex2Dgrad") },
             };
         }
 
@@ -72,7 +93,7 @@ namespace IIS.SLSharp.Translation.HLSL
         private Expression WidenType<T>(Expression source)
         {        
 #warning This badly needs refactoring!
-            // optimally we'd want either want to pull the information from the AST
+            // optimally we'd either want to pull the information from the AST
             // via _resolver.Resolve(nodeWithTargetType)
             // however this yields an IType and i've no idea how to pull off an TypeReference from that
             var t = typeof(T);
@@ -101,9 +122,7 @@ namespace IIS.SLSharp.Translation.HLSL
             result.Append("fmod(").Append(ArgsToString(args)).Append(")");
 
             return result;
-
         }
-
 
         private Func<MethodDefinition, InvocationExpression, StringBuilder> Rename(string newName)
         {
@@ -123,8 +142,13 @@ namespace IIS.SLSharp.Translation.HLSL
         // Dispatcher
         private StringBuilder VisitShaderDefCall(MethodDefinition m, InvocationExpression invocationExpression)
         {
+            
+
+            var tok = m.Resolve().MetadataToken.ToInt32();
             Func<MethodDefinition, InvocationExpression, StringBuilder> handler;
-            return _handlers.TryGetValue(m.Resolve().MetadataToken.ToInt32(), out handler) ? 
+            var etok = System.Linq.Expressions.Expression.Lambda<Action>(System.Linq.Expressions.Expression.Constant(tok));
+
+            return _handlers.TryGetValue(etok, out handler) ? 
                 handler(m, invocationExpression) : PassThrough(m, invocationExpression);
         }
     }
