@@ -21,6 +21,7 @@ namespace IIS.SLSharp.Examples.Axiom.Shaders
         [FragmentShader]
         public vec4 WangAt(vec2 tex)
         {
+            
             var address = tex - mod(tex, 1.0f / 256.0f);
             var subPos = fract(tex * 256.0f) / 4.0f;
             var offset = texture(WangMap, fract(address)).xw;
@@ -35,10 +36,11 @@ namespace IIS.SLSharp.Examples.Axiom.Shaders
             base.Begin();
             var smp = this.Sampler(() => WangTiles);
             smp.SetTextureName(Tiles.Name);
+            smp.SetTextureFiltering(FilterOptions.Linear, FilterOptions.Linear, FilterOptions.Linear);
 
             smp = this.Sampler(() => WangMap);
             smp.SetTextureName(WangTable.Name);
-            smp.SetTextureFiltering(FilterOptions.Point, FilterOptions.Point, FilterOptions.Point);    
+            smp.SetTextureFiltering(FilterOptions.Point, FilterOptions.Point, FilterOptions.None);
         }
     }
 }

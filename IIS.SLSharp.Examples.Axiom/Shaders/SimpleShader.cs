@@ -2,6 +2,7 @@
 using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Examples.Axiom.Textures;
 using IIS.SLSharp.Shaders;
+using IIS.SLSharp.Bindings.Axiom;
 
 namespace IIS.SLSharp.Examples.Axiom.Shaders
 {
@@ -43,7 +44,7 @@ namespace IIS.SLSharp.Examples.Axiom.Shaders
         public void VertexMain()
         {
             _uv = Texcoord;
-            gl_Position = Vertex * ModelviewProjection;
+            gl_Position = ModelviewProjection * Vertex;
         }
 
         // resource setup code

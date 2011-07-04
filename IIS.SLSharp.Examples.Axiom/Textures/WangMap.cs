@@ -376,19 +376,44 @@ namespace IIS.SLSharp.Examples.Axiom.Textures
                 var box = buf.Lock(new BasicBox(0, 0, Width, Height), BufferLocking.Normal);
 
                 var idx = 0;
+
+                
+
+                
+
                 for (var y = 0; y < Height; y++)
                 {
-                    var scanLine = box.Data + y * box.RowPitch * 2;
-                    for (var x = 0; x < Width; x++)
+                    IntPtr scanLine;
+                    switch (tex.Format)
                     {
-                        //Marshal.WriteByte(scanLine, 3, _map[idx, 1]);
-                        //Marshal.WriteByte(scanLine, 2, _map[idx, 0]);
+                        case PixelFormat.BYTE_LA:
+                            scanLine = box.Data + y * box.RowPitch * 2;
+                            for (var x = 0; x < Width; x++)
+                            {
+                                Marshal.WriteByte(scanLine, 0, _map[idx, 0]);
+                                Marshal.WriteByte(scanLine, 1, _map[idx, 1]);
 
-                        Marshal.WriteByte(scanLine, 0, _map[idx, 0]);
-                        Marshal.WriteByte(scanLine, 1, _map[idx, 1]);
+                                scanLine += 2;
+                                idx++;
+                            }
+                            break;
 
-                        scanLine += 2;
-                        idx++;
+                        case PixelFormat.A8R8G8B8:
+                            scanLine = box.Data + y * box.RowPitch * 4;
+                            for (var x = 0; x < Width; x++)
+                            {
+                                Marshal.WriteByte(scanLine, 0, _map[idx, 0]);
+                                Marshal.WriteByte(scanLine, 1, _map[idx, 0]);
+                                Marshal.WriteByte(scanLine, 2, _map[idx, 0]);
+                                Marshal.WriteByte(scanLine, 3, _map[idx, 1]);
+
+                                scanLine += 4;
+                                idx++;
+                            }
+                            break;
+
+                        default:
+                            throw new AxiomException("Axiom does not support a proper texture format!");
                     }
                 }
 

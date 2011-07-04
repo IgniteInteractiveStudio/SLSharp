@@ -83,7 +83,7 @@ namespace IIS.SLSharp.Examples.Axiom
             _camera.Position = cam + look;
             _camera.LookAt(look);
 
-
+            // Axiom Bug: cant set in GL mode properly atm
             // SL# allows direct manipulation of uniforms like this!
             //_shader.Blue = (float)Math.Sin(angle * 8.0f);
         }
