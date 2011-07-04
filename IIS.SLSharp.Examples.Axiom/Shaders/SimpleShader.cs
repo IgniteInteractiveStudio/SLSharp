@@ -43,7 +43,7 @@ namespace IIS.SLSharp.Examples.Axiom.Shaders
         public void VertexMain()
         {
             _uv = Texcoord;
-            gl_Position = ModelviewProjection * Vertex;
+            gl_Position = Vertex * ModelviewProjection;
         }
 
         // resource setup code

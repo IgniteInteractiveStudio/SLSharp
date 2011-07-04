@@ -26,7 +26,6 @@ namespace IIS.SLSharp.Examples.MOGRE
 
         public void OnLoad()
         {
-
             var dir = Directory.GetCurrentDirectory();
             ResourceGroupManager.Singleton.AddResourceLocation(dir, "FileSystem");
             MaterialManager.Singleton.Initialise();

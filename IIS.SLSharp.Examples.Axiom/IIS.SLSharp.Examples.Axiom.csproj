@@ -76,6 +76,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Resources\box.mesh">
+      <Link>box.mesh</Link>
+    </None>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
