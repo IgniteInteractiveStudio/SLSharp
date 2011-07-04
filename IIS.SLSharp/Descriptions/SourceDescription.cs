@@ -8,25 +8,31 @@ namespace IIS.SLSharp.Descriptions
     // everywhere to improve performance
     public class SourceDescription
     {
-        public readonly List<FunctionDescription> Functions;
+        public List<FunctionDescription> Functions { get; private set; }
 
-        public readonly List<VariableDescription> Uniforms;
+        public List<VariableDescription> Uniforms { get; private set; }
 
-        public readonly List<VariableDescription> Attributes;
+        public List<VariableDescription> Attributes { get; private set; }
 
-        public readonly List<VariableDescription> Varyings;
+        public List<VariableDescription> Varyings { get; private set; }
 
-        public readonly List<VariableDescription> VertexIns;
+        public List<VariableDescription> VertexIns { get; private set; }
 
-        public readonly List<VariableDescription> FragmentOuts;
+        public List<VariableDescription> FragmentOuts { get; private set; }
 
-        public readonly List<string> ForwardDecl;
+        public List<string> ForwardDecl { get; private set; }
 
-        public static readonly SourceDescription Empty = new SourceDescription(
-            new List<FunctionDescription>(), new List<VariableDescription>(), 
-            new List<VariableDescription>(), new List<VariableDescription>(), 
-            new List<VariableDescription>(), new List<VariableDescription>(), 
-            new List<string>());
+        public static SourceDescription Empty
+        {
+            get
+            {
+                return new SourceDescription(
+                    new List<FunctionDescription>(), new List<VariableDescription>(),
+                    new List<VariableDescription>(), new List<VariableDescription>(),
+                    new List<VariableDescription>(), new List<VariableDescription>(),
+                    new List<string>());
+            }
+        }
 
         public SourceDescription(List<FunctionDescription> functions, 
             List<VariableDescription> uniforms, List<VariableDescription> attributes, 
