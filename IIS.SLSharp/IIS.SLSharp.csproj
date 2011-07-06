@@ -83,6 +83,7 @@
     <Compile Include="Shaders\ShaderDefinition.SingleVector.cs" />
     <Compile Include="ShaderType.cs" />
     <Compile Include="SLSharpException.cs" />
+    <Compile Include="Translation\BaseVisitor.cs" />
     <Compile Include="Translation\GLSL\GlslSourceBuilder.cs" />
     <Compile Include="Translation\GLSL\GlslTransform.cs" />
     <Compile Include="Translation\GLSL\GlslVisitor.cs" />

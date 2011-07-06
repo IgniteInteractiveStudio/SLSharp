@@ -11,7 +11,7 @@ using Mono.Cecil;
 
 namespace IIS.SLSharp.Translation.GLSL
 {
-    internal sealed partial class GlslVisitor : IAstVisitor<int, StringBuilder>
+    internal sealed partial class GlslVisitor : BaseVisitor, IAstVisitor<int, StringBuilder>
     {
         private readonly HashSet<Tuple<string, string>> _functions = new HashSet<Tuple<string, string>>();
 
@@ -107,6 +107,7 @@ namespace IIS.SLSharp.Translation.GLSL
         }
 
         public GlslVisitor(BlockStatement block, CustomAttribute attr)
+            : this()
         {
             _attr = attr;
 

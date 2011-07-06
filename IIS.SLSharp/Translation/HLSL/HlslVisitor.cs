@@ -11,7 +11,7 @@ using Mono.Cecil;
 
 namespace IIS.SLSharp.Translation.HLSL
 {
-    internal sealed partial class HlslVisitor : IAstVisitor<int, StringBuilder>
+    internal sealed partial class HlslVisitor : BaseVisitor, IAstVisitor<int, StringBuilder>
     {
         private readonly HashSet<Tuple<string, string>> _functions = new HashSet<Tuple<string, string>>();
 
@@ -253,7 +253,7 @@ namespace IIS.SLSharp.Translation.HLSL
                     if ((objectCreateExpression.Arguments.Count == 1) && (numRows > 1))
                     {
                         // scalar intialize all elements to a const
-#warning rather use a float3 widen(float f) { return float3{f,f,f}; } util func or temporary var than expanding to float3(ast,ast,ast)
+                        // TODO: rather use a float3 widen(float f) { return float3{f,f,f}; } util func or temporary var than expanding to float3(ast,ast,ast)
                         var args = new List<Expression>();
                         for (var i = 0; i < numRows; i++)
                             args.Add(objectCreateExpression.Arguments.First());
