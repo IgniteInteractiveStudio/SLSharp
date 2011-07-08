@@ -88,5 +88,10 @@ namespace IIS.SLSharp.Translation.HLSL
         {
             return _functions.Select(f => f.Item1 + ";" + (debugInfo ? " // " + f.Item2 : string.Empty)).ToList();
         }
+
+        public IEnumerable<Shader> WorkaroundDependencies
+        {
+            get { return Enumerable.Empty<Shader>(); }
+        }
     }
 }

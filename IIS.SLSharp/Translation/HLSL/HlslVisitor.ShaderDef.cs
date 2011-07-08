@@ -175,14 +175,8 @@ namespace IIS.SLSharp.Translation.HLSL
    
         private Expression WidenType<T>(Expression source)
         {        
-            var t = typeof(T);
-            var asm = AssemblyDefinition.ReadAssembly(t.Assembly.Location);
-            var mod = asm.Modules.Single(x => x.MetadataToken.ToInt32() == t.Module.MetadataToken);
-            var sdef = mod.Types.Single(x => x.MetadataToken.ToInt32() == typeof(ShaderDefinition).MetadataToken);
-            var tref = sdef.NestedTypes.Single(x => x.MetadataToken.ToInt32() == t.MetadataToken);
-            
-            var n = new ObjectCreateExpression( AstBuilder.ConvertType(tref), new[] { source.Clone() });
-            
+            var tref = ShaderDefinition.ToCecil(typeof(T));
+            var n = new ObjectCreateExpression( AstBuilder.ConvertType(tref), new[] { source.Clone() });            
             return n;
         }
 

@@ -151,7 +151,14 @@ namespace IIS.SLSharp.Shaders
         {
             var e = Enumerable.Empty<object>();
 
-            // Compile all dependencies)
+            // Compile all workarounds
+            foreach (var lib in Binding.Active.Transform.WorkaroundDependencies)
+            {
+                lib.Compile();
+                e = e.Concat(lib._objects);
+            }
+
+            // Compile all dependencies
             if (libaries != null)
             {
                 foreach (var lib in libaries)

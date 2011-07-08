@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using IIS.SLSharp.Descriptions;
+using IIS.SLSharp.Shaders;
 using Mono.Cecil;
 
 namespace IIS.SLSharp.Translation
@@ -27,5 +29,11 @@ namespace IIS.SLSharp.Translation
         /// <param name="debugInfo">Include descriptive elements</param>
         /// <returns></returns>
         List<string> ForwardDeclare(bool debugInfo);
+
+        /// <summary>
+        /// Returns a list of possible workaround libraries
+        /// TODO: this shall become obsolete when auto determining depdendencies
+        /// </summary>
+        IEnumerable<Shader> WorkaroundDependencies { get; }
     }
 }

@@ -64,5 +64,12 @@ namespace IIS.SLSharp.Translation.GLSL
         {
             return _functions.Select(f => f.Item1 + ";" + (debugInfo ? " // " + f.Item2 : string.Empty)).ToList();
         }
+
+        private Shader[] _workaroundDependencies;
+
+        public IEnumerable<Shader> WorkaroundDependencies
+        {
+            get { return _workaroundDependencies ?? (_workaroundDependencies = new Shader[] { Shader.CreateInstance<Workarounds.Trigonometric>() }); }
+        }
     }
 }

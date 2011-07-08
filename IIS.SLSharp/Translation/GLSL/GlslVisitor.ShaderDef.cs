@@ -8,6 +8,7 @@ using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
+using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Shaders;
 using Mono.Cecil;
 using Expression = ICSharpCode.NRefactory.CSharp.Expression;
@@ -20,6 +21,7 @@ namespace IIS.SLSharp.Translation.GLSL
     {
 
         // ReSharper disable InconsistentNaming
+        // ReSharper disable UnusedMember.Local
 #pragma warning disable 649
         private static readonly ShaderDefinition.sampler2D sampler2D;
         private static ShaderDefinition.vec2 vec2;
@@ -28,6 +30,7 @@ namespace IIS.SLSharp.Translation.GLSL
         private static float _float;
 #pragma warning restore 649
         // ReSharper restore InconsistentNaming
+        // ReSharper restore UnusedMember.Local
 
         private readonly Dictionary<Expression<Action>, Func<MethodDefinition, InvocationExpression, StringBuilder>> _handlers;
 
@@ -54,6 +57,110 @@ namespace IIS.SLSharp.Translation.GLSL
                 return IdFrom(obj);
             }
         }
+
+
+        /// <summary>
+        /// Completeley renamed the invocated method to the given name
+        /// </summary>
+        private Func<MethodDefinition, InvocationExpression, StringBuilder> Rename(string newName)
+        {
+            return (m, i) =>
+            {
+                var result = new StringBuilder();
+                return result.Append(newName).Append("(").Append(ArgsToString(i.Arguments)).Append(")");
+            };
+        }
+
+        /// <summary>
+        /// Translates the invocated name without any modifications
+        /// </summary>
+        private StringBuilder PassThrough(MethodDefinition m, InvocationExpression i)
+        {
+            var result = new StringBuilder();
+            return result.Append(m.Name).Append("(").Append(ArgsToString(i.Arguments)).Append(")");
+        }
+
+        /// <summary>
+        /// Translates the invocated name to lower case
+        /// </summary>
+        private StringBuilder ToLower(MethodDefinition m, InvocationExpression i)
+        {
+            var result = new StringBuilder();
+            return result.Append(m.Name.ToLowerInvariant()).Append("(").Append(ArgsToString(i.Arguments)).Append(")");
+        }
+
+        /// <summary>
+        /// Redirects the invocation to the explicitly specified method
+        /// </summary>
+        private Func<MethodDefinition, InvocationExpression, StringBuilder> Redirect(Expression<Action> wrapper)
+        {
+            var fun = ShaderDefinition.ToCecil(((MethodCallExpression)wrapper.Body).Method);
+            return (m, i) =>
+            {
+                // replace the current node with a call to fun and process again
+                i.RemoveAnnotations(typeof(MethodDefinition));
+                i.RemoveAnnotations(typeof(MethodReference));
+                i.AddAnnotation(fun);
+                return i.AcceptVisitor(this, 0);
+            };
+        }
+
+
+        private bool SameSignature(MethodDefinition a, MethodDefinition b)
+        {
+            if (a.ReturnType.Resolve().MetadataToken != b.ReturnType.Resolve().MetadataToken)
+                return false;
+
+            if (a.Parameters.Count != b.Parameters.Count)
+                return false;
+
+            for (var i = 0; i < a.Parameters.Count; i++)
+            {
+                var pa = a.Parameters[i].ParameterType;
+                var pb = b.Parameters[i].ParameterType;
+                if (pa.Resolve().MetadataToken != pb.Resolve().MetadataToken)
+                    return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Redirects the invocation to the specified class, by searching for a
+        /// method with the specified name if given or same name otherwise
+        /// matching the original method signature.
+        /// </summary>
+        /// <returns></returns>
+        private Func<MethodDefinition, InvocationExpression, StringBuilder> Redirect<T>(string name = null)
+        {
+            var t = ShaderDefinition.ToCecil(typeof(T));
+            return (m, i) =>
+            {
+                var redirected = t.Methods.Single(j => j.Name == (name ?? m.Name)
+                                                       && SameSignature(j, m));
+                i.RemoveAnnotations(typeof(MethodDefinition));
+                i.RemoveAnnotations(typeof(MethodReference));
+                i.AddAnnotation(redirected);
+                return i.AcceptVisitor(this, 0);
+            };
+        }
+
+
+        // Dispatcher
+        private StringBuilder VisitShaderDefCall(MethodDefinition m, InvocationExpression invocationExpression)
+        {
+            var tok = m.Resolve().MetadataToken.ToInt32();
+            Func<MethodDefinition, InvocationExpression, StringBuilder> handler;
+            var etok = System.Linq.Expressions.Expression.Lambda<Action>(System.Linq.Expressions.Expression.Constant(tok));
+
+            return _handlers.TryGetValue(etok, out handler) ?
+                handler(m, invocationExpression) : PassThrough(m, invocationExpression);
+        }
+
+
+        // TODO:
+        // Actual use code starts here, move the above to a shared source
+        // that can be used by any visitor!
 
         public GlslVisitor()
         {
@@ -135,75 +242,13 @@ namespace IIS.SLSharp.Translation.GLSL
                 { () => ShaderDefinition.Atanh(vec3), ToLower },
                 { () => ShaderDefinition.Atanh(vec4), ToLower },
 
-                { () => ShaderDefinition.SinCos(_float, out _float, out _float), 
-                    EmulateSinCos(() => ShaderDefinition.Sin(_float), () => ShaderDefinition.Cos(_float)) },
-                { () => ShaderDefinition.SinCos(vec2, out vec2, out vec2), 
-                    EmulateSinCos(() => ShaderDefinition.Sin(vec2), () => ShaderDefinition.Cos(vec2)) },
-                { () => ShaderDefinition.SinCos(vec3, out vec3, out vec3), 
-                    EmulateSinCos(() => ShaderDefinition.Sin(vec3), () => ShaderDefinition.Cos(vec3)) },
-                { () => ShaderDefinition.SinCos(vec4, out vec4, out vec4), 
-                    EmulateSinCos(() => ShaderDefinition.Sin(vec4), () => ShaderDefinition.Cos(vec4)) },
+                { () => ShaderDefinition.SinCos(_float, out _float, out _float), Redirect<Workarounds.Trigonometric>()  },
+                { () => ShaderDefinition.SinCos(vec2, out vec2, out vec2), Redirect<Workarounds.Trigonometric>() },
+                { () => ShaderDefinition.SinCos(vec3, out vec3, out vec3), Redirect<Workarounds.Trigonometric>() },
+                { () => ShaderDefinition.SinCos(vec4, out vec4, out vec4), Redirect<Workarounds.Trigonometric>() },
 
 #endregion
             };
-        }
-
-
-        private Func<MethodDefinition, InvocationExpression, StringBuilder> Rename(string newName)
-        {
-            return (m, i) =>
-            {
-                var result = new StringBuilder();
-                return result.Append(newName).Append("(").Append(ArgsToString(i.Arguments)).Append(")");
-            };
-        }
-
-        private StringBuilder PassThrough(MethodDefinition m, InvocationExpression i)
-        {
-            var result = new StringBuilder();
-            return result.Append(m.Name).Append("(").Append(ArgsToString(i.Arguments)).Append(")");
-        }
-
-        private StringBuilder ToLower(MethodDefinition m, InvocationExpression i)
-        {
-            var result = new StringBuilder();
-            return result.Append(m.Name.ToLowerInvariant()).Append("(").Append(ArgsToString(i.Arguments)).Append(")");
-        }
-
-        private int _tempCounter;
-
-        private Func<MethodDefinition, InvocationExpression, StringBuilder>
-            EmulateSinCos(Expression<Action> sinf, Expression<Action> cosf)
-        {
-            return (m, i) =>
-            {
-                // cache angle in a temporary var
-                var tmp = ToTemp(i.Arguments.First());
-                var result = tmp.AcceptVisitor(this, 0);
-
-                var sinb = ((MethodCallExpression)sinf.Body).Method;
-                var cosb = ((MethodCallExpression)cosf.Body).Method;
-
-                // ... create a call to Cos/Sin here ...
-                var sin = new InvocationExpression(null, new Expression[] { });
-
-
-                throw new NotImplementedException();
-                return result;
-            };
-        }
-
-        // Dispatcher
-        private StringBuilder VisitShaderDefCall(MethodDefinition m, InvocationExpression invocationExpression)
-        {
-
-
-            var tok = m.Resolve().MetadataToken.ToInt32();
-            Func<MethodDefinition, InvocationExpression, StringBuilder> handler;
-            var etok = System.Linq.Expressions.Expression.Lambda<Action>(System.Linq.Expressions.Expression.Constant(tok));
-
-            return _handlers.TryGetValue(etok, out handler) ?
-                handler(m, invocationExpression) : PassThrough(m, invocationExpression);
         }
     }
 }
