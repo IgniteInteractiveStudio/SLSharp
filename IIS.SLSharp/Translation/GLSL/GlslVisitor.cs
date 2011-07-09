@@ -11,7 +11,7 @@ using Mono.Cecil;
 
 namespace IIS.SLSharp.Translation.GLSL
 {
-    internal sealed partial class GlslVisitor : BaseVisitor, IAstVisitor<int, StringBuilder>
+    internal sealed partial class GlslVisitor : BaseVisitor
     {
         private readonly HashSet<Tuple<string, string>> _functions = new HashSet<Tuple<string, string>>();
 
@@ -77,34 +77,7 @@ namespace IIS.SLSharp.Translation.GLSL
             _functions.Add(new Tuple<string, string>(GetSignature(m), m.DeclaringType.FullName + "." + m.Name));
         }
 
-        private StringBuilder ArgsToString(ICollection<Expression> args)
-        {
-            var result = new StringBuilder();
-            if (args.Count <= 0)
-                return result;
-
-            foreach (var v in args.Take(args.Count - 1))
-            {
-                result.Append(v.AcceptVisitor(this, 0));
-                result.Append(", ");
-            }
-
-            result.Append(args.Last().AcceptVisitor(this, 0));
-            return result;
-        }
-
-        private static StringBuilder Indent(AstNode node, StringBuilder b)
-        {
-            if (node is BlockStatement)
-                return b;
-
-            var res = new StringBuilder();
-
-            res.Append("\t");
-            res.Append(b.Replace(Environment.NewLine, Environment.NewLine + "\t"));
-
-            return res;
-        }
+        
 
         public GlslVisitor(BlockStatement block, CustomAttribute attr)
             : this()
@@ -120,7 +93,7 @@ namespace IIS.SLSharp.Translation.GLSL
             Result += Environment.NewLine;
         }
 
-        public StringBuilder VisitBlockStatement(BlockStatement blockStatement, int data)
+        public override StringBuilder VisitBlockStatement(BlockStatement blockStatement, int data)
         {
             var result = new StringBuilder();
 
@@ -134,12 +107,12 @@ namespace IIS.SLSharp.Translation.GLSL
             return result;
         }
 
-        public StringBuilder VisitExpressionStatement(ExpressionStatement expressionStatement, int data)
+        public override StringBuilder VisitExpressionStatement(ExpressionStatement expressionStatement, int data)
         {
             return expressionStatement.Expression.AcceptVisitor(this, data).Append(";");
         }
 
-        public StringBuilder VisitAssignmentExpression(AssignmentExpression assignmentExpression, int data)
+        public override StringBuilder VisitAssignmentExpression(AssignmentExpression assignmentExpression, int data)
         {
             var result = assignmentExpression.Left.AcceptVisitor(this, data);
 
@@ -187,7 +160,7 @@ namespace IIS.SLSharp.Translation.GLSL
             return result;
         }
 
-        public StringBuilder VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, int data)
+        public override StringBuilder VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, int data)
         {
             var result = new StringBuilder();
 
@@ -205,7 +178,7 @@ namespace IIS.SLSharp.Translation.GLSL
             throw new NotImplementedException();
         }
 
-        public StringBuilder VisitInvocationExpression(InvocationExpression invocationExpression, int data)
+        public override StringBuilder VisitInvocationExpression(InvocationExpression invocationExpression, int data)
         {
             var result = new StringBuilder();
 
@@ -222,25 +195,25 @@ namespace IIS.SLSharp.Translation.GLSL
             return result;
         }
 
-        public StringBuilder VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, int data)
+        public override StringBuilder VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, int data)
         {
             return objectCreateExpression.Type.AcceptVisitor(this, data).Append("(").Append(
                 ArgsToString(objectCreateExpression.Arguments)).Append(")");
         }
 
-        public StringBuilder VisitMemberType(MemberType memberType, int data)
+        public override StringBuilder VisitMemberType(MemberType memberType, int data)
         {
             return new StringBuilder(memberType.Annotation<TypeReference>().ToGlsl());
         }
 
-        public StringBuilder VisitSimpleType(SimpleType simpleType, int data)
+        public override StringBuilder VisitSimpleType(SimpleType simpleType, int data)
         {
             // this cast might not work for all cases...
             ValidateType((TypeReference)simpleType.Annotation<MemberReference>());
             return new StringBuilder(simpleType.ToString());
         }
 
-        public StringBuilder VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, int data)
+        public override StringBuilder VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, int data)
         {
             var result = new StringBuilder();
 
@@ -276,13 +249,13 @@ namespace IIS.SLSharp.Translation.GLSL
             return result.Append(primitiveExpression.Value.ToString());
         }
 
-        public StringBuilder VisitCastExpression(CastExpression castExpression, int data)
+        public override StringBuilder VisitCastExpression(CastExpression castExpression, int data)
         {
             // TODO: implement
             throw new NotImplementedException();
         }
 
-        public StringBuilder VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, int data)
+        public override StringBuilder VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, int data)
         {
             var result = new StringBuilder("(");
 
@@ -347,7 +320,7 @@ namespace IIS.SLSharp.Translation.GLSL
             return result;
         }
 
-        public StringBuilder VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, int data)
+        public override StringBuilder VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, int data)
         {
             var result = new StringBuilder();
 
@@ -376,7 +349,7 @@ namespace IIS.SLSharp.Translation.GLSL
             throw new NotImplementedException();
         }
 
-        public StringBuilder VisitReturnStatement(ReturnStatement returnStatement, int data)
+        public override StringBuilder VisitReturnStatement(ReturnStatement returnStatement, int data)
         {
             var result = new StringBuilder();
 
@@ -391,12 +364,12 @@ namespace IIS.SLSharp.Translation.GLSL
             return result;
         }
 
-        public StringBuilder VisitIdentifierExpression(IdentifierExpression identifierExpression, int data)
+        public override StringBuilder VisitIdentifierExpression(IdentifierExpression identifierExpression, int data)
         {
             return new StringBuilder(identifierExpression.Identifier);
         }
 
-        public StringBuilder VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement, int data)
+        public override StringBuilder VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement, int data)
         {
             var result = new StringBuilder();
 
@@ -407,7 +380,7 @@ namespace IIS.SLSharp.Translation.GLSL
             return result;
         }
 
-        public StringBuilder VisitVariableInitializer(VariableInitializer variableInitializer, int data)
+        public override StringBuilder VisitVariableInitializer(VariableInitializer variableInitializer, int data)
         {
             var result = new StringBuilder(variableInitializer.Name);
 
@@ -417,12 +390,12 @@ namespace IIS.SLSharp.Translation.GLSL
             return result;
         }
 
-        public StringBuilder VisitPrimitiveType(PrimitiveType primitiveType, int data)
+        public override StringBuilder VisitPrimitiveType(PrimitiveType primitiveType, int data)
         {
             return new StringBuilder(primitiveType.Keyword);
         }
 
-        public StringBuilder VisitWhileStatement(WhileStatement whileStatement, int data)
+        public override StringBuilder VisitWhileStatement(WhileStatement whileStatement, int data)
         {
             var result = new StringBuilder("while (").Append(whileStatement.Condition.AcceptVisitor(this, data)).Append(")");
 
@@ -432,7 +405,7 @@ namespace IIS.SLSharp.Translation.GLSL
             return result;
         }
 
-        public StringBuilder VisitDoWhileStatement(DoWhileStatement doWhileStatement, int data)
+        public override StringBuilder VisitDoWhileStatement(DoWhileStatement doWhileStatement, int data)
         {
             var result = new StringBuilder("do");
 
@@ -444,7 +417,7 @@ namespace IIS.SLSharp.Translation.GLSL
             return result;
         }
 
-        public StringBuilder VisitIfElseStatement(IfElseStatement ifElseStatement, int data)
+        public override StringBuilder VisitIfElseStatement(IfElseStatement ifElseStatement, int data)
         {
             var result = new StringBuilder("if (").Append(ifElseStatement.Condition.AcceptVisitor(this, data)).Append(")");
 
@@ -461,7 +434,7 @@ namespace IIS.SLSharp.Translation.GLSL
             return result;
         }
 
-        public StringBuilder VisitSwitchStatement(SwitchStatement switchStatement, int data)
+        public override StringBuilder VisitSwitchStatement(SwitchStatement switchStatement, int data)
         {
             var result = new StringBuilder("switch (").Append(switchStatement.Expression.AcceptVisitor(this, data)).Append(")");
 
@@ -475,7 +448,7 @@ namespace IIS.SLSharp.Translation.GLSL
             return result;
         }
 
-        public StringBuilder VisitSwitchSection(SwitchSection switchSection, int data)
+        public override StringBuilder VisitSwitchSection(SwitchSection switchSection, int data)
         {
             var result = new StringBuilder();
 
@@ -495,22 +468,22 @@ namespace IIS.SLSharp.Translation.GLSL
             return result;
         }
 
-        public StringBuilder VisitCaseLabel(CaseLabel caseLabel, int data)
+        public override StringBuilder VisitCaseLabel(CaseLabel caseLabel, int data)
         {
             return new StringBuilder("case ").Append(caseLabel.Expression.AcceptVisitor(this, data)).Append(":");
         }
 
-        public StringBuilder VisitBreakStatement(BreakStatement breakStatement, int data)
+        public override StringBuilder VisitBreakStatement(BreakStatement breakStatement, int data)
         {
             return new StringBuilder("break;");
         }
 
-        public StringBuilder VisitContinueStatement(ContinueStatement continueStatement, int data)
+        public override StringBuilder VisitContinueStatement(ContinueStatement continueStatement, int data)
         {
             return new StringBuilder("continue;");
         }
 
-        public StringBuilder VisitForStatement(ForStatement forStatement, int data)
+        public override StringBuilder VisitForStatement(ForStatement forStatement, int data)
         {
             var result = new StringBuilder("for (");
 
@@ -559,7 +532,7 @@ namespace IIS.SLSharp.Translation.GLSL
             return result;
         }
 
-        public StringBuilder VisitDirectionExpression(DirectionExpression directionExpression, int data)
+        public override StringBuilder VisitDirectionExpression(DirectionExpression directionExpression, int data)
         {
             // at invocation time we wont pass out or inout keywords so
             // this just passes through

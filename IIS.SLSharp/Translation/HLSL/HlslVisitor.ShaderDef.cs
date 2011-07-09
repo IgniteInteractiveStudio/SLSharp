@@ -18,46 +18,9 @@ namespace IIS.SLSharp.Translation.HLSL
 {
     internal sealed partial class HlslVisitor
     {
-
-// ReSharper disable InconsistentNaming
-#pragma warning disable 649
-        private static readonly ShaderDefinition.sampler2D sampler2D;
-        private static ShaderDefinition.vec2 vec2;
-        private static ShaderDefinition.vec3 vec3;
-        private static ShaderDefinition.vec4 vec4;
-        private static float _float;
-#pragma warning restore 649
-// ReSharper restore InconsistentNaming
-
-        private readonly Dictionary<Expression<Action>, Func<MethodDefinition, InvocationExpression, StringBuilder>> _handlers;
-
-        internal sealed class HandlerComparer : IEqualityComparer<Expression<Action>>
-        {
-            private int IdFrom(Expression<Action> a)
-            {
-                
-                var x = a.Body as MethodCallExpression;
-                if (x != null)
-                    return x.Method.MetadataToken;
-
-                var c = (ConstantExpression)a.Body;
-                return (int)c.Value;
-            }
-
-            public bool Equals(Expression<Action> x, Expression<Action> y)
-            {
-                return IdFrom(x) == IdFrom(y);
-            }
-
-            public int GetHashCode(Expression<Action> obj)
-            {
-                return IdFrom(obj);
-            }
-        }
-
         public HlslVisitor()
         {
-            _handlers = new Dictionary<Expression<Action>, Func<MethodDefinition, InvocationExpression, StringBuilder>>(new HandlerComparer())
+            Handlers = new Dictionary<Expression<Action>, Func<MethodDefinition, InvocationExpression, StringBuilder>>(new HandlerComparer())
             {
 #region Trigonometry
                 { () => ShaderDefinition.Radians(_float), ToLower },
@@ -216,40 +179,6 @@ namespace IIS.SLSharp.Translation.HLSL
             Warn("HLSL does not support a native Atanh, emulating with precision loss.");
             // TODO: emulate as (ln(1+x) - ln(1-x))/2
             throw new NotImplementedException();
-        }
-
-        private Func<MethodDefinition, InvocationExpression, StringBuilder> Rename(string newName)
-        {
-            return (m,i) =>
-            {
-                var result = new StringBuilder();
-                return result.Append(newName).Append("(").Append(ArgsToString(i.Arguments)).Append(")");
-            };
-        }
-
-        private StringBuilder PassThrough(MethodDefinition m, InvocationExpression i)
-        {
-            var result = new StringBuilder();
-            return result.Append(m.Name).Append("(").Append(ArgsToString(i.Arguments)).Append(")");
-        }
-
-        private StringBuilder ToLower(MethodDefinition m, InvocationExpression i)
-        {
-            var result = new StringBuilder();
-            return result.Append(m.Name.ToLowerInvariant()).Append("(").Append(ArgsToString(i.Arguments)).Append(")");
-        }
-
-        // Dispatcher
-        private StringBuilder VisitShaderDefCall(MethodDefinition m, InvocationExpression invocationExpression)
-        {
-            
-
-            var tok = m.Resolve().MetadataToken.ToInt32();
-            Func<MethodDefinition, InvocationExpression, StringBuilder> handler;
-            var etok = System.Linq.Expressions.Expression.Lambda<Action>(System.Linq.Expressions.Expression.Constant(tok));
-
-            return _handlers.TryGetValue(etok, out handler) ? 
-                handler(m, invocationExpression) : PassThrough(m, invocationExpression);
         }
     }
 }

@@ -6,117 +6,117 @@ namespace IIS.SLSharp.Translation.GLSL
 {
     internal sealed partial class GlslVisitor
     {
-        public StringBuilder VisitDelegateDeclaration(DelegateDeclaration delegateDeclaration, int data)
+        public override StringBuilder VisitDelegateDeclaration(DelegateDeclaration delegateDeclaration, int data)
         {
             throw new NotSupportedException();
         }
 
-        public StringBuilder VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, int data)
+        public override StringBuilder VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, int data)
         {
             throw new NotSupportedException();
         }
 
-        public StringBuilder VisitTypeDeclaration(TypeDeclaration typeDeclaration, int data)
+        public override StringBuilder VisitTypeDeclaration(TypeDeclaration typeDeclaration, int data)
         {
             throw new NotSupportedException();
         }
 
-        public StringBuilder VisitUsingAliasDeclaration(UsingAliasDeclaration usingAliasDeclaration, int data)
+        public override StringBuilder VisitUsingAliasDeclaration(UsingAliasDeclaration usingAliasDeclaration, int data)
         {
             throw new NotSupportedException();
         }
 
-        public StringBuilder VisitUsingDeclaration(UsingDeclaration usingDeclaration, int data)
+        public override StringBuilder VisitUsingDeclaration(UsingDeclaration usingDeclaration, int data)
         {
             throw new NotSupportedException();
         }
 
-        public StringBuilder VisitExternAliasDeclaration(ExternAliasDeclaration externAliasDeclaration, int data)
+        public override StringBuilder VisitExternAliasDeclaration(ExternAliasDeclaration externAliasDeclaration, int data)
         {
             throw new NotSupportedException();
         }
 
-        public StringBuilder VisitAccessor(Accessor accessor, int data)
+        public override StringBuilder VisitAccessor(Accessor accessor, int data)
         {
             throw new NotSupportedException();
         }
 
-        public StringBuilder VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, int data)
+        public override StringBuilder VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, int data)
         {
             throw new NotSupportedException();
         }
 
-        public StringBuilder VisitConstructorInitializer(ConstructorInitializer constructorInitializer, int data)
+        public override StringBuilder VisitConstructorInitializer(ConstructorInitializer constructorInitializer, int data)
         {
             throw new NotSupportedException();
         }
 
-        public StringBuilder VisitDestructorDeclaration(DestructorDeclaration destructorDeclaration, int data)
+        public override StringBuilder VisitDestructorDeclaration(DestructorDeclaration destructorDeclaration, int data)
         {
             throw new NotSupportedException();
         }
 
-        public StringBuilder VisitEnumMemberDeclaration(EnumMemberDeclaration enumMemberDeclaration, int data)
+        public override StringBuilder VisitEnumMemberDeclaration(EnumMemberDeclaration enumMemberDeclaration, int data)
         {
             throw new NotSupportedException();
         }
 
-        public StringBuilder VisitEventDeclaration(EventDeclaration eventDeclaration, int data)
+        public override StringBuilder VisitEventDeclaration(EventDeclaration eventDeclaration, int data)
         {
             throw new NotSupportedException();
         }
 
-        public StringBuilder VisitCustomEventDeclaration(CustomEventDeclaration customEventDeclaration, int data)
+        public override StringBuilder VisitCustomEventDeclaration(CustomEventDeclaration customEventDeclaration, int data)
         {
             throw new NotSupportedException();
         }
 
-        public StringBuilder VisitFieldDeclaration(FieldDeclaration fieldDeclaration, int data)
+        public override StringBuilder VisitFieldDeclaration(FieldDeclaration fieldDeclaration, int data)
         {
             throw new NotSupportedException();
         }
 
-        public StringBuilder VisitIndexerDeclaration(IndexerDeclaration indexerDeclaration, int data)
+        public override StringBuilder VisitIndexerDeclaration(IndexerDeclaration indexerDeclaration, int data)
         {
             throw new NotSupportedException();
         }
 
-        public StringBuilder VisitMethodDeclaration(MethodDeclaration methodDeclaration, int data)
+        public override StringBuilder VisitMethodDeclaration(MethodDeclaration methodDeclaration, int data)
         {
             throw new NotSupportedException();
         }
 
-        public StringBuilder VisitOperatorDeclaration(OperatorDeclaration operatorDeclaration, int data)
+        public override StringBuilder VisitOperatorDeclaration(OperatorDeclaration operatorDeclaration, int data)
         {
             throw new NotSupportedException();
         }
 
-        public StringBuilder VisitParameterDeclaration(ParameterDeclaration parameterDeclaration, int data)
+        public override StringBuilder VisitParameterDeclaration(ParameterDeclaration parameterDeclaration, int data)
         {
             throw new NotSupportedException();
         }
 
-        public StringBuilder VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, int data)
+        public override StringBuilder VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, int data)
         {
             throw new NotSupportedException();
         }
 
-        public StringBuilder VisitCompilationUnit(CompilationUnit compilationUnit, int data)
+        public override StringBuilder VisitCompilationUnit(CompilationUnit compilationUnit, int data)
         {
             throw new NotSupportedException();
         }
 
-        public StringBuilder VisitComment(Comment comment, int data)
+        public override StringBuilder VisitComment(Comment comment, int data)
         {
             throw new NotSupportedException();
         }
 
-        public StringBuilder VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, int data)
+        public override StringBuilder VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, int data)
         {
             throw new NotSupportedException();
         }
 
-        public StringBuilder VisitConstraint(Constraint constraint, int data)
+        public override StringBuilder VisitConstraint(Constraint constraint, int data)
         {
             throw new NotSupportedException();
         }
