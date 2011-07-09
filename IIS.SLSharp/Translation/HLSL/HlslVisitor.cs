@@ -11,7 +11,7 @@ using Mono.Cecil;
 
 namespace IIS.SLSharp.Translation.HLSL
 {
-    internal sealed partial class HlslVisitor : BaseVisitor, IAstVisitor<int, StringBuilder>
+    internal sealed partial class HlslVisitor : BaseVisitor
     {
         private readonly HashSet<Tuple<string, string>> _functions = new HashSet<Tuple<string, string>>();
 
@@ -88,35 +88,6 @@ namespace IIS.SLSharp.Translation.HLSL
                 throw new Exception("Cannot call shader entry point.");
 
             _functions.Add(new Tuple<string, string>(GetSignature(m), m.DeclaringType.FullName + "." + m.Name));
-        }
-
-        private StringBuilder ArgsToString(IEnumerable<Expression> args)
-        {
-            var result = new StringBuilder();
-            if (args.Count() <= 0)
-                return result;
-
-            foreach (var v in args.Take(args.Count() - 1))
-            {
-                result.Append(v.AcceptVisitor(this, 0));
-                result.Append(", ");
-            }
-
-            result.Append(args.Last().AcceptVisitor(this, 0));
-            return result;
-        }
-
-        private static StringBuilder Indent(AstNode node, StringBuilder b)
-        {
-            if (node is BlockStatement)
-                return b;
-
-            var res = new StringBuilder();
-
-            res.Append("\t");
-            res.Append(b.Replace(Environment.NewLine, Environment.NewLine + "\t"));
-
-            return res;
         }
 
         public HlslVisitor(BlockStatement block, CustomAttribute attr, ResolveVisitor resolver)
@@ -284,7 +255,7 @@ namespace IIS.SLSharp.Translation.HLSL
         {
             var result = new StringBuilder();
 
-            if (primitiveExpression.Value.GetType() == typeof(float))
+            if (primitiveExpression.Value is float)
             {
                 var s = ((float)primitiveExpression.Value).ToString(CultureInfo.InvariantCulture.NumberFormat);
                 result.Append(s);
@@ -295,7 +266,7 @@ namespace IIS.SLSharp.Translation.HLSL
                 return result;
             }
 
-            if (primitiveExpression.Value.GetType() == typeof(double))
+            if (primitiveExpression.Value is double)
             {
                 var s = ((double)primitiveExpression.Value).ToString(CultureInfo.InvariantCulture.NumberFormat);
                 result.Append(s);
@@ -306,7 +277,7 @@ namespace IIS.SLSharp.Translation.HLSL
                 return result;
             }
 
-            if (primitiveExpression.Value.GetType() == typeof(uint))
+            if (primitiveExpression.Value is uint)
             {
                 var s = ((uint)primitiveExpression.Value).ToString(CultureInfo.InvariantCulture.NumberFormat);
                 result.Append(s).Append("u");

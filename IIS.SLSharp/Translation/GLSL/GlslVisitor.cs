@@ -217,7 +217,7 @@ namespace IIS.SLSharp.Translation.GLSL
         {
             var result = new StringBuilder();
 
-            if (primitiveExpression.Value.GetType() == typeof(float))
+            if (primitiveExpression.Value is float)
             {
                 var s = ((float)primitiveExpression.Value).ToString(CultureInfo.InvariantCulture.NumberFormat);
                 result.Append(s);
@@ -228,7 +228,7 @@ namespace IIS.SLSharp.Translation.GLSL
                 return result;
             }
 
-            if (primitiveExpression.Value.GetType() == typeof(double))
+            if (primitiveExpression.Value is double)
             {
                 var s = ((double)primitiveExpression.Value).ToString(CultureInfo.InvariantCulture.NumberFormat);
                 result.Append(s);
@@ -239,7 +239,7 @@ namespace IIS.SLSharp.Translation.GLSL
                 return result;
             }
 
-            if (primitiveExpression.Value.GetType() == typeof(uint))
+            if (primitiveExpression.Value is uint)
             {
                 var s = ((uint)primitiveExpression.Value).ToString(CultureInfo.InvariantCulture.NumberFormat);
                 result.Append(s).Append("u");
