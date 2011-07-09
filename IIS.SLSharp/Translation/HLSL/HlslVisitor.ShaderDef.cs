@@ -153,7 +153,7 @@ namespace IIS.SLSharp.Translation.HLSL
             var lhs = i.Arguments.Take(1);
             var rhs = i.Arguments.Skip(1).Take(1);
             var widen = rhs.Select(WidenType<T>);
-            var args = lhs.Concat(widen);
+            var args = lhs.Concat(widen).ToList();
 
             result.Append("fmod(").Append(ArgsToString(args)).Append(")");
 

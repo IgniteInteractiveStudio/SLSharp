@@ -8,7 +8,7 @@ using Attribute = ICSharpCode.NRefactory.CSharp.Attribute;
 
 namespace IIS.SLSharp.Translation
 {
-    internal abstract partial class BaseVisitor : IAstVisitor<int, StringBuilder>
+    internal abstract partial class VisitorBase : IAstVisitor<int, StringBuilder>
     {
         protected void Warn(string message, params object[] args)
         {

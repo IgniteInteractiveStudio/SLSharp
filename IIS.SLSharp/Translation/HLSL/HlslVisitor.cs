@@ -11,7 +11,7 @@ using Mono.Cecil;
 
 namespace IIS.SLSharp.Translation.HLSL
 {
-    internal sealed partial class HlslVisitor : BaseVisitor
+    internal sealed partial class HlslVisitor : VisitorBase
     {
         private readonly HashSet<Tuple<string, string>> _functions = new HashSet<Tuple<string, string>>();
 

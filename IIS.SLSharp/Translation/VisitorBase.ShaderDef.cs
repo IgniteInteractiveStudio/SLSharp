@@ -9,7 +9,7 @@ using InvocationExpression = ICSharpCode.NRefactory.CSharp.InvocationExpression;
 
 namespace IIS.SLSharp.Translation
 {
-    internal abstract partial class BaseVisitor
+    internal abstract partial class VisitorBase
     {
         // ReSharper disable InconsistentNaming
         // ReSharper disable UnusedMember.Local

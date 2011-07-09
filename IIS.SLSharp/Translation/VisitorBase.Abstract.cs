@@ -7,7 +7,7 @@ using Attribute = System.Attribute;
 
 namespace IIS.SLSharp.Translation
 {
-    internal abstract partial class BaseVisitor
+    internal abstract partial class VisitorBase
     {
         public abstract StringBuilder VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression, int data);
         public abstract StringBuilder VisitArrayInitializerExpression(ArrayInitializerExpression arrayInitializerExpression, int data);
@@ -29,12 +29,6 @@ namespace IIS.SLSharp.Translation
         public abstract StringBuilder VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, int data);
         public abstract StringBuilder VisitUncheckedExpression(UncheckedExpression uncheckedExpression, int data);
         public abstract StringBuilder VisitEmptyExpression(EmptyExpression emptyExpression, int data);
-        public abstract StringBuilder VisitDelegateDeclaration(DelegateDeclaration delegateDeclaration, int data);
-        public abstract StringBuilder VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, int data);
-        public abstract StringBuilder VisitTypeDeclaration(TypeDeclaration typeDeclaration, int data);
-        public abstract StringBuilder VisitUsingAliasDeclaration(UsingAliasDeclaration usingAliasDeclaration, int data);
-        public abstract StringBuilder VisitUsingDeclaration(UsingDeclaration usingDeclaration, int data);
-        public abstract StringBuilder VisitExternAliasDeclaration(ExternAliasDeclaration externAliasDeclaration, int data);
         public abstract StringBuilder VisitBlockStatement(BlockStatement blockStatement, int data);
         public abstract StringBuilder VisitBreakStatement(BreakStatement breakStatement, int data);
         public abstract StringBuilder VisitContinueStatement(ContinueStatement continueStatement, int data);
@@ -51,29 +45,12 @@ namespace IIS.SLSharp.Translation
         public abstract StringBuilder VisitUncheckedStatement(UncheckedStatement uncheckedStatement, int data);
         public abstract StringBuilder VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement, int data);
         public abstract StringBuilder VisitWhileStatement(WhileStatement whileStatement, int data);
-        public abstract StringBuilder VisitAccessor(Accessor accessor, int data);
-        public abstract StringBuilder VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, int data);
-        public abstract StringBuilder VisitConstructorInitializer(ConstructorInitializer constructorInitializer, int data);
-        public abstract StringBuilder VisitDestructorDeclaration(DestructorDeclaration destructorDeclaration, int data);
-        public abstract StringBuilder VisitEnumMemberDeclaration(EnumMemberDeclaration enumMemberDeclaration, int data);
-        public abstract StringBuilder VisitEventDeclaration(EventDeclaration eventDeclaration, int data);
-        public abstract StringBuilder VisitCustomEventDeclaration(CustomEventDeclaration customEventDeclaration, int data);
-        public abstract StringBuilder VisitFieldDeclaration(FieldDeclaration fieldDeclaration, int data);
-        public abstract StringBuilder VisitIndexerDeclaration(IndexerDeclaration indexerDeclaration, int data);
-        public abstract StringBuilder VisitMethodDeclaration(MethodDeclaration methodDeclaration, int data);
-        public abstract StringBuilder VisitOperatorDeclaration(OperatorDeclaration operatorDeclaration, int data);
-        public abstract StringBuilder VisitParameterDeclaration(ParameterDeclaration parameterDeclaration, int data);
-        public abstract StringBuilder VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, int data);
         public abstract StringBuilder VisitVariableInitializer(VariableInitializer variableInitializer, int data);
-        public abstract StringBuilder VisitCompilationUnit(CompilationUnit compilationUnit, int data);
         public abstract StringBuilder VisitSimpleType(SimpleType simpleType, int data);
         public abstract StringBuilder VisitMemberType(MemberType memberType, int data);
         public abstract StringBuilder VisitComposedType(ComposedType composedType, int data);
         public abstract StringBuilder VisitArraySpecifier(ArraySpecifier arraySpecifier, int data);
         public abstract StringBuilder VisitPrimitiveType(PrimitiveType primitiveType, int data);
-        public abstract StringBuilder VisitComment(Comment comment, int data);
-        public abstract StringBuilder VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, int data);
-        public abstract StringBuilder VisitConstraint(Constraint constraint, int data);
         public abstract StringBuilder VisitCSharpTokenNode(CSharpTokenNode cSharpTokenNode, int data);
         public abstract StringBuilder VisitIdentifier(Identifier identifier, int data);
     }
