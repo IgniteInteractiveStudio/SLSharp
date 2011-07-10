@@ -42,12 +42,14 @@
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="Annotations\FragmentShaderAttribute.cs" />
+    <Compile Include="Annotations\UndefinedBehaviorAttribute.cs" />
     <Compile Include="Annotations\VertexInAttribute.cs" />
     <Compile Include="Annotations\IShaderAttribute.cs" />
     <Compile Include="Annotations\FragmentOutAttribute.cs" />
     <Compile Include="Annotations\UniformAttribute.cs" />
     <Compile Include="Annotations\VaryingAttribute.cs" />
     <Compile Include="Annotations\VertexShaderAttribute.cs" />
+    <Compile Include="Annotations\WarningAttribute.cs" />
     <Compile Include="Bindings\Binding.cs" />
     <Compile Include="Bindings\IProgram.cs" />
     <Compile Include="Bindings\ISLSharpBinding.cs" />
@@ -84,6 +86,7 @@
     <Compile Include="Shaders\ShaderDefinition.SingleVector.cs" />
     <Compile Include="ShaderType.cs" />
     <Compile Include="SLSharpException.cs" />
+    <Compile Include="Translation\HLSL\Workarounds\Trigonometric.cs" />
     <Compile Include="Translation\VisitorBase.Abstract.cs" />
     <Compile Include="Translation\VisitorBase.cs" />
     <Compile Include="Translation\VisitorBase.ShaderDef.cs" />

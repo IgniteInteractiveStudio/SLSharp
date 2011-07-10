@@ -83,20 +83,20 @@ namespace IIS.SLSharp.Translation.HLSL
                 { () => ShaderDefinition.Tanh(vec3), ToLower },
                 { () => ShaderDefinition.Tanh(vec4), ToLower },
 
-                { () => ShaderDefinition.Asinh(_float), EmulateAsinh },
-                { () => ShaderDefinition.Asinh(vec2), EmulateAsinh },
-                { () => ShaderDefinition.Asinh(vec3), EmulateAsinh },
-                { () => ShaderDefinition.Asinh(vec4), EmulateAsinh },
+                { () => ShaderDefinition.Asinh(_float), Redirect<Workarounds.Trigonometric>() },
+                { () => ShaderDefinition.Asinh(vec2), Redirect<Workarounds.Trigonometric>() },
+                { () => ShaderDefinition.Asinh(vec3), Redirect<Workarounds.Trigonometric>() },
+                { () => ShaderDefinition.Asinh(vec4), Redirect<Workarounds.Trigonometric>() },
 
-                { () => ShaderDefinition.Acosh(_float), EmulateAcosh },
-                { () => ShaderDefinition.Acosh(vec2), EmulateAcosh },
-                { () => ShaderDefinition.Acosh(vec3), EmulateAcosh },
-                { () => ShaderDefinition.Acosh(vec4), EmulateAcosh },
+                { () => ShaderDefinition.Acosh(_float), Redirect<Workarounds.Trigonometric>() },
+                { () => ShaderDefinition.Acosh(vec2), Redirect<Workarounds.Trigonometric>() },
+                { () => ShaderDefinition.Acosh(vec3), Redirect<Workarounds.Trigonometric>() },
+                { () => ShaderDefinition.Acosh(vec4), Redirect<Workarounds.Trigonometric>() },
 
-                { () => ShaderDefinition.Atanh(_float), EmulateAtanh },
-                { () => ShaderDefinition.Atanh(vec2), EmulateAtanh },
-                { () => ShaderDefinition.Atanh(vec3), EmulateAtanh },
-                { () => ShaderDefinition.Atanh(vec4), EmulateAtanh },
+                { () => ShaderDefinition.Atanh(_float), Redirect<Workarounds.Trigonometric>() },
+                { () => ShaderDefinition.Atanh(vec2), Redirect<Workarounds.Trigonometric>() },
+                { () => ShaderDefinition.Atanh(vec3), Redirect<Workarounds.Trigonometric>() },
+                { () => ShaderDefinition.Atanh(vec4), Redirect<Workarounds.Trigonometric>() },
 
                 { () => ShaderDefinition.SinCos(_float, out _float, out _float), ToLower },
                 { () => ShaderDefinition.SinCos(vec2, out vec2, out vec2), ToLower },
@@ -158,27 +158,6 @@ namespace IIS.SLSharp.Translation.HLSL
             result.Append("fmod(").Append(ArgsToString(args)).Append(")");
 
             return result;
-        }
-
-        private StringBuilder EmulateAsinh(MethodDefinition m, InvocationExpression i)
-        {
-            Warn("HLSL does not support a native Asinh, emulating with precision loss.");
-            // TODO: emulate as ln(x + sqrt(1 + x*x))
-            throw new NotImplementedException();
-        }
-
-        private StringBuilder EmulateAcosh(MethodDefinition m, InvocationExpression i)
-        {
-            Warn("HLSL does not support a native Acosh, emulating with precision loss.");
-            // TODO: emulate as 2*ln(sqrt((x+1)/2) + sqrt((x-1)/2))
-            throw new NotImplementedException();
-        }
-
-        private StringBuilder EmulateAtanh(MethodDefinition m, InvocationExpression i)
-        {
-            Warn("HLSL does not support a native Atanh, emulating with precision loss.");
-            // TODO: emulate as (ln(1+x) - ln(1-x))/2
-            throw new NotImplementedException();
         }
     }
 }

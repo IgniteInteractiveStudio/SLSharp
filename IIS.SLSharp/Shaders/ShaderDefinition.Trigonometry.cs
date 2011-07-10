@@ -1,4 +1,6 @@
-﻿namespace IIS.SLSharp.Shaders
+﻿using IIS.SLSharp.Annotations;
+
+namespace IIS.SLSharp.Shaders
 {
     public abstract partial class ShaderDefinition
     {
@@ -354,6 +356,7 @@
         /// </summary>
         /// <remarks>Results are undefined if x &lt; 1.</remarks>
         /// <returns>Returns the arc hyperbolic cosine of x.</returns>
+        [UndefinedBehavior("x < 1")]
         protected internal static float Acosh(float x) { throw _invalidAccess; }
 
         /// <summary>
@@ -361,6 +364,7 @@
         /// </summary>
         /// <remarks>Results are undefined if x &lt; 1.</remarks>
         /// <returns>Returns the arc hyperbolic cosine of x.</returns>
+        [UndefinedBehavior("x < 1")]
         protected internal static vec2 Acosh(vec2 x) { throw _invalidAccess; }
 
         /// <summary>
@@ -368,6 +372,7 @@
         /// </summary>
         /// <remarks>Results are undefined if x &lt; 1.</remarks>
         /// <returns>Returns the arc hyperbolic cosine of x.</returns>
+        [UndefinedBehavior("x < 1")]
         protected internal static vec3 Acosh(vec3 x) { throw _invalidAccess; }
 
         /// <summary>
@@ -375,6 +380,7 @@
         /// </summary>
         /// <remarks>Results are undefined if x &lt; 1.</remarks>
         /// <returns>Returns the arc hyperbolic cosine of x.</returns>
+        [UndefinedBehavior("x < 1")]
         protected internal static vec4 Acosh(vec4 x) { throw _invalidAccess; }
 
         #endregion
@@ -386,6 +392,7 @@
         /// </summary>
         /// <remarks>Results are undefined if |x| &gt;= 1.</remarks>
         /// <returns>Returns the arc hyperbolic tangent of x.</returns>
+        [UndefinedBehavior("x >= 1")]
         protected internal static float Atanh(float x) { throw _invalidAccess; }
 
         /// <summary>
@@ -393,6 +400,7 @@
         /// </summary>
         /// <remarks>Results are undefined if |x| &gt;= 1.</remarks>
         /// <returns>Returns the arc hyperbolic tangent of x.</returns>
+        [UndefinedBehavior("x >= 1")]
         protected internal static vec2 Atanh(vec2 x) { throw _invalidAccess; }
 
         /// <summary>
@@ -400,6 +408,7 @@
         /// </summary>
         /// <remarks>Results are undefined if |x| &gt;= 1.</remarks>
         /// <returns>Returns the arc hyperbolic tangent of x.</returns>
+        [UndefinedBehavior("x >= 1")]
         protected internal static vec3 Atanh(vec3 x) { throw _invalidAccess; }
 
         /// <summary>
@@ -407,6 +416,7 @@
         /// </summary>
         /// <remarks>Results are undefined if |x| &gt;= 1.</remarks>
         /// <returns>Returns the arc hyperbolic tangent of x.</returns>
+        [UndefinedBehavior("x >= 1")]
         protected internal static vec4 Atanh(vec4 x) { throw _invalidAccess; }
 
         #endregion

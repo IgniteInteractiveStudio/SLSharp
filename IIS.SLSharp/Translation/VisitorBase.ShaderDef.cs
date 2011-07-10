@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Shaders;
 using Mono.Cecil;
 using InvocationExpression = ICSharpCode.NRefactory.CSharp.InvocationExpression;
@@ -80,12 +81,22 @@ namespace IIS.SLSharp.Translation
             return result.Append(m.Name.ToLowerInvariant()).Append("(").Append(ArgsToString(i.Arguments)).Append(")");
         }
 
+        private void CheckWarnings(MethodDefinition def)
+        {
+            var warn = def.CustomAttributes.FirstOrDefault(a => a.AttributeType.Resolve().MetadataToken.ToInt32() == typeof(WarningAttribute).MetadataToken);
+            if (warn == null)
+                return;
+            var warning = (string)warn.ConstructorArguments.First().Value;
+            Warn(warning);
+        }
+
         /// <summary>
         /// Redirects the invocation to the explicitly specified method
         /// </summary>
         protected Func<MethodDefinition, InvocationExpression, StringBuilder> Redirect(Expression<Action> wrapper)
         {
             var fun = ShaderDefinition.ToCecil(((MethodCallExpression)wrapper.Body).Method);
+            CheckWarnings(fun);
             return (m, i) =>
             {
                 // replace the current node with a call to fun and process again
@@ -129,6 +140,7 @@ namespace IIS.SLSharp.Translation
             {
                 var redirected = t.Methods.Single(j => j.Name == (name ?? m.Name)
                                                        && SameSignature(j, m));
+                CheckWarnings(redirected);
                 i.RemoveAnnotations(typeof(MethodDefinition));
                 i.RemoveAnnotations(typeof(MethodReference));
                 i.AddAnnotation(redirected);

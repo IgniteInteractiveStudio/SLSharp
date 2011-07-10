@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using ICSharpCode.NRefactory.CSharp;
@@ -13,13 +14,13 @@ namespace IIS.SLSharp.Translation
         protected void Warn(string message, params object[] args)
         {
             var msg = String.Format(message, args);
-            Console.WriteLine("Warning: " + msg);
+            Debug.WriteLine("Warning: " + msg);
         }
 
         protected void Error(string message, params object[] args)
         {
             var msg = String.Format(message, args);
-            Console.WriteLine("Error: " + msg);
+            Debug.WriteLine("Error: " + msg);
         }
 
         private int _tempCounter;

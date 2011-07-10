@@ -22,6 +22,28 @@ namespace IIS.SLSharp.Translation.HLSL
             _functions.Clear();
         }
 
+        private bool SameMethod(MethodDefinition m, IMethod n, ITypeResolveContext ctx)
+        {
+            if (m.Name != n.Name)
+                return false;
+
+            if (n.ReturnType.Resolve(ctx).FullName != m.ReturnType.FullName.Replace('/', '.'))
+                return false;
+
+            if (n.Parameters.Count != m.Parameters.Count)
+                return false;
+
+            for (var i = 0; i < n.Parameters.Count; i++)
+            {
+                var pn = n.Parameters[i];
+                var pm = m.Parameters[i];
+                if (pn.Type.Resolve(ctx).FullName != pm.ParameterType.FullName.Replace('/', '.'))
+                    return false;
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// Public translation interface.
         /// Translates the given method to HLSL
@@ -67,7 +89,7 @@ namespace IIS.SLSharp.Translation.HLSL
             // TODO: need a more sane way to get the correct class + member
             var ss = ctx.GetAllClasses().First(c => c.FullName == s.FullName);
             resolver.CurrentTypeDefinition = ss;
-            resolver.CurrentMember = ss.Members.First(n => m.Name == n.Name);
+            resolver.CurrentMember = ss.Methods.First(n => SameMethod(m, n, ctx));
 
             var rv = new ResolveVisitor(resolver, null, null);
             
@@ -89,9 +111,11 @@ namespace IIS.SLSharp.Translation.HLSL
             return _functions.Select(f => f.Item1 + ";" + (debugInfo ? " // " + f.Item2 : string.Empty)).ToList();
         }
 
+        private Shader[] _workaroundDependencies;
+
         public IEnumerable<Shader> WorkaroundDependencies
         {
-            get { return Enumerable.Empty<Shader>(); }
+            get { return _workaroundDependencies ?? (_workaroundDependencies = new Shader[] { Shader.CreateInstance<Workarounds.Trigonometric>() }); }
         }
     }
 }

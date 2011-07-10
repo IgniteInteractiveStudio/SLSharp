@@ -23,22 +23,10 @@ namespace IIS.SLSharp.Translation.HLSL
             get { return _functions; }
         }
 
-        private static void ValidateComplexType(TypeReference type)
-        {
-            var typeDef = type.Resolve();
-            var declType = typeDef.DeclaringType;
-
-            if (declType != null && declType.MetadataToken.ToInt32() == typeof(ShaderDefinition).MetadataToken)
-                return;
-
-            throw new SLSharpException(type.FullName + " is invalid in a shader program.");
-        }
-
         public static void ValidateType(TypeReference t)
         {
             t.ToHlsl(); // throws when t is invalid
         }
-      
 
         public static string ToHlslParamType(ParameterDefinition p)
         {
