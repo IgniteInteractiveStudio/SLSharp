@@ -664,7 +664,7 @@ namespace IIS.SLSharp.Shaders
 
                 var info = TypeMap[prop.PropertyType.MetadataToken];
                 
-                MethodInfo uniformCall = Binding.Resolve(info.Token);
+                var uniformCall = Binding.Resolve(info.Token);
                 
 
                 var f = typeBuilder.DefineField("m_" + prop.Name, typeof(int), FieldAttributes.Private);

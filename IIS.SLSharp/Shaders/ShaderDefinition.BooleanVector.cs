@@ -7,15 +7,6 @@ namespace IIS.SLSharp.Shaders
     {
         public sealed class bvec2
         {
-            internal static bool[] value = new bool[2];
-
-            /*
-            // TODO: need uniform intializer glue code
-             
-            public static implicit operator bvec2(Vector2 v)
-            { value = v; return null; }
-            */
-
             public bool x, y;
 
             public bool r, g;
@@ -50,15 +41,6 @@ namespace IIS.SLSharp.Shaders
 
         public sealed class bvec3
         {
-            internal static bool[] value = new bool[3];
-
-            /*
-            // TODO: need uniform intializer glue code
-
-            public static implicit operator bvec3(Vector3 v)
-            { value = v; return null; }
-            */
-
             public bool x, y, z;
 
             public bool r, g, b;
@@ -124,15 +106,6 @@ namespace IIS.SLSharp.Shaders
 
         public sealed class bvec4
         {
-            internal static bool[] value = new bool[4];
-
-            /*
-            // TODO: need uniform intializer glue code
-
-            public static implicit operator bvec4(bvector4 v)
-            { value = v; return null; }
-            */
-
             public bool x, y, z, w;
 
             public bool r, g, b, a;

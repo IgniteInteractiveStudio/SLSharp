@@ -436,7 +436,7 @@ namespace IIS.SLSharp.Bindings.MOGRE
             public Vector4 F4;
             public Matrix3 F3X3;
             public Matrix4 F4X4;
-           
+            public int Sampler;
         }
 
         // use ThreadStatic when multiple render contexts are planned
@@ -462,6 +462,9 @@ namespace IIS.SLSharp.Bindings.MOGRE
         
         public static ShaderDefinition.mat4 ToMatrix4F(this Matrix4 v)
         { _storage.F4X4 = v; return null; }
+
+        public static ShaderDefinition.SamplerTmp ToSampler(this int v)
+        { _storage.Sampler = v; return null; }
 
         #endregion
 
@@ -541,7 +544,7 @@ namespace IIS.SLSharp.Bindings.MOGRE
 
         public static void UniformSampler(int location)
         {
-            GetParams(ref location).SetConstant((uint)location, ShaderDefinition.Sampler.value);
+            GetParams(ref location).SetConstant((uint)location, _storage.Sampler);
         }
         #endregion
     }

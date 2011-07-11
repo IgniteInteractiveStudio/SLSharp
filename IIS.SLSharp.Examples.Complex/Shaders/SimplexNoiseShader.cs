@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using IIS.SLSharp.Annotations;
+using IIS.SLSharp.Bindings.OpenTK;
 using IIS.SLSharp.Bindings.OpenTK.Textures;
 using IIS.SLSharp.Shaders;
 using OpenTK.Graphics.OpenGL;
@@ -172,8 +173,8 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
         public override void Begin()
         {
             base.Begin();
-            PermSampler2D = BindTexture(_perm2D);
-            PermGradSampler = BindTexture(_permGrad3);
+            PermSampler2D = BindTexture(_perm2D).ToSampler();
+            PermGradSampler = BindTexture(_permGrad3).ToSampler();
         }
     }
 }

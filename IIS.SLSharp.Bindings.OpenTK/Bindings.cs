@@ -157,6 +157,7 @@ namespace IIS.SLSharp.Bindings.OpenTK
             public Vector4d D4;
             public Matrix4 F4X4;
             public Matrix4d D4X4;
+            public int Sampler;
         }
 
         // use ThreadStatic when multiple render contexts are planned
@@ -189,6 +190,9 @@ namespace IIS.SLSharp.Bindings.OpenTK
 
         public static ShaderDefinition.dmat4 ToMatrix4D(this Matrix4d v)
         { _storage.D4X4 = v; return null; }
+
+        public static ShaderDefinition.SamplerTmp ToSampler(this int v)
+        { _storage.Sampler = v; return null; }
 
         #endregion
 
@@ -254,7 +258,7 @@ namespace IIS.SLSharp.Bindings.OpenTK
 
         public static void UniformSampler(int location)
         {
-            GL.Uniform1(location, ShaderDefinition.Sampler.value);
+            GL.Uniform1(location, _storage.Sampler);
         }
         #endregion
     }

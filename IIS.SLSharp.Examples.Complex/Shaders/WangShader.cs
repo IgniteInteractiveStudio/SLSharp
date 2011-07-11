@@ -1,4 +1,5 @@
 ﻿using IIS.SLSharp.Annotations;
+using IIS.SLSharp.Bindings.OpenTK;
 using IIS.SLSharp.Bindings.OpenTK.Textures;
 using IIS.SLSharp.Shaders;
 
@@ -31,8 +32,8 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
         public override void Begin()
         {
             base.Begin();
-            WangTiles = BindTexture(Tiles);
-            WangMap = BindTexture(WangTable);
+            WangTiles = BindTexture(Tiles).ToSampler();
+            WangMap = BindTexture(WangTable).ToSampler(); ;
         }
     }
 }
