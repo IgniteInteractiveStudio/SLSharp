@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.Serialization;
 using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Bindings;
 using IIS.SLSharp.Descriptions;
@@ -502,9 +505,20 @@ namespace IIS.SLSharp.Shaders
         private TypeDefinition LoadReflection()
         {
             var t = GetShaderType();
-            var asm = AssemblyDefinition.ReadAssembly(t.Assembly.Location);
+            var resolver = new DefaultAssemblyResolver();
+            resolver.AddSearchDirectory(Path.GetDirectoryName(t.Assembly.Location));
+            resolver.AddSearchDirectory(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+            /*
+            resolver.ResolveFailure += (sender, args) =>
+            {
+                Debug.WriteLine("Error with {0}", args.FullName);
+                return null;
+            };*/
+            var asm = AssemblyDefinition.ReadAssembly(t.Assembly.Location, new ReaderParameters { AssemblyResolver = resolver});
+
             var mod = asm.Modules.Single(x => x.MetadataToken.ToInt32() == t.Module.MetadataToken);
             return mod.Types.Single(x => x.MetadataToken.ToInt32() == t.MetadataToken);
+
         }
 
         protected Shader()
@@ -606,18 +620,19 @@ namespace IIS.SLSharp.Shaders
             }
         }
 
+
+
         /// <summary>
         /// Reflection utility that implements a shader around any user defined shader.
         /// Creating code for any uniform defined.
         /// </summary>
-        /// <typeparam name="T">The shader type to derive from</typeparam>
+        /// <param name="type">The shader type to derive from</param>
         /// <returns>A constructor to the derived type</returns>
-        private static ConstructorInfo GetConstructor<T>()
+        private static ConstructorInfo GetConstructor(Type type)
         {
             var baseBegin = ReflectionMarkerAttribute.FindMethod(
                  typeof(Shader), ReflectionToken.ShaderBegin);
 
-            var type = typeof(T);
             if (type.IsNotPublic)
                 throw new Exception("Type " + type.Name + " must be public");
 
@@ -736,8 +751,13 @@ namespace IIS.SLSharp.Shaders
         /// <returns>The shader instance</returns>
         public static T CreateSharedShader<T>() where T: Shader
         {
-            var ctor = GetConstructor<T>();
-            return (T)ResourceManager.Instance(ctor.DeclaringType, null, null);
+            return (T)CreateSharedShader(typeof(T));
+        }
+
+        public static Shader CreateSharedShader(Type type)
+        {
+            var ctor = GetConstructor(type);
+            return (Shader)ResourceManager.Instance(ctor.DeclaringType, null, null);
         }
 
         /// <summary>
@@ -747,11 +767,16 @@ namespace IIS.SLSharp.Shaders
         /// <returns>The shader instance</returns>
         public static T CreateInstance<T>() where T: Shader
         {
-            var ctor = GetConstructor<T>();
+            return (T)CreateInstance(typeof(T));
+        }
+
+        public static Shader CreateInstance(Type type) 
+        {
+            var ctor = GetConstructor(type);
 
             try
             {
-                return (T)ctor.Invoke(new object[0]);
+                return (Shader)ctor.Invoke(new object[0]);
             }
             catch (Exception e)
             {

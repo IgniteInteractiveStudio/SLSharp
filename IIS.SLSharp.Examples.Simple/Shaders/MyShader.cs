@@ -31,8 +31,9 @@ namespace IIS.SLSharp.Examples.Simple.Shaders
         [VertexShader(true)]
         public void VertexMain()
         {
-            _uv = (Vertex.xy + new vec2(1.0f)) * 0.5f;
-            gl_Position = Vertex;
+            gl_Position = new vec4(0.0f);
+            //_uv = (Vertex.xy + new vec2(1.0f)) * 0.5f;
+            //gl_Position = Vertex;
         }
 
         // resource setup code

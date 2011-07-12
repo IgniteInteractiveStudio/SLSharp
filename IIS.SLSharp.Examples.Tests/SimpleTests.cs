@@ -1,6 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Reflection.Emit;
+using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Bindings.OpenTK;
 using IIS.SLSharp.Examples.Simple.Shaders;
+using IIS.SLSharp.Shaders;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenTK;
 using OpenTK.Graphics;
@@ -8,51 +17,179 @@ using OpenTK.Graphics;
 namespace IIS.SLSharp.Examples.Tests
 {
     [TestClass]
-    public class SimpleTests
+    public sealed class State
     {
-        private MyShader _shader;
+        public static readonly ITestRuntime Runtime = new OpenTKTestRuntime.OpenTKTestRuntime();
 
-        private INativeWindow _window; // OpenTK forces us to create one ... (great design eh?)
+        [AssemblyInitialize]
+        public static void AssemblyInit(TestContext context)
+        { 
 
-        private IGraphicsContext _context;
+        }
+
+        [AssemblyCleanup]
+        public static void AssemblyCleanup()
+        {
+        }
+    }
+
+    public struct Vector4
+    {
+        public float X, Y, Z, W;
+
+        public Vector4(float x, float y, float z, float w)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+            W = w;
+        }
+    }
+
+    internal struct Vector3
+    {
+        public float X, Y, Z;
+
+        public Vector3(float x, float y, float z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
+    }
+
+    internal struct Vector2
+    {
+        public float X, Y;
+
+        public Vector2(float x, float y)
+        {
+            X = x;
+            Y = y;
+        }
+    }
+
+    internal class StaticTests : Shader
+    {
+        /// <summary>
+        /// Generates a vec4 by shearing the input value
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        private static Vector4 GenerateVec4(float f)
+        {
+            var result = new Vector4(f, f + 0.25f, f + 0.5f, f + 0.75f);
+
+            if (result.W < 1.0f)
+                return result;
+            result.W -= 1.0f;
+
+            if (result.Z < 1.0f)
+                return result;
+            result.Z -= 1.0f;
+
+            if (result.Y < 1.0f)
+                return result;
+            result.Y -= 1.0f;
+
+            if (result.X < 1.0f)
+                return result;
+            result.X -= 1.0f;
+
+            return result;
+        }
+
+        private static IEnumerable<Vector4> GenerateValues(int num)
+        {
+            var values = new List<Vector4>();
+            for (var i = 0; i < num; i++)
+                values.Add(GenerateVec4((float)i / num));
+            return values;
+        }
+
+        // float test values
+        private static readonly List<Vector4> _v4fA = GenerateValues(100).Select(x => x).ToList();
+        private static readonly List<Vector3> _v3fA = GenerateValues(100).Select(x => new Vector3(x.X, x.Y, x.Z)).ToList();
+        private static readonly List<Vector2> _v2fA = GenerateValues(100).Select(x => new Vector2(x.X, x.Y)).ToList();
+        private static readonly List<float> _v1fA = GenerateValues(100).Select(x => x.X).ToList();
+        private static readonly List<Vector4> _v4fB = GenerateValues(100).Select(x => new Vector4(x.Y, x.Z, x.W, x.X)).ToList();
+        private static readonly List<Vector3> _v3fB = GenerateValues(100).Select(x => new Vector3(x.Y, x.Z, x.W)).ToList();
+        private static readonly List<Vector2> _v2fB = GenerateValues(100).Select(x => new Vector2(x.Y, x.Z)).ToList();
+        private static readonly List<float> _v1fB = GenerateValues(100).Select(x => x.Y).ToList();
 
 
+        private static Type BuildShader(IList<Type> inputTypes)
+        {
+            var binDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var assemblyName = new AssemblyName("testcase") { Name = "testcase", CodeBase = Assembly.GetExecutingAssembly().Location };
+            var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Save, binDir);
+            var module = assemblyBuilder.DefineDynamicModule("testcase", "testcase.dll");
+            var shaderType = typeof(Shader);
+            var typeBuilder = module.DefineType("testshader", TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Abstract, shaderType);
+
+            var builder = new ShaderBuilder(typeBuilder);
+            builder.DefineInput(inputTypes);
+            builder.DefineVertexBody();
+            builder.DefineFragmentBody();
+
+            typeBuilder.CreateType();
+            assemblyBuilder.Save("testcase.dll");
+
+            var typ = Assembly.LoadFile(binDir + "\\testcase.dll").GetType("testshader");
+
+            return typ;
+        }
+
+        private static List<T> Eval<T>(Expression<Func<T, T>> x, List<T> inputs)
+        {
+            // * build a shader that evaluates x() and compile it
+            // * upload inputs to the GPU via shadertype to test (Vertex => VBO, Fragment => Texture)
+            // * run the shader
+            // * collect the outputs and pass them back
+
+            var shaderType = BuildShader(new[] { typeof(T) });
+            using (var shader = CreateInstance(shaderType))
+            {
+                shader.Begin();
+                // for each input: set uniforms + draw a one fragment size point
+                var res = State.Runtime.ProcessFragment();
+                shader.End();
+            }
+
+            return inputs;
+        }
+
+        public static void Test()
+        {
+            var outputs = Eval(x => sqrt(x), _v1fA);
+        }
+    }
+
+
+    [TestClass]
+    public class SimpleTests
+    {        
         [TestInitialize]
         public void Initialize()
         {
-            // <Rant>
-            // OpenTK has a great fuckup in its design here. It's absolutly not possible to create
-            // a render context for offscreen rendering without creating an OpenTK window.
-            // before. 
-            // Passing Utilities.CreateDummyWindowInfo() or anything else will cause an invalid cast exception
-            // Using Utilities.CreateWindowsWindowInfo(IntPtr.Zero) binds the code to windows only
-            // Really great, why do i need to have a window in order to render to memory? -_-
-            //</Rant>
-
-            _window = new NativeWindow { Visible = false };
-            _context = new GraphicsContext(GraphicsMode.Default, _window.WindowInfo, 2, 0, GraphicsContextFlags.Default);
-            _context.MakeCurrent(_window.WindowInfo);
-            _context.LoadAll();
-            
-            Bindings.OpenTK.SLSharp.Init();
-            _shader = Shaders.Shader.CreateInstance<MyShader>();
+            State.Runtime.Initialize();
         }
 
         [TestCleanup]
         public void Cleanup()
         {
-            _shader.Dispose();
-            _context.Dispose();
+            State.Runtime.Cleanup();
         }
+
+
+       
 
         [TestMethod]
         public void Test()
         {
-            _shader.Begin();
-            _shader.Blue = 0.5f;
-            _shader.Invert.Channels = (new Vector4(0.0f, 1.0f, 0.0f, 0.0f)).ToVector4F();
-            _shader.RenderQuad();
-            _shader.End();
+            StaticTests.Test();
+
+
         }
     }
 }
