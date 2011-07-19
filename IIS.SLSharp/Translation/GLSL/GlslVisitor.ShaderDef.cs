@@ -14,7 +14,8 @@ namespace IIS.SLSharp.Translation.GLSL
         {
             Handlers = new Dictionary<Expression<Action>, Func<MethodDefinition, InvocationExpression, StringBuilder>>(new HandlerComparer())
             {
-#region Trigonometry
+                #region Trigonometry
+
                 { () => ShaderDefinition.Radians(_float), ToLower },
                 { () => ShaderDefinition.Radians(vec2), ToLower },
                 { () => ShaderDefinition.Radians(vec3), ToLower },
@@ -95,7 +96,144 @@ namespace IIS.SLSharp.Translation.GLSL
                 { () => ShaderDefinition.SinCos(vec3, out vec3, out vec3), Redirect<Workarounds.Trigonometric>() },
                 { () => ShaderDefinition.SinCos(vec4, out vec4, out vec4), Redirect<Workarounds.Trigonometric>() },
 
-#endregion
+                #endregion
+
+                #region Exponential
+
+                { () => ShaderDefinition.Pow(_float, _float), ToLower },
+                { () => ShaderDefinition.Pow(vec2, vec2), ToLower },
+                { () => ShaderDefinition.Pow(vec3, vec3), ToLower },
+                { () => ShaderDefinition.Pow(vec4, vec4), ToLower },
+
+                { () => ShaderDefinition.Exp(_float), ToLower },
+                { () => ShaderDefinition.Exp(vec2), ToLower },
+                { () => ShaderDefinition.Exp(vec3), ToLower },
+                { () => ShaderDefinition.Exp(vec4), ToLower },
+
+                { () => ShaderDefinition.Log(_float), ToLower },
+                { () => ShaderDefinition.Log(vec2), ToLower },
+                { () => ShaderDefinition.Log(vec3), ToLower },
+                { () => ShaderDefinition.Log(vec4), ToLower },
+
+                { () => ShaderDefinition.Exp2(_float), ToLower },
+                { () => ShaderDefinition.Exp2(vec2), ToLower },
+                { () => ShaderDefinition.Exp2(vec3), ToLower },
+                { () => ShaderDefinition.Exp2(vec4), ToLower },
+
+                { () => ShaderDefinition.Log2(_float), ToLower },
+                { () => ShaderDefinition.Log2(vec2), ToLower },
+                { () => ShaderDefinition.Log2(vec3), ToLower },
+                { () => ShaderDefinition.Log2(vec4), ToLower },
+
+                { () => ShaderDefinition.Sqrt(_float), ToLower },
+                { () => ShaderDefinition.Sqrt(vec2), ToLower },
+                { () => ShaderDefinition.Sqrt(vec3), ToLower },
+                { () => ShaderDefinition.Sqrt(vec4), ToLower },
+
+                { () => ShaderDefinition.Sqrt(_double), ToLower },
+                { () => ShaderDefinition.Sqrt(dvec2), ToLower },
+                { () => ShaderDefinition.Sqrt(dvec3), ToLower },
+                { () => ShaderDefinition.Sqrt(dvec4), ToLower },
+
+                { () => ShaderDefinition.InverseSqrt(_float), ToLower },
+                { () => ShaderDefinition.InverseSqrt(vec2), ToLower },
+                { () => ShaderDefinition.InverseSqrt(vec3), ToLower },
+                { () => ShaderDefinition.InverseSqrt(vec4), ToLower },
+
+                { () => ShaderDefinition.InverseSqrt(_double), ToLower },
+                { () => ShaderDefinition.InverseSqrt(dvec2), ToLower },
+                { () => ShaderDefinition.InverseSqrt(dvec3), ToLower },
+                { () => ShaderDefinition.InverseSqrt(dvec4), ToLower },
+
+                { () => ShaderDefinition.Log10(_float), Redirect<Workarounds.Exponential>() },
+                { () => ShaderDefinition.Log10(vec2), Redirect<Workarounds.Exponential>() },
+                { () => ShaderDefinition.Log10(vec3), Redirect<Workarounds.Exponential>() },
+                { () => ShaderDefinition.Log10(vec4), Redirect<Workarounds.Exponential>() },
+
+                { () => ShaderDefinition.Exp10(_float), Redirect<Workarounds.Exponential>() },
+                { () => ShaderDefinition.Exp10(vec2), Redirect<Workarounds.Exponential>() },
+                { () => ShaderDefinition.Exp10(vec3), Redirect<Workarounds.Exponential>() },
+                { () => ShaderDefinition.Exp10(vec4), Redirect<Workarounds.Exponential>() },
+
+                #endregion
+
+                #region Geometric
+
+                { () => ShaderDefinition.Length(_float), ToLower },
+                { () => ShaderDefinition.Length(vec2), ToLower },
+                { () => ShaderDefinition.Length(vec3), ToLower },
+                { () => ShaderDefinition.Length(vec4), ToLower },
+
+                { () => ShaderDefinition.Length(_double), ToLower },
+                { () => ShaderDefinition.Length(dvec2), ToLower },
+                { () => ShaderDefinition.Length(dvec3), ToLower },
+                { () => ShaderDefinition.Length(dvec4), ToLower },
+
+                { () => ShaderDefinition.Distance(_float, _float), ToLower },
+                { () => ShaderDefinition.Distance(vec2, vec2), ToLower },
+                { () => ShaderDefinition.Distance(vec3, vec3), ToLower },
+                { () => ShaderDefinition.Distance(vec4, vec4), ToLower },
+
+                { () => ShaderDefinition.Distance(_double, _double), ToLower },
+                { () => ShaderDefinition.Distance(dvec2, dvec2), ToLower },
+                { () => ShaderDefinition.Distance(dvec3, dvec3), ToLower },
+                { () => ShaderDefinition.Distance(dvec4, dvec4), ToLower },
+
+                { () => ShaderDefinition.Dot(_float, _float), ToLower },
+                { () => ShaderDefinition.Dot(vec2, vec2), ToLower },
+                { () => ShaderDefinition.Dot(vec3, vec3), ToLower },
+                { () => ShaderDefinition.Dot(vec4, vec4), ToLower },
+
+                { () => ShaderDefinition.Dot(_double, _double), ToLower },
+                { () => ShaderDefinition.Dot(dvec2, dvec2), ToLower },
+                { () => ShaderDefinition.Dot(dvec3, dvec3), ToLower },
+                { () => ShaderDefinition.Dot(dvec4, dvec4), ToLower },
+
+                { () => ShaderDefinition.Cross(vec3, vec3), ToLower },
+
+                { () => ShaderDefinition.Cross(dvec3, dvec3), ToLower },
+
+                { () => ShaderDefinition.Normalize(_float), ToLower },
+                { () => ShaderDefinition.Normalize(vec2), ToLower },
+                { () => ShaderDefinition.Normalize(vec3), ToLower },
+                { () => ShaderDefinition.Normalize(vec4), ToLower },
+
+                { () => ShaderDefinition.Normalize(_double), ToLower },
+                { () => ShaderDefinition.Normalize(dvec2), ToLower },
+                { () => ShaderDefinition.Normalize(dvec3), ToLower },
+                { () => ShaderDefinition.Normalize(dvec4), ToLower },
+
+                { () => ShaderDefinition.FaceForward(_float, _float, _float), ToLower },
+                { () => ShaderDefinition.FaceForward(vec2, vec2, vec2), ToLower },
+                { () => ShaderDefinition.FaceForward(vec3, vec3, vec3), ToLower },
+                { () => ShaderDefinition.FaceForward(vec4, vec4, vec4), ToLower },
+
+                { () => ShaderDefinition.FaceForward(_double, _double, _double), ToLower },
+                { () => ShaderDefinition.FaceForward(dvec2, dvec2, dvec2), ToLower },
+                { () => ShaderDefinition.FaceForward(dvec3, dvec3, dvec3), ToLower },
+                { () => ShaderDefinition.FaceForward(dvec4, dvec4, dvec4), ToLower },
+
+                { () => ShaderDefinition.Reflect(_float, _float), ToLower },
+                { () => ShaderDefinition.Reflect(vec2, vec2), ToLower },
+                { () => ShaderDefinition.Reflect(vec3, vec3), ToLower },
+                { () => ShaderDefinition.Reflect(vec4, vec4), ToLower },
+
+                { () => ShaderDefinition.Reflect(_double, _double), ToLower },
+                { () => ShaderDefinition.Reflect(dvec2, dvec2), ToLower },
+                { () => ShaderDefinition.Reflect(dvec3, dvec3), ToLower },
+                { () => ShaderDefinition.Reflect(dvec4, dvec4), ToLower },
+
+                { () => ShaderDefinition.Refract(_float, _float, _float), ToLower },
+                { () => ShaderDefinition.Refract(vec2, vec2, _float), ToLower },
+                { () => ShaderDefinition.Refract(vec3, vec3, _float), ToLower },
+                { () => ShaderDefinition.Refract(vec4, vec4, _float), ToLower },
+
+                { () => ShaderDefinition.Refract(_double, _double, _double), ToLower },
+                { () => ShaderDefinition.Refract(dvec2, dvec2, _double), ToLower },
+                { () => ShaderDefinition.Refract(dvec3, dvec3, _double), ToLower },
+                { () => ShaderDefinition.Refract(dvec4, dvec4, _double), ToLower },
+
+                #endregion
             };
         }
     }

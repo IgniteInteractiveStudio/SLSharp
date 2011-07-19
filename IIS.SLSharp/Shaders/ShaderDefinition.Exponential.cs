@@ -6,195 +6,256 @@ namespace IIS.SLSharp.Shaders
     {
         // These all operate component-wise. The description is per component.
 
-        #region genType pow(genType x, genType y)
+        // TODO:
+        // HLSL supports matrix types for any of the builtins
+
+        // NOTE: ldexp and frexp belong to common function group
+
+        #region GLSL derived
+
+        #region genType Pow(genType x, genType y)
 
         /// <summary>Raises x to the power of y.</summary>
         /// <param name="x">Base, results are undefined for x &lt; 0 or (x == 0 and y &lt;= 0)</param>
         /// <param name="y">Exponent</param>
         /// <returns>x raised to the y power, i.e., x^y. </returns>
-        protected static float pow(float x, float y) { throw _invalidAccess; }
+        protected internal static float Pow(float x, float y) { throw _invalidAccess; }
 
         /// <summary>Raises x to the power of y.</summary>
         /// <param name="x">Base, results are undefined for x &lt; 0 or (x == 0 and y &lt;= 0)</param>
         /// <param name="y">Exponent</param>
         /// <returns>x raised to the y power, i.e., x^y. </returns>
-        protected static vec2 pow(vec2 x, vec2 y) { throw _invalidAccess; }
+        protected internal static vec2 Pow(vec2 x, vec2 y) { throw _invalidAccess; }
 
         /// <summary>Raises x to the power of y.</summary>
         /// <param name="x">Base, results are undefined for x &lt; 0 or (x == 0 and y &lt;= 0)</param>
         /// <param name="y">Exponent</param>
         /// <returns>x raised to the y power, i.e., x^y. </returns>
-        protected static vec3 pow(vec3 x, vec3 y) { throw _invalidAccess; }
+        protected internal static vec3 Pow(vec3 x, vec3 y) { throw _invalidAccess; }
 
         /// <summary>Raises x to the power of y.</summary>
         /// <param name="x">Base, results are undefined for x &lt; 0 or (x == 0 and y &lt;= 0)</param>
         /// <param name="y">Exponent</param>
         /// <returns>x raised to the y power, i.e., x^y. </returns>
-        protected static vec4 pow(vec4 x, vec4 y) { throw _invalidAccess; }
+        protected internal static vec4 Pow(vec4 x, vec4 y) { throw _invalidAccess; }
 
         #endregion
 
-        #region genType exp(genType x)
+        #region genType Exp(genType x)
 
         /// <summary>Returns the natural exponentiation of x, i.e., e^x.</summary>
         /// <param name="x">The exponent</param>
         /// <returns>Returns the natural exponentiation of x, i.e., e^x. </returns>
-        protected static float exp(float x) { throw _invalidAccess; }
+        protected internal static float Exp(float x) { throw _invalidAccess; }
 
         /// <summary>Returns the natural exponentiation of x, i.e., e^x.</summary>
         /// <param name="x">The exponent</param>
         /// <returns>Returns the natural exponentiation of x, i.e., e^x. </returns>
-        protected static vec2 exp(vec2 x) { throw _invalidAccess; }
+        protected internal static vec2 Exp(vec2 x) { throw _invalidAccess; }
 
         /// <summary>Returns the natural exponentiation of x, i.e., e^x.</summary>
         /// <param name="x">The exponent</param>
         /// <returns>Returns the natural exponentiation of x, i.e., e^x. </returns>
-        protected static vec3 exp(vec3 x) { throw _invalidAccess; }
+        protected internal static vec3 Exp(vec3 x) { throw _invalidAccess; }
 
         /// <summary>Returns the natural exponentiation of x, i.e., e^x.</summary>
         /// <param name="x">The exponent</param>
         /// <returns>Returns the natural exponentiation of x, i.e., e^x. </returns>
-        protected static vec4 exp(vec4 x) { throw _invalidAccess; }
+        protected internal static vec4 Exp(vec4 x) { throw _invalidAccess; }
 
         #endregion
 
-        #region genType log(genType x)
+        #region genType Log(genType x)
 
         /// <summary>Returns the natural logarithm of x, i.e.,  returns the value 
-        /// y which satisfies the equation x = ey.</summary>
+        /// y which satisfies the equation x = e**y.</summary>
         /// <returns>Returns the natural logarithm of x. </returns>
-        protected static float log(float x) { throw _invalidAccess; }
+        protected internal static float Log(float x) { throw _invalidAccess; }
 
         /// <summary>Returns the natural logarithm of x, i.e.,  returns the value 
-        /// y which satisfies the equation x = ey.</summary>
+        /// y which satisfies the equation x = e**y.</summary>
         /// <returns>Returns the natural logarithm of x. </returns>
-        protected static vec2 log(vec2 x) { throw _invalidAccess; }
+        protected internal static vec2 Log(vec2 x) { throw _invalidAccess; }
 
         /// <summary>Returns the natural logarithm of x, i.e.,  returns the value 
-        /// y which satisfies the equation x = ey.</summary>
+        /// y which satisfies the equation x = e**y.</summary>
         /// <returns>Returns the natural logarithm of x. </returns>
-        protected static vec3 log(vec3 x) { throw _invalidAccess; }
+        protected internal static vec3 Log(vec3 x) { throw _invalidAccess; }
 
         /// <summary>Returns the natural logarithm of x, i.e.,  returns the value 
-        /// y which satisfies the equation x = ey.</summary>
+        /// y which satisfies the equation x = e**y.</summary>
         /// <returns>Returns the natural logarithm of x. </returns>
-        protected static vec4 log(vec4 x) { throw _invalidAccess; }
+        protected internal static vec4 Log(vec4 x) { throw _invalidAccess; }
 
         #endregion
 
-        #region genType exp2(genType x)
+        #region genType Exp2(genType x)
 
         /// <summary>Returns 2 raised to the power of x, i.e., 2^x.</summary>
         /// <param name="x">The exponent</param>
         /// <returns>Returns 2^x. </returns>
-        protected static float exp2(float x) { throw _invalidAccess; }
+        protected internal static float Exp2(float x) { throw _invalidAccess; }
 
         /// <summary>Returns 2 raised to the power of x, i.e., 2^x.</summary>
         /// <param name="x">The exponent</param>
         /// <returns>Returns 2^x. </returns>
-        protected static vec2 exp2(vec2 x) { throw _invalidAccess; }
+        protected internal static vec2 Exp2(vec2 x) { throw _invalidAccess; }
 
         /// <summary>Returns 2 raised to the power of x, i.e., 2^x.</summary>
         /// <param name="x">The exponent</param>
         /// <returns>Returns 2^x. </returns>
-        protected static vec3 exp2(vec3 x) { throw _invalidAccess; }
+        protected internal static vec3 Exp2(vec3 x) { throw _invalidAccess; }
 
         /// <summary>Returns 2 raised to the power of x, i.e., 2^x.</summary>
         /// <param name="x">The exponent</param>
         /// <returns>Returns 2^x. </returns>
-        protected static vec4 exp2(vec4 x) { throw _invalidAccess; }
+        protected internal static vec4 Exp2(vec4 x) { throw _invalidAccess; }
 
         #endregion
 
-        #region genType log2(genType x)
+        #region genType Log2(genType x)
 
         /// <summary>Returns the base 2 logarithm of x, i.e., returns the value
-        /// y which satisfies the equation x=2y</summary>
-        protected static float log2(float x) { throw _invalidAccess; }
+        /// y which satisfies the equation x=2**y</summary>
+        protected internal static float Log2(float x) { throw _invalidAccess; }
 
         /// <summary>Returns the base 2 logarithm of x, i.e., returns the value
-        /// y which satisfies the equation x=2y</summary>
-        protected static vec2 log2(vec2 x) { throw _invalidAccess; }
+        /// y which satisfies the equation x=2**y</summary>
+        protected internal static vec2 Log2(vec2 x) { throw _invalidAccess; }
 
         /// <summary>Returns the base 2 logarithm of x, i.e., returns the value
-        /// y which satisfies the equation x=2y</summary>
-        protected static vec3 log2(vec3 x) { throw _invalidAccess; }
+        /// y which satisfies the equation x=2**y</summary>
+        protected internal static vec3 Log2(vec3 x) { throw _invalidAccess; }
 
         /// <summary>Returns the base 2 logarithm of x, i.e., returns the value
-        /// y which satisfies the equation x=2y</summary>
-        protected static vec4 log2(vec4 x) { throw _invalidAccess; }
+        /// y which satisfies the equation x=2**y</summary>
+        protected internal static vec4 Log2(vec4 x) { throw _invalidAccess; }
 
         #endregion
 
-        #region genType sqrt(genType x)
+        #region genType Sqrt(genType x)
 
         /// <summary>Returns the square root of x</summary>
-        protected static float sqrt(float x) { throw _invalidAccess; }
+        protected internal static float Sqrt(float x) { throw _invalidAccess; }
 
         /// <summary>Returns the square root of x</summary>
-        protected static vec2 sqrt(vec2 x) { throw _invalidAccess; }
+        protected internal static vec2 Sqrt(vec2 x) { throw _invalidAccess; }
 
         /// <summary>Returns the square root of x</summary>
-        protected static vec3 sqrt(vec3 x) { throw _invalidAccess; }
+        protected internal static vec3 Sqrt(vec3 x) { throw _invalidAccess; }
 
         /// <summary>Returns the square root of x</summary>
-        protected static vec4 sqrt(vec4 x) { throw _invalidAccess; }
+        protected internal static vec4 Sqrt(vec4 x) { throw _invalidAccess; }
 
         #endregion
 
-        #region genDType sqrt(genDType x)
+        #region genDType Sqrt(genDType x)
 
         /// <summary>Returns the square root of x</summary>
-        protected static double sqrt(double x) { throw _invalidAccess; }
+        protected internal static double Sqrt(double x) { throw _invalidAccess; }
 
         /// <summary>Returns the square root of x</summary>
-        protected static dvec2 sqrt(dvec2 x) { throw _invalidAccess; }
+        protected internal static dvec2 Sqrt(dvec2 x) { throw _invalidAccess; }
 
         /// <summary>Returns the square root of x</summary>
-        protected static dvec3 sqrt(dvec3 x) { throw _invalidAccess; }
+        protected internal static dvec3 Sqrt(dvec3 x) { throw _invalidAccess; }
 
         /// <summary>Returns the square root of x</summary>
-        protected static dvec4 sqrt(dvec4 x) { throw _invalidAccess; }
+        protected internal static dvec4 Sqrt(dvec4 x) { throw _invalidAccess; }
 
         #endregion
 
-        #region genType inversesqrt(genType x)
+        #region genType InverseSqrt(genType x)
 
-        /// <summary>Returns the reciprocal square root of x, i.e: 1/sqrt(x)
+        /// <summary>Returns the reciprocal square root of x, i.e: 1/Sqrt(x)
         /// Results are undefined if x &lt;= 0 </summary>
-        protected static float inversesqrt(float x) { throw _invalidAccess; }
+        protected internal static float InverseSqrt(float x) { throw _invalidAccess; }
 
-        /// <summary>Returns the reciprocal square root of x, i.e: 1/sqrt(x)
+        /// <summary>Returns the reciprocal square root of x, i.e: 1/Sqrt(x)
         /// Results are undefined if x &lt;= 0 </summary>
-        protected static vec2 inversesqrt(vec2 x) { throw _invalidAccess; }
+        protected internal static vec2 InverseSqrt(vec2 x) { throw _invalidAccess; }
 
-        /// <summary>Returns the reciprocal square root of x, i.e: 1/sqrt(x)
+        /// <summary>Returns the reciprocal square root of x, i.e: 1/Sqrt(x)
         /// Results are undefined if x &lt;= 0 </summary>
-        protected static vec3 inversesqrt(vec3 x) { throw _invalidAccess; }
+        protected internal static vec3 InverseSqrt(vec3 x) { throw _invalidAccess; }
 
-        /// <summary>Returns the reciprocal square root of x, i.e: 1/sqrt(x)
+        /// <summary>Returns the reciprocal square root of x, i.e: 1/Sqrt(x)
         /// Results are undefined if x &lt;= 0 </summary>
-        protected static vec4 inversesqrt(vec4 x) { throw _invalidAccess; }
+        protected internal static vec4 InverseSqrt(vec4 x) { throw _invalidAccess; }
 
         #endregion
 
-        #region genDType inversesqrt(genDType x)
+        #region genDType InverseSqrt(genDType x)
 
-        /// <summary>Returns the reciprocal square root of x, i.e: 1/sqrt(x)
+        /// <summary>Returns the reciprocal square root of x, i.e: 1/Sqrt(x)
         /// Results are undefined if x &lt;= 0 </summary>
-        protected static double inversesqrt(double x) { throw _invalidAccess; }
+        protected internal static double InverseSqrt(double x) { throw _invalidAccess; }
 
-        /// <summary>Returns the reciprocal square root of x, i.e: 1/sqrt(x)
+        /// <summary>Returns the reciprocal square root of x, i.e: 1/Sqrt(x)
         /// Results are undefined if x &lt;= 0 </summary>
-        protected static dvec2 inversesqrt(dvec2 x) { throw _invalidAccess; }
+        protected internal static dvec2 InverseSqrt(dvec2 x) { throw _invalidAccess; }
 
-        /// <summary>Returns the reciprocal square root of x, i.e: 1/sqrt(x)
+        /// <summary>Returns the reciprocal square root of x, i.e: 1/Sqrt(x)
         /// Results are undefined if x &lt;= 0 </summary>
-        protected static dvec3 inversesqrt(dvec3 x) { throw _invalidAccess; }
+        protected internal static dvec3 InverseSqrt(dvec3 x) { throw _invalidAccess; }
 
-        /// <summary>Returns the reciprocal square root of x, i.e: 1/sqrt(x)
+        /// <summary>Returns the reciprocal square root of x, i.e: 1/Sqrt(x)
         /// Results are undefined if x &lt;= 0 </summary>
-        protected static dvec4 inversesqrt(dvec4 x) { throw _invalidAccess; }
+        protected internal static dvec4 InverseSqrt(dvec4 x) { throw _invalidAccess; }
+
+        #endregion
+
+        #endregion
+
+        #region HLSL derived
+
+        #region genType Log10(genType x)
+
+        /// <summary>Returns the base 10 logarithm of x, i.e., returns the value
+        /// y which satisfies the equation x=10**y</summary>
+        protected internal static float Log10(float x) { throw _invalidAccess; }
+
+        /// <summary>Returns the base 10 logarithm of x, i.e., returns the value
+        /// y which satisfies the equation x=10**y</summary>
+        protected internal static vec2 Log10(vec2 x) { throw _invalidAccess; }
+
+        /// <summary>Returns the base 10 logarithm of x, i.e., returns the value
+        /// y which satisfies the equation x=10**y</summary>
+        protected internal static vec3 Log10(vec3 x) { throw _invalidAccess; }
+
+        /// <summary>Returns the base 10 logarithm of x, i.e., returns the value
+        /// y which satisfies the equation x=10**y</summary>
+        protected internal static vec4 Log10(vec4 x) { throw _invalidAccess; }
+
+        #endregion
+
+        #endregion
+
+        #region Additional functionality
+
+        #region genType Exp10(genType x)
+
+        /// <summary>Returns 10 raised to the power of x, i.e., 10^x.</summary>
+        /// <param name="x">The exponent</param>
+        /// <returns>Returns 10^x. </returns>
+        protected internal static float Exp10(float x) { throw _invalidAccess; }
+
+        /// <summary>Returns 10 raised to the power of x, i.e., 10^x.</summary>
+        /// <param name="x">The exponent</param>
+        /// <returns>Returns 10^x. </returns>
+        protected internal static vec2 Exp10(vec2 x) { throw _invalidAccess; }
+
+        /// <summary>Returns 10 raised to the power of x, i.e., 10^x.</summary>
+        /// <param name="x">The exponent</param>
+        /// <returns>Returns 10^x. </returns>
+        protected internal static vec3 Exp10(vec3 x) { throw _invalidAccess; }
+
+        /// <summary>Returns 10 raised to the power of x, i.e., 10^x.</summary>
+        /// <param name="x">The exponent</param>
+        /// <returns>Returns 10^x. </returns>
+        protected internal static vec4 Exp10(vec4 x) { throw _invalidAccess; }
+
+        #endregion
 
         #endregion
     }

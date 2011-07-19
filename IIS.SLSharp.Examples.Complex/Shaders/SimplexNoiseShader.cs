@@ -123,7 +123,7 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
         [FragmentShader]
         protected float GradPerm(float x, vec3 p)
         {
-            return dot(texture(PermGradSampler, x).xyz, p);
+            return Dot(texture(PermGradSampler, x).xyz, p);
         }
 
         [FragmentShader]

@@ -12,7 +12,7 @@ namespace IIS.SLSharp.Translation.HLSL.Workarounds
         [Warning("HLSL does not support a native Asinh, emulating with precision loss.")]
         protected new float Asinh(float x)
         {
-            return log(x + sqrt(1 + x * x));
+            return Log(x + Sqrt(1 + x * x));
         }
 
         [FragmentShader]
@@ -20,7 +20,7 @@ namespace IIS.SLSharp.Translation.HLSL.Workarounds
         [Warning("HLSL does not support a native Asinh, emulating with precision loss.")]
         protected new vec2 Asinh(vec2 x)
         {
-            return log(x + sqrt(new vec2(1.0f) + x * x));
+            return Log(x + Sqrt(new vec2(1.0f) + x * x));
         }
 
         [FragmentShader]
@@ -28,7 +28,7 @@ namespace IIS.SLSharp.Translation.HLSL.Workarounds
         [Warning("HLSL does not support a native Asinh, emulating with precision loss.")]
         protected new vec3 Asinh(vec3 x)
         {
-            return log(x + sqrt(new vec3(1.0f) + x * x));
+            return Log(x + Sqrt(new vec3(1.0f) + x * x));
         }
 
         [FragmentShader]
@@ -36,7 +36,7 @@ namespace IIS.SLSharp.Translation.HLSL.Workarounds
         [Warning("HLSL does not support a native Asinh, emulating with precision loss.")]
         protected new vec4 Asinh(vec4 x)
         {
-            return log(x + sqrt(new vec4(1.0f) + x * x));
+            return Log(x + Sqrt(new vec4(1.0f) + x * x));
         }
 
         #endregion
@@ -48,7 +48,7 @@ namespace IIS.SLSharp.Translation.HLSL.Workarounds
         [Warning("HLSL does not support a native Acosh, emulating with precision loss.")]
         protected new float Acosh(float x)
         {
-            return log(x + sqrt(x + 1.0f) * sqrt(x - 1.0f));
+            return Log(x + Sqrt(x + 1.0f) * Sqrt(x - 1.0f));
         }
 
         [FragmentShader]
@@ -56,7 +56,7 @@ namespace IIS.SLSharp.Translation.HLSL.Workarounds
         [Warning("HLSL does not support a native Acosh, emulating with precision loss.")]
         protected new vec2 Acosh(vec2 x)
         {
-            return log(x + sqrt(x + new vec2(1.0f)) * sqrt(x - new vec2(1.0f)));
+            return Log(x + Sqrt(x + new vec2(1.0f)) * Sqrt(x - new vec2(1.0f)));
         }
 
         [FragmentShader]
@@ -64,7 +64,7 @@ namespace IIS.SLSharp.Translation.HLSL.Workarounds
         [Warning("HLSL does not support a native Acosh, emulating with precision loss.")]
         protected new vec3 Acosh(vec3 x)
         {
-            return log(x + sqrt(x + new vec3(1.0f)) * sqrt(x - new vec3(1.0f)));
+            return Log(x + Sqrt(x + new vec3(1.0f)) * Sqrt(x - new vec3(1.0f)));
         }
 
         [FragmentShader]
@@ -72,7 +72,7 @@ namespace IIS.SLSharp.Translation.HLSL.Workarounds
         [Warning("HLSL does not support a native Acosh, emulating with precision loss.")]
         protected new vec4 Acosh(vec4 x)
         {
-            return log(x + sqrt(x + new vec4(1.0f)) * sqrt(x - new vec4(1.0f)));
+            return Log(x + Sqrt(x + new vec4(1.0f)) * Sqrt(x - new vec4(1.0f)));
         }
 
         #endregion
@@ -84,8 +84,8 @@ namespace IIS.SLSharp.Translation.HLSL.Workarounds
         [Warning("HLSL does not support a native Atanh, emulating with precision loss.")]
         protected new float Atanh(float x)
         {
-            return log((1.0f + x) / (1.0f - x)) * 0.5f;
-            //return (log(1.0f + x) - log(1.0f - x)) * 0.5f;
+            return Log((1.0f + x) / (1.0f - x)) * 0.5f;
+            //return (Log(1.0f + x) - Log(1.0f - x)) * 0.5f;
         }
 
         [FragmentShader]
@@ -93,8 +93,8 @@ namespace IIS.SLSharp.Translation.HLSL.Workarounds
         [Warning("HLSL does not support a native Atanh, emulating with precision loss.")]
         protected new vec2 Atanh(vec2 x)
         {
-            return log((new vec2(1.0f) + x) / (new vec2(1.0f) - x)) * 0.5f;
-            //return (log(new vec2(1.0f) + x) - log(new vec2(1.0f) - x)) * 0.5f;
+            return Log((new vec2(1.0f) + x) / (new vec2(1.0f) - x)) * 0.5f;
+            //return (Log(new vec2(1.0f) + x) - Log(new vec2(1.0f) - x)) * 0.5f;
         }
 
         [FragmentShader]
@@ -102,7 +102,7 @@ namespace IIS.SLSharp.Translation.HLSL.Workarounds
         [Warning("HLSL does not support a native Atanh, emulating with precision loss.")]
         protected new vec3 Atanh(vec3 x)
         {
-            return log((new vec3(1.0f) + x) / (new vec3(1.0f) - x)) * 0.5f;
+            return Log((new vec3(1.0f) + x) / (new vec3(1.0f) - x)) * 0.5f;
             //return (log(new vec3(1.0f) + x) - log(new vec3(1.0f) - x)) * 0.5f;
         }
 
@@ -111,8 +111,8 @@ namespace IIS.SLSharp.Translation.HLSL.Workarounds
         [Warning("HLSL does not support a native Atanh, emulating with precision loss.")]
         protected new vec4 Atanh(vec4 x)
         {
-            return log((new vec4(1.0f) + x) / (new vec4(1.0f) - x)) * 0.5f;
-            //return (log(new vec4(1.0f) + x) - log(new vec4(1.0f) - x)) * 0.5f;
+            return Log((new vec4(1.0f) + x) / (new vec4(1.0f) - x)) * 0.5f;
+            //return (log(new vec4(1.0f) + x) - Log(new vec4(1.0f) - x)) * 0.5f;
         }
 
         #endregion

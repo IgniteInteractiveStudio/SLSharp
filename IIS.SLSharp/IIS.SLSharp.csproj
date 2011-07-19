@@ -61,6 +61,7 @@
     <Compile Include="Reflection\ReflectionToken.cs" />
     <Compile Include="Runtime\ResourceManager.cs" />
     <Compile Include="Shaders\AttributeHelper.cs" />
+    <Compile Include="Shaders\Shader.Context.cs" />
     <Compile Include="Shaders\Shader.cs" />
     <Compile Include="Shaders\ShaderDefinition.BooleanVector.cs" />
     <Compile Include="Shaders\ShaderDefinition.Cecil.cs" />
@@ -86,6 +87,8 @@
     <Compile Include="Shaders\ShaderDefinition.SingleVector.cs" />
     <Compile Include="ShaderType.cs" />
     <Compile Include="SLSharpException.cs" />
+    <Compile Include="Translation\GLSL\Workarounds\Exponential.cs" />
+    <Compile Include="Translation\HLSL\Workarounds\Exponential.cs" />
     <Compile Include="Translation\HLSL\Workarounds\Trigonometric.cs" />
     <Compile Include="Translation\VisitorBase.Abstract.cs" />
     <Compile Include="Translation\VisitorBase.cs" />

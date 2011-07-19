@@ -69,7 +69,14 @@ namespace IIS.SLSharp.Translation.GLSL
 
         public IEnumerable<Shader> WorkaroundDependencies
         {
-            get { return _workaroundDependencies ?? (_workaroundDependencies = new Shader[] { Shader.CreateInstance<Workarounds.Trigonometric>() }); }
+            get
+            {
+                return _workaroundDependencies ?? (_workaroundDependencies = new Shader[]
+                {
+                    Shader.CreateInstance<Workarounds.Trigonometric>(),
+                    Shader.CreateInstance<Workarounds.Exponential>()
+                });
+            }
         }
     }
 }

@@ -22,7 +22,8 @@ namespace IIS.SLSharp.Translation.HLSL
         {
             Handlers = new Dictionary<Expression<Action>, Func<MethodDefinition, InvocationExpression, StringBuilder>>(new HandlerComparer())
             {
-#region Trigonometry
+                #region Trigonometry
+
                 { () => ShaderDefinition.Radians(_float), ToLower },
                 { () => ShaderDefinition.Radians(vec2), ToLower },
                 { () => ShaderDefinition.Radians(vec3), ToLower },
@@ -102,8 +103,118 @@ namespace IIS.SLSharp.Translation.HLSL
                 { () => ShaderDefinition.SinCos(vec2, out vec2, out vec2), ToLower },
                 { () => ShaderDefinition.SinCos(vec3, out vec3, out vec3), ToLower },
                 { () => ShaderDefinition.SinCos(vec4, out vec4, out vec4), ToLower },
-#endregion
+                
+                #endregion
 
+                #region Exponential
+
+                { () => ShaderDefinition.Pow(_float, _float), ToLower },
+                { () => ShaderDefinition.Pow(vec2, vec2), ToLower },
+                { () => ShaderDefinition.Pow(vec3, vec3), ToLower },
+                { () => ShaderDefinition.Pow(vec4, vec4), ToLower },
+
+                { () => ShaderDefinition.Exp(_float), ToLower },
+                { () => ShaderDefinition.Exp(vec2), ToLower },
+                { () => ShaderDefinition.Exp(vec3), ToLower },
+                { () => ShaderDefinition.Exp(vec4), ToLower },
+
+                { () => ShaderDefinition.Log(_float), ToLower },
+                { () => ShaderDefinition.Log(vec2), ToLower },
+                { () => ShaderDefinition.Log(vec3), ToLower },
+                { () => ShaderDefinition.Log(vec4), ToLower },
+
+                { () => ShaderDefinition.Exp2(_float), ToLower },
+                { () => ShaderDefinition.Exp2(vec2), ToLower },
+                { () => ShaderDefinition.Exp2(vec3), ToLower },
+                { () => ShaderDefinition.Exp2(vec4), ToLower },
+
+                { () => ShaderDefinition.Log2(_float), ToLower },
+                { () => ShaderDefinition.Log2(vec2), ToLower },
+                { () => ShaderDefinition.Log2(vec3), ToLower },
+                { () => ShaderDefinition.Log2(vec4), ToLower },
+
+                { () => ShaderDefinition.Sqrt(_float), ToLower },
+                { () => ShaderDefinition.Sqrt(vec2), ToLower },
+                { () => ShaderDefinition.Sqrt(vec3), ToLower },
+                { () => ShaderDefinition.Sqrt(vec4), ToLower },
+
+                { () => ShaderDefinition.InverseSqrt(_float), ToLower },
+                { () => ShaderDefinition.InverseSqrt(vec2), ToLower },
+                { () => ShaderDefinition.InverseSqrt(vec3), ToLower },
+                { () => ShaderDefinition.InverseSqrt(vec4), ToLower },
+
+                // HLSL does not define Sqrt / InverseSqrt on doubles and we should treat this 
+                // as an error rather than emulate with precision loss,
+                // because the double version normally gets explicitly requested
+
+                { () => ShaderDefinition.Log10(_float), ToLower },
+                { () => ShaderDefinition.Log10(vec2), ToLower },
+                { () => ShaderDefinition.Log10(vec3), ToLower },
+                { () => ShaderDefinition.Log10(vec4), ToLower },
+
+                { () => ShaderDefinition.Exp10(_float), Redirect<Workarounds.Exponential>() },
+                { () => ShaderDefinition.Exp10(vec2), Redirect<Workarounds.Exponential>() },
+                { () => ShaderDefinition.Exp10(vec3), Redirect<Workarounds.Exponential>() },
+                { () => ShaderDefinition.Exp10(vec4), Redirect<Workarounds.Exponential>() },
+
+                #endregion
+
+                #region Geometric
+
+                { () => ShaderDefinition.Length(_float), ToLower },
+                { () => ShaderDefinition.Length(vec2), ToLower },
+                { () => ShaderDefinition.Length(vec3), ToLower },
+                { () => ShaderDefinition.Length(vec4), ToLower },
+
+                // No double support for HLSL
+
+                { () => ShaderDefinition.Distance(_float, _float), ToLower },
+                { () => ShaderDefinition.Distance(vec2, vec2), ToLower },
+                { () => ShaderDefinition.Distance(vec3, vec3), ToLower },
+                { () => ShaderDefinition.Distance(vec4, vec4), ToLower },
+
+                // No double support for HLSL
+
+                { () => ShaderDefinition.Dot(_float, _float), ToLower },
+                { () => ShaderDefinition.Dot(vec2, vec2), ToLower },
+                { () => ShaderDefinition.Dot(vec3, vec3), ToLower },
+                { () => ShaderDefinition.Dot(vec4, vec4), ToLower },
+
+                // No double support for HLSL
+
+                { () => ShaderDefinition.Cross(vec3, vec3), ToLower },
+
+                // No double support for HLSL
+
+                { () => ShaderDefinition.Normalize(_float), ToLower },
+                { () => ShaderDefinition.Normalize(vec2), ToLower },
+                { () => ShaderDefinition.Normalize(vec3), ToLower },
+                { () => ShaderDefinition.Normalize(vec4), ToLower },
+
+                // No double support for HLSL
+
+                { () => ShaderDefinition.FaceForward(_float, _float, _float), ToLower },
+                { () => ShaderDefinition.FaceForward(vec2, vec2, vec2), ToLower },
+                { () => ShaderDefinition.FaceForward(vec3, vec3, vec3), ToLower },
+                { () => ShaderDefinition.FaceForward(vec4, vec4, vec4), ToLower },
+
+                // No double support for HLSL
+
+                { () => ShaderDefinition.Reflect(_float, _float), ToLower },
+                { () => ShaderDefinition.Reflect(vec2, vec2), ToLower },
+                { () => ShaderDefinition.Reflect(vec3, vec3), ToLower },
+                { () => ShaderDefinition.Reflect(vec4, vec4), ToLower },
+
+                // No double support for HLSL
+
+                { () => ShaderDefinition.Refract(_float, _float, _float), Refract },
+                { () => ShaderDefinition.Refract(vec2, vec2, _float), Refract },
+                { () => ShaderDefinition.Refract(vec3, vec3, _float), Refract },
+                { () => ShaderDefinition.Refract(vec4, vec4, _float), Refract },
+
+                // No double support for HLSL
+
+                #endregion
 
                 { () => ShaderDefinition.texture(sampler2D, vec2), Rename("tex2D") },
 
@@ -158,6 +269,19 @@ namespace IIS.SLSharp.Translation.HLSL
             result.Append("fmod(").Append(ArgsToString(args)).Append(")");
 
             return result;
+        }
+
+        private StringBuilder Refract(MethodDefinition m, InvocationExpression i)
+        {
+            Debug.Assert(i.Arguments.Count == 3);
+            var result = new StringBuilder();
+
+            var args = i.Arguments.ToArray();
+            var a1 = args[1];
+            args[1] = args[2];
+            args[2] = a1;
+
+            return result.Append("refract(").Append(ArgsToString(args)).Append(")");
         }
     }
 }
