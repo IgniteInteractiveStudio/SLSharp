@@ -22,7 +22,7 @@ namespace IIS.SLSharp.Shaders
     /// <summary>
     /// Base class of which all typed GLSL shaders derive of
     /// </summary>
-    public abstract class Shader : ShaderDefinition, IDisposable
+    public abstract partial class Shader : ShaderDefinition, IDisposable
     {
         private const BindingFlags BindingFlagsAny =
             BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
@@ -32,21 +32,7 @@ namespace IIS.SLSharp.Shaders
 
         public static bool DebugMode { get; set; }
 
-        private readonly List<VariableDescription> _uniforms;
-
-        private readonly List<VariableDescription> _varyings;
-
-        private readonly List<VariableDescription> _ins;
-
-        private readonly List<VariableDescription> _outs;
-
-        private readonly List<FunctionDescription> _ffuns;
-
-        private readonly List<FunctionDescription> _vfuns;
-
-        private readonly List<string> _fdeclFrag;
-
-        private readonly List<string> _fdeclVert;
+        private readonly ShaderContext _context;
 
         private bool _vsCompiled;
 
@@ -56,7 +42,7 @@ namespace IIS.SLSharp.Shaders
 
         private readonly List<object> _objects = new List<object>();
 
-        private readonly TypeDefinition _shader;
+        private Shader _parentLogic;
 
         private Type GetImplementingType()
         {
@@ -87,14 +73,9 @@ namespace IIS.SLSharp.Shaders
         /// Compiles the shader as GLSL shader.
         /// </summary>
         /// <param name="type">The shader type to construct and compile.</param>
-        /// <param name="version">The GLSL version to use</param>
-        private void CompileShader(ShaderType type, int version)
+        private void CompileShader(ShaderType type)
         {
-            if (version < 130)
-                throw new Exception("Versions < 130 are deprecated");
-  
-            List<FunctionDescription> funcs;
-            List<string> fdecl;
+            ShaderContext.UnitContext unit;
             switch (type)
             {
                 case ShaderType.VertexShader:
@@ -102,23 +83,20 @@ namespace IIS.SLSharp.Shaders
                         return;
 
                     _vsCompiled = true;
-                    funcs = _vfuns;
-                    fdecl =_fdeclVert;
+                    unit = _context.VertexUnit;
                     break;
                 case ShaderType.FragmentShader:
                     if (_fsCompiled)
                         return;
 
                     _fsCompiled = true;
-                    funcs = _ffuns;
-                    fdecl = _fdeclFrag;
+                    unit = _context.FragmentUnit;
                     break;
                 default:
                     throw new NotImplementedException();
             }
 
-            var tmp = new List<VariableDescription>();
-            var desc = new SourceDescription(funcs, _uniforms, tmp, _varyings, _ins, _outs, fdecl);
+            var desc = new SourceDescription(unit.Functions, _context.Uniforms, _context.Attribs, _context.Varyings, _context.Ins, _context.Outs, unit.ForwardDeclarations);
 
             var shader = Binding.Active.Compile(this, type, desc);
 
@@ -133,14 +111,13 @@ namespace IIS.SLSharp.Shaders
         /// <summary>
         /// Compiles Fragment as well as Vertex shader any exists.
         /// </summary>
-        /// <param name="version">The GLSL version to use</param>
-        protected void Compile(int version = 130)
+        protected void Compile()
         {
             if (HasType(typeof(FragmentShaderAttribute)))
-                CompileShader(ShaderType.FragmentShader, version);
+                CompileShader(ShaderType.FragmentShader);
 
             if (HasType(typeof(VertexShaderAttribute)))
-                CompileShader(ShaderType.VertexShader, version);
+                CompileShader(ShaderType.VertexShader);
         }
 
         /// <summary>
@@ -154,14 +131,14 @@ namespace IIS.SLSharp.Shaders
         {
             var e = Enumerable.Empty<object>();
 
-            // Compile all workarounds
+            // Compile and link all workarounds
             foreach (var lib in Binding.Active.Transform.WorkaroundDependencies)
             {
                 lib.Compile();
                 e = e.Concat(lib._objects);
             }
 
-            // Compile all dependencies
+            // Compile and link all external dependencies
             if (libaries != null)
             {
                 foreach (var lib in libaries)
@@ -171,8 +148,13 @@ namespace IIS.SLSharp.Shaders
                 }
             }
 
+            // Link all base class implementation
+            CompileParent();
+            if (_parentLogic != null)
+                e = e.Concat(_parentLogic._objects);
+
             // compile main unit
-            Compile(version);
+            Compile();
             e = e.Concat(_objects);
 
             Program = Binding.Active.Link(this, e);
@@ -318,45 +300,6 @@ namespace IIS.SLSharp.Shaders
         };
 
         /// <summary>
-        /// Collects the sources of all functions within this shader
-        /// </summary>
-        /// <param name="forwardDecl">Forward declaration of referenced functions</param>
-        /// <param name="type">The shadertype currently being collected for</param>
-        /// <returns>A string containing the GLSL code for all collected functions</returns>
-        private List<FunctionDescription> CollectFuncs<T>(out List<string> forwardDecl, ShaderType type)
-        {
-            var desc = new List<FunctionDescription>();
-            var hasEntry = false;
-
-            var trans = Binding.Active.Transform;
-            trans.ResetState();
-            foreach (var m in _shader.Methods)
-            {
-                var attrs = m.CustomAttributes.Where(a => a.AttributeType.Is<T>());
-                if (attrs.Count() == 0)
-                    continue;
-
-                var attr = attrs.First();
-                if ((bool)attr.ConstructorArguments.FirstOrDefault().Value)
-                {
-                    if (hasEntry)
-                        throw new Exception("Shader cannot have two entry points.");
-
-                    if (m.Parameters.Count() != 0)
-                        throw new Exception("Entry point must not have parameters.");
-
-                    hasEntry = true;
-                }
-
-
-                desc.Add(trans.Transform(_shader, m, attr, type));
-            }
-
-            forwardDecl = trans.ForwardDeclare(DebugMode);
-            return desc;
-        }
-
-        /// <summary>
         /// Looks up a unique shared name to be used in GLSL
         /// </summary>
         /// <param name="key">The native name to look up</param>
@@ -420,118 +363,10 @@ namespace IIS.SLSharp.Shaders
             return GetGlobalName(fullName);
         }
 
-        /// <summary>
-        /// Builds a string containing all uniform declarations.
-        /// </summary>
-        /// <returns>A string containing all uniform declarations.</returns>
-        private List<VariableDescription> CollectUniforms()
-        {
-            return (from prop in _shader.Properties
-                    let attrs = prop.CustomAttributes.Where(a => a.AttributeType.IsUniform())
-                    where attrs.Count() != 0
-                    let attr = attrs.First()
-                    let type = TypeMap[prop.PropertyType.Resolve().MetadataToken.ToInt32()].Type
-                    let name = GetUniformName(prop)
-                    let comment = DebugMode ? " // " + prop.DeclaringType.FullName + "." + prop.Name : string.Empty
-                    select new VariableDescription(type, name, UsageSemantic.Unknown, comment)).ToList();
-        }
-
-        /// <summary>
-        /// Builds a string containing all varying declarations.
-        /// </summary>
-        /// <returns>A string containing all varying declarations.</returns>
-        private List<VariableDescription> CollectVaryings()
-        {
-            return (from field in _shader.Fields
-                    let attrs = field.CustomAttributes.Where(a => a.AttributeType.IsVarying())
-                    where attrs.Count() != 0
-                    let attr = attrs.First()
-                    let type = TypeMap[field.FieldType.Resolve().MetadataToken.ToInt32()].Type
-                    let name = GetVaryingName(field)
-                    let comment = DebugMode ? " // " + field.DeclaringType.FullName + "." + field.Name : string.Empty
-                    select new VariableDescription(type, name, UsageSemantic.Unknown, comment)).ToList();
-        }
-
-        /// <summary>
-        /// Builds a string containing all in declarations.
-        /// </summary>
-        /// <returns>A string containing all in declarations.</returns>
-        private List<VariableDescription> CollectIns()
-        {
-            var s1 = (from field in _shader.Fields
-                      let attrs = field.CustomAttributes.Where(a => a.AttributeType.IsVertexIn())
-                      where attrs.Count() != 0
-                      let attr = attrs.First()
-                      let type = TypeMap[field.FieldType.Resolve().MetadataToken.ToInt32()].Type
-                      let name = GetVaryingName(field)
-                      let comment = DebugMode ? " // " + field.DeclaringType.FullName + "." + field.Name : string.Empty
-                      let semantic = (UsageSemantic)attr.ConstructorArguments[0].Value
-                      select new VariableDescription(type, name, semantic, comment));
-
-            // TODO: what was this supposed to be good for?
-            /*
-            var s2 = (from prop in _shader.Properties
-                      let attrs = prop.CustomAttributes.Where(a => a.AttributeType.IsVertexIn())
-                      where attrs.Count() != 0
-                      let attr = attrs.First()
-                      let type = TypeMap[prop.PropertyType.Resolve().MetadataToken.ToInt32()].Type
-                      let name = GetUniformName(prop)
-                      let comment = DebugMode ? " // " + prop.DeclaringType.FullName + "." + prop.Name : string.Empty
-                      let semantic = (UsageSemantic)attr.ConstructorArguments[0].Value
-                      select new VariableDescription(type, name, semantic, comment)).ToList();
-
-            return s1.Concat(s2).ToList();
-             */
-            return s1.ToList();
-        }
-
-        /// <summary>
-        /// Builds a string containing all out declarations.
-        /// </summary>
-        /// <returns>A string containing all out declarations.</returns>
-        private List<VariableDescription> CollectOuts()
-        {
-            return (from field in _shader.Fields
-                    let attrs = field.CustomAttributes.Where(a => a.AttributeType.IsFragmentOut())
-                    where attrs.Count() != 0
-                    let attr = attrs.First()
-                    let type = TypeMap[field.FieldType.Resolve().MetadataToken.ToInt32()].Type
-                    let name = GetVaryingName(field)
-                    let comment = DebugMode ? " // " + field.DeclaringType.FullName + "." + field.Name : string.Empty
-                    let semantic = (UsageSemantic)attr.ConstructorArguments[0].Value
-                    select new VariableDescription(type, name, semantic, comment)).ToList();
-        }
-
-        private TypeDefinition LoadReflection()
-        {
-            var t = GetShaderType();
-            var resolver = new DefaultAssemblyResolver();
-            resolver.AddSearchDirectory(Path.GetDirectoryName(t.Assembly.Location));
-            resolver.AddSearchDirectory(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-            /*
-            resolver.ResolveFailure += (sender, args) =>
-            {
-                Debug.WriteLine("Error with {0}", args.FullName);
-                return null;
-            };*/
-            var asm = AssemblyDefinition.ReadAssembly(t.Assembly.Location, new ReaderParameters { AssemblyResolver = resolver});
-
-            var mod = asm.Modules.Single(x => x.MetadataToken.ToInt32() == t.Module.MetadataToken);
-            return mod.Types.Single(x => x.MetadataToken.ToInt32() == t.MetadataToken);
-
-        }
-
         protected Shader()
         {
             RefShaders();
-            _shader = LoadReflection();
-            _ffuns = CollectFuncs<FragmentShaderAttribute>(out _fdeclFrag, ShaderType.FragmentShader);
-            _vfuns = CollectFuncs<VertexShaderAttribute>(out _fdeclVert, ShaderType.VertexShader);
-            _varyings = CollectVaryings();
-            _uniforms = CollectUniforms();
-            _ins = CollectIns();
-            _outs = CollectOuts();
-            _shader = null; // Dispose cecil data
+            _context = new ShaderContext(GetShaderType());
         }
 
         /// <summary>
@@ -581,12 +416,31 @@ namespace IIS.SLSharp.Shaders
 
         public virtual void Dispose()
         {
+            DisposeParent();
             if (Program == null) 
                 return;
 
             DerefShaders();
             Program.Dispose();
             Program = null;
+        }
+
+        private void CompileParent()
+        {
+            var myType = GetShaderType();
+            var parentType = myType.BaseType;
+            if (parentType == typeof(Shader))
+                return; // no parent logic defined
+
+            _parentLogic = CreateSharedShader(parentType);
+            _parentLogic.Compile();
+        }
+
+        private void DisposeParent()
+        {
+            if (_parentLogic != null)
+                _parentLogic.Dispose();
+            _parentLogic = null;
         }
 
         private static readonly Dictionary<Type, ConstructorInfo> _ctors = new Dictionary<Type, ConstructorInfo>();
