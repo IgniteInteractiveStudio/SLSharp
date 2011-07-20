@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
@@ -46,7 +47,7 @@ namespace IIS.SLSharp.Examples.Tests
             ilgen.Emit(OpCodes.Ldarg_0);
             ilgen.Emit(OpCodes.Ldnull); // link no additional shaders
             ilgen.Emit(OpCodes.Ldc_I4, 130); // compile v130 shader
-            ilgen.EmitCall(OpCodes.Call, link, null);
+            ilgen.Emit(OpCodes.Call, link);
             ilgen.Emit(OpCodes.Ret);
         }
 
@@ -102,25 +103,35 @@ namespace IIS.SLSharp.Examples.Tests
 
         #region DefineInput
 
-        public void DefineInput(IList<Type> inputTypes)
+        private PropertyInfo DefineInput(Expression input, string name)
         {
+            if (!(input is ParameterExpression))
+                throw new NotImplementedException("Only parameter expressions are supported at the moment.");
+
             // define a uniform we use to pass input to
+            var inputs = new List<PropertyInfo>();
             var ctor = typeof(UniformAttribute).GetConstructor(Type.EmptyTypes);
             var uniformAttrib = new CustomAttributeBuilder(ctor, new object[] { });
-            for (var i = 0; i < inputTypes.Count; i++)
-            {
-                var inputType = inputTypes[i];
-                var uniformProp = _type.DefineProperty("input" + i, PropertyAttributes.None, inputType, Type.EmptyTypes);
-                uniformProp.SetCustomAttribute(uniformAttrib);
 
-                var setter = _type.DefineMethod("set_" + uniformProp.Name, MethodAttributes.Public | MethodAttributes.Abstract | MethodAttributes.Virtual | MethodAttributes.NewSlot);
-                var getter = _type.DefineMethod("get_" + uniformProp.Name, MethodAttributes.Public | MethodAttributes.Abstract | MethodAttributes.Virtual | MethodAttributes.NewSlot);
-                getter.SetReturnType(inputType);
-                setter.SetParameters(new[] { inputType });
 
-                uniformProp.SetSetMethod(setter);
-                uniformProp.SetGetMethod(getter);
-            }
+
+            var param = (ParameterExpression)input;
+            var type = param.Type;
+
+
+
+            var uniformProp = _type.DefineProperty(name, PropertyAttributes.None, type, Type.EmptyTypes);
+            uniformProp.SetCustomAttribute(uniformAttrib);
+
+            var setter = _type.DefineMethod("set_" + uniformProp.Name, MethodAttributes.Public | MethodAttributes.Abstract | MethodAttributes.Virtual | MethodAttributes.NewSlot);
+            var getter = _type.DefineMethod("get_" + uniformProp.Name, MethodAttributes.Public | MethodAttributes.Abstract | MethodAttributes.Virtual | MethodAttributes.NewSlot);
+            getter.SetReturnType(type);
+            setter.SetParameters(new[] { type });
+
+            uniformProp.SetSetMethod(setter);
+            uniformProp.SetGetMethod(getter);
+
+            return uniformProp;
         }
 
         #endregion
@@ -137,13 +148,42 @@ namespace IIS.SLSharp.Examples.Tests
             _vertexBody.Emit(OpCodes.Ret);
         }
 
-        public void DefineFragmentBody()
+        public void DefineFragmentBody(Expression exp)
         {
-            _fragmentBody.Emit(OpCodes.Ldarg_0);
-            _fragmentBody.Emit(OpCodes.Ldc_R4, 10.5f);
-            _fragmentBody.Emit(OpCodes.Newobj, typeof(ShaderDefinition.vec4).GetConstructor(new[] { typeof(float) }));
-            _fragmentBody.Emit(OpCodes.Stfld, _output);
-            _fragmentBody.Emit(OpCodes.Ret);
+            if (exp is MethodCallExpression)
+            {
+                var call = (MethodCallExpression)exp;
+
+                // required for the output setfld below
+                _fragmentBody.Emit(OpCodes.Ldarg_0);
+
+                // load arguments to stack
+                for (var i = 0; i < call.Arguments.Count; i++)
+                {
+                    var arg = call.Arguments[i];
+                    var input = DefineInput(arg, "input" + i);
+                    var getter = input.GetGetMethod();
+
+                    _fragmentBody.Emit(OpCodes.Ldarg_0);
+                    _fragmentBody.Emit(OpCodes.Callvirt, getter);
+                }
+
+                // call the test method
+                _fragmentBody.Emit(OpCodes.Call, call.Method);
+
+                // convert the result to a vec4
+                _fragmentBody.Emit(OpCodes.Newobj, typeof(ShaderDefinition.vec4).GetConstructor(new[] { typeof(float) }));
+
+                // and store it to the output
+                _fragmentBody.Emit(OpCodes.Stfld, _output);
+
+                // finally ret
+                _fragmentBody.Emit(OpCodes.Ret);
+            }
+            else
+            {
+                throw new NotImplementedException("Unit testing currently only supports simple expressions");
+            }             
         }
 
     }

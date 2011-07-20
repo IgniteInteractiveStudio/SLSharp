@@ -69,7 +69,7 @@ namespace IIS.SLSharp.Examples.Tests
         }
     }
 
-    internal class StaticTests : Shader
+    public class StaticTests : Shader
     {
         /// <summary>
         /// Generates a vec4 by shearing the input value
@@ -118,19 +118,18 @@ namespace IIS.SLSharp.Examples.Tests
         private static readonly List<float> _v1fB = GenerateValues(100).Select(x => x.Y).ToList();
 
 
-        private static Type BuildShader(IList<Type> inputTypes)
+        private static Type BuildShader(Expression exp)
         {
             var binDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var assemblyName = new AssemblyName("testcase") { Name = "testcase", CodeBase = Assembly.GetExecutingAssembly().Location };
             var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Save, binDir);
             var module = assemblyBuilder.DefineDynamicModule("testcase", "testcase.dll");
-            var shaderType = typeof(Shader);
+            var shaderType = typeof(StaticTests);
             var typeBuilder = module.DefineType("testshader", TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Abstract, shaderType);
 
             var builder = new ShaderBuilder(typeBuilder);
-            builder.DefineInput(inputTypes);
             builder.DefineVertexBody();
-            builder.DefineFragmentBody();
+            builder.DefineFragmentBody(exp);
 
             typeBuilder.CreateType();
             assemblyBuilder.Save("testcase.dll");
@@ -140,28 +139,39 @@ namespace IIS.SLSharp.Examples.Tests
             return typ;
         }
 
-        private static List<T> Eval<T>(Expression<Func<T, T>> x, List<T> inputs)
+        private static IEnumerable<Vector4> Eval<T>(Expression<Func<T, T>> x, List<T> inputs)
         {
             // * build a shader that evaluates x() and compile it
             // * upload inputs to the GPU via shadertype to test (Vertex => VBO, Fragment => Texture)
             // * run the shader
             // * collect the outputs and pass them back
 
-            var shaderType = BuildShader(new[] { typeof(T) });
+            var results = new List<Vector4>(inputs.Count);
+
+            var shaderType = BuildShader(x.Body);
             using (var shader = CreateInstance(shaderType))
             {
+                var setInput0Func = shader.GetType().GetProperty("input0").GetSetMethod();
+                Action<T> setInput = v => setInput0Func.Invoke(shader, new object[] { v });
                 shader.Begin();
                 // for each input: set uniforms + draw a one fragment size point
-                var res = State.Runtime.ProcessFragment();
+                foreach (var input in inputs)
+                {
+                    setInput(input);
+                    var res = State.Runtime.ProcessFragment();
+                    results.Add(res);
+                }
                 shader.End();
             }
 
-            return inputs;
+            return results;
         }
 
         public static void Test()
         {
-            var outputs = Eval(x => sqrt(x), _v1fA);
+            var outputs = Eval(x => Sqrt(x), _v1fA);
+            foreach (var x in outputs.Zip(_v1fA, (x, y) => new Tuple<float, float>(x.X, (float)Math.Sqrt(y))))
+                Assert.AreEqual(x.Item1, x.Item2, 0.00001f);
         }
     }
 

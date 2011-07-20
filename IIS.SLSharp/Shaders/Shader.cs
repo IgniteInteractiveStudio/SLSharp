@@ -62,7 +62,7 @@ namespace IIS.SLSharp.Shaders
             var t = GetType();
 
             // ReSharper disable PossibleNullReferenceException
-            while (t.BaseType != typeof(Shader))
+            while (t.Assembly.IsDynamic)
             // ReSharper restore PossibleNullReferenceException
                 t = t.BaseType;
 
