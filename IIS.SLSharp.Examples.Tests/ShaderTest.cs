@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using IIS.SLSharp.Shaders;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace IIS.SLSharp.Examples.Tests
 {
@@ -49,6 +49,22 @@ namespace IIS.SLSharp.Examples.Tests
 
     public class ShaderTest : Shader
     {
+        // ReSharper disable InconsistentNaming
+        // ReSharper disable UnusedMember.Local
+#pragma warning disable 649
+        protected new static readonly sampler2D sampler2D;
+        protected new static vec2 vec2;
+        protected new static vec3 vec3;
+        protected new static vec4 vec4;
+        protected static float _float;
+        protected new static dvec2 dvec2;
+        protected new static dvec3 dvec3;
+        protected new static dvec4 dvec4;
+        protected static double _double;
+#pragma warning restore 649
+        // ReSharper restore InconsistentNaming
+        // ReSharper restore UnusedMember.Local
+
         /// <summary>
         /// Generates a vec4 by shearing the input value
         /// </summary>
@@ -98,11 +114,13 @@ namespace IIS.SLSharp.Examples.Tests
 
         private static Type BuildShader(Expression exp)
         {
-            var binDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            //var binDir = Path.GetDirectoryName(typeof(Shader).Assembly.Location);
+            var binDir = Directory.GetCurrentDirectory();
+            
             var assemblyName = new AssemblyName("testcase") { Name = "testcase", CodeBase = Assembly.GetExecutingAssembly().Location };
             var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Save, binDir);
             var module = assemblyBuilder.DefineDynamicModule("testcase", "testcase.dll");
-            var shaderType = typeof(StaticTests);
+            var shaderType = typeof(ExponentialTests); // TODO: supply from callee
             var typeBuilder = module.DefineType("testshader", TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Abstract, shaderType);
 
             var builder = new ShaderBuilder(typeBuilder);
@@ -118,7 +136,7 @@ namespace IIS.SLSharp.Examples.Tests
             return reflectType;
         }
 
-        protected static IEnumerable<Vector4> Eval<T>(Expression<Func<T, T>> x, List<T> inputs)
+        protected static IEnumerable<Vector4> Eval<T>(Expression<Action> x, List<T> inputs)
         {
             // * build a shader that evaluates x() and compile it
             // * upload inputs to the GPU via shadertype to test (Vertex => VBO, Fragment => Texture)
@@ -146,13 +164,13 @@ namespace IIS.SLSharp.Examples.Tests
             return results;
         }
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             TestState.Initialize();
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             TestState.Cleanup();

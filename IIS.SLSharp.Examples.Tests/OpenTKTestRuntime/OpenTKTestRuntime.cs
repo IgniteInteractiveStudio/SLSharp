@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using IIS.SLSharp.Bindings.OpenTK.Textures;
-using IIS.SLSharp.Examples.Simple.Shaders;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;

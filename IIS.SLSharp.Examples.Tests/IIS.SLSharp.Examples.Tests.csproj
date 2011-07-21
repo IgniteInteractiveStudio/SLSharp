@@ -3,17 +3,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>
-    </ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{61EA7E67-09B9-4FA3-92E5-F3BD4A1F7F04}</ProjectGuid>
+    <ProjectGuid>{0BA0BA6E-87FD-44B2-81AD-9939F19EB63C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IIS.SLSharp.Examples.Tests</RootNamespace>
     <AssemblyName>IIS.SLSharp.Examples.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,31 +31,30 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+    <Reference Include="nunit.framework, Version=2.5.9.10348, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Dependencies\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK">
       <HintPath>..\Dependencies\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Drawing" />
-  </ItemGroup>
-  <ItemGroup>
-    <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
-      <Visible>False</Visible>
-    </CodeAnalysisDependentAssemblyPaths>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="ExponentialTests.cs" />
     <Compile Include="ITestRuntime.cs" />
     <Compile Include="OpenTKTestRuntime\OpenTKTestRuntime.cs" />
     <Compile Include="ShaderBuilder.cs" />
     <Compile Include="ShaderTest.cs" />
-    <Compile Include="SimpleTests.cs" />
     <Compile Include="TestState.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -65,17 +62,12 @@
       <Project>{8A901280-C858-4018-AD66-45255EFEC519}</Project>
       <Name>IIS.SLSharp.Bindings.OpenTK</Name>
     </ProjectReference>
-    <ProjectReference Include="..\IIS.SLSharp.Examples.Simple\IIS.SLSharp.Examples.Simple.csproj">
-      <Project>{2BD44DA8-AEA2-4AC5-AC86-C5047FF28917}</Project>
-      <Name>IIS.SLSharp.Examples.Simple</Name>
-    </ProjectReference>
     <ProjectReference Include="..\IIS.SLSharp\IIS.SLSharp.csproj">
       <Project>{ECF58025-4591-4708-8EC9-4B95A5673DDA}</Project>
       <Name>IIS.SLSharp</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

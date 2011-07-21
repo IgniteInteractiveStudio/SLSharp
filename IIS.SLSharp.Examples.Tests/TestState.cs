@@ -1,8 +1,8 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace IIS.SLSharp.Examples.Tests
 {
-    [TestClass]
+    [SetUpFixture]
     public sealed class TestState
     {
         public static readonly ITestRuntime Runtime = new OpenTKTestRuntime.OpenTKTestRuntime();
@@ -25,13 +25,13 @@ namespace IIS.SLSharp.Examples.Tests
             _initialized = false;
         }
 
-        [AssemblyInitialize]
-        public static void AssemblyInit(TestContext context)
+        [SetUp]
+        public static void AssemblyInit()
         {
             Initialize(); // first init
         }
 
-        [AssemblyCleanup]
+        [TearDown]
         public static void AssemblyCleanup()
         {
         }

@@ -105,20 +105,11 @@ namespace IIS.SLSharp.Examples.Tests
 
         private PropertyInfo DefineInput(Expression input, string name)
         {
-            if (!(input is ParameterExpression))
-                throw new NotImplementedException("Only parameter expressions are supported at the moment.");
+            var type = input.Type;
 
             // define a uniform we use to pass input to
-            var inputs = new List<PropertyInfo>();
             var ctor = typeof(UniformAttribute).GetConstructor(Type.EmptyTypes);
             var uniformAttrib = new CustomAttributeBuilder(ctor, new object[] { });
-
-
-
-            var param = (ParameterExpression)input;
-            var type = param.Type;
-
-
 
             var uniformProp = _type.DefineProperty(name, PropertyAttributes.None, type, Type.EmptyTypes);
             uniformProp.SetCustomAttribute(uniformAttrib);
