@@ -23,8 +23,8 @@ namespace IIS.SLSharp.Examples.Axiom.Shaders
         {
             
             var address = tex - mod(tex, 1.0f / 256.0f);
-            var subPos = fract(tex * 256.0f) / 4.0f;
-            var offset = texture(WangMap, fract(address)).xw;
+            var subPos = Fraction(tex * 256.0f) / 4.0f;
+            var offset = texture(WangMap, Fraction(address)).xw;
             var tc = offset + subPos;
             var tileScaledTex = tex * new vec2(32.0f / 1.0f);
             

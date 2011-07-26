@@ -24,6 +24,18 @@ namespace IIS.SLSharp.Translation
         protected static ShaderDefinition.dvec3 dvec3;
         protected static ShaderDefinition.dvec4 dvec4;
         protected static double _double;
+        protected static ShaderDefinition.ivec2 ivec2;
+        protected static ShaderDefinition.ivec3 ivec3;
+        protected static ShaderDefinition.ivec4 ivec4;
+        protected static int _int;
+        protected static ShaderDefinition.uvec2 uvec2;
+        protected static ShaderDefinition.uvec3 uvec3;
+        protected static ShaderDefinition.uvec4 uvec4;
+        protected static uint _uint;
+        protected static ShaderDefinition.bvec2 bvec2;
+        protected static ShaderDefinition.bvec3 bvec3;
+        protected static ShaderDefinition.bvec4 bvec4;
+        protected static bool _bool;
 #pragma warning restore 649
         // ReSharper restore InconsistentNaming
         // ReSharper restore UnusedMember.Local

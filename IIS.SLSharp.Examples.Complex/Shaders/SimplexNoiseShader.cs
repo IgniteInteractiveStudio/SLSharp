@@ -129,8 +129,8 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
         [FragmentShader]
         protected float Noise(vec3 p)
         {
-            var q = mod(floor(p), 256.0f);
-            p -= floor(p);
+            var q = mod(Floor(p), 256.0f);
+            p -= Floor(p);
             var f = Fade(p);
 
             q = q / 256.0f;
@@ -139,11 +139,11 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
             var aa = Perm2D(q.xy) + q.z;
             var zo = new vec2(0.0f, 1.0f);
 
-            return mix(mix(mix(GradPerm(aa.x, p), GradPerm(aa.z, p - zo.yxx), f.x),
-                mix(GradPerm(aa.y, p - zo.xyx), GradPerm(aa.w, p - zo.yyx), f.x),
+            return Lerp(Lerp(Lerp(GradPerm(aa.x, p), GradPerm(aa.z, p - zo.yxx), f.x),
+                Lerp(GradPerm(aa.y, p - zo.xyx), GradPerm(aa.w, p - zo.yyx), f.x),
                 f.y),
-                mix(mix(GradPerm(aa.x + one, p - zo.xxy), GradPerm(aa.z + one, p - zo.yxy), f.x),
-                mix(GradPerm(aa.y + one, p - zo.xyy), GradPerm(aa.w + one, p - zo.yyy), f.x),
+                Lerp(Lerp(GradPerm(aa.x + one, p - zo.xxy), GradPerm(aa.z + one, p - zo.yxy), f.x),
+                Lerp(GradPerm(aa.y + one, p - zo.xyy), GradPerm(aa.w + one, p - zo.yyy), f.x),
                 f.y),
                 f.z);
         }

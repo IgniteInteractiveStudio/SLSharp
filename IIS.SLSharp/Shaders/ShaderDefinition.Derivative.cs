@@ -43,19 +43,19 @@ namespace IIS.SLSharp.Shaders
         #region genType fwidth(genType p)
 
         /// <summary>Returns the sum of the absolute derivative in x and y using local 
-        /// differencing for the input argument p, i.e., abs (dFdx (p)) + abs (dFdy (p));</summary>
+        /// differencing for the input argument p, i.e., Abs (dFdx (p)) + Abs (dFdy (p));</summary>
         protected static float fwidth(float p) { throw _invalidAccess; }
 
         /// <summary>Returns the sum of the absolute derivative in x and y using local 
-        /// differencing for the input argument p, i.e., abs (dFdx (p)) + abs (dFdy (p));</summary>
+        /// differencing for the input argument p, i.e., Abs (dFdx (p)) + Abs (dFdy (p));</summary>
         protected static vec2 fwidth(vec2 p) { throw _invalidAccess; }
 
         /// <summary>Returns the sum of the absolute derivative in x and y using local 
-        /// differencing for the input argument p, i.e., abs (dFdx (p)) + abs (dFdy (p));</summary>
+        /// differencing for the input argument p, i.e., Abs (dFdx (p)) + Abs (dFdy (p));</summary>
         protected static vec3 fwidth(vec3 p) { throw _invalidAccess; }
 
         /// <summary>Returns the sum of the absolute derivative in x and y using local 
-        /// differencing for the input argument p, i.e., abs (dFdx (p)) + abs (dFdy (p));</summary>
+        /// differencing for the input argument p, i.e., Abs (dFdx (p)) + Abs (dFdy (p));</summary>
         protected static vec4 fwidth(vec4 p) { throw _invalidAccess; }
 
         #endregion

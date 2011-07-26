@@ -8,7 +8,7 @@ namespace IIS.SLSharp.Shaders
         /// First, converts each component of the normalized floating-point value v into 8- or 16-bit integer values.
         /// Then, the results are packed into the returned 32-bit unsigned integer.
         /// The conversion for component c of v to fixed point is done as follows:
-        /// round(clamp(c, 0, +1) * 65535.0)
+        /// Round(Clamp(c, 0, +1) * 65535.0)
         /// The first component of the vector will be written to the least significant bits of the output; 
         /// the last component will be written to the most significant bits.
         /// </summary>
@@ -18,7 +18,7 @@ namespace IIS.SLSharp.Shaders
         /// First, converts each component of the normalized floating-point value v into 8- or 16-bit integer values.
         /// Then, the results are packed into the returned 32-bit unsigned integer.
         /// The conversion for component c of v to fixed point is done as follows:
-        /// round(clamp(c, 0, +1) * 255.0)
+        /// Round(Clamp(c, 0, +1) * 255.0)
         /// The first component of the vector will be written to the least significant bits of the output; 
         /// the last component will be written to the most significant bits.
         /// </summary>
@@ -28,7 +28,7 @@ namespace IIS.SLSharp.Shaders
         /// First, converts each component of the normalized floating-point value v into 8- or 16-bit integer values.
         /// Then, the results are packed into the returned 32-bit unsigned integer.
         /// The conversion for component c of v to fixed point is done as follows:
-        /// round(clamp(c, -1, +1) * 127.0)
+        /// Round(Clamp(c, -1, +1) * 127.0)
         /// The first component of the vector will be written to the least significant bits of the output; 
         /// the last component will be written to the most significant bits.
         /// </summary>
@@ -61,7 +61,7 @@ namespace IIS.SLSharp.Shaders
         /// unsigned integers, or four 8-bit signed integers. Then, each component is converted to a normalized 
         /// floating-point value to generate the returned two- or four-component vector.
         /// The conversion for unpacked fixed-point value f to floating point is done as follows:
-        /// clamp(f / 127.0, -1, +1)
+        /// Clamp(f / 127.0, -1, +1)
         /// The first component of the returned vector will be extracted from the least significant bits of the input; 
         /// the last component will be extracted from the most significant bits.
         /// </summary>

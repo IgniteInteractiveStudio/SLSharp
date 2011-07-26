@@ -234,6 +234,258 @@ namespace IIS.SLSharp.Translation.GLSL
                 { () => ShaderDefinition.Refract(dvec4, dvec4, _double), ToLower },
 
                 #endregion
+
+                #region Common
+
+                { () => ShaderDefinition.Abs(_float), ToLower },
+                { () => ShaderDefinition.Abs(vec2), ToLower },
+                { () => ShaderDefinition.Abs(vec3), ToLower },
+                { () => ShaderDefinition.Abs(vec4), ToLower },
+
+                { () => ShaderDefinition.Abs(_int), ToLower },
+                { () => ShaderDefinition.Abs(ivec2), ToLower },
+                { () => ShaderDefinition.Abs(ivec3), ToLower },
+                { () => ShaderDefinition.Abs(ivec4), ToLower },
+
+                { () => ShaderDefinition.Abs(_double), ToLower },
+                { () => ShaderDefinition.Abs(dvec2), ToLower },
+                { () => ShaderDefinition.Abs(dvec3), ToLower },
+                { () => ShaderDefinition.Abs(dvec4), ToLower },
+
+                { () => ShaderDefinition.Floor(_float), ToLower },
+                { () => ShaderDefinition.Floor(vec2), ToLower },
+                { () => ShaderDefinition.Floor(vec3), ToLower },
+                { () => ShaderDefinition.Floor(vec4), ToLower },
+
+                { () => ShaderDefinition.Floor(_double), ToLower },
+                { () => ShaderDefinition.Floor(dvec2), ToLower },
+                { () => ShaderDefinition.Floor(dvec3), ToLower },
+                { () => ShaderDefinition.Floor(dvec4), ToLower },
+
+                { () => ShaderDefinition.Trunc(_float), ToLower },
+                { () => ShaderDefinition.Trunc(vec2), ToLower },
+                { () => ShaderDefinition.Trunc(vec3), ToLower },
+                { () => ShaderDefinition.Trunc(vec4), ToLower },
+
+                { () => ShaderDefinition.Trunc(_double), ToLower },
+                { () => ShaderDefinition.Trunc(dvec2), ToLower },
+                { () => ShaderDefinition.Trunc(dvec3), ToLower },
+                { () => ShaderDefinition.Trunc(dvec4), ToLower },
+
+                { () => ShaderDefinition.Round(_float), ToLower },
+                { () => ShaderDefinition.Round(vec2), ToLower },
+                { () => ShaderDefinition.Round(vec3), ToLower },
+                { () => ShaderDefinition.Round(vec4), ToLower },
+
+                { () => ShaderDefinition.Round(_double), ToLower },
+                { () => ShaderDefinition.Round(dvec2), ToLower },
+                { () => ShaderDefinition.Round(dvec3), ToLower },
+                { () => ShaderDefinition.Round(dvec4), ToLower },
+
+                { () => ShaderDefinition.RoundEven(_float), ToLower },
+                { () => ShaderDefinition.RoundEven(vec2), ToLower },
+                { () => ShaderDefinition.RoundEven(vec3), ToLower },
+                { () => ShaderDefinition.RoundEven(vec4), ToLower },
+
+                { () => ShaderDefinition.RoundEven(_double), ToLower },
+                { () => ShaderDefinition.RoundEven(dvec2), ToLower },
+                { () => ShaderDefinition.RoundEven(dvec3), ToLower },
+                { () => ShaderDefinition.RoundEven(dvec4), ToLower },
+
+                { () => ShaderDefinition.Ceiling(_float), Rename("ceil") },
+                { () => ShaderDefinition.Ceiling(vec2), Rename("ceil") },
+                { () => ShaderDefinition.Ceiling(vec3), Rename("ceil") },
+                { () => ShaderDefinition.Ceiling(vec4), Rename("ceil") },
+
+                { () => ShaderDefinition.Ceiling(_double), Rename("ceil") },
+                { () => ShaderDefinition.Ceiling(dvec2), Rename("ceil") },
+                { () => ShaderDefinition.Ceiling(dvec3), Rename("ceil") },
+                { () => ShaderDefinition.Ceiling(dvec4), Rename("ceil") },
+
+                { () => ShaderDefinition.Fraction(_float), Rename("fract") },
+                { () => ShaderDefinition.Fraction(vec2), Rename("fract") },
+                { () => ShaderDefinition.Fraction(vec3), Rename("fract") },
+                { () => ShaderDefinition.Fraction(vec4), Rename("fract") },
+
+                { () => ShaderDefinition.Fraction(_double), Rename("fract") },
+                { () => ShaderDefinition.Fraction(dvec2), Rename("fract") },
+                { () => ShaderDefinition.Fraction(dvec3), Rename("fract") },
+                { () => ShaderDefinition.Fraction(dvec4), Rename("fract") },
+
+                { () => ShaderDefinition.Min(_float, _float), ToLower },
+                { () => ShaderDefinition.Min(vec2, _float), ToLower },
+                { () => ShaderDefinition.Min(vec3, _float), ToLower },
+                { () => ShaderDefinition.Min(vec4, _float), ToLower },
+
+                { () => ShaderDefinition.Min(vec2, vec2), ToLower },
+                { () => ShaderDefinition.Min(vec3, vec3), ToLower },
+                { () => ShaderDefinition.Min(vec4, vec4), ToLower },
+
+                { () => ShaderDefinition.Min(_double, _double), ToLower },
+                { () => ShaderDefinition.Min(dvec2, _double), ToLower },
+                { () => ShaderDefinition.Min(dvec3, _double), ToLower },
+                { () => ShaderDefinition.Min(dvec4, _double), ToLower },
+
+                { () => ShaderDefinition.Min(dvec2, dvec2), ToLower },
+                { () => ShaderDefinition.Min(dvec3, dvec3), ToLower },
+                { () => ShaderDefinition.Min(dvec4, dvec4), ToLower },
+
+                { () => ShaderDefinition.Min(_int, _int), ToLower },
+                { () => ShaderDefinition.Min(ivec2, _int), ToLower },
+                { () => ShaderDefinition.Min(ivec3, _int), ToLower },
+                { () => ShaderDefinition.Min(ivec4, _int), ToLower },
+
+                { () => ShaderDefinition.Min(ivec2, ivec2), ToLower },
+                { () => ShaderDefinition.Min(ivec3, ivec3), ToLower },
+                { () => ShaderDefinition.Min(ivec4, ivec4), ToLower },
+
+                { () => ShaderDefinition.Min(_uint, _uint), ToLower },
+                { () => ShaderDefinition.Min(uvec2, _uint), ToLower },
+                { () => ShaderDefinition.Min(uvec3, _uint), ToLower },
+                { () => ShaderDefinition.Min(uvec4, _uint), ToLower },
+
+                { () => ShaderDefinition.Min(uvec2, uvec2), ToLower },
+                { () => ShaderDefinition.Min(uvec3, uvec3), ToLower },
+                { () => ShaderDefinition.Min(uvec4, uvec4), ToLower },
+
+                { () => ShaderDefinition.Max(_float, _float), ToLower },
+                { () => ShaderDefinition.Max(vec2, _float), ToLower },
+                { () => ShaderDefinition.Max(vec3, _float), ToLower },
+                { () => ShaderDefinition.Max(vec4, _float), ToLower },
+
+                { () => ShaderDefinition.Max(vec2, vec2), ToLower },
+                { () => ShaderDefinition.Max(vec3, vec3), ToLower },
+                { () => ShaderDefinition.Max(vec4, vec4), ToLower },
+
+                { () => ShaderDefinition.Max(_double, _double), ToLower },
+                { () => ShaderDefinition.Max(dvec2, _double), ToLower },
+                { () => ShaderDefinition.Max(dvec3, _double), ToLower },
+                { () => ShaderDefinition.Max(dvec4, _double), ToLower },
+
+                { () => ShaderDefinition.Max(dvec2, dvec2), ToLower },
+                { () => ShaderDefinition.Max(dvec3, dvec3), ToLower },
+                { () => ShaderDefinition.Max(dvec4, dvec4), ToLower },
+
+                { () => ShaderDefinition.Max(_int, _int), ToLower },
+                { () => ShaderDefinition.Max(ivec2, _int), ToLower },
+                { () => ShaderDefinition.Max(ivec3, _int), ToLower },
+                { () => ShaderDefinition.Max(ivec4, _int), ToLower },
+
+                { () => ShaderDefinition.Max(ivec2, ivec2), ToLower },
+                { () => ShaderDefinition.Max(ivec3, ivec3), ToLower },
+                { () => ShaderDefinition.Max(ivec4, ivec4), ToLower },
+
+                { () => ShaderDefinition.Max(_uint, _uint), ToLower },
+                { () => ShaderDefinition.Max(uvec2, _uint), ToLower },
+                { () => ShaderDefinition.Max(uvec3, _uint), ToLower },
+                { () => ShaderDefinition.Max(uvec4, _uint), ToLower },
+
+                { () => ShaderDefinition.Max(uvec2, uvec2), ToLower },
+                { () => ShaderDefinition.Max(uvec3, uvec3), ToLower },
+                { () => ShaderDefinition.Max(uvec4, uvec4), ToLower },
+
+  
+                { () => ShaderDefinition.Clamp(_float, _float, _float), ToLower },
+                { () => ShaderDefinition.Clamp(vec2, _float, _float), ToLower },
+                { () => ShaderDefinition.Clamp(vec3, _float, _float), ToLower },
+                { () => ShaderDefinition.Clamp(vec4, _float, _float), ToLower },
+
+                { () => ShaderDefinition.Clamp(vec2, vec2, vec2), ToLower },
+                { () => ShaderDefinition.Clamp(vec3, vec3, vec3), ToLower },
+                { () => ShaderDefinition.Clamp(vec4, vec4, vec4), ToLower },
+
+                { () => ShaderDefinition.Clamp(_double, _double, _double), ToLower },
+                { () => ShaderDefinition.Clamp(dvec2, _double, _double), ToLower },
+                { () => ShaderDefinition.Clamp(dvec3, _double, _double), ToLower },
+                { () => ShaderDefinition.Clamp(dvec4, _double, _double), ToLower },
+
+                { () => ShaderDefinition.Clamp(dvec2, dvec2, dvec2), ToLower },
+                { () => ShaderDefinition.Clamp(dvec3, dvec3, dvec3), ToLower },
+                { () => ShaderDefinition.Clamp(dvec4, dvec4, dvec4), ToLower },
+
+                { () => ShaderDefinition.Clamp(_int, _int, _int), ToLower },
+                { () => ShaderDefinition.Clamp(ivec2, _int, _int), ToLower },
+                { () => ShaderDefinition.Clamp(ivec3, _int, _int), ToLower },
+                { () => ShaderDefinition.Clamp(ivec4, _int, _int), ToLower },
+
+                { () => ShaderDefinition.Clamp(ivec2, ivec2, ivec2), ToLower },
+                { () => ShaderDefinition.Clamp(ivec3, ivec3, ivec3), ToLower },
+                { () => ShaderDefinition.Clamp(ivec4, ivec4, ivec4), ToLower },
+
+                { () => ShaderDefinition.Clamp(_uint, _uint, _uint), ToLower },
+                { () => ShaderDefinition.Clamp(uvec2, _uint, _uint), ToLower },
+                { () => ShaderDefinition.Clamp(uvec3, _uint, _uint), ToLower },
+                { () => ShaderDefinition.Clamp(uvec4, _uint, _uint), ToLower },
+
+                { () => ShaderDefinition.Clamp(uvec2, uvec2, uvec2), ToLower },
+                { () => ShaderDefinition.Clamp(uvec3, uvec3, uvec3), ToLower },
+                { () => ShaderDefinition.Clamp(uvec4, uvec4, uvec4), ToLower },
+
+                { () => ShaderDefinition.Lerp(_float, _float, _float), Rename("mix") },
+                { () => ShaderDefinition.Lerp(vec2, vec2, _float), Rename("mix") },
+                { () => ShaderDefinition.Lerp(vec3, vec3, _float), Rename("mix") },
+                { () => ShaderDefinition.Lerp(vec4, vec4, _float), Rename("mix") },
+
+                { () => ShaderDefinition.Lerp(vec2, vec2, vec2), Rename("mix") },
+                { () => ShaderDefinition.Lerp(vec3, vec3, vec3), Rename("mix") },
+                { () => ShaderDefinition.Lerp(vec4, vec4, vec4), Rename("mix") },
+
+                { () => ShaderDefinition.Lerp(_double, _double, _double), Rename("mix") },
+                { () => ShaderDefinition.Lerp(dvec2, dvec2, _double), Rename("mix") },
+                { () => ShaderDefinition.Lerp(dvec3, dvec3, _double), Rename("mix") },
+                { () => ShaderDefinition.Lerp(dvec4, dvec4, _double), Rename("mix") },
+
+                { () => ShaderDefinition.Lerp(dvec2, dvec2, dvec2), Rename("mix") },
+                { () => ShaderDefinition.Lerp(dvec3, dvec3, dvec3), Rename("mix") },
+                { () => ShaderDefinition.Lerp(dvec4, dvec4, dvec4), Rename("mix") },
+
+                { () => ShaderDefinition.Lerp(_float, _float, _bool), Rename("mix") },
+                { () => ShaderDefinition.Lerp(vec2, vec2, bvec2), Rename("mix") },
+                { () => ShaderDefinition.Lerp(vec3, vec3, bvec3), Rename("mix") },
+                { () => ShaderDefinition.Lerp(vec4, vec4, bvec4), Rename("mix") },
+
+                { () => ShaderDefinition.Lerp(_double, _double, _bool), Rename("mix") },
+                { () => ShaderDefinition.Lerp(dvec2, dvec2, bvec2), Rename("mix") },
+                { () => ShaderDefinition.Lerp(dvec3, dvec3, bvec3), Rename("mix") },
+                { () => ShaderDefinition.Lerp(dvec4, dvec4, bvec4), Rename("mix") },
+
+                { () => ShaderDefinition.Step(_float, _float), ToLower },
+                { () => ShaderDefinition.Step(_float, vec2), ToLower },
+                { () => ShaderDefinition.Step(_float, vec3), ToLower },
+                { () => ShaderDefinition.Step(_float, vec4), ToLower },
+
+                { () => ShaderDefinition.Step(vec2, vec2), ToLower },
+                { () => ShaderDefinition.Step(vec3, vec3), ToLower },
+                { () => ShaderDefinition.Step(vec4, vec4), ToLower },
+
+                { () => ShaderDefinition.Step(_double, _double), ToLower },
+                { () => ShaderDefinition.Step(_double, dvec2), ToLower },
+                { () => ShaderDefinition.Step(_double, dvec3), ToLower },
+                { () => ShaderDefinition.Step(_double, dvec4), ToLower },
+
+                { () => ShaderDefinition.Step(dvec2, dvec2), ToLower },
+                { () => ShaderDefinition.Step(dvec3, dvec3), ToLower },
+                { () => ShaderDefinition.Step(dvec4, dvec4), ToLower },
+
+                { () => ShaderDefinition.SmoothStep(_float, _float, _float), ToLower },
+                { () => ShaderDefinition.SmoothStep(_float, _float, vec2), ToLower },
+                { () => ShaderDefinition.SmoothStep(_float, _float, vec3), ToLower },
+                { () => ShaderDefinition.SmoothStep(_float, _float, vec4), ToLower },
+
+                { () => ShaderDefinition.SmoothStep(vec2, vec2, vec2), ToLower },
+                { () => ShaderDefinition.SmoothStep(vec3, vec3, vec3), ToLower },
+                { () => ShaderDefinition.SmoothStep(vec4, vec4, vec4), ToLower },
+
+                { () => ShaderDefinition.SmoothStep(_double, _double, _double), ToLower },
+                { () => ShaderDefinition.SmoothStep(_double, _double, dvec2), ToLower },
+                { () => ShaderDefinition.SmoothStep(_double, _double, dvec3), ToLower },
+                { () => ShaderDefinition.SmoothStep(_double, _double, dvec4), ToLower },
+
+                { () => ShaderDefinition.SmoothStep(dvec2, dvec2, dvec2), ToLower },
+                { () => ShaderDefinition.SmoothStep(dvec3, dvec3, dvec3), ToLower },
+                { () => ShaderDefinition.SmoothStep(dvec4, dvec4, dvec4), ToLower },
+
+                #endregion
             };
         }
     }
