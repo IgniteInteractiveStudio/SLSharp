@@ -141,41 +141,58 @@ namespace IIS.SLSharp.Examples.Tests
 
         public void DefineFragmentBody(Expression exp)
         {
-            if (exp is MethodCallExpression)
+            if (!(exp is MethodCallExpression))
+                throw new NotImplementedException("Unit testing currently only supports simple expressions");
+
+            var call = (MethodCallExpression)exp;
+
+            // required for the output setfld below
+            _fragmentBody.Emit(OpCodes.Ldarg_0);
+
+            // load arguments to stack
+            for (var i = 0; i < call.Arguments.Count; i++)
             {
-                var call = (MethodCallExpression)exp;
+                var arg = call.Arguments[i];
+                var input = DefineInput(arg, "input" + i);
+                var getter = input.GetGetMethod();
 
-                // required for the output setfld below
                 _fragmentBody.Emit(OpCodes.Ldarg_0);
+                _fragmentBody.Emit(OpCodes.Callvirt, getter);
+            }
 
-                // load arguments to stack
-                for (var i = 0; i < call.Arguments.Count; i++)
-                {
-                    var arg = call.Arguments[i];
-                    var input = DefineInput(arg, "input" + i);
-                    var getter = input.GetGetMethod();
+            // call the test method
+            _fragmentBody.Emit(OpCodes.Call, call.Method);
 
-                    _fragmentBody.Emit(OpCodes.Ldarg_0);
-                    _fragmentBody.Emit(OpCodes.Callvirt, getter);
-                }
-
-                // call the test method
-                _fragmentBody.Emit(OpCodes.Call, call.Method);
-
-                // convert the result to a vec4
-                _fragmentBody.Emit(OpCodes.Newobj, typeof(ShaderDefinition.vec4).GetConstructor(new[] { typeof(float) }));
-
-                // and store it to the output
-                _fragmentBody.Emit(OpCodes.Stfld, _output);
-
-                // finally ret
-                _fragmentBody.Emit(OpCodes.Ret);
+            // extend to vec4 if required
+            var tok = call.Method.ReturnType.MetadataToken;
+            Type[] types;
+            
+            if (tok == typeof(ShaderDefinition.vec2).MetadataToken)
+            {
+                types = new []{typeof(ShaderDefinition.vec2), typeof(float), typeof(float)};
+                _fragmentBody.Emit(OpCodes.Ldc_R4, 0.0f);
+                _fragmentBody.Emit(OpCodes.Ldc_R4, 0.0f);
+            }
+            else if (tok == typeof(ShaderDefinition.vec3).MetadataToken)
+            {
+                types = new[] { typeof(ShaderDefinition.vec3), typeof(float) };
+                _fragmentBody.Emit(OpCodes.Ldc_R4, 0.0f);
             }
             else
             {
-                throw new NotImplementedException("Unit testing currently only supports simple expressions");
-            }             
-        }
+                types = new[] { call.Method.ReturnType };
+            }
 
+            // convert the result to a vec4 in case it aint one, yet
+            if (tok != typeof(ShaderDefinition.vec4).MetadataToken)
+                _fragmentBody.Emit(OpCodes.Newobj, typeof(ShaderDefinition.vec4).GetConstructor(types));
+
+            // and store it to the output
+            _fragmentBody.Emit(OpCodes.Stfld, _output);
+
+            // finally ret
+            _fragmentBody.Emit(OpCodes.Ret);
+
+        }
     }
 }

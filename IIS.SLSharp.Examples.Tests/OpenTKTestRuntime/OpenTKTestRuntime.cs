@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using IIS.SLSharp.Bindings.OpenTK;
 using IIS.SLSharp.Bindings.OpenTK.Textures;
+using IIS.SLSharp.Shaders;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
@@ -35,6 +38,11 @@ namespace IIS.SLSharp.Examples.Tests.OpenTKTestRuntime
 
             // create offscreen rendertarget with high precision
             _rtt = new RenderToTexture(1, 1, false, 4, typeof(float));
+
+            int precision;
+            int range;
+            GL.GetShaderPrecisionFormat(OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, ShaderPrecisionType.HighFloat, out range, out precision);
+            Debug.WriteLine("Precision: {0}, Range {1}", precision, range);
 
             // init SL#
             Bindings.OpenTK.SLSharp.Init();
@@ -72,6 +80,24 @@ namespace IIS.SLSharp.Examples.Tests.OpenTKTestRuntime
             //_context.SwapBuffers();
             
             return new Vector4(pixel[0], pixel[1], pixel[2], pixel[3]);
+        }
+
+        public ShaderDefinition.vec2 Convert(Vector2 v)
+        {
+            var v2 = new OpenTK.Vector2(v.X, v.Y);
+            return v2.ToVector2F();
+        }
+
+        public ShaderDefinition.vec3 Convert(Vector3 v)
+        {
+            var v3 = new OpenTK.Vector3(v.X, v.Y, v.Z);
+            return v3.ToVector3F();
+        }
+
+        public ShaderDefinition.vec4 Convert(Vector4 v)
+        {
+            var v4 = new OpenTK.Vector4(v.X, v.Y, v.Z, v.W);
+            return v4.ToVector4F();
         }
     }
 }

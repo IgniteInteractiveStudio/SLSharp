@@ -70,34 +70,37 @@ namespace IIS.SLSharp.Examples.Tests
         /// </summary>
         /// <param name="f"></param>
         /// <returns></returns>
-        private static Vector4 GenerateVec4(float f)
+        private static Vector4 GenerateVec4(double f)
         {
-            var result = new Vector4(f, f + 0.25f, f + 0.5f, f + 0.75f);
+            var x = f;
+            var y = f + 0.25;
+            var z = f + 0.5;
+            var w = f + 0.75;
 
-            if (result.W < 1.0f)
-                return result;
-            result.W -= 1.0f;
+            if (w < 1.0)
+                return new Vector4((float)x, (float)y, (float)z, (float)w);
+            w = f - 0.25; // w -= 1.0;
 
-            if (result.Z < 1.0f)
-                return result;
-            result.Z -= 1.0f;
+            if (z < 1.0)
+                return new Vector4((float)x, (float)y, (float)z, (float)w);
+            z = f - 0.5; // z -= 1.0;
 
-            if (result.Y < 1.0f)
-                return result;
-            result.Y -= 1.0f;
+            if (y < 1.0)
+                return new Vector4((float)x, (float)y, (float)z, (float)w);
+            y = f - 0.75; // y -= 1.0f;
 
-            if (result.X < 1.0f)
-                return result;
-            result.X -= 1.0f;
+            if (x < 1.0)
+                return new Vector4((float)x, (float)y, (float)z, (float)w);
+            x -= 1.0;
 
-            return result;
+            return new Vector4((float)x, (float)y, (float)z, (float)w);
         }
 
         private static IEnumerable<Vector4> GenerateValues(int num)
         {
             var values = new List<Vector4>();
             for (var i = 0; i < num; i++)
-                values.Add(GenerateVec4((float)i / num));
+                values.Add(GenerateVec4((double)i / num));
             return values;
         }
 
@@ -116,10 +119,14 @@ namespace IIS.SLSharp.Examples.Tests
         {
             //var binDir = Path.GetDirectoryName(typeof(Shader).Assembly.Location);
             var binDir = Directory.GetCurrentDirectory();
-            
-            var assemblyName = new AssemblyName("testcase") { Name = "testcase", CodeBase = Assembly.GetExecutingAssembly().Location };
+
+            var call = (MethodCallExpression)exp;
+            var testName = string.Format("{0}_{1}", call.Method.Name, call.Method.MetadataToken);
+            var testDll = testName + ".dll";
+
+            var assemblyName = new AssemblyName(testName) { Name = testName, CodeBase = Assembly.GetExecutingAssembly().Location };
             var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Save, binDir);
-            var module = assemblyBuilder.DefineDynamicModule("testcase", "testcase.dll");
+            var module = assemblyBuilder.DefineDynamicModule(testName, testDll);
             var shaderType = typeof(ExponentialTests); // TODO: supply from callee
             var typeBuilder = module.DefineType("testshader", TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Abstract, shaderType);
 
@@ -128,12 +135,29 @@ namespace IIS.SLSharp.Examples.Tests
             builder.DefineFragmentBody(exp);
 
             var reflectType = typeBuilder.CreateType();
-            assemblyBuilder.Save("testcase.dll");
+            assemblyBuilder.Save(testDll);
 
             //var typ = Assembly.LoadFile(binDir + "\\testcase.dll").GetType("testshader");
             //return typ;
 
             return reflectType;
+        }
+
+
+        private static Action<T> GetInputSetter<T>(Shader shader, int index)
+        {
+            var setInput0Func = shader.GetType().GetProperty("input" + index).GetSetMethod();
+            
+            if (typeof(T) == typeof(float))
+                return v => setInput0Func.Invoke(shader, new object[] { v });
+            if (typeof(T) == typeof(Vector2))
+                return v => setInput0Func.Invoke(shader, new object[] { TestState.Runtime.Convert((Vector2)(object)v) });
+            if (typeof(T) == typeof(Vector3))
+                return v => setInput0Func.Invoke(shader, new object[] { TestState.Runtime.Convert((Vector3)(object)v) });
+            if (typeof(T) == typeof(Vector4))
+               return v => setInput0Func.Invoke(shader, new object[] { TestState.Runtime.Convert((Vector4)(object)v) });
+            
+            throw new NotImplementedException();
         }
 
         protected static IEnumerable<Vector4> Eval<T>(Expression<Action> x, List<T> inputs)
@@ -148,13 +172,38 @@ namespace IIS.SLSharp.Examples.Tests
             var shaderType = BuildShader(x.Body);
             using (var shader = CreateInstance(shaderType))
             {
-                var setInput0Func = shader.GetType().GetProperty("input0").GetSetMethod();
-                Action<T> setInput = v => setInput0Func.Invoke(shader, new object[] { v });
+                var setInput = GetInputSetter<T>(shader, 0);
                 shader.Begin();
                 // for each input: set uniforms + draw a one fragment size point
                 foreach (var input in inputs)
                 {
                     setInput(input);
+                    var res = TestState.Runtime.ProcessFragment();
+                    results.Add(res);
+                }
+                shader.End();
+            }
+
+            return results;
+        }
+
+
+        protected static IEnumerable<Vector4> Eval<T1,T2>(Expression<Action> x, List<T1> input0, List<T2> input1)
+        {
+            var results = new List<Vector4>(input0.Count);
+
+            var shaderType = BuildShader(x.Body);
+            using (var shader = CreateInstance(shaderType))
+            {
+                var setInput0 = GetInputSetter<T1>(shader, 0);
+                var setInput1 = GetInputSetter<T2>(shader, 1);
+                shader.Begin();
+                // for each input: set uniforms + draw a one fragment size point
+                //foreach (var input in inputs)
+                for (var i = 0; i < input0.Count; i++)
+                {
+                    setInput0(input0[i]);
+                    setInput1(input1[i]);
                     var res = TestState.Runtime.ProcessFragment();
                     results.Add(res);
                 }
