@@ -378,6 +378,31 @@ namespace IIS.SLSharp.Translation.HLSL
 
                 // No double support for HLSL
 
+                { () => ShaderDefinition.IsNaN(_float), ToLower },
+                // TODO: these overloads need special handling as they return only 1 bool not a bvec!
+                // even worse: documentation doesn't tell what the result is...
+                //{ () => ShaderDefinition.IsNaN(vec2), ToLower },
+                //{ () => ShaderDefinition.IsNaN(vec3), ToLower },
+                //{ () => ShaderDefinition.IsNaN(vec4), ToLower },
+
+                // No double support for HLSL
+
+                 { () => ShaderDefinition.IsInfinity(_float), ToLower },
+                // TODO: these overloads need special handling as they return only 1 bool not a bvec!
+                // even worse: documentation doesn't tell what the result is...
+                //{ () => ShaderDefinition.IsInfinity(vec2), ToLower },
+                //{ () => ShaderDefinition.IsInfinity(vec3), ToLower },
+                //{ () => ShaderDefinition.IsInfinity(vec4), ToLower },
+
+                // No double support for HLSL
+
+                { () => ShaderDefinition.FusedMultiplyAdd(_float, _float, _float), Rename("mad") },
+                { () => ShaderDefinition.FusedMultiplyAdd(vec2, vec2, vec2), Rename("mad") },
+                { () => ShaderDefinition.FusedMultiplyAdd(vec3, vec3, vec3), Rename("mad") },
+                { () => ShaderDefinition.FusedMultiplyAdd(vec4, vec4, vec4), Rename("mad") },
+
+                // No double support for HLSL
+
                 #endregion
 
                 { () => ShaderDefinition.texture(sampler2D, vec2), Rename("tex2D") },
@@ -406,7 +431,7 @@ namespace IIS.SLSharp.Translation.HLSL
 
    
         private Expression WidenType<T>(Expression source)
-        {        
+        {
             var tref = ShaderDefinition.ToCecil(typeof(T));
             var n = new ObjectCreateExpression( AstBuilder.ConvertType(tref), new[] { source.Clone() });            
             return n;
@@ -423,7 +448,7 @@ namespace IIS.SLSharp.Translation.HLSL
             var rhs = i.Arguments.Skip(1).Take(1);
             var widen = rhs.Select(WidenType<T>);
             var args = lhs.Concat(widen).ToList();
-
+            
             result.Append("fmod(").Append(ArgsToString(args)).Append(")");
 
             return result;

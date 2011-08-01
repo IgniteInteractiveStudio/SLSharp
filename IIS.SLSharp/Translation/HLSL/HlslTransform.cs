@@ -17,6 +17,8 @@ namespace IIS.SLSharp.Translation.HLSL
     {
         private readonly HashSet<Tuple<string, string>> _functions = new HashSet<Tuple<string, string>>();
 
+        private readonly HashSet<Type> _dependencies = new HashSet<Type>(); 
+
         public void ResetState()
         {
             _functions.Clear();
@@ -103,6 +105,8 @@ namespace IIS.SLSharp.Translation.HLSL
             var code = glsl.Result;
             var desc = new FunctionDescription(Shader.GetMethodName(m), sig + code, entry, type);
 
+            _dependencies.UnionWith(glsl.Dependencies);
+
             return desc;
         }
 
@@ -123,6 +127,11 @@ namespace IIS.SLSharp.Translation.HLSL
                     Shader.CreateInstance<Workarounds.Exponential>()
                 });
             }
+        }
+
+        public IEnumerable<Type> Dependencies
+        {
+            get { return _dependencies; }
         }
     }
 }

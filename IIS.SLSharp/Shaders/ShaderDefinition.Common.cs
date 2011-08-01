@@ -1,5 +1,6 @@
 ﻿// ReSharper disable InconsistentNaming
 
+using System;
 
 namespace IIS.SLSharp.Shaders
 {
@@ -388,15 +389,19 @@ namespace IIS.SLSharp.Shaders
         #region genType mod(genType x, float y)
 
         /// <summary>Modulus. Returns x – y * Floor (x/y).</summary>
+        [Obsolete("Use the % operator")]
         protected internal static float mod(float x, float y) { throw _invalidAccess; }
 
         /// <summary>Modulus. Returns x – y * Floor (x/y).</summary>
+        [Obsolete("Use the % operator")]
         protected internal static vec2 mod(vec2 x, float y) { throw _invalidAccess; }
 
         /// <summary>Modulus. Returns x – y * Floor (x/y).</summary>
+        [Obsolete("Use the % operator")]
         protected internal static vec3 mod(vec3 x, float y) { throw _invalidAccess; }
 
         /// <summary>Modulus. Returns x – y * Floor (x/y).</summary>
+        [Obsolete("Use the % operator")]
         protected internal static vec4 mod(vec4 x, float y) { throw _invalidAccess; }
 
         #endregion
@@ -404,12 +409,15 @@ namespace IIS.SLSharp.Shaders
         #region genType mod(genType x, genType y)
 
         /// <summary>Modulus. Returns x – y * Floor (x/y).</summary>
+        [Obsolete("Use the % operator")]
         protected internal static vec2 mod(vec2 x, vec2 y) { throw _invalidAccess; }
 
         /// <summary>Modulus. Returns x – y * Floor (x/y).</summary>
+        [Obsolete("Use the % operator")]
         protected internal static vec3 mod(vec3 x, vec3 y) { throw _invalidAccess; }
 
         /// <summary>Modulus. Returns x – y * Floor (x/y).</summary>
+        [Obsolete("Use the % operator")]
         protected internal static vec4 mod(vec4 x, vec4 y) { throw _invalidAccess; }
 
         #endregion
@@ -417,15 +425,19 @@ namespace IIS.SLSharp.Shaders
         #region genDType mod(genDType x, double y)
 
         /// <summary>Modulus. Returns x – y * Floor (x/y).</summary>
+        [Obsolete("Use the % operator")]
         protected static double mod(double x, double y) { throw _invalidAccess; }
 
         /// <summary>Modulus. Returns x – y * Floor (x/y).</summary>
+        [Obsolete("Use the % operator")]
         protected static dvec2 mod(dvec2 x, double y) { throw _invalidAccess; }
 
         /// <summary>Modulus. Returns x – y * Floor (x/y).</summary>
+        [Obsolete("Use the % operator")]
         protected static dvec3 mod(dvec3 x, double y) { throw _invalidAccess; }
 
         /// <summary>Modulus. Returns x – y * Floor (x/y).</summary>
+        [Obsolete("Use the % operator")]
         protected static dvec4 mod(dvec4 x, double y) { throw _invalidAccess; }
 
         #endregion
@@ -1143,77 +1155,79 @@ namespace IIS.SLSharp.Shaders
 
         #endregion
 
-        #region genBType isnan (genType x)
+        #region genBType IsNaN (genType x)
 
         /// <summary>Returns true if x holds a NaN. Returns false otherwise.</summary>
-        protected static bool isnan(float x) { throw _invalidAccess; }
+        protected internal static bool IsNaN(float x) { throw _invalidAccess; }
 
         /// <summary>Returns true if x holds a NaN. Returns false otherwise.</summary>
-        protected static bvec2 isnan(vec2 x) { throw _invalidAccess; }
+        protected internal static bvec2 IsNaN(vec2 x) { throw _invalidAccess; }
 
         /// <summary>Returns true if x holds a NaN. Returns false otherwise.</summary>
-        protected static bvec3 isnan(vec3 x) { throw _invalidAccess; }
+        protected internal static bvec3 IsNaN(vec3 x) { throw _invalidAccess; }
 
         /// <summary>Returns true if x holds a NaN. Returns false otherwise.</summary>
-        protected static bvec4 isnan(vec4 x) { throw _invalidAccess; }
+        protected internal static bvec4 IsNaN(vec4 x) { throw _invalidAccess; }
 
         #endregion
 
-        #region genBType isnan (genDType x)
+        #region genBType IsNaN (genDType x)
 
         /// <summary>Returns true if x holds a NaN. Returns false otherwise.</summary>
-        protected static bool isnan(double x) { throw _invalidAccess; }
+        protected internal static bool IsNaN(double x) { throw _invalidAccess; }
 
         /// <summary>Returns true if x holds a NaN. Returns false otherwise.</summary>
-        protected static bvec2 isnan(dvec2 x) { throw _invalidAccess; }
+        protected internal static bvec2 IsNaN(dvec2 x) { throw _invalidAccess; }
 
         /// <summary>Returns true if x holds a NaN. Returns false otherwise.</summary>
-        protected static bvec3 isnan(dvec3 x) { throw _invalidAccess; }
+        protected internal static bvec3 IsNaN(dvec3 x) { throw _invalidAccess; }
 
         /// <summary>Returns true if x holds a NaN. Returns false otherwise.</summary>
-        protected static bvec4 isnan(dvec4 x) { throw _invalidAccess; }
+        protected internal static bvec4 IsNaN(dvec4 x) { throw _invalidAccess; }
 
         #endregion
 
-        #region genBType isinf (genType x)
+        #region genBType IsInfinity (genType x)
 
         /// <summary>Returns true if x holds a positive infinity or negative infinity. 
         /// Returns false otherwise.</summary>
-        protected static bool isinf(float x) { throw _invalidAccess; }
+        protected internal static bool IsInfinity(float x) { throw _invalidAccess; }
 
         /// <summary>Returns true if x holds a positive infinity or negative infinity. 
         /// Returns false otherwise.</summary>
-        protected static bvec2 isinf(vec2 x) { throw _invalidAccess; }
+        protected internal static bvec2 IsInfinity(vec2 x) { throw _invalidAccess; }
 
         /// <summary>Returns true if x holds a positive infinity or negative infinity. 
         /// Returns false otherwise.</summary>
-        protected static bvec3 isinf(vec3 x) { throw _invalidAccess; }
+        protected internal static bvec3 IsInfinity(vec3 x) { throw _invalidAccess; }
 
         /// <summary>Returns true if x holds a positive infinity or negative infinity. 
         /// Returns false otherwise.</summary>
-        protected static bvec4 isinf(vec4 x) { throw _invalidAccess; }
+        protected internal static bvec4 IsInfinity(vec4 x) { throw _invalidAccess; }
 
         #endregion
 
-        #region genBType isinf (genDType x)
+        #region genBType IsInfinity (genDType x)
 
         /// <summary>Returns true if x holds a positive infinity or negative infinity. 
         /// Returns false otherwise.</summary>
-        protected static bool isinf(double x) { throw _invalidAccess; }
+        protected internal static bool IsInfinity(double x) { throw _invalidAccess; }
 
         /// <summary>Returns true if x holds a positive infinity or negative infinity. 
         /// Returns false otherwise.</summary>
-        protected static bvec2 isinf(dvec2 x) { throw _invalidAccess; }
+        protected internal static bvec2 IsInfinity(dvec2 x) { throw _invalidAccess; }
 
         /// <summary>Returns true if x holds a positive infinity or negative infinity. 
         /// Returns false otherwise.</summary>
-        protected static bvec3 isinf(dvec3 x) { throw _invalidAccess; }
+        protected internal static bvec3 IsInfinity(dvec3 x) { throw _invalidAccess; }
 
         /// <summary>Returns true if x holds a positive infinity or negative infinity. 
         /// Returns false otherwise.</summary>
-        protected static bvec4 isinf(dvec4 x) { throw _invalidAccess; }
+        protected internal static bvec4 IsInfinity(dvec4 x) { throw _invalidAccess; }
 
         #endregion
+
+        // use public static explicit operator Int(Float) here
 
         #region genIType floatBitsToInt (genType value)
 
@@ -1343,35 +1357,35 @@ namespace IIS.SLSharp.Shaders
 
         #endregion
 
-        #region genType fma(genType a, genType b, genType c)
+        #region genType FusedMultiplyAdd(genType a, genType b, genType c)
 
         /// <summary>Computes and returns a*b + c.</summary>
-        protected static float fma(float a, float b, float c) { throw _invalidAccess; }
+        protected internal static float FusedMultiplyAdd(float a, float b, float c) { throw _invalidAccess; }
 
         /// <summary>Computes and returns a*b + c.</summary>
-        protected static vec2 fma(vec2 a, vec2 b, vec2 c) { throw _invalidAccess; }
+        protected internal static vec2 FusedMultiplyAdd(vec2 a, vec2 b, vec2 c) { throw _invalidAccess; }
 
         /// <summary>Computes and returns a*b + c.</summary>
-        protected static vec3 fma(vec3 a, vec3 b, vec3 c) { throw _invalidAccess; }
+        protected internal static vec3 FusedMultiplyAdd(vec3 a, vec3 b, vec3 c) { throw _invalidAccess; }
 
         /// <summary>Computes and returns a*b + c.</summary>
-        protected static vec4 fma(vec4 a, vec4 b, vec4 c) { throw _invalidAccess; }
+        protected internal static vec4 FusedMultiplyAdd(vec4 a, vec4 b, vec4 c) { throw _invalidAccess; }
 
         #endregion
 
-        #region genDType fma(genDType a, genDType b, genDType c)
+        #region genDType FusedMultiplyAdd(genDType a, genDType b, genDType c)
 
         /// <summary>Computes and returns a*b + c.</summary>
-        protected static double fma(double a, double b, double c) { throw _invalidAccess; }
+        protected internal static double FusedMultiplyAdd(double a, double b, double c) { throw _invalidAccess; }
 
         /// <summary>Computes and returns a*b + c.</summary>
-        protected static dvec2 fma(dvec2 a, dvec2 b, dvec2 c) { throw _invalidAccess; }
+        protected internal static dvec2 FusedMultiplyAdd(dvec2 a, dvec2 b, dvec2 c) { throw _invalidAccess; }
 
         /// <summary>Computes and returns a*b + c.</summary>
-        protected static dvec3 fma(dvec3 a, dvec3 b, dvec3 c) { throw _invalidAccess; }
+        protected internal static dvec3 FusedMultiplyAdd(dvec3 a, dvec3 b, dvec3 c) { throw _invalidAccess; }
 
         /// <summary>Computes and returns a*b + c.</summary>
-        protected static dvec4 fma(dvec4 a, dvec4 b, dvec4 c) { throw _invalidAccess; }
+        protected internal static dvec4 FusedMultiplyAdd(dvec4 a, dvec4 b, dvec4 c) { throw _invalidAccess; }
 
         #endregion
 

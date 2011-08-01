@@ -129,37 +129,28 @@ namespace IIS.SLSharp.Shaders
         /// <param name="version">The GLSL version to use to compile this shader</param>
         protected void Link(Shader[] libaries = null, int version = 130)
         {
-            var e = Enumerable.Empty<object>();
-
-            // Compile and link all workarounds
-            foreach (var lib in Binding.Active.Transform.WorkaroundDependencies)
-            {
-                lib.Compile();
-                e = e.Concat(lib._objects);
-            }
-
-            // Compile and link all external dependencies
-            if (libaries != null)
-            {
-                foreach (var lib in libaries)
-                {
-                    lib.Compile();
-                    e = e.Concat(lib._objects);
-                }
-            }
-
-            // Link all base class implementation
-            CompileParent();
-            if (_parentLogic != null)
-                e = e.Concat(_parentLogic._objects);
+            var compiled = new HashSet<Type>();
 
             // compile main unit
+            var e = Enumerable.Empty<object>();
             Compile();
             e = e.Concat(_objects);
 
+            // TODO: this smells hacky, we need refactoring in the transform logic...
+            var deps = Binding.Active.Transform.Dependencies;
+            foreach (var dep in deps)
+            {
+                if (!compiled.Add(dep))
+                    continue;
+
+                using (var tmp = CreateSharedShader(dep))
+                {
+                    tmp.Compile();
+                    e = e.Concat(tmp._objects);
+                }
+            }
+
             Program = Binding.Active.Link(this, e);
-            
-            // now we can pull and cache uniform locations
             CacheUniforms();
         }
 

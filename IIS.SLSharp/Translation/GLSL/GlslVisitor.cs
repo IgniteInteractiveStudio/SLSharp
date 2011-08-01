@@ -64,6 +64,8 @@ namespace IIS.SLSharp.Translation.GLSL
 
         private void RegisterMethod(MethodDefinition m)
         {
+            AddDependency(m);
+
             // generate signature
             var neededType = _attr.AttributeType.Resolve();
             var attr = m.CustomAttributes.FirstOrDefault(a => a.AttributeType.Resolve().MetadataToken == neededType.MetadataToken);

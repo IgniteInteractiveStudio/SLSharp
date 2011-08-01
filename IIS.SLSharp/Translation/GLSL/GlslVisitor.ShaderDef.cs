@@ -485,6 +485,36 @@ namespace IIS.SLSharp.Translation.GLSL
                 { () => ShaderDefinition.SmoothStep(dvec3, dvec3, dvec3), ToLower },
                 { () => ShaderDefinition.SmoothStep(dvec4, dvec4, dvec4), ToLower },
 
+                { () => ShaderDefinition.IsNaN(_float), ToLower },
+                { () => ShaderDefinition.IsNaN(vec2), ToLower },
+                { () => ShaderDefinition.IsNaN(vec3), ToLower },
+                { () => ShaderDefinition.IsNaN(vec4), ToLower },
+
+                { () => ShaderDefinition.IsNaN(_double), ToLower },
+                { () => ShaderDefinition.IsNaN(dvec2), ToLower },
+                { () => ShaderDefinition.IsNaN(dvec3), ToLower },
+                { () => ShaderDefinition.IsNaN(dvec4), ToLower },
+
+                { () => ShaderDefinition.IsInfinity(_float), ToLower },
+                { () => ShaderDefinition.IsInfinity(vec2), ToLower },
+                { () => ShaderDefinition.IsInfinity(vec3), ToLower },
+                { () => ShaderDefinition.IsInfinity(vec4), ToLower },
+
+                { () => ShaderDefinition.IsInfinity(_double), ToLower },
+                { () => ShaderDefinition.IsInfinity(dvec2), ToLower },
+                { () => ShaderDefinition.IsInfinity(dvec3), ToLower },
+                { () => ShaderDefinition.IsInfinity(dvec4), ToLower },
+
+                { () => ShaderDefinition.FusedMultiplyAdd(_float, _float, _float), Rename("fma") },
+                { () => ShaderDefinition.FusedMultiplyAdd(vec2, vec2, vec2), Rename("fma") },
+                { () => ShaderDefinition.FusedMultiplyAdd(vec3, vec3, vec3), Rename("fma") },
+                { () => ShaderDefinition.FusedMultiplyAdd(vec4, vec4, vec4), Rename("fma") },
+
+                { () => ShaderDefinition.FusedMultiplyAdd(_double, _double, _double), Rename("fma") },
+                { () => ShaderDefinition.FusedMultiplyAdd(dvec2, dvec2, dvec2), Rename("fma") },
+                { () => ShaderDefinition.FusedMultiplyAdd(dvec3, dvec3, dvec3), Rename("fma") },
+                { () => ShaderDefinition.FusedMultiplyAdd(dvec4, dvec4, dvec4), Rename("fma") },
+
                 #endregion
             };
         }

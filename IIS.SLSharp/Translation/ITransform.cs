@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using IIS.SLSharp.Descriptions;
 using IIS.SLSharp.Shaders;
@@ -35,5 +36,7 @@ namespace IIS.SLSharp.Translation
         /// TODO: this shall become obsolete when auto determining depdendencies
         /// </summary>
         IEnumerable<Shader> WorkaroundDependencies { get; }
+
+        IEnumerable<Type> Dependencies { get; }
     }
 }

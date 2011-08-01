@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
+using Mono.Cecil;
 using Attribute = ICSharpCode.NRefactory.CSharp.Attribute;
 
 namespace IIS.SLSharp.Translation
 {
     internal abstract partial class VisitorBase : IAstVisitor<int, StringBuilder>
     {
+        public readonly HashSet<Type> Dependencies = new HashSet<Type>();
+
         protected void Warn(string message, params object[] args)
         {
             var msg = String.Format(message, args);
@@ -57,6 +61,18 @@ namespace IIS.SLSharp.Translation
             res.Append(b.Replace(Environment.NewLine, Environment.NewLine + "\t"));
 
             return res;
+        }
+
+        private static Type GetType(TypeDefinition td)
+        {
+            var qualifiedName = Assembly.CreateQualifiedName(td.Module.Assembly.FullName, td.FullName);
+            return Type.GetType(qualifiedName, true);
+        }
+
+        protected void AddDependency(MethodDefinition m)
+        {
+            var dependency = m.DeclaringType.Resolve();
+            Dependencies.Add(GetType(dependency));
         }
     }
 }
