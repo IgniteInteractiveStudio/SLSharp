@@ -51,6 +51,7 @@
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="ExponentialTests.cs" />
+    <Compile Include="GeometricTests.cs" />
     <Compile Include="ITestRuntime.cs" />
     <Compile Include="OpenTKTestRuntime\OpenTKTestRuntime.cs" />
     <Compile Include="ShaderBuilder.cs" />

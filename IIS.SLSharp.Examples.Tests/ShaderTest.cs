@@ -115,7 +115,7 @@ namespace IIS.SLSharp.Examples.Tests
         protected static readonly List<float> V1fB = GenerateValues(100).Select(x => x.Y).ToList();
 
 
-        private static Type BuildShader(Expression exp)
+        private static Type BuildShader(Expression exp, Type shaderType)
         {
             //var binDir = Path.GetDirectoryName(typeof(Shader).Assembly.Location);
             var binDir = Directory.GetCurrentDirectory();
@@ -127,7 +127,7 @@ namespace IIS.SLSharp.Examples.Tests
             var assemblyName = new AssemblyName(testName) { Name = testName, CodeBase = Assembly.GetExecutingAssembly().Location };
             var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Save, binDir);
             var module = assemblyBuilder.DefineDynamicModule(testName, testDll);
-            var shaderType = typeof(ExponentialTests); // TODO: supply from callee
+            //var shaderType = typeof(ExponentialTests); // TODO: supply from callee
             var typeBuilder = module.DefineType("testshader", TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Abstract, shaderType);
 
             var builder = new ShaderBuilder(typeBuilder);
@@ -160,7 +160,7 @@ namespace IIS.SLSharp.Examples.Tests
             throw new NotImplementedException();
         }
 
-        protected static IEnumerable<Vector4> Eval<T>(Expression<Action> x, List<T> inputs)
+        protected IEnumerable<Vector4> Eval<T>(Expression<Action> x, List<T> inputs)
         {
             // * build a shader that evaluates x() and compile it
             // * upload inputs to the GPU via shadertype to test (Vertex => VBO, Fragment => Texture)
@@ -169,7 +169,7 @@ namespace IIS.SLSharp.Examples.Tests
 
             var results = new List<Vector4>(inputs.Count);
 
-            var shaderType = BuildShader(x.Body);
+            var shaderType = BuildShader(x.Body, GetType());
             using (var shader = CreateInstance(shaderType))
             {
                 var setInput = GetInputSetter<T>(shader, 0);
@@ -188,11 +188,11 @@ namespace IIS.SLSharp.Examples.Tests
         }
 
 
-        protected static IEnumerable<Vector4> Eval<T1,T2>(Expression<Action> x, List<T1> input0, List<T2> input1)
+        protected IEnumerable<Vector4> Eval<T1,T2>(Expression<Action> x, List<T1> input0, List<T2> input1)
         {
             var results = new List<Vector4>(input0.Count);
 
-            var shaderType = BuildShader(x.Body);
+            var shaderType = BuildShader(x.Body, GetType());
             using (var shader = CreateInstance(shaderType))
             {
                 var setInput0 = GetInputSetter<T1>(shader, 0);
