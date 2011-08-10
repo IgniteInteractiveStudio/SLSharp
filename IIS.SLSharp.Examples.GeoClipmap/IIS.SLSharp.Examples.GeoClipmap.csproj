@@ -65,7 +65,12 @@
     <Compile Include="Shaders\DebugShader.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="..\Resources\height.jpg">
+      <Link>height.jpg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IIS.SLSharp.Bindings.OpenTK\IIS.SLSharp.Bindings.OpenTK.csproj">
       <Project>{8A901280-C858-4018-AD66-45255EFEC519}</Project>

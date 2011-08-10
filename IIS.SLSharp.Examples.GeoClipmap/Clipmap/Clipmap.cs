@@ -93,7 +93,7 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
         public Clipmap()
         {
             //_testMap = (Bitmap)Image.FromFile("height.png");
-            _testMap = (Bitmap)Image.FromFile(@"E:\SLSharp\IIS.SLSharp.Examples.GeoClipmap\testImg.png");
+            _testMap = (Bitmap)Image.FromFile(@"height.jpg");
             
 
             Position = new IntFloatVector2(new IntFloat(-_testMap.Width / 4), new IntFloat(-_testMap.Height / 4));
