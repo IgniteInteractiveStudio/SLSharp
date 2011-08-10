@@ -42,6 +42,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIS.SLSharp.Examples.Tests"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIS.SLSharp.Examples.GeoClipmap", "IIS.SLSharp.Examples.GeoClipmap\IIS.SLSharp.Examples.GeoClipmap.csproj", "{A44CFBAB-B76F-4458-BF71-908911163917}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIS.SLSharp.Examples.MOGRE.GeoClipmap", "IIS.SLSharp.Examples.MOGRE.GeoClipmap\IIS.SLSharp.Examples.MOGRE.GeoClipmap.csproj", "{59534F08-51E6-40D9-8260-D339FA1B5FBB}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = SLSharp.vsmdi
@@ -195,6 +197,16 @@ Global
 		{A44CFBAB-B76F-4458-BF71-908911163917}.Release|Mixed Platforms.Build.0 = Release|x86
 		{A44CFBAB-B76F-4458-BF71-908911163917}.Release|x86.ActiveCfg = Release|x86
 		{A44CFBAB-B76F-4458-BF71-908911163917}.Release|x86.Build.0 = Release|x86
+		{59534F08-51E6-40D9-8260-D339FA1B5FBB}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{59534F08-51E6-40D9-8260-D339FA1B5FBB}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{59534F08-51E6-40D9-8260-D339FA1B5FBB}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{59534F08-51E6-40D9-8260-D339FA1B5FBB}.Debug|x86.ActiveCfg = Debug|x86
+		{59534F08-51E6-40D9-8260-D339FA1B5FBB}.Debug|x86.Build.0 = Debug|x86
+		{59534F08-51E6-40D9-8260-D339FA1B5FBB}.Release|Any CPU.ActiveCfg = Release|x86
+		{59534F08-51E6-40D9-8260-D339FA1B5FBB}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{59534F08-51E6-40D9-8260-D339FA1B5FBB}.Release|Mixed Platforms.Build.0 = Release|x86
+		{59534F08-51E6-40D9-8260-D339FA1B5FBB}.Release|x86.ActiveCfg = Release|x86
+		{59534F08-51E6-40D9-8260-D339FA1B5FBB}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

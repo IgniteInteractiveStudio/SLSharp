@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{59534F08-51E6-40D9-8260-D339FA1B5FBB}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IIS.SLSharp.Examples.MOGRE.GeoClipmap</RootNamespace>
+    <AssemblyName>IIS.SLSharp.Examples.MOGRE.GeoClipmap</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Mogre">
+      <HintPath>..\Dependencies\MogreD\Mogre.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
+    <Compile Include="DemoWindow.cs" />
+    <Compile Include="GeoClipmap\Clipmap.cs" />
+    <Compile Include="GeoClipmap\ClipmapLevel.cs" />
+    <Compile Include="GeoClipmap\IntFloat.cs" />
+    <Compile Include="GeoClipmap\IntFloatVector2.cs" />
+    <Compile Include="GeoClipmap\Patch.cs" />
+    <Compile Include="GeoClipmap\PatchLocation.cs" />
+    <Compile Include="GeoClipmap\PatchLocations.cs" />
+    <Compile Include="GeoClipmap\PatchRenderable.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Shaders\ClipmapShader.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\Dependencies\OgreMain.dll">
+      <Link>OgreMain.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Dependencies\OgreMain_d.dll">
+      <Link>OgreMain_d.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Dependencies\RenderSystem_Direct3D9.dll">
+      <Link>RenderSystem_Direct3D9.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Dependencies\RenderSystem_Direct3D9_d.dll">
+      <Link>RenderSystem_Direct3D9_d.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Dependencies\RenderSystem_GL.dll">
+      <Link>RenderSystem_GL.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Dependencies\RenderSystem_GL_d.dll">
+      <Link>RenderSystem_GL_d.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Resources\box.mesh">
+      <Link>box.mesh</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Resources\height.jpg">
+      <Link>height.jpg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IIS.SLSharp.Bindings.MOGRE\IIS.SLSharp.Bindings.MOGRE.csproj">
+      <Project>{08922A61-B3E4-4A4D-8476-59F1937254A2}</Project>
+      <Name>IIS.SLSharp.Bindings.MOGRE</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IIS.SLSharp\IIS.SLSharp.csproj">
+      <Project>{ECF58025-4591-4708-8EC9-4B95A5673DDA}</Project>
+      <Name>IIS.SLSharp</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
