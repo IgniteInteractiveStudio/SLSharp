@@ -11,11 +11,9 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
     {
         public Texture2D Heightmap { get; private set; }
 
-        public int X { get; private set; }
-
-        public int Y { get; private set; }
-
         public float Scale { get; private set; }
+
+        public int ScaleInt { get; private set; }
 
         private readonly Clipmap _clipmap;
 
@@ -25,19 +23,66 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
 
         private readonly int _n;
 
-        public float SubX { get; private set; }
+        public IntFloatVector2 Position;
 
-        public float SubY { get; private set; }
+        public bool Left
+        {
+            get { return Position.X.Fraction < 0.5f; }
+        }
 
-        public float IntX { get; private set; }
+        public bool Bottom
+        {
+            get { return Position.Y.Fraction < 0.5f; }
+        }
 
-        public float IntY { get; private set; }
+        private float GeneratePixelAt(int xr, int yr)
+        {
+            // this function encodes zc and zf as described in the geoclipmapping paper
 
-        public bool Left { get; private set; }
+            var x = xr * ScaleInt;
+            var y = yr * ScaleInt;
 
-        public bool Bottom { get; private set; }
+            var finePixel =  _clipmap.GeneratePixelAt(x, y);
 
-        public ClipmapLevel(float scale, Clipmap clipmap)
+            //x &= ~1;
+            //y &= ~1;
+
+           
+            
+
+            //x += ScaleInt;
+            //y += ScaleInt;
+
+            // odd/even == central??
+            
+            // even/odd  odd/ood
+            // even/even odd/even
+            var coarsePixel = _clipmap.GeneratePixelAt(x, y);
+
+            var zf = finePixel;
+            if (zf < 0.0f)
+                zf = 0.0f;
+            if (zf > 1.0f)
+                zf = 1.0f;
+            zf = (float)Math.Round(zf * 512.0f);
+            //var zd = coarsePixel - finePixel; // should be 0 for innermost level?!
+            //zd = - finePixel;
+
+            var zd = 0.0f;
+            //if ((x & 1) == 0 && (y & 1) == 0)
+            //    zd = -finePixel;
+
+            // zd can range from -1 to 1 thus normalize to 0..1
+            zd += 1.0f;
+            zd *= 0.5f; 
+
+            var zfzd = zf + zd;
+            zfzd *= 0.001953125f;
+
+            return zfzd;
+        }
+
+        public ClipmapLevel(float scale, int scaleInt, Clipmap clipmap)
         {
             _d = clipmap.DValue;
             _h = clipmap.HValue;
@@ -45,6 +90,7 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
 
             _clipmap = clipmap;
             Scale = scale;
+            ScaleInt = scaleInt;
             Heightmap = new Texture2D(_d, _d, 3, typeof(float));
             Heightmap.Activate();
 
@@ -54,8 +100,6 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
 
             Heightmap.Finish();
-            X = 0;
-            Y = 0;
         }
 
 
@@ -78,27 +122,27 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
             GL.BindTexture(TextureTarget.Texture2D, _lastTex);
         }
 
-        private void UpdateRows(int y, int size)
+        private void UpdateRows(int startY, int size)
         {
-            float hx = _h;
-            float hy = _h;
-            hx += SubX - 1;
-            hy += SubY - 1;
-    
+            var x = Position.X.Integer;
+            var y = Position.Y.Integer;
+            var d2 = _d / 2;
+
             Heightmap.Activate();
-            for (var i = 0; i < size; i++)
+            for (var i2 = 0; i2 < size; i2++) // foreach row to be updated
             {
-                var yt = (y + i) & _n;
-                var yr = (-Y + yt) & _n;
-                var py = (hy + yr) * Scale;
+                var i = startY + i2;
+                var yt = i & _n; // row in texture
 
                 for (var j = 0; j < _d; j++)
                 {
-                    var xr = (-X + j) & _n;
-                    var px = (hx + xr)*Scale;
-                    // px py = virtual position
-                    // j, yt = physical position in texture
-                    _slice[j] = _clipmap.GeneratePixelAt(px, py);
+                    // physical to world
+                    var cy = ((y * 2 + i)) & ~_n;
+                    var cx = ((x * 2 + j)) & ~_n;
+                    var yr = i - cy - d2;
+                    var xr = j - cx - d2;
+                   
+                    _slice[j] = GeneratePixelAt(xr, yr );
                 }
 
                 GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, yt, _d, 1, PixelFormat.Luminance,
@@ -106,27 +150,31 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
             }
         }
 
-        private void UpdateColumns(int x, int size)
+        private void UpdateColumns(int startX, int size)
         {
-            float hx = _h;
-            float hy = _h;
-            hx += SubX - 1;
-            hy += SubY - 1;
+            var x = Position.X.Integer;
+            var y = Position.Y.Integer;
+            var d2 = _d / 2;
 
-            for (var i = 0; i < size; i++)
+            Heightmap.Activate();
+            for (var i2 = 0; i2 < size; i2++)
             {
-                var xt = (x + i) & _n;
-                var xr = (-X + xt) & _n;
-                var px = (hx + xr) * Scale;
+                var i = startX + i2;
+                var xt = i & _n;
 
                 for (var j = 0; j < _d; j++)
                 {
-                    var yr = (-Y + j) & _n;
-                    var py = (hy + yr)*Scale;
-                    _slice[j] = _clipmap.GeneratePixelAt(px, py);
+                    // physical to world
+                    var cy = ((y*2 + j)) & ~_n;
+                    var cx = ((x*2 + i)) & ~_n;
+                    var yr = j - cy - d2;
+                    var xr = i - cx - d2;
+
+
+                    _slice[j] = GeneratePixelAt(xr, yr);
                 }
 
-                Heightmap.Activate();
+                
                 GL.TexSubImage2D(TextureTarget.Texture2D, 0, xt, 0, 1, _d, PixelFormat.Luminance,
                                  PixelType.Float, _slice);
             }
@@ -140,68 +188,38 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
             EndUpdate();
         }
 
-        public void SetPosition(int x, int y, bool mx, bool my)
-        {
-            x &= _n;
-            y &= _n;
-
-            if (X == x && Y == y)
-                return;
-
-            // TODO: could remove double update of crossing region
-            // by using Slice() more intelligent
-
-            // gotta do this more stable
-            // currently wrong when moving fast (more than half the region)
-
-            var oldX = X;
-            var oldY = Y;
-
-            // might need to do this before updates?
-            Y = y;
-            X = x;
-
-            BeginUpdate();
-            if (oldY != y)
-            {
-                var y1 = (y - oldY) & _n;
-                var y2 = (oldY - y) & _n;
-
-                if (y1 < y2)
-                    UpdateRows(oldY, y1);
-                else
-                    UpdateRows(y, y2);
-            }
-
-            if (oldX != x)
-            {
-                var x1 = (x - oldX) & _n;
-                var x2 = (oldX - x) & _n;
-
-                if (x1 < x2)
-                    UpdateColumns(oldX, x1);
-                else
-                    UpdateColumns(x, x2);
-            }   
-
-            EndUpdate();
-        }
-
-        public void UpdatePosition(ref float xpos, ref float ypos, float xraw, float yraw)
-        {
-            SubX = (Utilities.Fract(xpos * 0.5f + 0.5f) - 0.5f) * 2;
-            SubY = (Utilities.Fract(ypos * 0.5f + 0.5f) - 0.5f) * 2;
-            IntX = xraw - SubX;
-            IntY = yraw - SubY;
-            Left = SubX < 0.0f;
-            Bottom = SubY < 0.0f;
-            ypos += Bottom ? 0.5f : -0.5f;
-            xpos += Left ? 0.5f : -0.5f;
-        }
-
         public void Dispose()
         {
             Heightmap.Dispose();
+        }
+
+        public void SetPosition2(IntFloatVector2 pos)
+        {
+            var x = pos.X.Integer * 2 + 1;
+            var y = pos.Y.Integer * 2 + 1;
+            var oldX = Position.X.Integer * 2 + 1;
+            var oldY = Position.Y.Integer * 2 + 1;
+
+            Position = pos;
+
+            // for slice updates we are only interested in the integer part
+            if (x == oldX && y == oldY)
+                return;
+
+            BeginUpdate();
+
+            
+            if (y > oldY)
+                UpdateRows((_n - oldY) & _n, Math.Min((y - oldY), _n));
+            else if (oldY > y)
+                UpdateRows((_n - y) & _n, Math.Min((oldY - y), _n));
+
+            if (x > oldX)
+                UpdateColumns((_n - oldX) & _n, Math.Min((x - oldX), _n));
+            else if (oldX > x)
+                UpdateColumns((_n - x) & _n, Math.Min((oldX - x), _n));
+
+            EndUpdate();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using IIS.SLSharp.Bindings.OpenTK;
 using IIS.SLSharp.Examples.GeoClipmap.Shaders;
 using IIS.SLSharp.Shaders;
@@ -9,7 +10,7 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
 {
     public sealed class Clipmap : IDisposable
     {
-        private const int K = 8;
+        private const int K = 4;
 
         private const int D = 1 << K;
 
@@ -20,6 +21,8 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
         private const int H = -M - M + 1;
 
         private const int Hx = -D / 2;
+
+        private readonly Bitmap _testMap;
 
         public int DValue
         {
@@ -34,7 +37,7 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
 
         private const double InverseD = 1.0 / D;
 
-        private const int Levels = 1;
+        private const int Levels = 2;
 
         public const float Scale = 2.0f / D;
 
@@ -44,19 +47,41 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
 
         private readonly ClipmapLevel[] _levels = new ClipmapLevel[Levels];
 
-        public float XPosition { get; private set; }
-
-        public float YPosition { get; private set; }
-
-        private bool _mx, _my;
+        public IntFloatVector2 Position;
 
         public int DebugIndex { get; set; }
 
         public PatchLocations Locations { get; private set; }
 
-        public float GeneratePixelAt(float x, float y)
+        public float GeneratePixelAt(int x, int y)
         {
-            return (float)(Math.Sin(y * 10.0f) * Math.Sin(x * 10.0f));
+            // wrap to positive values
+            x %= _testMap.Width;
+            if (x < 0)
+                x += _testMap.Width;
+            y %= _testMap.Height;
+            if (y < 0)
+                y += _testMap.Height;
+
+            return _testMap.GetPixel(x, y).R / 255.0f;
+             
+             
+
+            //if (x < 0 || y < 0)
+            //    return 0.2f + 0.8f * (float)rng.NextDouble(); ;
+            //return 0.0f;
+
+            /*
+            const float scale = 1.0f/D * 1.340f;
+            return (float)(Math.Sin(y * Math.PI * scale) * Math.Sin(x * Math.PI * scale) * 0.5 + 0.5);
+             */
+             
+            /*
+            if (y < 0)
+                return 0.0f;
+            return Math.Min(y/255.0f, 1.0f);
+             */
+             
         }
 
         private void GenerateTestTexture()
@@ -67,18 +92,27 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
 
         public Clipmap()
         {
+            //_testMap = (Bitmap)Image.FromFile("height.png");
+            _testMap = (Bitmap)Image.FromFile(@"E:\SLSharp\IIS.SLSharp.Examples.GeoClipmap\testImg.png");
+            
+
+            Position = new IntFloatVector2(new IntFloat(-_testMap.Width / 4), new IntFloat(-_testMap.Height / 4));
+
             Locations = new PatchLocations(H, M);
 
             var scale = Scale;
+            var scaleInt = 1;
 
             for (var i = 0; i < Levels; i++)
             {
-                _levels[i] = new ClipmapLevel(scale, this);
-                scale *= 0.5f;
+                _levels[i] = new ClipmapLevel(scale, scaleInt, this);
+                scale *= 2.0f;
+                scaleInt *= 2;
             }
 
             GenerateTestTexture();
             UpdatePosition();
+            Reset();
 
             _initialized = true;
         }
@@ -96,8 +130,10 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
         {
         }
 
+
         private void UpdatePosition()
         {
+            /*
             var xpos = XPosition * (2 * D);
             var ypos = YPosition * (2 * D);
             var xraw = xpos;
@@ -113,6 +149,13 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
                 yraw += yraw;
 
                 lvl.SetPosition((int)-lvl.IntX & N, (int)-lvl.IntY & N, _mx, _my);
+            }*/
+
+            var pos = Position;
+            foreach (var lvl in _levels)
+            {
+                lvl.SetPosition2(pos);
+                pos = pos.Div2();
             }
         }
 
@@ -120,19 +163,22 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
         {
             if (Math.Abs(dx) < 0.0000001f && Math.Abs(dy) < 0.0000001f)
                 return;
-
+            /*
             _mx = dx >= 0;
             _my = dy >= 0;
 
             XPosition = Utilities.Fract(XPosition + 0.5f + dx) - 0.5f;
             YPosition = Utilities.Fract(YPosition + 0.5f + dy) - 0.5f;
+             */
 
+            Position = Position.MoveBy(dx, dy);
             UpdatePosition();
         }
 
-        public void Render(Matrix4 modelviewProjection, bool debugColors)
+        public void Render(Matrix4 modelviewProjection, Matrix4 normalMatrix, bool debugColors)
         {
             _shader.Begin();
+            _shader.alpha = 0.5f + 0.5f * (float)Math.Sin((DateTime.Now.Millisecond + DateTime.Now.Second * 1000) * 0.01f);
 
             _shader.ModelViewProjectionMatrix = modelviewProjection.ToMatrix4F();
 
@@ -144,21 +190,18 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
             _shader.ViewerPosition = new Vector2(0.0f, 0.0f).ToVector2F();
             _shader.AlphaOffset = new Vector2(0.0f, 0.0f).ToVector2F();
             _shader.OneOverWidth = new Vector2(1.0f / M, 1.0f / M).ToVector2F();
+            _shader.NormalMatrix = normalMatrix.ToMatrix4F();
  
             var vloc = Shader.AttributeLocation(_shader, () => _shader.Vertex);
 
-            //var tmp = new List<AxisAlignedBoundingBox>();
             for (var i = 0; i < Levels; i++)
             {
                 var level = _levels[i];
 
                 BeginLevel(i);
-                if (debugColors)
-                    SelectColor(i);
-                else
-                    GL.Color3(1.0f, 1.0f, 1.0f);
+                _shader.Color = debugColors ? SelectColor(i).ToVector4F() : new Vector4(1.0f, 1.0f, 1.0f, 1.0f).ToVector4F();
 
-                var mask = i == Levels - 1 ? PatchLocations.PatchSelection.Everything : PatchLocations.PatchSelection.Outer;
+                var mask = i == 0 ? PatchLocations.PatchSelection.Everything : PatchLocations.PatchSelection.Outer;
 
                 // test line
                 //mask = PatchLocations.PatchSelection.OuterDegenerated | PatchLocations.PatchSelection.BaseBottomLeft;
@@ -169,35 +212,27 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
                 mask |= level.Bottom ? PatchLocations.PatchSelection.InteriorBottom : PatchLocations.PatchSelection.InteriorTop;
                 mask |= level.Left ? PatchLocations.PatchSelection.InteriorLeft : PatchLocations.PatchSelection.InteriorRight;
 
+                var subX = level.Position.X.Fraction * 2.0f - 1.0f;
+                var intX = level.Position.X.Integer;
+                var subY = level.Position.Y.Fraction * 2.0f - 1.0f;
+                var intY = level.Position.Y.Integer;
+                var texX = (intX * 2) & N;
+                var texY = (intY * 2) & N;
+
                 foreach (var p in Locations.Select(mask))
                 {
                     var pp = p.Patch;
 
-                    //GL.Color3(1.0f, 1.0f, 1.0f);
-                    //if (((1 << p.Index) & (int)PatchLocations.PatchSelection.Fixup) != 0)
-                    //    GL.Color3(1.0f, 0.0f, 0.0f);
+                    
 
-                    _shader.ScaleFactor = new Vector4(p.X + level.SubX, p.Y + level.SubY, level.Scale, level.Scale).ToVector4F();
-                    _shader.FineBlockOrigin = new Vector4(p.X - Hx - level.IntX + 0.5f, p.Y - Hx - level.IntY + 0.5f, (float)InverseD, (float)InverseD).ToVector4F();
+                    _shader.ScaleFactor = new Vector4(p.X + subX, p.Y + subY, level.Scale, level.Scale).ToVector4F();
+                    _shader.FineBlockOrigin = new Vector4(p.X - Hx - texX, p.Y - Hx - texY, (float)InverseD, (float)InverseD).ToVector4F();
                     pp.Draw(vloc);
                 }
             }
 
             EndDraw();
             _shader.End();
-
-            /*
-            foreach (var lvl in _levels)
-            {
-                if (Intersection.SolidSolid(cam.Frustum, lvl.BoundingBoxes[5]))
-                    GL.Color3(1.0, 0.0, 0.0);
-                else GL.Color3(0.0, 1.0, 0.0);
-
-                lvl.BoundingBoxes[5].Render();
-            }*/
-
-            //foreach (var bb in tmp)
-            //    bb.Render();
         }
 
         public void Dispose()
@@ -229,10 +264,19 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
                 level.Recalculate();
         }
 
-        public static void SelectColor(int index)
+        private readonly Vector4[] _colors = new[] 
+        { 
+            new Vector4(1.0f, 0.0f, 0.0f, 1.0f), 
+            new Vector4(0.0f, 1.0f, 0.0f, 1.0f), 
+            new Vector4(0.0f, 0.0f, 1.0f, 1.0f), 
+            new Vector4(1.0f, 1.0f, 0.0f, 1.0f), 
+            new Vector4(1.0f, 0.0f, 1.0f, 1.0f), 
+            new Vector4(0.0f, 1.0f, 1.0f, 1.0f)
+        };
+
+        public Vector4 SelectColor(int index)
         {
-            //GL.Color3(Colors[index % Colors.Length]);
-            GL.Color3(1.0f, 1.0f, 1.0f);
+            return _colors[index % _colors.Length];
         }
 
         public void Debug()
@@ -255,7 +299,7 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
                 var lvl = _levels[i];
 
                 lvl.Heightmap.Activate();
-                SelectColor(i);
+                GL.Color4(SelectColor(i));
 
                 GL.Enable(EnableCap.Texture2D);
                 GL.Begin(BeginMode.Quads);
@@ -270,8 +314,8 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
                 GL.End();
                 GL.Disable(EnableCap.Texture2D);
 
-                var px = x + Utilities.Fract(lvl.X * (float)InverseD + 0.5f);
-                var py = y + Utilities.Fract(-lvl.Y * (float)InverseD + 0.5f);
+                var px = x + Utilities.Fract(lvl.Position.X.Integer * (float)InverseD + 0.5f);
+                var py = y + Utilities.Fract(-lvl.Position.Y.Integer * (float)InverseD + 0.5f);
 
                 GL.PointSize(4.0f);
                 GL.Color3(1.0f, 0.0f, 0.0f);
@@ -386,6 +430,16 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
             GL.PopMatrix();
             GL.MatrixMode(MatrixMode.Modelview);
             GL.PopMatrix();
+             
+            /*
+            var level = _levels[0];
+            _debugShader.Begin();
+            _debugShader.HeightSize = new Vector4(D).ToVector4F();
+            _debugShader.HeightmapTex = level.Heightmap;
+            Shader.RenderQuad(_debugShader, () => _debugShader.Vertex);
+            _debugShader.End();
+             */
+
         }
 
     }

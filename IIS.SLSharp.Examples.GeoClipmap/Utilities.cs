@@ -9,7 +9,8 @@ namespace IIS.SLSharp.Examples.GeoClipmap
     {
         public static float Fract(float f)
         {
-            return f - (int)f;
+            var fout = (float)Math.Floor(f);
+            return f - fout;
         }
     }
 }

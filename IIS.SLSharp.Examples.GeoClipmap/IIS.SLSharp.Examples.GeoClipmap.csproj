@@ -34,6 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mogre, Version=1.7.1.0, Culture=neutral, processorArchitecture=x86" />
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dependencies\OpenTK.dll</HintPath>
@@ -48,20 +49,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="Clipmap\Clipmap.cs" />
     <Compile Include="Clipmap\ClipmapLevel.cs" />
     <Compile Include="Clipmap\Patch.cs" />
     <Compile Include="Clipmap\PatchLocation.cs" />
     <Compile Include="Clipmap\PatchLocations.cs" />
     <Compile Include="DemoWindow.cs" />
+    <Compile Include="IntFloat.cs" />
+    <Compile Include="IntFloatVector2.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Shaders\ClipmapShader.cs" />
-    <Compile Include="SolutionInfo.cs" />
+    <Compile Include="Shaders\DebugShader.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\IIS.SLSharp.Bindings.OpenTK\IIS.SLSharp.Bindings.OpenTK.csproj">
       <Project>{8A901280-C858-4018-AD66-45255EFEC519}</Project>

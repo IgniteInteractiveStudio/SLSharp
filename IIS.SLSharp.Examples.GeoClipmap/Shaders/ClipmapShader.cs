@@ -8,6 +8,9 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
     public abstract class ClipmapShader : Shader
     {
         [Uniform]
+        public abstract vec4 Color { set; get; }
+
+        [Uniform]
         public abstract mat4 ModelViewProjectionMatrix { set; get; }
 
         [Uniform]
@@ -35,6 +38,9 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
         public abstract float DebugValue { set; get; }
 
         [Uniform]
+        public abstract float alpha { set; get; }
+
+        [Uniform]
         public abstract sampler2D Heightmap { set; get; }
 
         [Varying]
@@ -45,6 +51,9 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
 
         [Varying]
         public vec4 _finalPos;
+
+        [Varying]
+        public vec3 Normal;
 
         [VertexIn(UsageSemantic.Position0)]
         public vec4 Vertex;
@@ -60,22 +69,31 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
 
 
             var texel = new vec3(texture(Heightmap, _uv, 1.0f).r);
-    
-            var zfZd = texel.x;
-            var zf = Floor(zfZd);
-            var zd = Fraction(zfZd) * 512.0f - 256.0f;
 
-            var alpha = Clamp((Abs(worldPos - ViewerPosition) - AlphaOffset) * OneOverWidth, 0.0f, 1.0f);
-            alpha.x = Max(alpha.x, alpha.y);
-            _z = zf + alpha.x * zd;
+            var zfZd = texel.x * 512.0f;
+            var zf = Floor(zfZd) * 0.001953125f;
+            var zd = Fraction(zfZd) * 2.0f - 1.0f;
+
+            //var alpha = Clamp((Abs(worldPos - ViewerPosition) - AlphaOffset) * OneOverWidth, 0.0f, 1.0f);
+            //alpha.x = Max(alpha.x, alpha.y);
+
+
+            _z = zf + /* alpha * */ zd;
     
-            _z = zfZd; // alpha blend not implemented, yet
+            //_z = zfZd; // alpha blend not implemented, yet
 
             // planar map
-            var worldPosFinal = new vec4(worldPos, _z * 0.1f, 1.0f);
+            var worldPosFinal = new vec4(worldPos, _z * 0.3f, 1.0f);
 
             _finalPos = ModelViewProjectionMatrix * worldPosFinal;
             gl_Position = _finalPos;
+
+
+            // just for testing, derive normal using interpolation over heights
+            var dfdx = (texture(Heightmap, _uv + new vec2(FineBlockOrigin.z, 0.0f), 1.0f).r - texel.r);
+            var dfdy = (texture(Heightmap, _uv + new vec2(0.0f, FineBlockOrigin.w), 1.0f).r - texel.r);
+            var dz = 2.0f*ScaleFactor.z - dfdx * dfdx - dfdy * dfdy;
+            Normal = new vec3(dfdx, dfdy, dz);
 
             //normal = normalize(vec3(texel.yz, 1.0));
         }
@@ -83,12 +101,18 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
         [FragmentShader(true)]
         public void ClipmapFragmentMain()
         {
-            var n = Normalize(Cross(dFdx(_finalPos.xyz),dFdy(_finalPos.xyz)));
-            n.xy = -n.xy;
-            var light = Normalize(new vec3(1.0f, 0.0f, 1.0f));
-            light = new mat3(NormalMatrix) * (light);
-            var i = Dot(light, n);
-            FragColor = new vec4(_uv.xy, i, 1.0f);
+            var light = Normalize(new vec3(0.0f, 1.0f, 0.6f));
+            var n = Normalize(Normal);
+
+            /*
+            var n2 = Normalize(Cross(dFdx(_finalPos.xyz),dFdy(_finalPos.xyz)));
+            n2.xy = -n2.xy;
+            var light2 = new mat3(NormalMatrix) * (light);
+            */
+            var i = Max(Dot(light, n), 0.0f) * 0.8f + 0.2f; // Dot(light2, n2);
+
+
+            FragColor = Color * _z;
         }
 
         private int _heightmap;
