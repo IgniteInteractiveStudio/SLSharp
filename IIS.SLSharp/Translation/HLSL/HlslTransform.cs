@@ -71,12 +71,13 @@ namespace IIS.SLSharp.Translation.HLSL
             while (sbase.MetadataToken.ToInt32() != typeof(Shader).MetadataToken)
                 sbase = sbase.BaseType.Resolve();
 
-            var d = AstMethodBodyBuilder.CreateMethodBody(m, new DecompilerContext(s.Module)
+            var dctx = new DecompilerContext(s.Module)
             {
                 CurrentType = s,
                 CurrentMethod = m,
                 CancellationToken = CancellationToken.None
-            });
+            };
+            var d = AstMethodBodyBuilder.CreateMethodBody(m, dctx);
 
             //var ctx = new CecilTypeResolveContext(sbase.Module);
 
@@ -89,13 +90,13 @@ namespace IIS.SLSharp.Translation.HLSL
             var resolver = new CSharpResolver(ctx, CancellationToken.None) {UsingScope = new UsingScope(project)};
 
             // TODO: need a more sane way to get the correct class + member
-            var ss = ctx.GetAllClasses().First(c => c.FullName == s.FullName);
+            var ss = ctx.GetAllTypes().First(c => c.FullName == s.FullName);
             resolver.CurrentTypeDefinition = ss;
             resolver.CurrentMember = ss.Methods.First(n => SameMethod(m, n, ctx));
 
             var rv = new ResolveVisitor(resolver, null, null);
             
-            var glsl = new HlslVisitor(d, attr, rv);
+            var glsl = new HlslVisitor(d, attr, rv, dctx);
 
             _functions.UnionWith(glsl.Functions);
 

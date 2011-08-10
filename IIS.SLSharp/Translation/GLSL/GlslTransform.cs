@@ -42,14 +42,16 @@ namespace IIS.SLSharp.Translation.GLSL
             if (attr == null)
                 throw new ArgumentNullException("attr");
 
-            var d = AstMethodBodyBuilder.CreateMethodBody(m, new DecompilerContext(s.Module)
+            var ctx = new DecompilerContext(s.Module)
             {
                 CurrentType = s,
                 CurrentMethod = m,
                 CancellationToken = CancellationToken.None
-            });
+            };
 
-            var glsl = new GlslVisitor(d, attr);
+            var d = AstMethodBodyBuilder.CreateMethodBody(m, ctx);
+
+            var glsl = new GlslVisitor(d, attr, ctx);
 
             _functions.UnionWith(glsl.Functions);
 

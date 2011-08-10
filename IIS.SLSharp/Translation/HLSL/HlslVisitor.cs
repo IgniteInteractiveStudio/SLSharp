@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp.Resolver;
@@ -80,13 +81,13 @@ namespace IIS.SLSharp.Translation.HLSL
             _functions.Add(new Tuple<string, string>(GetSignature(m), m.DeclaringType.FullName + "." + m.Name));
         }
 
-        public HlslVisitor(BlockStatement block, CustomAttribute attr, ResolveVisitor resolver)
+        public HlslVisitor(BlockStatement block, CustomAttribute attr, ResolveVisitor resolver, DecompilerContext ctx)
             : this()
         {
             _attr = attr;
             _resolver = resolver;
 
-            var trans1 = new ReplaceMethodCallsWithOperators();
+            var trans1 = new ReplaceMethodCallsWithOperators(ctx);
             var trans2 = new RenameLocals();
             ((IAstTransform)trans1).Run(block);
             trans2.Run(block);

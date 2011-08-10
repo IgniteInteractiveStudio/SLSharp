@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.NRefactory.CSharp;
 using IIS.SLSharp.Shaders;
@@ -81,12 +82,12 @@ namespace IIS.SLSharp.Translation.GLSL
 
         
 
-        public GlslVisitor(BlockStatement block, CustomAttribute attr)
+        public GlslVisitor(BlockStatement block, CustomAttribute attr, DecompilerContext ctx)
             : this()
         {
             _attr = attr;
 
-            var trans1 = new ReplaceMethodCallsWithOperators();
+            var trans1 = new ReplaceMethodCallsWithOperators(ctx);
             var trans2 = new RenameLocals();
             ((IAstTransform)trans1).Run(block);
             trans2.Run(block);
