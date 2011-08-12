@@ -67,7 +67,7 @@ namespace IIS.SLSharp.Examples.MOGRE.GeoClipmap.Shaders
             _uv = (Vertex.xy + FineBlockOrigin.xy) * FineBlockOrigin.zw;
 
 
-            var texel = new vec3(texture(Heightmap, _uv/*, 1.0f*/).r);
+            var texel = new vec3(textureLod(Heightmap, _uv, 1.0f).r);
 
             var zfZd = texel.x * 512.0f;
             var zf = Floor(zfZd) * 0.001953125f;
@@ -89,8 +89,8 @@ namespace IIS.SLSharp.Examples.MOGRE.GeoClipmap.Shaders
 
 
             // just for testing, derive normal using interpolation over heights
-            var dfdx = (texture(Heightmap, _uv + new vec2(FineBlockOrigin.z, 0.0f)/*, 1.0f*/).r - texel.r);
-            var dfdy = (texture(Heightmap, _uv + new vec2(0.0f, FineBlockOrigin.w)/*, 1.0f*/).r - texel.r);
+            var dfdx = (textureLod(Heightmap, _uv + new vec2(FineBlockOrigin.z, 0.0f), 1.0f).r - texel.r);
+            var dfdy = (textureLod(Heightmap, _uv + new vec2(0.0f, FineBlockOrigin.w), 1.0f).r - texel.r);
             var dz = 2.0f * ScaleFactor.z - dfdx * dfdx - dfdy * dfdy;
             Normal = new vec3(dfdx, dfdy, dz);
 
@@ -111,7 +111,7 @@ namespace IIS.SLSharp.Examples.MOGRE.GeoClipmap.Shaders
             var i = Max(Dot(light, n), 0.0f) * 0.8f + 0.2f; // Dot(light2, n2);
 
 
-            FragColor = /*Color **/ new vec4(i); // _z;
+            FragColor = /*Color **/ new vec4(i);
         }
 
         private int _heightmap;

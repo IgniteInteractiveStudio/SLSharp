@@ -86,6 +86,7 @@ namespace IIS.SLSharp.Translation.HLSL
         {
             _attr = attr;
             _resolver = resolver;
+            _resolver.Scan(block);
 
             var trans1 = new ReplaceMethodCallsWithOperators(ctx);
             var trans2 = new RenameLocals();
@@ -292,8 +293,9 @@ namespace IIS.SLSharp.Translation.HLSL
                 var lhs = _resolver.Resolve(binaryOperatorExpression.Left);
                 var rhs = _resolver.Resolve(binaryOperatorExpression.Right);
 
-                if ((lhs.Type.Name.StartsWith("mat") && rhs.Type.Name.StartsWith("vec")) ||
-                    (rhs.Type.Name.StartsWith("mat") && lhs.Type.Name.StartsWith("vec")))
+                // ignoring the vec side is just a temporary hack till the resolving is fixed :(
+                if ((lhs.Type.Name.StartsWith("mat") /*&& rhs.Type.Name.StartsWith("vec")*/) ||
+                    (rhs.Type.Name.StartsWith("mat") /*&& lhs.Type.Name.StartsWith("vec")*/))
                 {
                     result.AppendFormat("mul({0}, {1})",
                         binaryOperatorExpression.Left.AcceptVisitor(this, data),

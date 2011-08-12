@@ -389,7 +389,7 @@ namespace IIS.SLSharp.Shaders
         }
 
         /// <summary>Use the texture coordinate P to do a texture lookup in the texture currently bound to sampler.</summary>
-        protected static vec4 texture(sampler2D sampler, vec2 P, float bias)
+        protected internal static vec4 texture(sampler2D sampler, vec2 P, float bias)
         {
             throw _invalidAccess;
         }
@@ -1027,7 +1027,7 @@ namespace IIS.SLSharp.Shaders
         /// (See section 3.8.11 “Texture Minification” and equation 3.17 in the OpenGL Graphics SystemSpecification.)
         /// ∂u/∂x = 0; ∂v/∂x = 0; ∂w/∂x = 0; ∂u/∂y = 0; ∂v/∂y = 0; ∂w/∂y = 0; 
         /// </summary>
-        protected static vec4 textureLod(sampler2D sampler, vec2 P, float lod)
+        protected internal static vec4 textureLod(sampler2D sampler, vec2 P, float lod)
         {
             throw _invalidAccess;
         }
@@ -1047,7 +1047,7 @@ namespace IIS.SLSharp.Shaders
         /// (See section 3.8.11 “Texture Minification” and equation 3.17 in the OpenGL Graphics SystemSpecification.)
         /// ∂u/∂x = 0; ∂v/∂x = 0; ∂w/∂x = 0; ∂u/∂y = 0; ∂v/∂y = 0; ∂w/∂y = 0; 
         /// </summary>
-        protected static uvec4 textureLod(sampler2D sampler, uvec2 P, float lod)
+        protected static uvec4 textureLod(usampler2D sampler, vec2 P, float lod)
         {
             throw _invalidAccess;
         }

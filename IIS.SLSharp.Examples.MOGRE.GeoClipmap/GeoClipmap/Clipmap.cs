@@ -24,7 +24,11 @@ namespace IIS.SLSharp.Examples.MOGRE.GeoClipmap.GeoClipmap
 
         private const int Hx = -D / 2;
 
-        private readonly Bitmap _testMap;
+        private readonly int _testMapWidth;
+
+        private readonly int _testMapHeight;
+
+        private readonly float []_testMap;
 
         private readonly SceneManager _scene;
 
@@ -62,37 +66,18 @@ namespace IIS.SLSharp.Examples.MOGRE.GeoClipmap.GeoClipmap
         public float GeneratePixelAt(int x, int y)
         {
             // wrap to positive values
-            x %= _testMap.Width;
+            x %= _testMapWidth;
             if (x < 0)
-                x += _testMap.Width;
-            y %= _testMap.Height;
+                x += _testMapWidth;
+            y %= _testMapHeight;
             if (y < 0)
-                y += _testMap.Height;
+                y += _testMapHeight;
 
-            return _testMap.GetPixel(x, y).R / 255.0f;
-             
-             
-
-            //if (x < 0 || y < 0)
-            //    return 0.2f + 0.8f * (float)rng.NextDouble(); ;
-            //return 0.0f;
-
-            /*
-            const float scale = 1.0f/D * 1.340f;
-            return (float)(Math.Sin(y * Math.PI * scale) * Math.Sin(x * Math.PI * scale) * 0.5 + 0.5);
-             */
-             
-            /*
-            if (y < 0)
-                return 0.0f;
-            return Math.Min(y/255.0f, 1.0f);
-             */
-             
+            return _testMap[x + y * _testMapWidth];  
         }
 
         public Clipmap(SceneManager scene)
         {
-            //_testMap = (Bitmap)Image.FromFile("height.png");
             _scene = scene;
             _scene.RenderQueueStarted += (byte groupId, string invocation, out bool skipThisInvocation) =>
             {
@@ -100,14 +85,19 @@ namespace IIS.SLSharp.Examples.MOGRE.GeoClipmap.GeoClipmap
                     QueuePatches(_scene.RenderQueue);
                 skipThisInvocation = false;
             };
-            _testMap = (Bitmap)Image.FromFile(@"height.jpg");
 
+            using (var testMap = (Bitmap)Image.FromFile(@"height.jpg"))
+            {
+                _testMapWidth = testMap.Width;
+                _testMapHeight = testMap.Height;
+                _testMap = new float[_testMapWidth * _testMapHeight];
+                var i = 0;
+                for (var y = 0; y < testMap.Height; y++)
+                    for (var x = 0; x < testMap.Width; x++)
+                        _testMap[i++] = testMap.GetPixel(x, y).R / 255.0f;
+            }
 
-            var mat = _shader.ToMaterial();
-            var pass = mat.GetTechnique(0).GetPass(0);
-            //pass.CullingMode = CullingMode.CULL_NONE;
-            //pass.PolygonMode = PolygonMode.PM_POINTS;
-            
+        
             var tu = _shader.Sampler(() => _shader.Heightmap);
             tu.DesiredFormat = PixelFormat.PF_FLOAT32_RGB;
             tu.SetTextureFiltering(FilterOptions.FO_POINT, FilterOptions.FO_POINT, FilterOptions.FO_NONE);
@@ -115,11 +105,11 @@ namespace IIS.SLSharp.Examples.MOGRE.GeoClipmap.GeoClipmap
             tu.SetBindingType(TextureUnitState.BindingType.BT_VERTEX);
 
             _shader.SetAuto(() => _shader.ModelViewProjectionMatrix, GpuProgramParameters.AutoConstantType.ACT_WORLDVIEWPROJ_MATRIX);
-            _shader.SetAuto(() => _shader.NormalMatrix, GpuProgramParameters.AutoConstantType.ACT_INVERSE_TRANSPOSE_WORLDVIEW_MATRIX);
+            //_shader.SetAuto(() => _shader.NormalMatrix, GpuProgramParameters.AutoConstantType.ACT_INVERSE_TRANSPOSE_WORLDVIEW_MATRIX);
             _shader.SetAuto(() => _shader.ScaleFactor, GpuProgramParameters.AutoConstantType.ACT_CUSTOM, 0);
             _shader.SetAuto(() => _shader.FineBlockOrigin, GpuProgramParameters.AutoConstantType.ACT_CUSTOM, 1);
 
-            Position = new IntFloatVector2(new IntFloat(-_testMap.Width / 4), new IntFloat(-_testMap.Height / 4));
+            Position = new IntFloatVector2(new IntFloat(-_testMapWidth / 4), new IntFloat(-_testMapHeight / 4));
 
             Locations = new PatchLocations(H, M);
 
@@ -144,19 +134,6 @@ namespace IIS.SLSharp.Examples.MOGRE.GeoClipmap.GeoClipmap
             _initialized = true;
         }
 
-        private static void BeginDraw()
-        {
-        }
-
-        private void BeginLevel(int i)
-        {
-            //_shader.HeightmapTex = _levels[i].Heightmap;
-        }
-
-        private static void EndDraw()
-        {
-        }
-
 
         private void UpdatePosition()
         {
@@ -175,63 +152,6 @@ namespace IIS.SLSharp.Examples.MOGRE.GeoClipmap.GeoClipmap
 
             Position = Position.MoveBy(dx, dy);
             UpdatePosition();
-        }
-
-        public void Render(Matrix4 modelviewProjection, Matrix4 normalMatrix, bool debugColors)
-        {
-            _shader.Begin();
-            _shader.alpha = 0.5f + 0.5f * (float)Math.Sin((DateTime.Now.Millisecond + DateTime.Now.Second * 1000) * 0.01f);
-
-            _shader.ModelViewProjectionMatrix = modelviewProjection.ToMatrix4F();
-
-            BeginDraw();
-
-            _shader.DebugValue = (DebugIndex & 1) == 1 ? 1.0f : 0.0f;
-            _shader.ScaleFactor = new Vector4(0.1f, 0.1f, 0.0f, 0.0f).ToVector4F();
-            _shader.FineBlockOrigin = (new Vector4(0.01f, 0.01f, 0.0f, 0.0f)).ToVector4F();
-            _shader.ViewerPosition = new Vector2(0.0f, 0.0f).ToVector2F();
-            _shader.AlphaOffset = new Vector2(0.0f, 0.0f).ToVector2F();
-            _shader.OneOverWidth = new Vector2(1.0f / M, 1.0f / M).ToVector2F();
-            _shader.NormalMatrix = normalMatrix.ToMatrix4F();
- 
-            var vloc = Shader.AttributeLocation(_shader, () => _shader.Vertex);
-
-            for (var i = 0; i < Levels; i++)
-            {
-                var level = _levels[i];
-
-                BeginLevel(i);
-                _shader.Color = debugColors ? SelectColor(i).ToVector4F() : new Vector4(1.0f, 1.0f, 1.0f, 1.0f).ToVector4F();
-
-                var mask = i == 0 ? PatchLocations.PatchSelection.Everything : PatchLocations.PatchSelection.Outer;
-
-                // test line
-                //mask = PatchLocations.PatchSelection.OuterDegenerated | PatchLocations.PatchSelection.BaseBottomLeft;
-
-                if (i != 0)
-                    mask |= PatchLocations.PatchSelection.OuterDegenerated;
-
-                mask |= level.Bottom ? PatchLocations.PatchSelection.InteriorBottom : PatchLocations.PatchSelection.InteriorTop;
-                mask |= level.Left ? PatchLocations.PatchSelection.InteriorLeft : PatchLocations.PatchSelection.InteriorRight;
-
-                var subX = level.Position.X.Fraction * 2.0f - 1.0f;
-                var intX = level.Position.X.Integer;
-                var subY = level.Position.Y.Fraction * 2.0f - 1.0f;
-                var intY = level.Position.Y.Integer;
-                var texX = (intX * 2) & N;
-                var texY = (intY * 2) & N;
-
-                foreach (var p in Locations.Select(mask))
-                {
-                    var pp = p.Patch;
-                    _shader.ScaleFactor = new Vector4(p.X + subX, p.Y + subY, level.Scale, level.Scale).ToVector4F();
-                    _shader.FineBlockOrigin = new Vector4(p.X - Hx - texX, p.Y - Hx - texY, (float)InverseD, (float)InverseD).ToVector4F();
-                    //pp.Draw(vloc);
-                }
-            }
-
-            EndDraw();
-            _shader.End();
         }
 
         public void Dispose()
@@ -287,9 +207,6 @@ namespace IIS.SLSharp.Examples.MOGRE.GeoClipmap.GeoClipmap
                 var level = _levels[i];
 
                 var mask = i == 0 ? PatchLocations.PatchSelection.Everything :PatchLocations.PatchSelection.Outer;
-
-                // test line
-                //mask = PatchLocations.PatchSelection.OuterDegenerated | PatchLocations.PatchSelection.BaseBottomLeft;
 
                 if (i != 0)
                     mask |= PatchLocations.PatchSelection.OuterDegenerated;

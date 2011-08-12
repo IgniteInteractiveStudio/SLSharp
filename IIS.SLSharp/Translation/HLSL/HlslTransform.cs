@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
+using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp.Resolver;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
@@ -89,12 +90,23 @@ namespace IIS.SLSharp.Translation.HLSL
             var ctx = new CompositeTypeResolveContext(new[] { project, slsharp, mscorlib });
             var resolver = new CSharpResolver(ctx, CancellationToken.None) {UsingScope = new UsingScope(project)};
 
+            /*
+            foreach (var v in m.Body.Variables)
+            {
+                resolver.AddVariable(v.VariableType, null, v.Name)
+            }*/
+            
+            //resolver.AddVariable()
+            
+            //resolver.LocalVariables = m.Body.Variables;
+            
+
             // TODO: need a more sane way to get the correct class + member
             var ss = ctx.GetAllTypes().First(c => c.FullName == s.FullName);
             resolver.CurrentTypeDefinition = ss;
             resolver.CurrentMember = ss.Methods.First(n => SameMethod(m, n, ctx));
 
-            var rv = new ResolveVisitor(resolver, null, null);
+            var rv = new ResolveVisitor(resolver, new ParsedFile("memory", resolver.UsingScope), null);
             
             var glsl = new HlslVisitor(d, attr, rv, dctx);
 

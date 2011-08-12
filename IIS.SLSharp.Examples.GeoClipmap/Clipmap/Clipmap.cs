@@ -10,7 +10,7 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
 {
     public sealed class Clipmap : IDisposable
     {
-        private const int K = 4;
+        private const int K = 8;
 
         private const int D = 1 << K;
 
@@ -37,7 +37,7 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
 
         private const double InverseD = 1.0 / D;
 
-        private const int Levels = 2;
+        private const int Levels = 4;
 
         public const float Scale = 2.0f / D;
 

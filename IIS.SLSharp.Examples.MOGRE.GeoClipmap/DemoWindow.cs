@@ -13,15 +13,32 @@ namespace IIS.SLSharp.Examples.MOGRE.GeoClipmap
     {
         private readonly Root _root;
         private SceneManager _scene;
-        private Entity _patchEntity;
         private Camera _camera;
         private readonly RenderWindow _window;
         private Clipmap _clipmap;
+        private float _z;
 
         public DemoWindow(Root root, RenderWindow renderWindow)
         {
             _root = root;
             _window = renderWindow;
+        }
+
+        private float Lerp(float a, float b, float w)
+        {
+            return w * b + (1 - w) * a;
+        }
+
+        private void RecalcHeight()
+        {
+            _z = _clipmap.GeneratePixelAt(-(_clipmap.Position.X.Integer * 2 - 1), -(_clipmap.Position.Y.Integer * 2 - 1));
+            var zx = _clipmap.GeneratePixelAt(-(_clipmap.Position.X.Integer * 2 + 1), -(_clipmap.Position.Y.Integer * 2 - 1));
+            var zy = _clipmap.GeneratePixelAt(-(_clipmap.Position.X.Integer * 2 - 1), -(_clipmap.Position.Y.Integer * 2 + 1));
+            var zxy = _clipmap.GeneratePixelAt(-(_clipmap.Position.X.Integer * 2 + 1), -(_clipmap.Position.Y.Integer * 2 + 1));
+
+            var v1 = Lerp(_z, zx, _clipmap.Position.X.Fraction);
+            var v2 = Lerp(zy, zxy, _clipmap.Position.X.Fraction);
+            _z = Lerp(v1, v2, _clipmap.Position.Y.Fraction);
         }
 
         public void OnLoad()
@@ -38,11 +55,8 @@ namespace IIS.SLSharp.Examples.MOGRE.GeoClipmap
             
             //Shader.DebugMode = true;
 
-            
-            //_patchEntity = _scene.CreateEntity("Box", "box.mesh");
-            //_scene.RootSceneNode.AttachObject(_patchEntity);
-
             _clipmap = new Clipmap(_scene);
+            RecalcHeight();
 
             _camera = _scene.CreateCamera("MainCamera");
             _camera.Position = new Vector3(0, 0, 5);
@@ -62,25 +76,23 @@ namespace IIS.SLSharp.Examples.MOGRE.GeoClipmap
 
         public bool OnRenderFrame(FrameEvent evt)
         {
+            _clipmap.MoveBy(0.0f, 0.4f);
+            RecalcHeight();
+
             var angle = Mogre.Math.DegreesToRadians((DateTime.Now.Millisecond / 1000.0f + DateTime.Now.Second) * 6);
 
             angle *= 4;
-            var z = 0.1f + (1.0f + (float)Math.Sin(angle));
-            
-            
-
+            var z = 1.0f + (float)Math.Sin(angle);
+            if (z < _z)
+                z = _z;
+           
             var cam = new Vector3(0.0f, 0.0f, z);
             var look = new Vector3((float)Math.Sin(angle), (float)Math.Cos(angle), 0.1f);
             var up = new Vector3(0.0f, 0.0f, 1.0f);
 
-            /*
-            var cam = new Vector3(0.0f, 0.0f, 10.00f+8.0f*(float)Math.Sin(angle*4.0f));
-            var look = Vector3.ZERO;
-            var up = Vector3.UNIT_Y;
-             */
             _camera.Position = cam;
             _camera.LookAt(look);
-            _camera.SetFixedYawAxis(true, up);
+            _camera.SetFixedYawAxis(true, up);      
 
             return !_window.IsClosed;
         }

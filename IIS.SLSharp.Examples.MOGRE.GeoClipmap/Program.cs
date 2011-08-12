@@ -26,12 +26,12 @@ namespace IIS.SLSharp.Examples.MOGRE.GeoClipmap
 
                     if (v == 1)
                     {
-                        r.LoadPlugin("RenderSystem_GL_d");
+                        r.LoadPlugin("RenderSystem_GL");
                         r.RenderSystem = r.GetRenderSystemByName("OpenGL Rendering Subsystem");
                     }
                     else
                     {
-                        r.LoadPlugin("RenderSystem_Direct3D9_d");
+                        r.LoadPlugin("RenderSystem_Direct3D9");
                         r.RenderSystem = r.GetRenderSystemByName("Direct3D9 Rendering Subsystem");
                     }
                     break;

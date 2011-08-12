@@ -21,3 +21,5 @@ IIS.SLSharp.NuGet/*/*
 
 # Test directory
 TestResults/*
+
+Debug

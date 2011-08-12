@@ -340,6 +340,12 @@ namespace IIS.SLSharp.Bindings.MOGRE
             //_pass.GetFragmentProgramParameters().SetNamedAutoConstant(name, ac);
         }
 
+        public void SetAuto(string name, GpuProgramParameters.AutoConstantType ac, uint extraInfo)
+        {
+            Pass.GetVertexProgramParameters().SetNamedAutoConstant(name, ac, extraInfo);
+            //_pass.GetFragmentProgramParameters().SetNamedAutoConstant(name, ac);
+        }
+
         public TextureUnitState Sampler(string name)
         {
             return _textureUnits[name];
@@ -373,12 +379,29 @@ namespace IIS.SLSharp.Bindings.MOGRE
             return prog.Material;
         }
 
+        public static MaterialPtr CloneMaterial(this Shader shader, string newName)
+        {
+            var prog = (Program)shader.Program;
+            var mat = prog.Material;
+            var clone = mat.Clone(newName);
+            Program.MatToProg.Add(clone.Target, prog);
+            return clone;
+        }
+
         public static void SetAuto<T>(this Shader shader, Expression<Func<T>> loc,
             GpuProgramParameters.AutoConstantType ac)
         {
             var name = Shader.UniformName(loc);
             var prog = (Program)shader.Program;
             prog.SetAuto(name, ac);
+        }
+
+        public static void SetAuto<T>(this Shader shader, Expression<Func<T>> loc,
+            GpuProgramParameters.AutoConstantType ac, uint extraInfo)
+        {
+            var name = Shader.UniformName(loc);
+            var prog = (Program)shader.Program;
+            prog.SetAuto(name, ac, extraInfo);
         }
 
         public static TextureUnitState Sampler<T>(this Shader shader, Expression<Func<T>> loc)

@@ -406,6 +406,9 @@ namespace IIS.SLSharp.Translation.HLSL
                 #endregion
 
                 { () => ShaderDefinition.texture(sampler2D, vec2), Rename("tex2D") },
+                
+                // we need to wrap this into tex2DBias(sampler, new vec4(vec2, 0.0, float)
+                //{ () => ShaderDefinition.texture(sampler2D, vec2, _float), Redirect<Workarounds.Texture>("tex2Dbias") },
 
                 { () => ShaderDefinition.mod(vec2, _float), (m, i) => ModFloat<ShaderDefinition.vec2>(m, i) },
                 { () => ShaderDefinition.mod(vec3, _float), (m, i) => ModFloat<ShaderDefinition.vec2>(m, i) },
@@ -426,6 +429,8 @@ namespace IIS.SLSharp.Translation.HLSL
                 { () => ShaderDefinition.dFdy(vec4), Rename("ddy") },
 
                 { () => ShaderDefinition.textureGrad(sampler2D, vec2, vec2, vec2), Rename("tex2Dgrad") },
+
+                { () => ShaderDefinition.textureLod(sampler2D, vec2, _float), TextureLod }
             };
         }
 
@@ -452,6 +457,22 @@ namespace IIS.SLSharp.Translation.HLSL
             result.Append("fmod(").Append(ArgsToString(args)).Append(")");
 
             return result;
+        }
+
+        private StringBuilder TextureLod(MethodDefinition m, InvocationExpression i)
+        {
+            Debug.Assert(i.Arguments.Count == 3);
+            var args = i.Arguments.ToArray();
+            var sampler = args[0];
+            var pos = args[1];
+            var lod = args[2];
+
+            var tref = ShaderDefinition.ToCecil(typeof(ShaderDefinition.vec4));
+            var zero = new PrimitiveExpression("0.0f");
+            var newPos = new ObjectCreateExpression(AstBuilder.ConvertType(tref), new[] { pos.Clone(), zero, lod.Clone() });            
+
+            var result = new StringBuilder();
+            return result.Append("tex2Dlod(").Append(ArgsToString(new[] { sampler, newPos })).Append(")");
         }
 
         private StringBuilder Refract(MethodDefinition m, InvocationExpression i)

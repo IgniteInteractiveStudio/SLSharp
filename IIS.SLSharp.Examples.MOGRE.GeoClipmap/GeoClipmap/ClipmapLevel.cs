@@ -16,8 +16,6 @@ namespace IIS.SLSharp.Examples.MOGRE.GeoClipmap.GeoClipmap
 
         private readonly int _d;
 
-        private readonly int _h;
-
         private readonly int _n;
 
         public IntFloatVector2 Position;
@@ -43,17 +41,6 @@ namespace IIS.SLSharp.Examples.MOGRE.GeoClipmap.GeoClipmap
 
             var finePixel =  _clipmap.GeneratePixelAt(x, y);
 
-            //x &= ~1;
-            //y &= ~1;
-
-           
-            
-
-            //x += ScaleInt;
-            //y += ScaleInt;
-
-            // odd/even == central??
-            
             // even/odd  odd/ood
             // even/even odd/even
             var coarsePixel = _clipmap.GeneratePixelAt(x, y);
@@ -84,7 +71,6 @@ namespace IIS.SLSharp.Examples.MOGRE.GeoClipmap.GeoClipmap
         public ClipmapLevel(float scale, int scaleInt, Clipmap clipmap)
         {
             _d = clipmap.DValue;
-            _h = clipmap.HValue;
             _n = _d - 1;
 
             _clipmap = clipmap;
@@ -92,117 +78,147 @@ namespace IIS.SLSharp.Examples.MOGRE.GeoClipmap.GeoClipmap
             ScaleInt = scaleInt;
 
             Heightmap = TextureManager.Singleton.CreateManual("Level_" + scaleInt, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME, TextureType.TEX_TYPE_2D, (uint)_d, (uint)_d, 0, PixelFormat.PF_FLOAT32_RGB);
-            
-            /*
-            Heightmap = new Texture2D(_d, _d, 3, typeof(float));
-            Heightmap.Activate();
-
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
-
-            Heightmap.Finish();
-             */
         }
 
 
-        private int _lastTex;
 
-        private float[] _slice;
-        
-        private void BeginUpdate()
-        {
-            if (_slice == null)
-                _slice = new float[_d];
-
-            //GL.GetInteger(GetPName.TextureBinding2D, out _lastTex);
-            //Heightmap.Activate();
-        }
-
-        private void EndUpdate()
-        {
-            //Texture.Finish();
-            //GL.BindTexture(TextureTarget.Texture2D, _lastTex);
-        }
-
-        private void UpdateRows(int startY, int size)
+        private void UpdateContinousRows(int startY, int size, int yOff)
         {
             var x = Position.X.Integer;
             var y = Position.Y.Integer;
             var d2 = _d / 2;
             var buf = Heightmap.GetBuffer();
+            var endY = startY + size;
 
-            //Heightmap.Activate();
-            for (var i2 = 0; i2 < size; i2++) // foreach row to be updated
+            int colAdvance;
+            var data = buf.Lock(new Box(0, (uint)startY, (uint)_d, (uint)endY), HardwareBuffer.LockOptions.HBL_DISCARD);
+            switch (data.format)
             {
-                var i = startY + i2;
-                var yt = i & _n; // row in texture
+                case PixelFormat.PF_FLOAT32_RGB:
+                    colAdvance = 3;
+                    break;
+                case PixelFormat.PF_FLOAT32_RGBA:
+                    colAdvance = 4;
+                    break;
+                case PixelFormat.PF_FLOAT32_R:
+                    colAdvance = 1;
+                    break;
+                default:
+                    throw new SLSharpException("No proper pixelformat supported");
+            }
+            var rowAdvance = data.rowPitch * colAdvance;
 
-                var data = buf.Lock(new Box(0, (uint)yt, 0, (uint)_d, (uint)yt + 1, 0), HardwareBuffer.LockOptions.HBL_DISCARD);
-
-                unsafe
+            unsafe
+            {
+                var p = (float*)data.data;
+                for (var i2 = 0; i2 < size; i2++) // foreach row to be updated
                 {
-                    var p = (float*)data.data;
+                    var i = yOff + i2;                    
                     for (var j = 0; j < _d; j++)
                     {
                         // physical to world
-                        var cy = ((y * 2 + i)) & ~_n;
-                        var cx = ((x * 2 + j)) & ~_n;
+                        var cy = (y * 2 + i) & ~_n;
+                        var cx = (x * 2 + j) & ~_n;
                         var yr = i - cy - d2;
                         var xr = j - cx - d2;
 
-
-                        p[j * 3] = GeneratePixelAt(xr, yr);
-                        //p[j * 3 + 1] = p[j * 3];
-                        //p[j * 3 + 2] = p[j * 3];
-                        //_slice[j] = GeneratePixelAt(xr, yr);
+                        p[j * colAdvance] = GeneratePixelAt(xr, yr);
                     }
+
+                    p += rowAdvance;
                 }
-
-                buf.Unlock();
-
-                //GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, yt, _d, 1, PixelFormat.Luminance,
-                //                 PixelType.Float, _slice); 
             }
+
+            buf.Unlock();
         }
 
-        private void UpdateColumns(int startX, int size)
+
+        private void UpdateRows(int startY, int size)
+        {
+            var endY = startY + size;
+            if (endY < _d)
+            {
+                UpdateContinousRows(startY, size, startY);
+                return;
+            }
+
+            var lowCount = _d - startY;
+            UpdateContinousRows(startY, lowCount, startY);
+            if (size > lowCount)
+                UpdateContinousRows(0, size - lowCount, startY + lowCount);
+        }
+
+        private void UpdateContinousColumns(int startX, int size, int xOff)
         {
             var x = Position.X.Integer;
             var y = Position.Y.Integer;
             var d2 = _d / 2;
 
-            //Heightmap.Activate();
-            for (var i2 = 0; i2 < size; i2++)
+            var buf = Heightmap.GetBuffer();
+            var endX = startX + size;
+
+            int colAdvance;
+            var data = buf.Lock(new Box((uint)startX, 0, (uint)endX, (uint)_d), HardwareBuffer.LockOptions.HBL_DISCARD);
+            switch (data.format)
             {
-                var i = startX + i2;
-                var xt = i & _n;
-
-                for (var j = 0; j < _d; j++)
-                {
-                    // physical to world
-                    var cy = ((y*2 + j)) & ~_n;
-                    var cx = ((x*2 + i)) & ~_n;
-                    var yr = j - cy - d2;
-                    var xr = i - cx - d2;
-
-
-                    _slice[j] = GeneratePixelAt(xr, yr);
-                }
-
-                
-                //GL.TexSubImage2D(TextureTarget.Texture2D, 0, xt, 0, 1, _d, PixelFormat.Luminance,
-                //                 PixelType.Float, _slice);
+                case PixelFormat.PF_FLOAT32_RGB:
+                    colAdvance = 3;
+                    break;
+                case PixelFormat.PF_FLOAT32_RGBA:
+                    colAdvance = 4;
+                    break;
+                case PixelFormat.PF_FLOAT32_R:
+                    colAdvance = 1;
+                    break;
+                default:
+                    throw new SLSharpException("No proper pixelformat supported");
             }
+            var rowAdvance = data.rowPitch * colAdvance;
+
+            unsafe
+            {
+                var p = (float*)data.data;
+                for (var i2 = 0; i2 < size; i2++) // for each column to be updates
+                {
+                    var i = xOff + i2;
+
+                    for (var j = 0; j < _d; j++)
+                    {
+                        // physical to world
+                        var cy = ((y * 2 + j)) & ~_n;
+                        var cx = ((x * 2 + i)) & ~_n;
+                        var yr = j - cy - d2;
+                        var xr = i - cx - d2;
+
+                        p[j * rowAdvance] = GeneratePixelAt(xr, yr);
+                    }
+
+                    p += colAdvance;
+                }
+            }
+
+            buf.Unlock();
+        }
+
+        private void UpdateColumns(int startX, int size)
+        {
+            var endX = startX + size;
+            if (endX < _d)
+            {
+                UpdateContinousColumns(startX, size, startX);
+                return;
+            }
+
+            var lowCount = _d - startX;
+            UpdateContinousColumns(startX, lowCount, startX);
+            if (size > lowCount)
+                UpdateContinousColumns(0, size - lowCount, startX + lowCount);
         }
 
 
         public void Recalculate()
         {
-            BeginUpdate();
             UpdateRows(0, _d);
-            EndUpdate();
         }
 
         public void Dispose()
@@ -223,9 +239,6 @@ namespace IIS.SLSharp.Examples.MOGRE.GeoClipmap.GeoClipmap
             // for slice updates we are only interested in the integer part
             if (x == oldX && y == oldY)
                 return;
-
-            BeginUpdate();
-
             
             if (y > oldY)
                 UpdateRows((_n - oldY) & _n, Math.Min((y - oldY), _n));
@@ -236,8 +249,6 @@ namespace IIS.SLSharp.Examples.MOGRE.GeoClipmap.GeoClipmap
                 UpdateColumns((_n - oldX) & _n, Math.Min((x - oldX), _n));
             else if (oldX > x)
                 UpdateColumns((_n - x) & _n, Math.Min((oldX - x), _n));
-
-            EndUpdate();
         }
     }
 }
