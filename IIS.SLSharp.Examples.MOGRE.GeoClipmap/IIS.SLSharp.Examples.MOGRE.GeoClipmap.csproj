@@ -84,9 +84,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IIS.SLSharp.Bindings.MOGRE\IIS.SLSharp.Bindings.MOGRE.csproj">
+    <ProjectReference Include="..\IIS.SLSharp.Bindings.MOGRE\IIS.SLSharp.Bindings.Mogre.csproj">
       <Project>{08922A61-B3E4-4A4D-8476-59F1937254A2}</Project>
-      <Name>IIS.SLSharp.Bindings.MOGRE</Name>
+      <Name>IIS.SLSharp.Bindings.Mogre</Name>
     </ProjectReference>
     <ProjectReference Include="..\IIS.SLSharp\IIS.SLSharp.csproj">
       <Project>{ECF58025-4591-4708-8EC9-4B95A5673DDA}</Project>
