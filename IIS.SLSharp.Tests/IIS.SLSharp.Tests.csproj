@@ -8,8 +8,8 @@
     <ProjectGuid>{0BA0BA6E-87FD-44B2-81AD-9939F19EB63C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IIS.SLSharp.Examples.Tests</RootNamespace>
-    <AssemblyName>IIS.SLSharp.Examples.Tests</AssemblyName>
+    <RootNamespace>IIS.SLSharp.Tests</RootNamespace>
+    <AssemblyName>IIS.SLSharp.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
