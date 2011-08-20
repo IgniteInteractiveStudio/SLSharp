@@ -8,8 +8,8 @@
     <ProjectGuid>{08922A61-B3E4-4A4D-8476-59F1937254A2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IIS.SLSharp.Bindings.MOGRE</RootNamespace>
-    <AssemblyName>IIS.SLSharp.Bindings.MOGRE</AssemblyName>
+    <RootNamespace>IIS.SLSharp.Bindings.Mogre</RootNamespace>
+    <AssemblyName>IIS.SLSharp.Bindings.Mogre</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
@@ -22,7 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\bin\Debug\IIS.SLSharp.Bindings.MOGRE.xml</DocumentationFile>
+    <DocumentationFile>..\bin\Debug\IIS.SLSharp.Bindings.Mogre.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>x86</PlatformTarget>
@@ -35,7 +35,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>1591</NoWarn>
-    <DocumentationFile>..\bin\Release\IIS.SLSharp.Bindings.MOGRE.xml</DocumentationFile>
+    <DocumentationFile>..\bin\Release\IIS.SLSharp.Bindings.Mogre.xml</DocumentationFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>

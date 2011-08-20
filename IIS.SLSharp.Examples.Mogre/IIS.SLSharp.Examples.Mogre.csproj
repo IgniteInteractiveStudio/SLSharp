@@ -8,8 +8,8 @@
     <ProjectGuid>{CE9B6538-CA10-4607-A5F7-1371F0994B66}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IIS.SLSharp.Examples.MOGRE</RootNamespace>
-    <AssemblyName>IIS.SLSharp.Examples.MOGRE</AssemblyName>
+    <RootNamespace>IIS.SLSharp.Examples.Mogre</RootNamespace>
+    <AssemblyName>IIS.SLSharp.Examples.Mogre</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>

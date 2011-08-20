@@ -8,8 +8,8 @@
     <ProjectGuid>{31C6D7EC-615F-4A19-8079-967B10A8FA3E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IIS.SLSharp.Bindings.XNA</RootNamespace>
-    <AssemblyName>IIS.SLSharp.Bindings.XNA</AssemblyName>
+    <RootNamespace>IIS.SLSharp.Bindings.Xna</RootNamespace>
+    <AssemblyName>IIS.SLSharp.Bindings.Xna</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
@@ -23,7 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\bin\Debug\IIS.SLSharp.Bindings.XNA.xml</DocumentationFile>
+    <DocumentationFile>..\bin\Debug\IIS.SLSharp.Bindings.Xna.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <PlatformTarget>x86</PlatformTarget>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -36,7 +36,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>1591</NoWarn>
-    <DocumentationFile>..\bin\Release\IIS.SLSharp.Bindings.XNA.xml</DocumentationFile>
+    <DocumentationFile>..\bin\Release\IIS.SLSharp.Bindings.Xna.xml</DocumentationFile>
     <PlatformTarget>x86</PlatformTarget>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>

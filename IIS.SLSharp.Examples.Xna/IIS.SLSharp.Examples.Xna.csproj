@@ -8,8 +8,8 @@
     <ProjectGuid>{83127CAD-D3FB-473C-A798-3599AD5BD459}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IIS.SLSharp.Examples.XNA</RootNamespace>
-    <AssemblyName>IIS.SLSharp.Examples.XNA</AssemblyName>
+    <RootNamespace>IIS.SLSharp.Examples.Xna</RootNamespace>
+    <AssemblyName>IIS.SLSharp.Examples.Xna</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
