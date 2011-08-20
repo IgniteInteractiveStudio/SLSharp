@@ -1,25 +1,15 @@
-# User configuration files.
 *.opensdf
 *.sdf
 *.suo
 *.user
 *.userprefs
-*ReSharper*
-
-# Debugging files.
 *.pdb
 *.pidb
 *.vsp
-
-# Merge conflict-related files.
 *.orig
 
-# Output directories.
+_ReSharper*/*
 bin/*
 */obj/*
 IIS.SLSharp.NuGet/*/*
-
-# Test directory
 TestResults/*
-
-Debug
