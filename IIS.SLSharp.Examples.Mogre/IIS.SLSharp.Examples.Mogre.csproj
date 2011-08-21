@@ -23,7 +23,7 @@
     <NoWarn>1591</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
-    <CodeAnalysisLogFile>..\bin\Debug\IIS.SLSharp.Examples.MOGRE.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisLogFile>..\bin\Debug\IIS.SLSharp.Examples.Mogre.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
@@ -41,7 +41,7 @@
     <NoWarn>1591</NoWarn>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
-    <CodeAnalysisLogFile>..\bin\Release\IIS.SLSharp.Examples.MOGRE.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisLogFile>..\bin\Release\IIS.SLSharp.Examples.Mogre.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
@@ -74,7 +74,7 @@
     <Compile Include="Textures\WangMap.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IIS.SLSharp.Bindings.MOGRE\IIS.SLSharp.Bindings.Mogre.csproj">
+    <ProjectReference Include="..\IIS.SLSharp.Bindings.Mogre\IIS.SLSharp.Bindings.Mogre.csproj">
       <Project>{08922A61-B3E4-4A4D-8476-59F1937254A2}</Project>
       <Name>IIS.SLSharp.Bindings.Mogre</Name>
     </ProjectReference>

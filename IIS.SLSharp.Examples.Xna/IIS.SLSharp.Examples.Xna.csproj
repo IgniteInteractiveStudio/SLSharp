@@ -69,7 +69,7 @@
     <Compile Include="Shaders\SimpleShader.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IIS.SLSharp.Bindings.XNA\IIS.SLSharp.Bindings.Xna.csproj">
+    <ProjectReference Include="..\IIS.SLSharp.Bindings.Xna\IIS.SLSharp.Bindings.Xna.csproj">
       <Project>{31C6D7EC-615F-4A19-8079-967B10A8FA3E}</Project>
       <Name>IIS.SLSharp.Bindings.Xna</Name>
     </ProjectReference>
