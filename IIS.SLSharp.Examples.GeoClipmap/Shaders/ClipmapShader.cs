@@ -23,6 +23,9 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
         public abstract vec4 FineBlockOrigin { set; get; }
 
         [Uniform]
+        public abstract vec2 Block { set; get; }
+
+        [Uniform]
         public abstract vec2 ViewerPosition { set; get; }
 
         [Uniform]
@@ -41,7 +44,28 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
         public abstract float alpha { set; get; }
 
         [Uniform]
+        public abstract vec4 AtlasScale { set; get; }
+
+        [Uniform]
         public abstract sampler2D Heightmap { set; get; }
+
+        [Uniform]
+        public abstract sampler2D Alphamap { set; get; }
+
+        [Uniform]
+        public abstract sampler2D Normalmap { set; get; }
+
+        [Uniform]
+        public abstract sampler2D Colormap { set; get; }
+
+        [Uniform]
+        public abstract sampler2D Atlas { set; get; }
+
+        [Uniform]
+        public abstract sampler2D Indexmap { set; get; }
+
+        [Uniform]
+        public abstract sampler2D Indexmap2 { set; get; }
 
         [Varying]
         public vec2 _uv;
@@ -70,20 +94,9 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
 
             var texel = new vec3(texture(Heightmap, _uv, 1.0f).r);
 
-            var zfZd = texel.x * 512.0f;
-            var zf = Floor(zfZd) * 0.001953125f;
-            var zd = Fraction(zfZd) * 2.0f - 1.0f;
-
-            //var alpha = Clamp((Abs(worldPos - ViewerPosition) - AlphaOffset) * OneOverWidth, 0.0f, 1.0f);
-            //alpha.x = Max(alpha.x, alpha.y);
-
-
-            _z = zf + /* alpha * */ zd;
+            _z = texel.x;
     
-            //_z = zfZd; // alpha blend not implemented, yet
-
-            // planar map
-            var worldPosFinal = new vec4(worldPos, _z * 0.3f, 1.0f);
+            var worldPosFinal = new vec4(worldPos, _z * 8.0f, 1.0f);
 
             _finalPos = ModelViewProjectionMatrix * worldPosFinal;
             gl_Position = _finalPos;
@@ -92,7 +105,7 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
             // just for testing, derive normal using interpolation over heights
             var dfdx = (textureLod(Heightmap, _uv + new vec2(FineBlockOrigin.z, 0.0f), 1.0f).r - texel.r);
             var dfdy = (textureLod(Heightmap, _uv + new vec2(0.0f, FineBlockOrigin.w), 1.0f).r - texel.r);
-            var dz = 2.0f*ScaleFactor.z - dfdx * dfdx - dfdy * dfdy;
+            var dz = 0.1f*ScaleFactor.z - dfdx * dfdx - dfdy * dfdy;
             Normal = new vec3(dfdx, dfdy, dz);
 
             //normal = normalize(vec3(texel.yz, 1.0));
@@ -101,21 +114,64 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
         [FragmentShader(true)]
         public void ClipmapFragmentMain()
         {
-            var light = Normalize(new vec3(0.0f, 1.0f, 0.6f));
-            var n = Normalize(Normal);
+            var light = Normalize(new vec3(-1.0f, 0.0f, 0.6f));
+            var normT = texture(Normalmap, _uv);
+            var texId = normT.w;
+            var n = Normalize(normT.xyz * 2.0f - 1.0f);
+            var color = texture(Colormap, _uv) * 2.0f;
+            //var color = new vec4(1.0f);
+            var dl = Dot(light, n);
+            var i = Max(dl, 0.0f) * 0.8f + 0.2f;
 
-            /*
-            var n2 = Normalize(Cross(dFdx(_finalPos.xyz),dFdy(_finalPos.xyz)));
-            n2.xy = -n2.xy;
-            var light2 = new mat3(NormalMatrix) * (light);
-            */
-            var i = Max(Dot(light, n), 0.0f) * 0.8f + 0.2f; // Dot(light2, n2);
+            // 256 is correct scaler here!
+
+            var uv01 = mod(_uv, 1.0f);
+
+            var uvs = (uv01 * 256.0f - Block + new vec2(DebugValue) + new vec2(8.0f)) / 17.0f;
+            uvs = mod(uvs, 1.0f);
+
+            var uvz = uvs * AtlasScale.xy;
+            var uva = uvs * (64.0f / 2048.0f); //*AtlasScale.zw;
+
+            var index0 = texture(Indexmap, _uv);
+            var index1 = texture(Indexmap2, _uv);
+            
+            var layer0Tex = texture(Atlas, uvz + index0.rg);
+            var layer1Tex = texture(Atlas, uvz + index0.ba);
+            var layer2Tex = texture(Atlas, uvz + index1.rg);
+            var layer3Tex = texture(Atlas, uvz + index1.ba);
+
+            var alphaTex = texture(Alphamap, _uv) * 2.0f;
+
+            
+            var combinedColor =
+                layer0Tex * (1.0f - (alphaTex.r + alphaTex.g + alphaTex.b)) +
+                layer1Tex * alphaTex.r +
+                layer2Tex * alphaTex.g +
+                layer3Tex * alphaTex.b
+                //alphaTex
+                ;
 
 
-            FragColor = Color * _z;
+            FragColor = combinedColor * i; // new vec4(uvs, 0.0f, 0.0f);
+
+
+            
         }
 
         private int _heightmap;
+
+        private int _normalmap;
+
+        private int _colormap;
+
+        private int _atlas;
+
+        private int _indexmap;
+
+        private int _indexmap2;
+
+        private int _alphatex;
 
         protected ClipmapShader()
         {
@@ -128,12 +184,55 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
             set { BindTexture(value, _heightmap); }
         }
 
+        public Texture2D NormalTex
+        {
+            set { BindTexture(value, _normalmap); }
+        }
+
+        public Texture2D ColorTex
+        {
+            set { BindTexture(value, _colormap); }
+        }
+
+        public Texture2D AtlasTex
+        {
+            set { BindTexture(value, _atlas); }
+        }
+
+        public Texture2D IndexTex
+        {
+            set { BindTexture(value, _indexmap); }
+        }
+
+        public Texture2D IndexTex2
+        {
+            set { BindTexture(value, _indexmap2); }
+        }
+
+        public Texture2D AlphaTex
+        {
+            set { BindTexture(value, _alphatex); }
+        }
+
+
         public override void Begin()
         {
             base.Begin();
 
             _heightmap = AllocateSamplerSlot();
+            _normalmap = AllocateSamplerSlot();
+            _colormap = AllocateSamplerSlot();
+            _atlas = AllocateSamplerSlot();
+            _indexmap = AllocateSamplerSlot();
+            _indexmap2 = AllocateSamplerSlot();
+            _alphatex = AllocateSamplerSlot();
             Heightmap = _heightmap.ToSampler();
+            Normalmap = _normalmap.ToSampler();
+            Colormap = _colormap.ToSampler();
+            Atlas = _atlas.ToSampler();
+            Indexmap = _indexmap.ToSampler();
+            Indexmap2 = _indexmap2.ToSampler();
+            Alphamap = _alphatex.ToSampler();
         }
 
         public override void Dispose()

@@ -22,6 +22,8 @@ namespace IIS.SLSharp.Examples.GeoClipmap
 
         private bool _wireFrame;
 
+        private int _debugValue;
+
         protected override void OnLoad(EventArgs e)
         {
             Mouse.Move += (x, args) =>
@@ -65,10 +67,10 @@ namespace IIS.SLSharp.Examples.GeoClipmap
 
         private void RecalcHeight()
         {
-            _z = _clipmap.GeneratePixelAt(-(_clipmap.Position.X.Integer * 2 - 1), -(_clipmap.Position.Y.Integer * 2 - 1));
-            var zx = _clipmap.GeneratePixelAt(-(_clipmap.Position.X.Integer * 2 + 1), -(_clipmap.Position.Y.Integer * 2 - 1));
-            var zy = _clipmap.GeneratePixelAt(-(_clipmap.Position.X.Integer * 2 - 1), -(_clipmap.Position.Y.Integer * 2 + 1));
-            var zxy = _clipmap.GeneratePixelAt(-(_clipmap.Position.X.Integer * 2 + 1), -(_clipmap.Position.Y.Integer * 2 + 1));
+            _z = _clipmap.GeneratePixelAt(-(_clipmap.Position.X.Integer * 2 - 1), -(_clipmap.Position.Y.Integer * 2 - 1)).Z;
+            var zx = _clipmap.GeneratePixelAt(-(_clipmap.Position.X.Integer * 2 + 1), -(_clipmap.Position.Y.Integer * 2 - 1)).Z;
+            var zy = _clipmap.GeneratePixelAt(-(_clipmap.Position.X.Integer * 2 - 1), -(_clipmap.Position.Y.Integer * 2 + 1)).Z;
+            var zxy = _clipmap.GeneratePixelAt(-(_clipmap.Position.X.Integer * 2 + 1), -(_clipmap.Position.Y.Integer * 2 + 1)).Z;
 
             var v1 = Lerp(_z, zx, _clipmap.Position.X.Fraction);
             var v2 = Lerp(zy, zxy, _clipmap.Position.X.Fraction);
@@ -91,11 +93,11 @@ namespace IIS.SLSharp.Examples.GeoClipmap
                 dx++;
             if (Keyboard[Key.D])
                 dx--;
-            if (Keyboard[Key.R])
-                _clipmap.Reset();
+            //if (Keyboard[Key.R])
+            //    _clipmap.Reset();
             if (Keyboard[Key.Q])
             {
-                if (_height < 100)
+                if (_height < 200)
                     _height++;
             }
             if (Keyboard[Key.E])
@@ -104,12 +106,28 @@ namespace IIS.SLSharp.Examples.GeoClipmap
                     _height--;
             }
 
+            if (Keyboard[Key.Plus])
+            {
+                _debugValue++;
+                Console.WriteLine("DebugValue: {0}", _debugValue * 0.01f);
+            }
+            if (Keyboard[Key.Minus])
+            {
+                _debugValue--;
+                Console.WriteLine("DebugValue: {0}", _debugValue * 0.01f);
+            }
+
+            _clipmap.DebugValue = _debugValue * 0.01f;
+
             // rotate vec dx/dy by cam
 
             var v = new Vector2(dx, dy);
             v.Normalize();
             if (!(Keyboard[Key.ShiftLeft] || Keyboard[Key.ShiftRight]))
                 v *= 0.02f;
+
+            if (Keyboard[Key.ControlLeft])
+                v *= 3.0f;
 
             var drx = cosPhi * v.X + sinPhi * v.Y;
             var dry = cosPhi * v.Y - sinPhi * v.X;
@@ -137,14 +155,19 @@ namespace IIS.SLSharp.Examples.GeoClipmap
 
             //z = Lerp(z, zy, _clipmap.Position.Y.Fraction);
 
-            var minHeight = _z * 0.3f + 0.01f;
+            var minHeight = _z * 8.0f + 0.01f;
             var heightTotal = _height * 0.03f;
-            if (heightTotal < minHeight)
-                heightTotal = minHeight;
-            
+            //if (heightTotal < minHeight)
+            //    heightTotal = minHeight;
 
-            var mod = Matrix4.LookAt(0.0f, 0.0f, heightTotal, sinPhi, cosPhi, heightTotal + _up * 0.01f, 0.0f, 0.0f, 1.0f);
-            var proj = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(70.0f), aspect, 0.0001f, 10.0f);
+            heightTotal += minHeight;
+
+            //var cc = (float)Math.Sin(_up / 100.0f * 2.0f);
+            var cc = heightTotal * (_up + 101) / 200.0f;
+
+            
+            var mod = Matrix4.LookAt(0.0f, 0.0f, heightTotal, sinPhi * cc, cosPhi * cc, cc, 0.0f, 0.0f, 1.0f);
+            var proj = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(70.0f), aspect, 0.0001f * heightTotal, 10.0f * heightTotal);
 
 
             if (Keyboard[Key.Z])
