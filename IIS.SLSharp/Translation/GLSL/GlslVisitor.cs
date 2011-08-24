@@ -249,6 +249,14 @@ namespace IIS.SLSharp.Translation.GLSL
                 return result;
             }
 
+            if (primitiveExpression.Value is bool)
+            {
+                if ((bool)primitiveExpression.Value)
+                    result.Append("true");
+                else result.Append("false");
+                return result;
+            }
+
             return result.Append(primitiveExpression.Value.ToString());
         }
 
@@ -428,7 +436,7 @@ namespace IIS.SLSharp.Translation.GLSL
             result.Append(Indent(trueSection, trueSection.AcceptVisitor(this, data)));
 
             var elseSection = ifElseStatement.FalseStatement;
-            if (elseSection != null)
+            if (elseSection.GetType().FullName != "ICSharpCode.NRefactory.CSharp.Statement+NullStatement")
             {
                 result.Append(Environment.NewLine + "else");
                 result.Append(Indent(elseSection, elseSection.AcceptVisitor(this, data)));
