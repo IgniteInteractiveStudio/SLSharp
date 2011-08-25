@@ -13,3 +13,5 @@ bin/*
 */obj/*
 IIS.SLSharp.NuGet/*/*
 TestResults/*
+
+Debug
