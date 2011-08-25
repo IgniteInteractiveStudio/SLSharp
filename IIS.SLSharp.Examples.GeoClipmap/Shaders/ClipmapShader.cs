@@ -1,3 +1,6 @@
+using System.Drawing;
+using System.Reflection;
+using System.Resources;
 using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Bindings.OpenTK;
 using IIS.SLSharp.Bindings.OpenTK.Textures;
@@ -23,6 +26,9 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
         public abstract vec4 FineBlockOrigin { set; get; }
 
         [Uniform]
+        public abstract vec2 Origin { set; get; }
+
+        [Uniform]
         public abstract vec2 ViewerPosition { set; get; }
 
         [Uniform]
@@ -36,9 +42,6 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
 
         [Uniform]
         public abstract float DebugValue { set; get; }
-
-        [Uniform]
-        public abstract float alpha { set; get; }
 
         [Uniform]
         public abstract sampler2D Heightmap { set; get; }
@@ -71,16 +74,23 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
             var texel = new vec3(texture(Heightmap, _uv, 1.0f).r);
 
             var zfZd = texel.x * 512.0f;
-            var zf = Floor(zfZd) * 0.001953125f;
-            var zd = Fraction(zfZd) * 2.0f - 1.0f;
+            var zd = (Floor(zfZd) + 1.0f) * 0.001953125f;
+            var zf = Fraction(zfZd);
 
-            //var alpha = Clamp((Abs(worldPos - ViewerPosition) - AlphaOffset) * OneOverWidth, 0.0f, 1.0f);
-            //alpha.x = Max(alpha.x, alpha.y);
+            var uvs = new vec2(0.125f*0.5f) / FineBlockOrigin.zw;
+            var uvx = (Vertex.xy + Origin.xy) * FineBlockOrigin.zw;
+            var a = Clamp(uvx * uvs, new vec2(0.0f), new vec2(1.0f));
+            var b = Clamp((new vec2(1.0f) - uvx) * uvs, new vec2(0.0f), new vec2(1.0f));
+            
+            var c = Min(a, b);
+            var d = Min(c.x, c.y);
 
 
-            _z = zf + /* alpha * */ zd;
-    
-            //_z = zfZd; // alpha blend not implemented, yet
+            //DebugColor = new vec3(Step(0.98f, d));
+
+            // zd = coarse
+            // zf = detail
+            _z = Lerp(zd, zf, d);
 
             // planar map
             var worldPosFinal = new vec4(worldPos, _z * 0.3f, 1.0f);
@@ -104,15 +114,14 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
             var light = Normalize(new vec3(0.0f, 1.0f, 0.6f));
             var n = Normalize(Normal);
 
-            /*
+            
             var n2 = Normalize(Cross(dFdx(_finalPos.xyz),dFdy(_finalPos.xyz)));
             n2.xy = -n2.xy;
             var light2 = new mat3(NormalMatrix) * (light);
-            */
-            var i = Max(Dot(light, n), 0.0f) * 0.8f + 0.2f; // Dot(light2, n2);
+            
+            var i = Max(Dot(light2, n2), 0.0f) * 0.8f + 0.2f; // Dot(light2, n2);
 
-
-            FragColor = Color * _z;
+            FragColor = Color * i;
         }
 
         private int _heightmap;

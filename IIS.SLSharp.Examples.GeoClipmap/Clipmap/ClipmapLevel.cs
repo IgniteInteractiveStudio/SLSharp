@@ -25,6 +25,8 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
 
         public IntFloatVector2 Position;
 
+        private readonly float [,]_cache;
+
         public bool Left
         {
             get { return Position.X.Fraction < 0.5f; }
@@ -42,43 +44,39 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
             var x = xr * ScaleInt;
             var y = yr * ScaleInt;
 
-            var finePixel =  _clipmap.GeneratePixelAt(x, y);
+            const float quantizeSteps = 512.0f;
 
-            //x &= ~1;
-            //y &= ~1;
 
-           
-            
+            var scaleInt2 = ScaleInt + ScaleInt;
+            var coarsePixel = 0.0f;
 
-            //x += ScaleInt;
-            //y += ScaleInt;
+            // any of these values actually must be cached in the parent layer
+            // as the current later lies within it.
+            // the outermost layer will not need to generate the coarse information at all
+            // the maximum visible layer(s) should update in the interior region
+            // as this data needs to be re(used) anyway.
 
-            // odd/even == central??
-            
-            // even/odd  odd/ood
-            // even/even odd/even
-            var coarsePixel = _clipmap.GeneratePixelAt(x, y);
+            switch ((xr & 1) | ((yr & 1) << 1))
+            {
+                case 3: // odd odd (plain parent pixel)
+                    coarsePixel = _clipmap.GeneratePixelAt(x + ScaleInt, y + ScaleInt);
+                    break;
+                case 2: // even/odd
+                    coarsePixel = (_clipmap.GeneratePixelAt(x + scaleInt2, y + ScaleInt) + _clipmap.GeneratePixelAt(x, y + ScaleInt)) * 0.5f;
+                    break;
+                case 1: // odd/even
+                    coarsePixel = (_clipmap.GeneratePixelAt(x + ScaleInt, y + scaleInt2) + _clipmap.GeneratePixelAt(x + ScaleInt, y)) * 0.5f;
+                    break;
+                case 0: // even/even
+                    coarsePixel = (_clipmap.GeneratePixelAt(x + scaleInt2, y) + _clipmap.GeneratePixelAt(x, y + scaleInt2)) * 0.5f;
+                    break;
+            }
 
-            var zf = finePixel;
-            if (zf < 0.0f)
-                zf = 0.0f;
-            if (zf > 1.0f)
-                zf = 1.0f;
-            zf = (float)Math.Round(zf * 512.0f);
-            //var zd = coarsePixel - finePixel; // should be 0 for innermost level?!
-            //zd = - finePixel;
+            var finePixel = _clipmap.GeneratePixelAt(x, y);
+            //_cache[xr, yr]
 
-            var zd = 0.0f;
-            //if ((x & 1) == 0 && (y & 1) == 0)
-            //    zd = -finePixel;
-
-            // zd can range from -1 to 1 thus normalize to 0..1
-            zd += 1.0f;
-            zd *= 0.5f; 
-
-            var zfzd = zf + zd;
-            zfzd *= 0.001953125f;
-
+            //var finePixel = coarsePixel;
+            var zfzd = ((float)Math.Floor(coarsePixel * quantizeSteps) + finePixel) / quantizeSteps;
             return zfzd;
         }
 
@@ -87,6 +85,8 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
             _d = clipmap.DValue;
             _h = clipmap.HValue;
             _n = _d - 1;
+
+            _cache = new float[_d, _d];
 
             _clipmap = clipmap;
             Scale = scale;
@@ -142,7 +142,7 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
                     var yr = i - cy - d2;
                     var xr = j - cx - d2;
                    
-                    _slice[j] = GeneratePixelAt(xr, yr );
+                    _slice[j] = GeneratePixelAt(xr, yr);
                 }
 
                 GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, yt, _d, 1, PixelFormat.Luminance,

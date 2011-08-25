@@ -22,6 +22,8 @@ namespace IIS.SLSharp.Examples.GeoClipmap
 
         private bool _wireFrame;
 
+        private Vector3 _debugPos;
+
         protected override void OnLoad(EventArgs e)
         {
             Mouse.Move += (x, args) =>
@@ -124,7 +126,6 @@ namespace IIS.SLSharp.Examples.GeoClipmap
             }
 
 
-
             GL.ClearColor(0.6f, 0.6f, 0.8f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.Enable(EnableCap.CullFace);
@@ -141,11 +142,37 @@ namespace IIS.SLSharp.Examples.GeoClipmap
             var heightTotal = _height * 0.03f;
             if (heightTotal < minHeight)
                 heightTotal = minHeight;
-            
 
-            var mod = Matrix4.LookAt(0.0f, 0.0f, heightTotal, sinPhi, cosPhi, heightTotal + _up * 0.01f, 0.0f, 0.0f, 1.0f);
-            var proj = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(70.0f), aspect, 0.0001f, 10.0f);
 
+            _clipmap.ActiveMin = _height / 30;
+            _clipmap.ActiveMax = _clipmap.ActiveMin + 4;
+
+            var mod = Matrix4.LookAt(_debugPos.X, _debugPos.Y, _debugPos.Z + heightTotal, 
+                _debugPos.X + sinPhi, _debugPos.Y + cosPhi, _debugPos.Z + heightTotal + _up * 0.01f, 0.0f, 0.0f, 1.0f);
+            var proj = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(70.0f), aspect, 0.0001f, 100.0f);
+
+
+            // debug camera
+            dx = 0;
+            dy = 0;
+            if (Keyboard[Key.Up])
+                dy--;
+            if (Keyboard[Key.Down])
+                dy++;
+            if (Keyboard[Key.Left])
+                dx--;
+            if (Keyboard[Key.Right])
+                dx++;
+            if (dx != 0 || dy != 0)
+            {
+                v = new Vector2(dx, dy);
+                v.Normalize();
+                v *= 0.005f;
+                if (!(Keyboard[Key.ShiftLeft] || Keyboard[Key.ShiftRight]))
+                    v *= 0.1f;
+
+                _debugPos += v.X * mod.Column0.Xyz + v.Y * mod.Column2.Xyz;
+            }
 
             if (Keyboard[Key.Z])
                 _clipmap.Debug();
