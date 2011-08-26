@@ -70,7 +70,6 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
             var worldPos = (Vertex.xy + ScaleFactor.xy) * ScaleFactor.zw;
             _uv = (Vertex.xy + FineBlockOrigin.xy) * FineBlockOrigin.zw;
 
-
             var texel = new vec3(texture(Heightmap, _uv, 1.0f).r);
 
             var zfZd = texel.x * 512.0f;
@@ -84,9 +83,6 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
             
             var c = Min(a, b);
             var d = Min(c.x, c.y);
-
-
-            //DebugColor = new vec3(Step(0.98f, d));
 
             // zd = coarse
             // zf = detail

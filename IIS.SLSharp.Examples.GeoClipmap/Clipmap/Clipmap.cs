@@ -79,6 +79,7 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
 
         public float GeneratePixelAt(int x, int y)
         {
+
             // wrap to positive values
             x %= _testMap.Width;
             if (x < 0)
@@ -124,14 +125,11 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
 
             Locations = new PatchLocations(H, M);
 
-            var scale = Scale;
-            var scaleInt = 1;
-
-            for (var i = 0; i < Levels; i++)
+            ClipmapLevel parent = null;
+            for (var i = Levels - 1; i >= 0; i--)
             {
-                _levels[i] = new ClipmapLevel(scale, scaleInt, this);
-                scale *= 2.0f;
-                scaleInt *= 2;
+                _levels[i] = new ClipmapLevel(i, Scale, this, parent);
+                parent = _levels[i];
             }
 
             GenerateTestTexture();
@@ -159,32 +157,22 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
 
         private void UpdatePosition()
         {
-            /*
-            var xpos = XPosition * (2 * D);
-            var ypos = YPosition * (2 * D);
-            var xraw = xpos;
-            var yraw = ypos;
-
-            foreach (var lvl in _levels)
-            {
-                lvl.UpdatePosition(ref xpos, ref ypos, xraw, yraw);
-
-                xpos += xpos;
-                ypos += ypos;
-                xraw += xraw;
-                yraw += yraw;
-
-                lvl.SetPosition((int)-lvl.IntX & N, (int)-lvl.IntY & N, _mx, _my);
-            }*/
-
             var pos = Position;
+            var p = new IntFloatVector2[Levels]; // TODO: could make this a member var
+
             for (var i = 0; i < ActiveMax; i++)
             {
-                var lvl = _levels[i];
-                if (i >= ActiveMin)
-                    lvl.SetPosition2(pos);
+                p[i] = pos;
                 pos = pos.Div2();
             }
+
+            // we need to update from coarse to detail levels
+            // as detail levels access the coarse level caches
+            for (var i = ActiveMax - 1; i >= 0; i--)
+            {
+                var lvl = _levels[i];
+                lvl.SetPosition2(p[i]);
+            } 
         }
 
         public void MoveBy(float dx, float dy)
