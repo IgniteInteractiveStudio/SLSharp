@@ -26,24 +26,6 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
         public abstract vec4 FineBlockOrigin { set; get; }
 
         [Uniform]
-        public abstract vec2 Origin { set; get; }
-
-        [Uniform]
-        public abstract vec2 ViewerPosition { set; get; }
-
-        [Uniform]
-        public abstract vec2 AlphaOffset { set; get; }
-
-        [Uniform]
-        public abstract vec2 OneOverWidth { set; get; }
-
-        [Uniform]
-        public abstract float ZTexScaleFactor { set; get; }
-
-        [Uniform]
-        public abstract float DebugValue { set; get; }
-
-        [Uniform]
         public abstract sampler2D Heightmap { set; get; }
 
         [Varying]
@@ -67,8 +49,8 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
         [VertexShader(true)]
         public void ClipmapVertexMain()
         {
-            var worldPos = (Vertex.xy + ScaleFactor.xy) * ScaleFactor.zw;
-            _uv = (Vertex.xy + FineBlockOrigin.xy) * FineBlockOrigin.zw;
+            var worldPos = (Vertex.xy + ScaleFactor.xy) * ScaleFactor.zz;
+            _uv = (Vertex.xy + FineBlockOrigin.xy) * ScaleFactor.ww;
 
             var texel = new vec3(texture(Heightmap, _uv, 1.0f).r);
 
@@ -76,8 +58,8 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
             var zd = (Floor(zfZd) + 1.0f) * 0.001953125f;
             var zf = Fraction(zfZd);
 
-            var uvs = new vec2(0.125f*0.5f) / FineBlockOrigin.zw;
-            var uvx = (Vertex.xy + Origin.xy) * FineBlockOrigin.zw;
+            var uvs = new vec2(0.125f * 0.5f) / ScaleFactor.ww;
+            var uvx = (Vertex.xy + FineBlockOrigin.zw) * ScaleFactor.ww;
             var a = Clamp(uvx * uvs, new vec2(0.0f), new vec2(1.0f));
             var b = Clamp((new vec2(1.0f) - uvx) * uvs, new vec2(0.0f), new vec2(1.0f));
             
@@ -96,8 +78,8 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
 
 
             // just for testing, derive normal using interpolation over heights
-            var dfdx = (textureLod(Heightmap, _uv + new vec2(FineBlockOrigin.z, 0.0f), 1.0f).r - texel.r);
-            var dfdy = (textureLod(Heightmap, _uv + new vec2(0.0f, FineBlockOrigin.w), 1.0f).r - texel.r);
+            var dfdx = (textureLod(Heightmap, _uv + new vec2(ScaleFactor.w, 0.0f), 1.0f).r - texel.r);
+            var dfdy = (textureLod(Heightmap, _uv + new vec2(0.0f, ScaleFactor.w), 1.0f).r - texel.r);
             var dz = 2.0f*ScaleFactor.z - dfdx * dfdx - dfdy * dfdy;
             Normal = new vec3(dfdx, dfdy, dz);
 

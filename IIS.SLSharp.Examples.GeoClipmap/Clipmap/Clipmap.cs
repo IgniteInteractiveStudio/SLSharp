@@ -199,12 +199,6 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
 
             BeginDraw();
 
-            _shader.DebugValue = (DebugIndex & 1) == 1 ? 1.0f : 0.0f;
-            _shader.ScaleFactor = new Vector4(0.1f, 0.1f, 0.0f, 0.0f).ToVector4F();
-            _shader.FineBlockOrigin = (new Vector4(0.01f, 0.01f, 0.0f, 0.0f)).ToVector4F();
-            _shader.ViewerPosition = new Vector2(0.0f, 0.0f).ToVector2F();
-            _shader.AlphaOffset = new Vector2(0.0f, 0.0f).ToVector2F();
-            _shader.OneOverWidth = new Vector2(1.0f / M, 1.0f / M).ToVector2F();
             _shader.NormalMatrix = normalMatrix.ToMatrix4F();
  
             var vloc = Shader.AttributeLocation(_shader, () => _shader.Vertex);
@@ -239,11 +233,8 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Clipmap
                 {
                     var pp = p.Patch;
 
-                    
-
-                    _shader.ScaleFactor = new Vector4(p.X + subX, p.Y + subY, level.Scale, level.Scale).ToVector4F();
-                    _shader.FineBlockOrigin = new Vector4(p.X - Hx - texX, p.Y - Hx - texY, (float)InverseD, (float)InverseD).ToVector4F();
-                    _shader.Origin = new Vector2(p.X - Hx, p.Y - Hx).ToVector2F();
+                    _shader.ScaleFactor = new Vector4(p.X + subX, p.Y + subY, level.Scale, (float)InverseD).ToVector4F();
+                    _shader.FineBlockOrigin = new Vector4(p.X - Hx - texX, p.Y - Hx - texY, p.X - Hx, p.Y - Hx).ToVector4F();
                     pp.Draw(vloc);
                 }
             }
