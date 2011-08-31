@@ -436,7 +436,7 @@ namespace IIS.SLSharp.Translation.GLSL
             result.Append(Indent(trueSection, trueSection.AcceptVisitor(this, data)));
 
             var elseSection = ifElseStatement.FalseStatement;
-            if (elseSection.GetType().FullName != "ICSharpCode.NRefactory.CSharp.Statement+NullStatement")
+            if (!elseSection.IsNull)
             {
                 result.Append(Environment.NewLine + "else");
                 result.Append(Indent(elseSection, elseSection.AcceptVisitor(this, data)));
