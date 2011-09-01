@@ -268,6 +268,16 @@ namespace IIS.SLSharp.Translation.GLSL
 
         public override StringBuilder VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, int data)
         {
+            if (binaryOperatorExpression.Operator == BinaryOperatorType.Modulus)
+            {
+                // TODO: check if lhs is a gen(D)Type and only apply the rule in that case
+                // replace with mod(lhs, rhs) statement
+                var r = new StringBuilder("mod(");
+                r.Append(binaryOperatorExpression.Left.AcceptVisitor(this, data));
+                r.Append(", ").Append(binaryOperatorExpression.Right.AcceptVisitor(this, data)).Append(")");
+                return r;
+            }
+
             var result = new StringBuilder("(");
 
             result.Append(binaryOperatorExpression.Left.AcceptVisitor(this, data));

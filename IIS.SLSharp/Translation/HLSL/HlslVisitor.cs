@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp.Resolver;
@@ -312,6 +313,22 @@ namespace IIS.SLSharp.Translation.HLSL
                     return result;
                 }
             }
+
+            if (binaryOperatorExpression.Operator == BinaryOperatorType.Modulus)
+            {
+                // TODO: check if lhs is a gen(D)Type and only apply the rule in that case
+                // replace with mod(lhs, rhs) statement
+                var r = new StringBuilder("fmod(");
+                r.Append(binaryOperatorExpression.Left.AcceptVisitor(this, data)).Append(", ");
+
+              
+                // we need to widen in case rhs is a scalar and rhs is a vec type!
+                r.Append(binaryOperatorExpression.Right.AcceptVisitor(this, data));
+
+                r.Append(")");
+                return r;
+            }
+
 
             result.Append("(");
             result.Append(binaryOperatorExpression.Left.AcceptVisitor(this, data));

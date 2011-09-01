@@ -410,14 +410,6 @@ namespace IIS.SLSharp.Translation.HLSL
                 // we need to wrap this into tex2DBias(sampler, new vec4(vec2, 0.0, float)
                 //{ () => ShaderDefinition.texture(sampler2D, vec2, _float), Redirect<Workarounds.Texture>("tex2Dbias") },
 
-                { () => ShaderDefinition.mod(vec2, _float), (m, i) => ModFloat<ShaderDefinition.vec2>(m, i) },
-                { () => ShaderDefinition.mod(vec3, _float), (m, i) => ModFloat<ShaderDefinition.vec2>(m, i) },
-                { () => ShaderDefinition.mod(vec4, _float), (m, i) => ModFloat<ShaderDefinition.vec2>(m, i) },
-                { () => ShaderDefinition.mod(_float, _float), Rename("fmod") },
-                { () => ShaderDefinition.mod(vec2, vec2), Rename("fmod") },
-                { () => ShaderDefinition.mod(vec3, vec3), Rename("fmod") },
-                { () => ShaderDefinition.mod(vec4, vec4), Rename("fmod") },
-
                 { () => ShaderDefinition.dFdx(_float), Rename("ddx") },
                 { () => ShaderDefinition.dFdx(vec2), Rename("ddx") },
                 { () => ShaderDefinition.dFdx(vec3), Rename("ddx") },
@@ -440,23 +432,6 @@ namespace IIS.SLSharp.Translation.HLSL
             var tref = ShaderDefinition.ToCecil(typeof(T));
             var n = new ObjectCreateExpression( AstBuilder.ConvertType(tref), new[] { source.Clone() });            
             return n;
-        }
-
-        private StringBuilder ModFloat<T>(MethodDefinition m, InvocationExpression i)
-        {
-            // mod() will have 2 args we need to widen the rhs to a T1 however
-
-            Debug.Assert(i.Arguments.Count == 2);
-            var result = new StringBuilder();
-
-            var lhs = i.Arguments.Take(1);
-            var rhs = i.Arguments.Skip(1).Take(1);
-            var widen = rhs.Select(WidenType<T>);
-            var args = lhs.Concat(widen).ToList();
-            
-            result.Append("fmod(").Append(ArgsToString(args)).Append(")");
-
-            return result;
         }
 
         private StringBuilder TextureLod(MethodDefinition m, InvocationExpression i)
