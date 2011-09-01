@@ -7,11 +7,11 @@ namespace IIS.SLSharp.Shaders
     {
         public sealed class dvec2
         {
-            public float x, y;
+            public double x, y;
 
-            public float r, g;
+            public double r, g;
 
-            public float s, t;
+            public double s, t;
 
             public dvec2 xx, xy, yx, yy;
 
@@ -40,24 +40,28 @@ namespace IIS.SLSharp.Shaders
 
             public static dvec2 operator *(dvec2 v1, dvec2 v2) { throw _invalidAccess; }
 
-            public static dvec2 operator *(dvec2 v1, float s) { throw _invalidAccess; }
+            public static dvec2 operator *(dvec2 v1, double s) { throw _invalidAccess; }
 
-            public static dvec2 operator /(dvec2 v1, float s) { throw _invalidAccess; }
+            public static dvec2 operator /(dvec2 v1, double s) { throw _invalidAccess; }
+
+            public static dvec2 operator %(dvec2 v1, dvec2 v2) { throw _invalidAccess; }
+
+            public static dvec2 operator %(dvec2 v1, double s) { throw _invalidAccess; }
 
             public static dvec2 operator -(dvec2 v) { throw _invalidAccess; }
 
-            public dvec2(float xy) { throw _invalidAccess; }
+            public dvec2(double xy) { throw _invalidAccess; }
 
-            public dvec2(float x, float y) { throw _invalidAccess; }
+            public dvec2(double x, double y) { throw _invalidAccess; }
         }
 
         public sealed class dvec3
         {
-            public float x, y, z;
+            public double x, y, z;
 
-            public float r, g, b;
+            public double r, g, b;
 
-            public float s, t, p;
+            public double s, t, p;
 
             public dvec2 xx, xy, xz, yx, yy, yz, zx, zy, zz;
 
@@ -113,36 +117,40 @@ namespace IIS.SLSharp.Shaders
 
             public static dvec3 operator *(dvec3 v, dvec3 m) { throw _invalidAccess; }
 
-            public static dvec3 operator *(dvec3 v, float d) { throw _invalidAccess; }
+            public static dvec3 operator *(dvec3 v, double d) { throw _invalidAccess; }
 
             public static dvec3 operator *(dvec3 v, mat3 m) { throw _invalidAccess; }
 
             public static dvec3 operator *(mat3 m, dvec3 v) { throw _invalidAccess; }
 
-            public static dvec3 operator /(dvec3 v, float d) { throw _invalidAccess; }
+            public static dvec3 operator /(dvec3 v, double d) { throw _invalidAccess; }
 
-            public static dvec3 operator -(dvec3 v, float d) { throw _invalidAccess; }
+            public static dvec3 operator %(dvec3 v1, dvec3 v2) { throw _invalidAccess; }
 
-            public static dvec3 operator +(dvec3 v, float d) { throw _invalidAccess; }
+            public static dvec3 operator %(dvec3 v1, double d) { throw _invalidAccess; }
+
+            public static dvec3 operator -(dvec3 v, double d) { throw _invalidAccess; }
+
+            public static dvec3 operator +(dvec3 v, double d) { throw _invalidAccess; }
 
             public static dvec3 operator -(dvec3 v) { throw _invalidAccess; }
 
-            public dvec3(float xyz) { throw _invalidAccess; }
+            public dvec3(double xyz) { throw _invalidAccess; }
 
-            public dvec3(dvec2 xy, float z) { throw _invalidAccess; }
+            public dvec3(dvec2 xy, double z) { throw _invalidAccess; }
 
-            public dvec3(float x, dvec2 yz) { throw _invalidAccess; }
+            public dvec3(double x, dvec2 yz) { throw _invalidAccess; }
 
-            public dvec3(float x, float y, float z) { throw _invalidAccess; }
+            public dvec3(double x, double y, double z) { throw _invalidAccess; }
         }
 
         public sealed class dvec4
         {
-            public float x, y, z, w;
+            public double x, y, z, w;
 
-            public float r, g, b, a;
+            public double r, g, b, a;
 
-            public float s, t, p, q;
+            public double s, t, p, q;
 
             public dvec2 xx, xy, xz, xw, yx, yy, yz, yw, zx, zy, zz, zw, wx, wy, wz, ww;
 
@@ -226,31 +234,35 @@ namespace IIS.SLSharp.Shaders
 
             public static dvec4 operator *(mat4 m, dvec4 v) { throw _invalidAccess; }
 
-            public static dvec2 operator /(dvec4 v, float s) { throw _invalidAccess; }
+            public static dvec4 operator /(dvec4 v, double s) { throw _invalidAccess; }
 
-            public static dvec4 operator +(dvec4 v, float s) { throw _invalidAccess; }
+            public static dvec4 operator %(dvec4 v1, dvec4 v2) { throw _invalidAccess; }
 
-            public static dvec4 operator -(dvec4 v, float s) { throw _invalidAccess; }
+            public static dvec4 operator %(dvec4 v1, double d) { throw _invalidAccess; }
 
-            public static dvec4 operator *(dvec4 v, float s) { throw _invalidAccess; }
+            public static dvec4 operator +(dvec4 v, double s) { throw _invalidAccess; }
+
+            public static dvec4 operator -(dvec4 v, double s) { throw _invalidAccess; }
+
+            public static dvec4 operator *(dvec4 v, double s) { throw _invalidAccess; }
 
             public static dvec4 operator -(dvec4 v) { throw _invalidAccess; }
 
-            public dvec4(float xyzw) { throw _invalidAccess; }
+            public dvec4(double xyzw) { throw _invalidAccess; }
 
-            public dvec4(float x, float y, float z, float w) { throw _invalidAccess; }
+            public dvec4(double x, double y, double z, double w) { throw _invalidAccess; }
 
-            public dvec4(dvec2 xy, float z, float w) { throw _invalidAccess; }
+            public dvec4(dvec2 xy, double z, double w) { throw _invalidAccess; }
 
-            public dvec4(float x, dvec2 yz, float w) { throw _invalidAccess; }
+            public dvec4(double x, dvec2 yz, double w) { throw _invalidAccess; }
 
-            public dvec4(float x, float y, dvec2 zw) { throw _invalidAccess; }
+            public dvec4(double x, double y, dvec2 zw) { throw _invalidAccess; }
 
             public dvec4(dvec2 xy, dvec2 zw) { throw _invalidAccess; }
 
-            public dvec4(dvec3 xyz, float w) { throw _invalidAccess; }
+            public dvec4(dvec3 xyz, double w) { throw _invalidAccess; }
 
-            public dvec4(float x, dvec3 yzw) { throw _invalidAccess; }
+            public dvec4(double x, dvec3 yzw) { throw _invalidAccess; }
         }
     }
 }

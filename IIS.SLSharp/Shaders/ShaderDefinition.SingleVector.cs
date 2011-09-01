@@ -46,6 +46,10 @@ namespace IIS.SLSharp.Shaders
 
             public static vec2 operator /(vec2 v1, vec2 v2) { throw _invalidAccess; }
 
+            public static vec2 operator %(vec2 v1, vec2 v2) { throw _invalidAccess; }
+
+            public static vec2 operator %(vec2 v1, float s) { throw _invalidAccess; }
+
             public static vec2 operator -(vec2 v) { throw _invalidAccess; }
 
             public vec2(float xy) { throw _invalidAccess; }
@@ -124,6 +128,10 @@ namespace IIS.SLSharp.Shaders
             public static vec3 operator /(vec3 v, float d) { throw _invalidAccess; }
 
             public static vec3 operator /(vec3 v, vec3 d) { throw _invalidAccess; }
+
+            public static vec3 operator %(vec3 v1, vec3 v3) { throw _invalidAccess; }
+
+            public static vec3 operator %(vec3 v1, float d) { throw _invalidAccess; }
 
             public static vec3 operator -(vec3 v, float d) { throw _invalidAccess; }
 
@@ -233,6 +241,10 @@ namespace IIS.SLSharp.Shaders
             public static vec4 operator /(vec4 v, float s) { throw _invalidAccess; }
 
             public static vec4 operator /(vec4 v, vec4 s) { throw _invalidAccess; }
+
+            public static vec4 operator %(vec4 v1, vec4 v2) { throw _invalidAccess; }
+
+            public static vec4 operator %(vec4 v1, float s) { throw _invalidAccess; }
 
             public static vec4 operator +(vec4 v, float s) { throw _invalidAccess; }
 
