@@ -79,6 +79,30 @@
     <Compile Include="Shaders\ClipmapShader.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\Dependencies\Axiom.Platforms.OpenTK.dll">
+      <Link>Axiom.Platforms.OpenTK.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Dependencies\Axiom.RenderSystems.DirectX9.dll">
+      <Link>Axiom.RenderSystems.DirectX9.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Dependencies\Axiom.RenderSystems.OpenGL.OpenTK.dll">
+      <Link>Axiom.RenderSystems.OpenGL.OpenTK.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Dependencies\OpenTK.Compatibility.dll">
+      <Link>OpenTK.Compatibility.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Dependencies\OpenTK.dll">
+      <Link>OpenTK.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Dependencies\OpenTK.GLControl.dll">
+      <Link>OpenTK.GLControl.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\Resources\height.jpg">
       <Link>height.jpg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
