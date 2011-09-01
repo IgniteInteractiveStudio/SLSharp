@@ -129,7 +129,7 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
         [FragmentShader]
         protected float Noise(vec3 p)
         {
-            var q = mod(Floor(p), 256.0f);
+            var q = Floor(p) % 256.0f;
             p -= Floor(p);
             var f = Fade(p);
 
