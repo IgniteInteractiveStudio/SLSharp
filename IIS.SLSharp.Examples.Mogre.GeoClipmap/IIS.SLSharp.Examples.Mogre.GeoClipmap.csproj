@@ -78,6 +78,18 @@
     <Compile Include="Shaders\ClipmapShader.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\Dependencies\OgreMain.dll">
+      <Link>OgreMain.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Dependencies\RenderSystem_Direct3D9.dll">
+      <Link>RenderSystem_Direct3D9.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Dependencies\RenderSystem_GL.dll">
+      <Link>RenderSystem_GL.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\Resources\height.jpg">
       <Link>height.jpg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
