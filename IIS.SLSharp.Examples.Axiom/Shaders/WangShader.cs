@@ -22,7 +22,7 @@ namespace IIS.SLSharp.Examples.Axiom.Shaders
         public vec4 WangAt(vec2 tex)
         {
             
-            var address = tex - mod(tex, 1.0f / 256.0f);
+            var address = tex - tex % (1.0f / 256.0f);
             var subPos = Fraction(tex * 256.0f) / 4.0f;
             var offset = texture(WangMap, Fraction(address)).xw;
             var tc = offset + subPos;
