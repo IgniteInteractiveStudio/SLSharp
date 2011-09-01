@@ -150,24 +150,6 @@ namespace IIS.SLSharp.Shaders
 
         #endregion
 
-        #region vec4 ftransform()
-
-        /// <summary>
-        /// compatibility profile only
-        /// For vertex shaders only. This function will ensure that the incoming vertex value 
-        /// will be transformed in a way that produces exactly the same result as would be 
-        /// produced by OpenGL’s fixed functionality transform. It is intended to be used to 
-        /// compute gl_Position, e.g.,
-        /// gl_Position = ftransform()
-        /// This function should be used, for example, when an application is rendering the same 
-        /// geometry in separate passes, and one pass uses the fixed functionality path to 
-        /// render and another pass uses programmable shaders.
-        /// </summary>
-        [Obsolete("Not supported by SL#; Deprecated as by GL 3.0; Not supported by HLSL;", true)]
-        protected static vec4 ftransform() { throw _invalidAccess; }
-
-        #endregion
-
         #region genType FaceForward (genType N, genType I, genType Nref)
 
         /// <summary>If Dot(Nref, I) &lt; 0 return N, otherwise return –N.</summary>

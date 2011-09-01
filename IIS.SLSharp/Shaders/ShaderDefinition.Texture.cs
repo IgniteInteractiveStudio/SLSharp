@@ -8,28 +8,6 @@ namespace IIS.SLSharp.Shaders
 
     public abstract partial class ShaderDefinition
     {
-        #region Deprecated 120 functions
-
-        [Obsolete("Deprecated with v130", true)]
-        protected static vec4 texture1D(sampler1D sampler, float s)
-        {
-            throw _invalidAccess;
-        }
-
-        [Obsolete("Deprecated with v130", true)]
-        protected static vec4 texture2D(sampler2D sampler, vec2 st)
-        {
-            throw _invalidAccess;
-        }
-
-        [Obsolete("Deprecated with v130", true)]
-        protected static vec4 texture2D(sampler2D sampler, vec2 st, float bias)
-        {
-            throw _invalidAccess;
-        }
-
-        #endregion
-
         #region textureSize
 
         #region int textureSize (gsampler1D sampler, int lod)
