@@ -18,7 +18,7 @@ namespace IIS.SLSharp.Bindings.OpenTK.Textures
 
         private readonly RenderbufferObject _rbo;
 
-        private readonly Bindings.OpenTK.Textures.Texture2D[] _textures;
+        private readonly Texture2D[] _textures;
 
         private readonly DrawBuffersEnum[] _bufs;
 
@@ -27,7 +27,7 @@ namespace IIS.SLSharp.Bindings.OpenTK.Textures
         /// </summary>
         /// <param name="index">The output channel index to retrieve</param>
         /// <returns></returns>
-        public Bindings.OpenTK.Textures.Texture2D this[int index] 
+        public Texture2D this[int index] 
         { 
             get { return _textures[index]; } 
         }
@@ -44,7 +44,7 @@ namespace IIS.SLSharp.Bindings.OpenTK.Textures
         public RenderToTexture(int width, int height, bool depth, int components = 3, Type format = null, int buffers = 1)
         {
             _fbo = new FramebufferObject();
-            _textures = new Bindings.OpenTK.Textures.Texture2D[buffers];
+            _textures = new Texture2D[buffers];
             _bufs = new DrawBuffersEnum[buffers];
 
             for (var i = 0; i < buffers; i++)
@@ -55,12 +55,12 @@ namespace IIS.SLSharp.Bindings.OpenTK.Textures
             Utilities.CheckGL();
 
             _fbo.Finish();
-            GL.DrawBuffer(DrawBufferMode.Front);
+            GL.DrawBuffer(DrawBufferMode.Back);
             Utilities.CheckGL();
 
             for (var i = 0; i < buffers; i++)
             {
-                _textures[i] = new Bindings.OpenTK.Textures.Texture2D(width, height, components, format ?? typeof(Half));
+                _textures[i] = new Texture2D(width, height, components, format ?? typeof(Half));
                 _fbo.SetTexture(_textures[i], i);
             }
 
