@@ -23,6 +23,7 @@ namespace IIS.SLSharp.Translation.HLSL
         public void ResetState()
         {
             _functions.Clear();
+            _dependencies.Clear();
         }
 
         private bool SameMethod(MethodDefinition m, IMethod n, ITypeResolveContext ctx)

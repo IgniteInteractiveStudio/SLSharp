@@ -19,6 +19,7 @@ namespace IIS.SLSharp.Translation.GLSL
         public void ResetState()
         {
             _functions.Clear();
+            _dependencies.Clear();
         }
 
         /// <summary>
