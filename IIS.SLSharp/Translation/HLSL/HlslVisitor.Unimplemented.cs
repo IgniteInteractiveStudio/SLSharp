@@ -22,11 +22,6 @@ namespace IIS.SLSharp.Translation.HLSL
             return null;
         }
 
-        public override StringBuilder VisitConditionalExpression(ConditionalExpression conditionalExpression, int data)
-        {
-            throw new NotImplementedException();
-        }
-
         public override StringBuilder VisitDefaultValueExpression(DefaultValueExpression defaultValueExpression, int data)
         {
             throw new NotImplementedException();

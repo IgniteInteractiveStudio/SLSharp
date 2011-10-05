@@ -559,5 +559,13 @@ namespace IIS.SLSharp.Translation.GLSL
             // this just passes through
             return directionExpression.Expression.AcceptVisitor(this, data);
         }
+
+        public override StringBuilder VisitConditionalExpression(ConditionalExpression conditionalExpression, int data)
+        {
+            var result = conditionalExpression.Condition.AcceptVisitor(this, data);
+            var trueCond = conditionalExpression.TrueExpression.AcceptVisitor(this, data);
+            var falseCond = conditionalExpression.FalseExpression.AcceptVisitor(this, data);
+            return result.Append(" ? ").Append(trueCond).Append(" : ").Append(falseCond);
+        }
     }
 }
