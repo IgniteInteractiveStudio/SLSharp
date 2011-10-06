@@ -80,6 +80,7 @@
     <Compile Include="Shaders\ShaderDefinition.MatrixFunctions.cs" />
     <Compile Include="Shaders\ShaderDefinition.Noise.cs" />
     <Compile Include="Shaders\ShaderDefinition.Sampler.cs" />
+    <Compile Include="Shaders\ShaderDefinition.Special.cs" />
     <Compile Include="Shaders\ShaderDefinition.Texture.cs" />
     <Compile Include="Shaders\ShaderDefinition.Trigonometry.cs" />
     <Compile Include="Shaders\ShaderDefinition.UInt32Vector.cs" />

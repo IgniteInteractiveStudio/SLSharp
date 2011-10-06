@@ -14,6 +14,8 @@ namespace IIS.SLSharp.Translation.GLSL
         {
             Handlers = new Dictionary<Expression<Action>, Func<MethodDefinition, InvocationExpression, StringBuilder>>(new HandlerComparer())
             {
+                { () => ShaderDefinition.Discard(), KeywordDiscard },
+
                 #region Trigonometry
 
                 { () => ShaderDefinition.Radians(_float), ToLower },
@@ -517,6 +519,11 @@ namespace IIS.SLSharp.Translation.GLSL
 
                 #endregion
             };
+        }
+
+        private StringBuilder KeywordDiscard(MethodDefinition unused1, InvocationExpression unused2)
+        {
+            return new StringBuilder("discard");
         }
     }
 }
