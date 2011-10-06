@@ -14,6 +14,8 @@ namespace IIS.SLSharp.Shaders
 
         protected vec4 gl_Position;
 
+        protected float gl_FragDepth;
+
         // ReSharper restore InconsistentNaming
         // ReSharper restore UnusedParameter.Local
     }
