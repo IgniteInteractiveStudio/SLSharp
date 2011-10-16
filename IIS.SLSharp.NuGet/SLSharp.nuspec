@@ -4,10 +4,10 @@
     <id>SLSharp</id> 
     <version>2.0</version> 
     <authors>Ignite Interactive Studio</authors>
-    <description>Runtime IL-to-GLSL translator, allowing developers to write OpenGL shaders in C#.</description> 
+    <description>Runtime IL-to-shader translator, allowing developers to write GLSL/HLSL shaders in pure C#.</description> 
     <language>en-US</language>
     <licenseUrl>https://github.com/IgniteInteractiveStudio/SLSharp/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/IgniteInteractiveStudio/SLSharp</projectUrl>
-    <tags>il glsl c# runtime shader shaders opengl gl graphics graphic opentk otk game games</tags>
+    <tags>il glsl hlsl c# runtime shader shaders opengl directx dx ogl gl graphics graphic opentk otk game games axiom ogre mogre xna</tags>
   </metadata> 
 </package>
