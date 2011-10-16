@@ -8,9 +8,8 @@
 *.vsp
 *.orig
 
-_ReSharper*/*
+*_ReSharper*/*
 bin/*
 */obj/*
 IIS.SLSharp.NuGet/*/*
 TestResults/*
-Debug/*
