@@ -25,11 +25,14 @@ namespace IIS.SLSharp.Shaders
             {
                 public readonly List<FunctionDescription> Functions;
                 public readonly List<string> ForwardDeclarations;
+                public readonly List<Type> Dependencies; 
 
-                public UnitContext(List<FunctionDescription> functions, List<string> forwardDeclarations)
+                public UnitContext(List<FunctionDescription> functions, List<string> forwardDeclarations,
+                    List<Type> dependencies)
                 {
                     Functions = functions;
                     ForwardDeclarations = forwardDeclarations;
+                    Dependencies = dependencies;
                 }
             }
 
@@ -183,7 +186,7 @@ namespace IIS.SLSharp.Shaders
                 }
 
                 var forwardDecl = trans.ForwardDeclare(DebugMode);
-                return new UnitContext(desc, forwardDecl);
+                return new UnitContext(desc, forwardDecl, trans.Dependencies.ToList());
             }
 
             // shaderType = GetShaderType()

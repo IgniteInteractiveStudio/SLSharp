@@ -44,6 +44,8 @@ namespace IIS.SLSharp.Shaders
 
         private Shader _parentLogic;
 
+        private List<Type> _dependencies = new List<Type>(); // SL# shaders, this shader depends on
+
         private Type GetImplementingType()
         {
             var t = GetType();
@@ -96,10 +98,12 @@ namespace IIS.SLSharp.Shaders
                     throw new NotImplementedException();
             }
 
-            var desc = new SourceDescription(unit.Functions, _context.Uniforms, _context.Attribs, _context.Varyings, _context.Ins, _context.Outs, unit.ForwardDeclarations);
+            var desc = new SourceDescription(unit.Functions, _context.Uniforms, _context.Attribs, _context.Varyings, _context.Ins, _context.Outs, 
+                unit.ForwardDeclarations);
 
             var shader = Binding.Active.Compile(this, type, desc);
 
+            _dependencies = _dependencies.Union(unit.Dependencies).ToList();
             _objects.Add(shader);
         }
 
@@ -136,9 +140,7 @@ namespace IIS.SLSharp.Shaders
             Compile();
             e = e.Concat(_objects);
 
-            // TODO: this smells hacky, we need refactoring in the transform logic...
-            var deps = Binding.Active.Transform.Dependencies;
-            foreach (var dep in deps)
+            foreach (var dep in _dependencies)
             {
                 if (!compiled.Add(dep))
                     continue;
