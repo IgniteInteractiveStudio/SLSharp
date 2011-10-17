@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Descriptions;
 using IIS.SLSharp.Shaders;
 using Mono.Cecil;
@@ -112,7 +113,18 @@ namespace IIS.SLSharp.Translation.GLSL
 
             if (type == ShaderType.FragmentShader)
                 desc.FragmentOuts.ForEach(
-                    v => s.AppendFormat("out {0} {1};{2}", v.Type.ToGlsl(), v.Name, v.Comment).Append(Environment.NewLine));
+                    v => 
+                    {
+                        if (v.Semantic == UsageSemantic.Depth)
+                        {
+                            // validate type and let SL# throw rather than generate invalid GL code
+                            if (v.Type != typeof(float))
+                                throw new SLSharpException(v.Name + "'s must be float, as it is marked as fragment depth!");
+                            s.AppendFormat("#define {0} gl_FragDepth {1}", v.Name, v.Comment).Append(Environment.NewLine);
+                            return;
+                        }
+                        s.AppendFormat("out {0} {1};{2}", v.Type.ToGlsl(), v.Name, v.Comment).Append(Environment.NewLine);
+                    });
 
             s.AppendLine();
             desc.ForwardDecl.ForEach(v => s.AppendLine(v));

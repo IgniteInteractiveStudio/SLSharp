@@ -22,6 +22,8 @@ namespace IIS.SLSharp.Annotations
         Depth*/
         Unknown,
 
+        Depth,
+
         PositionX,
         Position0,
         Position1,
