@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using IIS.SLSharp.Descriptions;
+using IIS.SLSharp.Shaders;
 using OpenTK.Graphics.OpenGL;
 using System.Linq;
 
@@ -11,6 +13,33 @@ namespace IIS.SLSharp.Bindings.OpenTK
         public int Name { get; private set; }
 
         public List<VariableDescription> VertexIns { get; private set; }
+
+        private void Validate()
+        {
+            int linkStatus, validStatus;
+            var logCompile = GL.GetProgramInfoLog(Name);
+            GL.ValidateProgram(Name);
+            var logValidate = GL.GetProgramInfoLog(Name);
+
+            GL.GetProgram(Name, ProgramParameter.LinkStatus, out linkStatus);
+            GL.GetProgram(Name, ProgramParameter.ValidateStatus, out validStatus);
+
+            var log = "=== Compilation log ===" + Environment.NewLine +
+                      logCompile + Environment.NewLine +
+                      "=== Validation log ===" + Environment.NewLine + logValidate;
+
+            if (linkStatus != 1)
+                throw new SLSharpException("Program linkage failed: " + Environment.NewLine + log);
+
+            if (validStatus != 1)
+            {
+                Debug.WriteLine("Program validation failed: " + Environment.NewLine + log);
+                return;
+            }
+
+            if (!String.IsNullOrEmpty(logCompile) || !String.IsNullOrEmpty(logValidate))
+                Debug.WriteLine("Link info: " + log);
+        }
 
         public Program(IEnumerable<Tuple<int, SourceDescription>> units)
         {
@@ -25,6 +54,7 @@ namespace IIS.SLSharp.Bindings.OpenTK
             VertexIns = merged.VertexIns;
 
             GL.LinkProgram(Name);
+            Validate();
             Utilities.CheckGL();
         }
 
