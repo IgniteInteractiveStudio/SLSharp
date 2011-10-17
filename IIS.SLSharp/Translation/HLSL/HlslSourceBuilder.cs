@@ -158,6 +158,8 @@ namespace IIS.SLSharp.Translation.HLSL
                 case UsageSemantic.Normal13: return "NORMAL13";
                 case UsageSemantic.Normal14: return "NORMAL14";
                 case UsageSemantic.Normal15: return "NORMAL15";
+
+                case UsageSemantic.Depth: return "DEPTH";
             }
 
             throw new SLSharpException("Usage semantic " + semantic + " currently not supported");
