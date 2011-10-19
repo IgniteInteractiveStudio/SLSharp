@@ -56,11 +56,10 @@ namespace IIS.SLSharp.Translation.GLSL
 
             _functions.UnionWith(glsl.Functions);
 
+            var sig = GlslVisitor.GetSignature(m);
             var entry = (bool)attr.ConstructorArguments.FirstOrDefault().Value;
-            var sig = entry ? "void main()" : GlslVisitor.GetSignature(m);
-            
             var code = glsl.Result;
-            var desc = new FunctionDescription(entry ? "main" : Shader.GetMethodName(m), sig + code, entry, type);
+            var desc = new FunctionDescription(Shader.GetMethodName(m), sig + code, entry, type);
 
             _dependencies.UnionWith(glsl.Dependencies);
 

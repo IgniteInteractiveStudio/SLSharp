@@ -18,6 +18,9 @@ namespace IIS.SLSharp.Examples.Simple.Shaders
         [FragmentOut(UsageSemantic.Color0)]
         public vec4 Color;
 
+        [Varying(UsageSemantic.Position0)]
+        public vec4 Position;
+
         // demonstrate using a shared library
         public InvertShader Invert { get; private set; }
 
@@ -32,7 +35,7 @@ namespace IIS.SLSharp.Examples.Simple.Shaders
         public void VertexMain()
         {
             _uv = (Vertex.xy + new vec2(1.0f)) * 0.5f;
-            gl_Position = Vertex;
+            Position = Vertex;
         }
 
         // resource setup code

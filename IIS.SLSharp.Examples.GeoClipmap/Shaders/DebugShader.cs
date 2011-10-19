@@ -38,6 +38,9 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
         [Varying]
         public vec2 _uv;
 
+        [Varying(UsageSemantic.Position0)]
+        private vec4 _position;
+
         [FragmentShader(true)]
         public void DebugFragmentMain()
         {
@@ -67,7 +70,7 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
         [VertexShader(true)]
         public void FragmentMain()
         {
-            gl_Position = Vertex;
+            _position = Vertex;
             _uv = Vertex.xy * 0.5f + new vec2(0.5f);
         }
 

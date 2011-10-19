@@ -175,6 +175,38 @@ namespace IIS.SLSharp.Translation.HLSL
             return desc.Functions.FirstOrDefault(f => f.EntryPoint && f.Type == ShaderType.FragmentShader);
         }
 
+        private static void GenerateVaryingStruct(StringBuilder s, SourceDescription desc)
+        {
+            var usedSemantics = new HashSet<UsageSemantic>();
+            foreach (var x in desc.Varyings.Where(x => x.Semantic != UsageSemantic.Unknown))
+            {
+                s.AppendFormat("    {0} {1}: {2};", x.Type.ToHlsl(), x.Name, x.Semantic.ToHlsl()).AppendLine();
+                if (!usedSemantics.Add(x.Semantic))
+                    throw new SLSharpException(String.Format("Semantic {0} redefined with {1}", x.Semantic, x.Name));
+            }
+            foreach (var x in desc.Varyings.Where(x => x.Semantic == UsageSemantic.Unknown))
+            {
+                var t0 = UsageSemantic.Texcoord0;
+                while (usedSemantics.Contains(t0))
+                {
+                    switch (t0)
+                    {
+                        case UsageSemantic.Texcoord15:
+                            t0 = UsageSemantic.Color0;
+                            break;
+                        case UsageSemantic.Color15:
+                            throw new SLSharpException("SLSharp does not support that many varyings for hlsl at the moment.");
+                        default:
+                            t0++;
+                            break;
+                    }
+                    t0++;
+                }
+                s.AppendFormat("    {0} {1}: {2};", x.Type.ToHlsl(), x.Name, t0.ToHlsl()).AppendLine();
+                usedSemantics.Add(t0);
+            }
+        }
+
         public static string ToHlsl(this SourceDescription desc)
         {
             var s = new StringBuilder();
@@ -195,7 +227,6 @@ namespace IIS.SLSharp.Translation.HLSL
             // expose varyings inputs and outputs as globals for unified access
             // through all functions
 
-            s.AppendLine("static float4 gl_Position;");
             var statics = desc.Varyings.Concat(desc.VertexIns).Concat(desc.FragmentOuts);
             foreach (var v in statics)
                 s.AppendFormat("static {0} {1};{2}", v.Type.ToHlsl(), v.Name, v.Comment).Append(Environment.NewLine);
@@ -222,12 +253,7 @@ namespace IIS.SLSharp.Translation.HLSL
 
                 s.AppendLine("struct SLSharp_VertexOut");
                 s.AppendLine("{");
-                s.AppendLine("    float4 gl_Position: POSITION;");
-                var i = 0;
-                desc.Varyings.ForEach(
-                    v => s.AppendFormat("    {0} {1}: TEXCOORD{2};", v.Type.ToHlsl(), v.Name, i++).AppendLine());
-                if (i > 15)
-                    throw new NotImplementedException("more than 16 varyings not supported yet");
+                GenerateVaryingStruct(s, desc);
                 s.AppendLine("};");
                 s.AppendLine();
 
@@ -240,7 +266,6 @@ namespace IIS.SLSharp.Translation.HLSL
                 s.AppendFormat("    {0}();", vmain.Name).AppendLine();
                 // write back results from globals
                 desc.Varyings.ForEach(v => s.AppendFormat("    output.{0} = {1};", v.Name, v.Name).AppendLine());
-                s.AppendLine("    output.gl_Position = gl_Position;");
                 s.AppendLine("    return output;");
                 s.AppendLine("}");
             }
@@ -249,9 +274,7 @@ namespace IIS.SLSharp.Translation.HLSL
             {
                 s.AppendLine("struct SLSharp_FragmentIn");
                 s.AppendLine("{");
-                var i = 0;
-                desc.Varyings.ForEach(
-                    v => s.AppendFormat("    {0} {1}: TEXCOORD{2};", v.Type.ToHlsl(), v.Name, i++).AppendLine());
+                GenerateVaryingStruct(s, desc);
                 s.AppendLine("};");
                 s.AppendLine();
 

@@ -45,6 +45,9 @@ namespace IIS.SLSharp.Examples.MOGRE.GeoClipmap.Shaders
         [Varying]
         public vec2 _uv;
 
+        [Varying(UsageSemantic.Position0)]
+        private vec4 _position;
+
         [Varying]
         public float _z;
 
@@ -85,7 +88,7 @@ namespace IIS.SLSharp.Examples.MOGRE.GeoClipmap.Shaders
             var worldPosFinal = new vec4(worldPos, _z * 0.3f, 1.0f);
 
             _finalPos = ModelViewProjectionMatrix * worldPosFinal;
-            gl_Position = _finalPos;
+            _position = _finalPos;
 
 
             // just for testing, derive normal using interpolation over heights

@@ -15,6 +15,9 @@ namespace IIS.SLSharp.Examples.XNA.Shaders
         [Varying]
         private vec2 _fragNormal;
 
+        [Varying(UsageSemantic.Position0)]
+        private vec4 _position;
+
         [VertexIn(UsageSemantic.Position0)]
         public vec4 Vertex;
 
@@ -34,7 +37,7 @@ namespace IIS.SLSharp.Examples.XNA.Shaders
         public void VertexMain()
         {
             _fragNormal = Normal;
-            gl_Position = ModelviewProjection * Vertex;
+            _position = ModelviewProjection * Vertex;
         }
 
         // resource setup code

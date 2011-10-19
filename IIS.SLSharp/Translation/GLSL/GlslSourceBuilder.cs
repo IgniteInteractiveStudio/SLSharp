@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using IIS.SLSharp.Annotations;
 using IIS.SLSharp.Descriptions;
 using IIS.SLSharp.Shaders;
@@ -113,18 +114,7 @@ namespace IIS.SLSharp.Translation.GLSL
 
             if (type == ShaderType.FragmentShader)
                 desc.FragmentOuts.ForEach(
-                    v => 
-                    {
-                        if (v.Semantic == UsageSemantic.Depth)
-                        {
-                            // validate type and let SL# throw rather than generate invalid GL code
-                            if (v.Type != typeof(float))
-                                throw new SLSharpException(v.Name + "'s must be float, as it is marked as fragment depth!");
-                            s.AppendFormat("#define {0} gl_FragDepth {1}", v.Name, v.Comment).Append(Environment.NewLine);
-                            return;
-                        }
-                        s.AppendFormat("out {0} {1};{2}", v.Type.ToGlsl(), v.Name, v.Comment).Append(Environment.NewLine);
-                    });
+                    v => s.AppendFormat("out {0} {1};{2}", v.Type.ToGlsl(), v.Name, v.Comment).Append(Environment.NewLine));
 
             s.AppendLine();
             desc.ForwardDecl.ForEach(v => s.AppendLine(v));
@@ -132,6 +122,38 @@ namespace IIS.SLSharp.Translation.GLSL
 
 
             desc.Functions.ForEach(v => s.AppendLine(v.Body));
+
+            var entry = desc.Functions.FirstOrDefault(x => x.Type == type && x.EntryPoint);
+            if (entry != null)
+            {
+                s.AppendLine("void main()").AppendLine("{");
+                s.AppendLine("    " + entry.Name + "();");
+                if (type == ShaderType.VertexShader)
+                {
+                    var glPosition = desc.Varyings.FirstOrDefault(x => x.Semantic == UsageSemantic.Position0);
+                    // glPosition write is mandatory in a vs.
+                    // In theory a lib could supply this, we dont support this with the new syntax anymore at the moment tho.
+                    // in order for support we'd need to scan over all dependency varyings as well.
+                    if (glPosition == null)
+                        throw new SLSharpException("Vertexshader must output a Position");
+                    s.AppendLine("    gl_Position = " + glPosition.Name + ";");
+                }
+
+                if (type == ShaderType.FragmentShader)
+                {
+                    var glFragDepth = desc.FragmentOuts.FirstOrDefault(x => x.Semantic == UsageSemantic.Depth);
+
+                    if (glFragDepth != null)
+                    {
+                        // validate type and let SL# throw rather than generate invalid GL code
+                        if (glFragDepth.Type != typeof(float))
+                            throw new SLSharpException(glFragDepth.Name + "'s must be float, as it is marked as fragment depth!");
+                        s.AppendLine("    gl_FragDepth = " + glFragDepth.Name + ";");
+                    }
+                }
+
+                s.AppendLine("}");
+            }
 
             var src = s.ToString();
             Console.WriteLine(src);

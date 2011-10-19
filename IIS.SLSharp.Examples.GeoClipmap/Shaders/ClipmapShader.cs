@@ -46,6 +46,9 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
         [FragmentOut(UsageSemantic.Color0)]
         public vec4 FragColor;
 
+        [Varying(UsageSemantic.Position0)]
+        private vec4 _position;
+
         [VertexShader(true)]
         public void ClipmapVertexMain()
         {
@@ -74,7 +77,7 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
             var worldPosFinal = new vec4(worldPos, _z * 0.3f, 1.0f);
 
             _finalPos = ModelViewProjectionMatrix * worldPosFinal;
-            gl_Position = _finalPos;
+            _position = _finalPos;
 
 
             // just for testing, derive normal using interpolation over heights

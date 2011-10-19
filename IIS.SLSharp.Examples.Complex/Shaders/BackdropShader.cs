@@ -21,6 +21,9 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
         [Varying]
         private vec2 _uv;
 
+        [Varying(UsageSemantic.Position0)]
+        private vec4 _position;
+
         [FragmentOut(UsageSemantic.Color0)]
         protected vec4 Color;
 
@@ -40,7 +43,7 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
         public void VertexMain()
         {
             _uv = GlVertex.xy * 0.5f * Scale * MaxScale;
-            gl_Position = GlVertex;
+            _position = GlVertex;
         }
 
         // resource setup code

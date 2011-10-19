@@ -24,6 +24,9 @@ namespace IIS.SLSharp.Examples.Axiom.Shaders
         [Varying]
         private vec2 _uv;
 
+        [Varying(UsageSemantic.Position0)]
+        private vec4 _position;
+
         [VertexIn(UsageSemantic.Position0)]
         public vec4 Vertex;
 
@@ -44,7 +47,7 @@ namespace IIS.SLSharp.Examples.Axiom.Shaders
         public void VertexMain()
         {
             _uv = Texcoord;
-            gl_Position = ModelviewProjection * Vertex;
+            _position = ModelviewProjection * Vertex;
         }
 
         // resource setup code

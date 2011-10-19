@@ -8,6 +8,9 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
         [Varying]
         private vec3 _uvw;
 
+        [Varying(UsageSemantic.Position0)]
+        private vec4 _position;
+
         [VertexIn(UsageSemantic.Position0)]
         public vec4 Vertex;
 
@@ -31,7 +34,7 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
         public void VertexMain()
         {
             _uvw = (Vertex.xyz + new vec3(1.0f)) * 0.5f;
-            gl_Position = ModelViewProjectionMatrix * Vertex;
+            _position = ModelViewProjectionMatrix * Vertex;
         }
 
         // resource setup code

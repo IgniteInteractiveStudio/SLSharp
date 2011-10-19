@@ -20,10 +20,13 @@ namespace IIS.SLSharp.Examples.Tests
 
         private FieldBuilder _output;
 
+        private FieldBuilder _position;
+
         public ShaderBuilder(TypeBuilder type)
         {
             _type = type;
 
+            DefinePosition();
             DefineConstructor();
             DefineVertexMain();
             DefineFragmentMain();
@@ -101,6 +104,18 @@ namespace IIS.SLSharp.Examples.Tests
 
         #endregion
 
+        #region DefinePosition
+
+        private void DefinePosition()
+        {
+            var ctor = typeof(VaryingAttribute).GetConstructor(new[] { typeof(UsageSemantic) });
+            var positionOutAttrib = new CustomAttributeBuilder(ctor, new object[] { UsageSemantic.Position0 });
+            _position = _type.DefineField("position", typeof(ShaderDefinition.vec4), FieldAttributes.Public);
+            _position.SetCustomAttribute(positionOutAttrib);
+        }
+
+        #endregion
+
         #region DefineInput
 
         private PropertyInfo DefineInput(Expression input, string name)
@@ -135,7 +150,7 @@ namespace IIS.SLSharp.Examples.Tests
             _vertexBody.Emit(OpCodes.Ldarg_0);
             _vertexBody.Emit(OpCodes.Ldc_R4, 0.0f);
             _vertexBody.Emit(OpCodes.Newobj, typeof(ShaderDefinition.vec4).GetConstructor(new[] { typeof(float) }));
-            _vertexBody.Emit(OpCodes.Stfld, typeof(Shader).GetField("gl_Position", BindingFlags.Instance | BindingFlags.NonPublic));
+            _vertexBody.Emit(OpCodes.Stfld, _position);
             _vertexBody.Emit(OpCodes.Ret);
         }
 

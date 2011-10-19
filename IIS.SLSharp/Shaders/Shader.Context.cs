@@ -99,7 +99,8 @@ namespace IIS.SLSharp.Shaders
                         let type = TypeMap[field.FieldType.Resolve().MetadataToken.ToInt32()].Type
                         let name = GetVaryingName(field)
                         let comment = DebugMode ? " // " + field.DeclaringType.FullName + "." + field.Name : string.Empty
-                        select new VariableDescription(type, name, UsageSemantic.Unknown, comment)).ToList();
+                        let semantic = attr.HasConstructorArguments ? (UsageSemantic)attr.ConstructorArguments[0].Value : UsageSemantic.Unknown
+                        select new VariableDescription(type, name, semantic, comment)).ToList();
             }
 
             /// <summary>
