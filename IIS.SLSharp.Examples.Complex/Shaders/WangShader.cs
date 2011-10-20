@@ -26,7 +26,7 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
             var tc = offset + subPos;
             var tileScaledTex = tex * new vec2(32.0f / 1.0f);
 
-            return textureGrad(WangTiles, tc, dFdx(tileScaledTex), dFdy(tileScaledTex));
+            return textureGrad(WangTiles, tc, DeriveTowardsX(tileScaledTex), DeriveTowardsY(tileScaledTex));
         }
 
         public override void Begin()

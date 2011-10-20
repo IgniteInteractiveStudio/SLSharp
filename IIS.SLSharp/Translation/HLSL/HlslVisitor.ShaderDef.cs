@@ -22,6 +22,8 @@ namespace IIS.SLSharp.Translation.HLSL
         {
             Handlers = new Dictionary<Expression<Action>, Func<MethodDefinition, InvocationExpression, StringBuilder>>(new HandlerComparer())
             {
+                { () => ShaderDefinition.Discard(), KeywordDiscard },
+
                 #region Trigonometry
 
                 { () => ShaderDefinition.Radians(_float), ToLower },
@@ -405,20 +407,35 @@ namespace IIS.SLSharp.Translation.HLSL
 
                 #endregion
 
+                #region Derivative
+
+                { () => ShaderDefinition.DeriveTowardsX(_float), Rename("ddx") },
+                { () => ShaderDefinition.DeriveTowardsX(vec2), Rename("ddx") },
+                { () => ShaderDefinition.DeriveTowardsX(vec3), Rename("ddx") },
+                { () => ShaderDefinition.DeriveTowardsX(vec4), Rename("ddx") },
+
+                { () => ShaderDefinition.DeriveTowardsY(_float), Rename("ddy") },
+                { () => ShaderDefinition.DeriveTowardsY(vec2), Rename("ddy") },
+                { () => ShaderDefinition.DeriveTowardsY(vec3), Rename("ddy") },
+                { () => ShaderDefinition.DeriveTowardsY(vec4), Rename("ddy") },
+
+                #endregion
+
+                #region Noise
+
+                { () => ShaderDefinition.Noise1(_float), Rename("noise") },
+                { () => ShaderDefinition.Noise1(vec2), Rename("noise") },
+                { () => ShaderDefinition.Noise1(vec3), Rename("noise") },
+                { () => ShaderDefinition.Noise1(vec4), Rename("noise") },
+
+                // Noise2 3 and 4 needs emulation
+                
+                #endregion
+
                 { () => ShaderDefinition.texture(sampler2D, vec2), Rename("tex2D") },
                 
                 // we need to wrap this into tex2DBias(sampler, new vec4(vec2, 0.0, float)
                 //{ () => ShaderDefinition.texture(sampler2D, vec2, _float), Redirect<Workarounds.Texture>("tex2Dbias") },
-
-                { () => ShaderDefinition.dFdx(_float), Rename("ddx") },
-                { () => ShaderDefinition.dFdx(vec2), Rename("ddx") },
-                { () => ShaderDefinition.dFdx(vec3), Rename("ddx") },
-                { () => ShaderDefinition.dFdx(vec4), Rename("ddx") },
-
-                { () => ShaderDefinition.dFdy(_float), Rename("ddy") },
-                { () => ShaderDefinition.dFdy(vec2), Rename("ddy") },
-                { () => ShaderDefinition.dFdy(vec3), Rename("ddy") },
-                { () => ShaderDefinition.dFdy(vec4), Rename("ddy") },
 
                 { () => ShaderDefinition.textureGrad(sampler2D, vec2, vec2, vec2), Rename("tex2Dgrad") },
 
@@ -461,6 +478,11 @@ namespace IIS.SLSharp.Translation.HLSL
             args[2] = a1;
 
             return result.Append("refract(").Append(ArgsToString(args)).Append(")");
+        }
+
+        private StringBuilder KeywordDiscard(MethodDefinition unused1, InvocationExpression unused2)
+        {
+            return new StringBuilder("discard");
         }
     }
 }

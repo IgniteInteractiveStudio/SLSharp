@@ -518,6 +518,44 @@ namespace IIS.SLSharp.Translation.GLSL
                 { () => ShaderDefinition.FusedMultiplyAdd(dvec4, dvec4, dvec4), Rename("fma") },
 
                 #endregion
+
+                #region Derivative
+
+                { () => ShaderDefinition.DeriveTowardsX(_float), Rename("dFdx") },
+                { () => ShaderDefinition.DeriveTowardsX(vec2), Rename("dFdx") },
+                { () => ShaderDefinition.DeriveTowardsX(vec3), Rename("dFdx") },
+                { () => ShaderDefinition.DeriveTowardsX(vec4), Rename("dFdx") },
+
+                { () => ShaderDefinition.DeriveTowardsY(_float), Rename("dFdy") },
+                { () => ShaderDefinition.DeriveTowardsY(vec2), Rename("dFdy") },
+                { () => ShaderDefinition.DeriveTowardsY(vec3), Rename("dFdy") },
+                { () => ShaderDefinition.DeriveTowardsY(vec4), Rename("dFdy") },
+                
+                #endregion
+
+                #region Noise
+
+                { () => ShaderDefinition.Noise1(_float), ToLower },
+                { () => ShaderDefinition.Noise1(vec2), ToLower },
+                { () => ShaderDefinition.Noise1(vec3), ToLower },
+                { () => ShaderDefinition.Noise1(vec4), ToLower },
+
+                { () => ShaderDefinition.Noise2(_float), ToLower },
+                { () => ShaderDefinition.Noise2(vec2), ToLower },
+                { () => ShaderDefinition.Noise2(vec3), ToLower },
+                { () => ShaderDefinition.Noise2(vec4), ToLower },
+
+                { () => ShaderDefinition.Noise3(_float), ToLower },
+                { () => ShaderDefinition.Noise3(vec2), ToLower },
+                { () => ShaderDefinition.Noise3(vec3), ToLower },
+                { () => ShaderDefinition.Noise3(vec4), ToLower },
+
+                { () => ShaderDefinition.Noise4(_float), ToLower },
+                { () => ShaderDefinition.Noise4(vec2), ToLower },
+                { () => ShaderDefinition.Noise4(vec3), ToLower },
+                { () => ShaderDefinition.Noise4(vec4), ToLower },
+                
+                #endregion
             };
         }
 

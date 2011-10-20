@@ -95,8 +95,8 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
             var light = Normalize(new vec3(0.0f, 1.0f, 0.6f));
             var n = Normalize(Normal);
 
-            
-            var n2 = Normalize(Cross(dFdx(_finalPos.xyz),dFdy(_finalPos.xyz)));
+
+            var n2 = Normalize(Cross(DeriveTowardsX(_finalPos.xyz), DeriveTowardsY(_finalPos.xyz)));
             n2.xy = -n2.xy;
             var light2 = new mat3(NormalMatrix) * (light);
             

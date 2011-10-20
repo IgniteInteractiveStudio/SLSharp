@@ -8,67 +8,67 @@ namespace IIS.SLSharp.Shaders
         // can be used to increase visual complexity. Values returned by the following noise functions give the
         // appearance of randomness, but are not truly random.
 
-        #region float noise1(genType x)
+        #region float Noise1(genType x)
 
         /// <summary>Returns a 1D noise value based on the input value x.</summary>
-        protected static float noise1(float x) { throw _invalidAccess; }
+        protected internal static float Noise1(float x) { throw _invalidAccess; }
 
         /// <summary>Returns a 1D noise value based on the input value x.</summary>
-        protected static float noise1(vec2 x) { throw _invalidAccess; }
+        protected internal static float Noise1(vec2 x) { throw _invalidAccess; }
 
         /// <summary>Returns a 1D noise value based on the input value x.</summary>
-        protected static float noise1(vec3 x) { throw _invalidAccess; }
+        protected internal static float Noise1(vec3 x) { throw _invalidAccess; }
 
         /// <summary>Returns a 1D noise value based on the input value x.</summary>
-        protected static float noise1(vec4 x) { throw _invalidAccess; }
+        protected internal static float Noise1(vec4 x) { throw _invalidAccess; }
 
         #endregion
 
-        #region vec2 noise2(genType x)
+        #region vec2 Noise2(genType x)
 
         /// <summary>Returns a 2D noise value based on the input value x.</summary>
-        protected static vec2 noise2(float x) { throw _invalidAccess; }
+        protected internal static vec2 Noise2(float x) { throw _invalidAccess; }
 
         /// <summary>Returns a 2D noise value based on the input value x.</summary>
-        protected static vec2 noise2(vec2 x) { throw _invalidAccess; }
+        protected internal static vec2 Noise2(vec2 x) { throw _invalidAccess; }
 
         /// <summary>Returns a 2D noise value based on the input value x.</summary>
-        protected static vec2 noise2(vec3 x) { throw _invalidAccess; }
+        protected internal static vec2 Noise2(vec3 x) { throw _invalidAccess; }
 
         /// <summary>Returns a 2D noise value based on the input value x.</summary>
-        protected static vec2 noise2(vec4 x) { throw _invalidAccess; }
+        protected internal static vec2 Noise2(vec4 x) { throw _invalidAccess; }
 
         #endregion
 
-        #region vec3 noise3(genType x)
+        #region vec3 Noise3(genType x)
 
         /// <summary>Returns a 3D noise value based on the input value x.</summary>
-        protected static vec3 noise3(float x) { throw _invalidAccess; }
+        protected internal static vec3 Noise3(float x) { throw _invalidAccess; }
 
         /// <summary>Returns a 3D noise value based on the input value x.</summary>
-        protected static vec3 noise3(vec2 x) { throw _invalidAccess; }
+        protected internal static vec3 Noise3(vec2 x) { throw _invalidAccess; }
 
         /// <summary>Returns a 3D noise value based on the input value x.</summary>
-        protected static vec3 noise3(vec3 x) { throw _invalidAccess; }
+        protected internal static vec3 Noise3(vec3 x) { throw _invalidAccess; }
 
         /// <summary>Returns a 3D noise value based on the input value x.</summary>
-        protected static vec3 noise3(vec4 x) { throw _invalidAccess; }
+        protected internal static vec3 Noise3(vec4 x) { throw _invalidAccess; }
 
         #endregion
 
-        #region vec4 noise4(genType x)
+        #region vec4 Noise4(genType x)
 
         /// <summary>Returns a 4D noise value based on the input value x.</summary>
-        protected static vec4 noise4(float x) { throw _invalidAccess; }
+        protected internal static vec4 Noise4(float x) { throw _invalidAccess; }
 
         /// <summary>Returns a 4D noise value based on the input value x.</summary>
-        protected static vec4 noise4(vec2 x) { throw _invalidAccess; }
+        protected internal static vec4 Noise4(vec2 x) { throw _invalidAccess; }
 
         /// <summary>Returns a 4D noise value based on the input value x.</summary>
-        protected static vec4 noise4(vec3 x) { throw _invalidAccess; }
+        protected internal static vec4 Noise4(vec3 x) { throw _invalidAccess; }
 
         /// <summary>Returns a 4D noise value based on the input value x.</summary>
-        protected static vec4 noise4(vec4 x) { throw _invalidAccess; }
+        protected internal static vec4 Noise4(vec4 x) { throw _invalidAccess; }
 
         #endregion
     }
