@@ -15,7 +15,25 @@ namespace IIS.SLSharp.Translation
         // ReSharper disable InconsistentNaming
         // ReSharper disable UnusedMember.Local
 #pragma warning disable 649
+        protected static readonly ShaderDefinition.sampler1D sampler1D;
+        protected static readonly ShaderDefinition.isampler1D isampler1D;
+        protected static readonly ShaderDefinition.usampler1D usampler1D;
         protected static readonly ShaderDefinition.sampler2D sampler2D;
+        protected static readonly ShaderDefinition.isampler2D isampler2D;
+        protected static readonly ShaderDefinition.usampler2D usampler2D;
+        protected static readonly ShaderDefinition.sampler3D sampler3D;
+        protected static readonly ShaderDefinition.isampler3D isampler3D;
+        protected static readonly ShaderDefinition.usampler3D usampler3D;
+        protected static readonly ShaderDefinition.samplerCube samplerCube;
+        protected static readonly ShaderDefinition.isamplerCube isamplerCube;
+        protected static readonly ShaderDefinition.usamplerCube usamplerCube;
+        protected static readonly ShaderDefinition.sampler1DShadow sampler1DShadow;
+        protected static readonly ShaderDefinition.sampler2DShadow sampler2DShadow;
+        protected static readonly ShaderDefinition.samplerCubeShadow samplerCubeShadow;
+        protected static readonly ShaderDefinition.sampler2DRect sampler2DRect;
+        protected static readonly ShaderDefinition.isampler2DRect isampler2DRect;
+        protected static readonly ShaderDefinition.usampler2DRect usampler2DRect;
+        protected static readonly ShaderDefinition.sampler2DRectShadow sampler2DRectShadow;
         protected static ShaderDefinition.vec2 vec2;
         protected static ShaderDefinition.vec3 vec3;
         protected static ShaderDefinition.vec4 vec4;
@@ -94,7 +112,8 @@ namespace IIS.SLSharp.Translation
         protected StringBuilder ToLower(MethodDefinition m, InvocationExpression i)
         {
             var result = new StringBuilder();
-            return result.Append(m.Name.ToLowerInvariant()).Append("(").Append(ArgsToString(i.Arguments)).Append(")");
+            var lowerName = Char.ToLowerInvariant(m.Name[0]) + m.Name.Substring(1);
+            return result.Append(lowerName).Append("(").Append(ArgsToString(i.Arguments)).Append(")");
         }
 
         private void CheckWarnings(MethodDefinition def)

@@ -69,7 +69,7 @@ namespace IIS.SLSharp.Examples.Axiom.GeoClipmap.Shaders
             _uv = (Vertex.xy + FineBlockOrigin.xy) * FineBlockOrigin.zw;
 
 
-            var texel = new vec3(textureLod(Heightmap, _uv, 1.0f).r);
+            var texel = new vec3(TextureLod(Heightmap, _uv, 1.0f).r);
 
             var zfZd = texel.x * 512.0f;
             var zf = Floor(zfZd) * 0.001953125f;
@@ -91,8 +91,8 @@ namespace IIS.SLSharp.Examples.Axiom.GeoClipmap.Shaders
 
 
             // just for testing, derive normal using interpolation over heights
-            var dfdx = (textureLod(Heightmap, _uv + new vec2(FineBlockOrigin.z, 0.0f), 1.0f).r - texel.r);
-            var dfdy = (textureLod(Heightmap, _uv + new vec2(0.0f, FineBlockOrigin.w), 1.0f).r - texel.r);
+            var dfdx = (TextureLod(Heightmap, _uv + new vec2(FineBlockOrigin.z, 0.0f), 1.0f).r - texel.r);
+            var dfdy = (TextureLod(Heightmap, _uv + new vec2(0.0f, FineBlockOrigin.w), 1.0f).r - texel.r);
             var dz = 2.0f * ScaleFactor.z - dfdx * dfdx - dfdy * dfdy;
             Normal = new vec3(dfdx, dfdy, dz);
 

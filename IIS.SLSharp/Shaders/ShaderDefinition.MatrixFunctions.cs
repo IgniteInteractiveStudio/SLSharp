@@ -476,13 +476,13 @@ namespace IIS.SLSharp.Shaders
         #region determinant (double)
 
         /// <summary>Returns the determinant of m. </summary>
-        protected float determinant(dmat2 m) { throw _invalidAccess; }
+        protected double determinant(dmat2 m) { throw _invalidAccess; }
 
         /// <summary>Returns the determinant of m. </summary>
-        protected float determinant(dmat3 m) { throw _invalidAccess; }
+        protected double determinant(dmat3 m) { throw _invalidAccess; }
 
         /// <summary>Returns the determinant of m. </summary>
-        protected float determinant(dmat4 m) { throw _invalidAccess; }
+        protected double determinant(dmat4 m) { throw _invalidAccess; }
 
         #endregion
     }

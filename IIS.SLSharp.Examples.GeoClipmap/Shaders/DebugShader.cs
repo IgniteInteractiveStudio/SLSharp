@@ -47,7 +47,7 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
             var uvs = _uv * HeightSize.xy;
             var subUv = Fraction(uvs);
             var val = (uvs - subUv + new vec2(0.5f)) / HeightSize.xy;
-            var height = texture(Heightmap, val);
+            var height = Texture(Heightmap, val);
             //var height = new vec4(1.0f);
 
             var idx = height.r * 255.0f;
@@ -59,7 +59,7 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
                         
             var tileUv = new vec2(subUv.x/16.0f + xidx, (1.0f-subUv.y)/16.0f + yidx);
 
-            FragColor = texture(DebugTex, tileUv);
+            FragColor = Texture(DebugTex, tileUv);
 
 
             //FragColor = height;

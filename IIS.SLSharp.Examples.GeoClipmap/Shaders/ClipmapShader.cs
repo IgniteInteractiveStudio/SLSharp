@@ -55,7 +55,7 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
             var worldPos = (Vertex.xy + ScaleFactor.xy) * ScaleFactor.zz;
             _uv = (Vertex.xy + FineBlockOrigin.xy) * ScaleFactor.ww;
 
-            var texel = new vec3(texture(Heightmap, _uv, 1.0f).r);
+            var texel = new vec3(Texture(Heightmap, _uv, 1.0f).r);
 
             var zfZd = texel.x * 512.0f;
             var zd = (Floor(zfZd) + 1.0f) * 0.001953125f;
@@ -81,8 +81,8 @@ namespace IIS.SLSharp.Examples.GeoClipmap.Shaders
 
 
             // just for testing, derive normal using interpolation over heights
-            var dfdx = (textureLod(Heightmap, _uv + new vec2(ScaleFactor.w, 0.0f), 1.0f).r - texel.r);
-            var dfdy = (textureLod(Heightmap, _uv + new vec2(0.0f, ScaleFactor.w), 1.0f).r - texel.r);
+            var dfdx = (TextureLod(Heightmap, _uv + new vec2(ScaleFactor.w, 0.0f), 1.0f).r - texel.r);
+            var dfdy = (TextureLod(Heightmap, _uv + new vec2(0.0f, ScaleFactor.w), 1.0f).r - texel.r);
             var dz = 2.0f*ScaleFactor.z - dfdx * dfdx - dfdy * dfdy;
             Normal = new vec3(dfdx, dfdy, dz);
 

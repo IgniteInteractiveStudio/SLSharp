@@ -22,11 +22,11 @@ namespace IIS.SLSharp.Examples.Complex.Shaders
         {
             var address = tex - tex % (1.0f / 256.0f);
             var subPos = Fraction(tex * 256.0f) / 4.0f;
-            var offset = texture(WangMap, Fraction(address)).xw;
+            var offset = Texture(WangMap, Fraction(address)).xw;
             var tc = offset + subPos;
             var tileScaledTex = tex * new vec2(32.0f / 1.0f);
 
-            return textureGrad(WangTiles, tc, DeriveTowardsX(tileScaledTex), DeriveTowardsY(tileScaledTex));
+            return TextureGrad(WangTiles, tc, DeriveTowardsX(tileScaledTex), DeriveTowardsY(tileScaledTex));
         }
 
         public override void Begin()

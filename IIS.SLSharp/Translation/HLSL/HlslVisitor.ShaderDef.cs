@@ -432,14 +432,14 @@ namespace IIS.SLSharp.Translation.HLSL
                 
                 #endregion
 
-                { () => ShaderDefinition.texture(sampler2D, vec2), Rename("tex2D") },
+                { () => ShaderDefinition.Texture(sampler2D, vec2), Rename("tex2D") },
                 
                 // we need to wrap this into tex2DBias(sampler, new vec4(vec2, 0.0, float)
                 //{ () => ShaderDefinition.texture(sampler2D, vec2, _float), Redirect<Workarounds.Texture>("tex2Dbias") },
 
-                { () => ShaderDefinition.textureGrad(sampler2D, vec2, vec2, vec2), Rename("tex2Dgrad") },
+                { () => ShaderDefinition.TextureGrad(sampler2D, vec2, vec2, vec2), Rename("tex2Dgrad") },
 
-                { () => ShaderDefinition.textureLod(sampler2D, vec2, _float), TextureLod }
+                { () => ShaderDefinition.TextureLod(sampler2D, vec2, _float), TextureLod }
             };
         }
 

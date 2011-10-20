@@ -556,6 +556,444 @@ namespace IIS.SLSharp.Translation.GLSL
                 { () => ShaderDefinition.Noise4(vec4), ToLower },
                 
                 #endregion
+
+                #region Texture
+
+                { () => ShaderDefinition.TextureSize(sampler1D, _int), ToLower },
+                { () => ShaderDefinition.TextureSize(isampler1D, _int), ToLower },
+                { () => ShaderDefinition.TextureSize(usampler1D, _int), ToLower },
+
+                { () => ShaderDefinition.TextureSize(sampler2D, _int), ToLower },
+                { () => ShaderDefinition.TextureSize(isampler2D, _int), ToLower },
+                { () => ShaderDefinition.TextureSize(usampler2D, _int), ToLower },
+
+                { () => ShaderDefinition.TextureSize(sampler3D, _int), ToLower },
+                { () => ShaderDefinition.TextureSize(isampler3D, _int), ToLower },
+                { () => ShaderDefinition.TextureSize(usampler3D, _int), ToLower },
+
+                { () => ShaderDefinition.TextureSize(samplerCube, _int), ToLower },
+                { () => ShaderDefinition.TextureSize(isamplerCube, _int), ToLower },
+                { () => ShaderDefinition.TextureSize(usamplerCube, _int), ToLower },
+
+                { () => ShaderDefinition.TextureSize(sampler1DShadow, _int), ToLower },
+                { () => ShaderDefinition.TextureSize(sampler2DShadow, _int), ToLower },
+                { () => ShaderDefinition.TextureSize(samplerCubeShadow, _int), ToLower },
+
+                { () => ShaderDefinition.TextureSize(sampler2DRect), ToLower },
+                { () => ShaderDefinition.TextureSize(isampler2DRect), ToLower },
+                { () => ShaderDefinition.TextureSize(usampler2DRect), ToLower },
+
+                { () => ShaderDefinition.TextureQueryLod(sampler1D, _float), ToLower },
+                { () => ShaderDefinition.TextureQueryLod(isampler1D, _float), ToLower },
+                { () => ShaderDefinition.TextureQueryLod(usampler1D, _float), ToLower },
+
+                { () => ShaderDefinition.TextureQueryLod(sampler2D, vec2), ToLower },
+                { () => ShaderDefinition.TextureQueryLod(isampler2D, vec2), ToLower },
+                { () => ShaderDefinition.TextureQueryLod(usampler2D, vec2), ToLower },
+
+                { () => ShaderDefinition.TextureQueryLod(sampler3D, vec3), ToLower },
+                { () => ShaderDefinition.TextureQueryLod(isampler3D, vec3), ToLower },
+                { () => ShaderDefinition.TextureQueryLod(usampler3D, vec3), ToLower },
+
+                { () => ShaderDefinition.TextureQueryLod(samplerCube, vec3), ToLower },
+                { () => ShaderDefinition.TextureQueryLod(isamplerCube, vec3), ToLower },
+                { () => ShaderDefinition.TextureQueryLod(usamplerCube, vec3), ToLower },
+
+                { () => ShaderDefinition.TextureQueryLod(sampler1DShadow, _float), ToLower },
+                { () => ShaderDefinition.TextureQueryLod(sampler2DShadow, vec2), ToLower },
+                { () => ShaderDefinition.TextureQueryLod(samplerCubeShadow, vec3), ToLower },
+
+                { () => ShaderDefinition.Texture(sampler1D, _float), ToLower },
+                { () => ShaderDefinition.Texture(sampler1D, _float, _float), ToLower },
+                { () => ShaderDefinition.Texture(isampler1D, _float), ToLower },
+                { () => ShaderDefinition.Texture(isampler1D, _float, _float), ToLower },
+                { () => ShaderDefinition.Texture(usampler1D, _float), ToLower },
+                { () => ShaderDefinition.Texture(usampler1D, _float, _float), ToLower },
+
+                { () => ShaderDefinition.Texture(sampler2D, vec2), ToLower },
+                { () => ShaderDefinition.Texture(sampler2D, vec2, _float), ToLower },
+                { () => ShaderDefinition.Texture(isampler2D, vec2), ToLower },
+                { () => ShaderDefinition.Texture(isampler2D, vec2, _float), ToLower },
+                { () => ShaderDefinition.Texture(usampler2D, vec2), ToLower },
+                { () => ShaderDefinition.Texture(usampler2D, vec2, _float), ToLower },
+
+                { () => ShaderDefinition.Texture(sampler3D, vec3), ToLower },
+                { () => ShaderDefinition.Texture(sampler3D, vec3, _float), ToLower },
+                { () => ShaderDefinition.Texture(isampler3D, vec3), ToLower },
+                { () => ShaderDefinition.Texture(isampler3D, vec3, _float), ToLower },
+                { () => ShaderDefinition.Texture(usampler3D, vec3), ToLower },
+                { () => ShaderDefinition.Texture(usampler3D, vec3, _float), ToLower },
+
+                { () => ShaderDefinition.Texture(samplerCube, vec3), ToLower },
+                { () => ShaderDefinition.Texture(samplerCube, vec3, _float), ToLower },
+                { () => ShaderDefinition.Texture(isamplerCube, vec3), ToLower },
+                { () => ShaderDefinition.Texture(isamplerCube, vec3, _float), ToLower },
+                { () => ShaderDefinition.Texture(usamplerCube, vec3), ToLower },
+                { () => ShaderDefinition.Texture(usamplerCube, vec3, _float), ToLower },
+
+                { () => ShaderDefinition.Texture(sampler1DShadow, vec3), ToLower },
+                { () => ShaderDefinition.Texture(sampler1DShadow, vec3, _float), ToLower },
+                { () => ShaderDefinition.Texture(sampler2DShadow, vec3), ToLower },
+                { () => ShaderDefinition.Texture(sampler2DShadow, vec3, _float), ToLower },
+                { () => ShaderDefinition.Texture(samplerCubeShadow, vec4), ToLower },
+                { () => ShaderDefinition.Texture(samplerCubeShadow, vec4, _float), ToLower },
+
+                { () => ShaderDefinition.Texture(sampler2DRect, vec2), ToLower },
+                { () => ShaderDefinition.Texture(isampler2DRect, vec2), ToLower },
+                { () => ShaderDefinition.Texture(usampler2DRect, vec2), ToLower },
+
+                { () => ShaderDefinition.TextureProj(sampler1D, vec2), ToLower },
+                { () => ShaderDefinition.TextureProj(sampler1D, vec2, _float), ToLower },
+                { () => ShaderDefinition.TextureProj(isampler1D, vec2), ToLower },
+                { () => ShaderDefinition.TextureProj(isampler1D, vec2, _float), ToLower },
+                { () => ShaderDefinition.TextureProj(usampler1D, vec2), ToLower },
+                { () => ShaderDefinition.TextureProj(usampler1D, vec2, _float), ToLower },
+
+                { () => ShaderDefinition.TextureProj(sampler1D, vec4), ToLower },
+                { () => ShaderDefinition.TextureProj(sampler1D, vec4, _float), ToLower },
+                { () => ShaderDefinition.TextureProj(isampler1D, vec4), ToLower },
+                { () => ShaderDefinition.TextureProj(isampler1D, vec4, _float), ToLower },
+                { () => ShaderDefinition.TextureProj(usampler1D, vec4), ToLower },
+                { () => ShaderDefinition.TextureProj(usampler1D, vec4, _float), ToLower },
+
+                { () => ShaderDefinition.TextureProj(sampler2D, vec3), ToLower },
+                { () => ShaderDefinition.TextureProj(sampler2D, vec3, _float), ToLower },
+                { () => ShaderDefinition.TextureProj(isampler2D, vec3), ToLower },
+                { () => ShaderDefinition.TextureProj(isampler2D, vec3, _float), ToLower },
+                { () => ShaderDefinition.TextureProj(usampler2D, vec3), ToLower },
+                { () => ShaderDefinition.TextureProj(usampler2D, vec3, _float), ToLower },
+
+                { () => ShaderDefinition.TextureProj(sampler2D, vec4), ToLower },
+                { () => ShaderDefinition.TextureProj(sampler2D, vec4, _float), ToLower },
+                { () => ShaderDefinition.TextureProj(isampler2D, vec4), ToLower },
+                { () => ShaderDefinition.TextureProj(isampler2D, vec4, _float), ToLower },
+                { () => ShaderDefinition.TextureProj(usampler2D, vec4), ToLower },
+                { () => ShaderDefinition.TextureProj(usampler2D, vec4, _float), ToLower },
+
+                { () => ShaderDefinition.TextureProj(sampler3D, vec4), ToLower },
+                { () => ShaderDefinition.TextureProj(sampler3D, vec4, _float), ToLower },
+                { () => ShaderDefinition.TextureProj(isampler3D, vec4), ToLower },
+                { () => ShaderDefinition.TextureProj(isampler3D, vec4, _float), ToLower },
+                { () => ShaderDefinition.TextureProj(usampler3D, vec4), ToLower },
+                { () => ShaderDefinition.TextureProj(usampler3D, vec4, _float), ToLower },
+
+                { () => ShaderDefinition.TextureProj(sampler1DShadow, vec4), ToLower },
+                { () => ShaderDefinition.TextureProj(sampler1DShadow, vec4, _float), ToLower },
+                { () => ShaderDefinition.TextureProj(sampler2DShadow, vec4), ToLower },
+                { () => ShaderDefinition.TextureProj(sampler2DShadow, vec4, _float), ToLower },
+
+                { () => ShaderDefinition.TextureProj(sampler2DRect, vec3), ToLower },
+                { () => ShaderDefinition.TextureProj(isampler2DRect, vec3), ToLower },
+                { () => ShaderDefinition.TextureProj(usampler2DRect, vec3), ToLower },
+
+                { () => ShaderDefinition.TextureProj(sampler2DRect, vec4), ToLower },
+                { () => ShaderDefinition.TextureProj(isampler2DRect, vec4), ToLower },
+                { () => ShaderDefinition.TextureProj(usampler2DRect, vec4), ToLower },
+
+                { () => ShaderDefinition.TextureProj(sampler2DRectShadow, vec4), ToLower },
+
+                { () => ShaderDefinition.TextureLod(sampler1D, _float, _float), ToLower },
+                { () => ShaderDefinition.TextureLod(isampler1D, _float, _float), ToLower },
+                { () => ShaderDefinition.TextureLod(usampler1D, _float, _float), ToLower },
+
+                { () => ShaderDefinition.TextureLod(sampler2D, vec2, _float), ToLower },
+                { () => ShaderDefinition.TextureLod(isampler2D, vec2, _float), ToLower },
+                { () => ShaderDefinition.TextureLod(usampler2D, vec2, _float), ToLower },
+
+                { () => ShaderDefinition.TextureLod(sampler3D, vec3, _float), ToLower },
+                { () => ShaderDefinition.TextureLod(isampler3D, vec3, _float), ToLower },
+                { () => ShaderDefinition.TextureLod(usampler3D, vec3, _float), ToLower },
+
+                { () => ShaderDefinition.TextureLod(samplerCube, vec3, _float), ToLower },
+                { () => ShaderDefinition.TextureLod(isamplerCube, vec3, _float), ToLower },
+                { () => ShaderDefinition.TextureLod(usamplerCube, vec3, _float), ToLower },
+
+                { () => ShaderDefinition.TextureLod(sampler1DShadow, vec3, _float), ToLower },
+                { () => ShaderDefinition.TextureLod(sampler2DShadow, vec3, _float), ToLower },
+
+                { () => ShaderDefinition.TextureOffset(sampler1D, _float, _int), ToLower },
+                { () => ShaderDefinition.TextureOffset(sampler1D, _float, _int, _float), ToLower },
+                { () => ShaderDefinition.TextureOffset(isampler1D, _float, _int), ToLower },
+                { () => ShaderDefinition.TextureOffset(isampler1D, _float, _int, _float), ToLower },
+                { () => ShaderDefinition.TextureOffset(usampler1D, _float, _int), ToLower },
+                { () => ShaderDefinition.TextureOffset(usampler1D, _float, _int, _float), ToLower },
+
+                { () => ShaderDefinition.TextureOffset(sampler2D, vec2, ivec2), ToLower },
+                { () => ShaderDefinition.TextureOffset(sampler2D, vec2, ivec2, _float), ToLower },
+                { () => ShaderDefinition.TextureOffset(isampler2D, vec2, ivec2), ToLower },
+                { () => ShaderDefinition.TextureOffset(isampler2D, vec2, ivec2, _float), ToLower },
+                { () => ShaderDefinition.TextureOffset(usampler2D, vec2, ivec2), ToLower },
+                { () => ShaderDefinition.TextureOffset(usampler2D, vec2, ivec2, _float), ToLower },
+
+                { () => ShaderDefinition.TextureOffset(sampler3D, vec3, ivec3), ToLower },
+                { () => ShaderDefinition.TextureOffset(sampler3D, vec3, ivec3, _float), ToLower },
+                { () => ShaderDefinition.TextureOffset(isampler3D, vec3, ivec3), ToLower },
+                { () => ShaderDefinition.TextureOffset(isampler3D, vec3, ivec3, _float), ToLower },
+                { () => ShaderDefinition.TextureOffset(usampler3D, vec3, ivec3), ToLower },
+                { () => ShaderDefinition.TextureOffset(usampler3D, vec3, ivec3, _float), ToLower },
+
+                { () => ShaderDefinition.TextureOffset(sampler2DRect, vec2, ivec2), ToLower },
+                { () => ShaderDefinition.TextureOffset(isampler2DRect, vec2, ivec2), ToLower },
+                { () => ShaderDefinition.TextureOffset(usampler2DRect, vec2, ivec2), ToLower },
+
+                { () => ShaderDefinition.TextureOffset(sampler2DRectShadow, vec3, ivec2), ToLower },
+
+                { () => ShaderDefinition.TextureOffset(sampler1DShadow, vec3, _int, _float), ToLower },
+                { () => ShaderDefinition.TextureOffset(sampler2DShadow, vec3, ivec2, _float), ToLower },
+
+                { () => ShaderDefinition.TexelFetch(sampler1D, _int, _int), ToLower },
+                { () => ShaderDefinition.TexelFetch(isampler1D, _int, _int), ToLower },
+                { () => ShaderDefinition.TexelFetch(usampler1D, _int, _int), ToLower },
+
+                { () => ShaderDefinition.TexelFetch(sampler2D, ivec2, _int), ToLower },
+                { () => ShaderDefinition.TexelFetch(isampler2D, ivec2, _int), ToLower },
+                { () => ShaderDefinition.TexelFetch(usampler2D, ivec2, _int), ToLower },
+
+                { () => ShaderDefinition.TexelFetch(sampler3D, ivec3, _int), ToLower },
+                { () => ShaderDefinition.TexelFetch(isampler3D, ivec3, _int), ToLower },
+                { () => ShaderDefinition.TexelFetch(usampler3D, ivec3, _int), ToLower },
+
+                { () => ShaderDefinition.TexelFetch(sampler2DRect, ivec2), ToLower },
+                { () => ShaderDefinition.TexelFetch(isampler2DRect, ivec2), ToLower },
+                { () => ShaderDefinition.TexelFetch(usampler2DRect, ivec2), ToLower },
+
+                { () => ShaderDefinition.TexelFetchOffset(sampler1D, _int, _int, _int), ToLower },
+                { () => ShaderDefinition.TexelFetchOffset(isampler1D, _int, _int, _int), ToLower },
+                { () => ShaderDefinition.TexelFetchOffset(usampler1D, _int, _int, _int), ToLower },
+
+                { () => ShaderDefinition.TexelFetchOffset(sampler2D, ivec2, _int, ivec2), ToLower },
+                { () => ShaderDefinition.TexelFetchOffset(isampler2D, ivec2, _int, ivec2), ToLower },
+                { () => ShaderDefinition.TexelFetchOffset(usampler2D, ivec2, _int, ivec2), ToLower },
+
+                { () => ShaderDefinition.TexelFetchOffset(sampler3D, ivec3, _int, ivec3), ToLower },
+                { () => ShaderDefinition.TexelFetchOffset(isampler3D, ivec3, _int, ivec3), ToLower },
+                { () => ShaderDefinition.TexelFetchOffset(usampler3D, ivec3, _int, ivec3), ToLower },
+
+                { () => ShaderDefinition.TexelFetchOffset(sampler2DRect, ivec2, ivec2), ToLower },
+                { () => ShaderDefinition.TexelFetchOffset(isampler2DRect, ivec2, ivec2), ToLower },
+                { () => ShaderDefinition.TexelFetchOffset(usampler2DRect, ivec2, ivec2), ToLower },
+
+                { () => ShaderDefinition.TextureProjOffset(sampler1D, vec2, _int), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(sampler1D, vec2, _int, _float), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(isampler1D, vec2, _int), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(isampler1D, vec2, _int, _float), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(usampler1D, vec2, _int), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(usampler1D, vec2, _int, _float), ToLower },
+
+                { () => ShaderDefinition.TextureProjOffset(sampler1D, vec4, _int), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(sampler1D, vec4, _int, _float), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(isampler1D, vec4, _int), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(isampler1D, vec4, _int, _float), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(usampler1D, vec4, _int), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(usampler1D, vec4, _int, _float), ToLower },
+
+                { () => ShaderDefinition.TextureProjOffset(sampler2D, vec3, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(sampler2D, vec3, ivec2, _float), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(isampler2D, vec3, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(isampler2D, vec3, ivec2, _float), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(usampler2D, vec3, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(usampler2D, vec3, ivec2, _float), ToLower },
+
+                { () => ShaderDefinition.TextureProjOffset(sampler2D, vec4, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(sampler2D, vec4, ivec2, _float), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(isampler2D, vec4, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(isampler2D, vec4, ivec2, _float), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(usampler2D, vec4, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(usampler2D, vec4, ivec2, _float), ToLower },
+
+                { () => ShaderDefinition.TextureProjOffset(sampler3D, vec4, ivec3), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(sampler3D, vec4, ivec3, _float), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(isampler3D, vec4, ivec3), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(isampler3D, vec4, ivec3, _float), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(usampler3D, vec4, ivec3), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(usampler3D, vec4, ivec3, _float), ToLower },
+
+                { () => ShaderDefinition.TextureProjOffset(sampler1DShadow, vec4, _int), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(sampler1DShadow, vec4, _int, _float), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(sampler2DShadow, vec4, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(sampler2DShadow, vec4, ivec2, _float), ToLower },
+
+                { () => ShaderDefinition.TextureProjOffset(sampler2DRect, vec3, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(isampler2DRect, vec3, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(usampler2DRect, vec3, ivec2), ToLower },
+
+                { () => ShaderDefinition.TextureProjOffset(sampler2DRect, vec4, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(isampler2DRect, vec4, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjOffset(usampler2DRect, vec4, ivec2), ToLower },
+
+                { () => ShaderDefinition.TextureProjOffset(sampler2DRectShadow, vec4, ivec2), ToLower },
+
+                { () => ShaderDefinition.TextureLodOffset(sampler1D, _float, _float, _int), ToLower },
+                { () => ShaderDefinition.TextureLodOffset(isampler1D, _float, _float, _int), ToLower },
+                { () => ShaderDefinition.TextureLodOffset(usampler1D, _float, _float, _int), ToLower },
+
+                { () => ShaderDefinition.TextureLodOffset(sampler2D, vec2, _float, ivec2), ToLower },
+                { () => ShaderDefinition.TextureLodOffset(isampler2D, vec2, _float, ivec2), ToLower },
+                { () => ShaderDefinition.TextureLodOffset(usampler2D, vec2, _float, ivec2), ToLower },
+
+                { () => ShaderDefinition.TextureLodOffset(sampler3D, vec3, _float, ivec3), ToLower },
+                { () => ShaderDefinition.TextureLodOffset(isampler3D, vec3, _float, ivec3), ToLower },
+                { () => ShaderDefinition.TextureLodOffset(usampler3D, vec3, _float, ivec3), ToLower },
+
+                { () => ShaderDefinition.TextureLodOffset(sampler1DShadow, vec3, _float, _int), ToLower },
+                { () => ShaderDefinition.TextureLodOffset(sampler2DShadow, vec3, _float, ivec2), ToLower },
+
+                { () => ShaderDefinition.TextureProjLod(sampler1D, vec2, _float), ToLower },
+                { () => ShaderDefinition.TextureProjLod(isampler1D, vec2, _float), ToLower },
+                { () => ShaderDefinition.TextureProjLod(usampler1D, vec2, _float), ToLower },
+
+                { () => ShaderDefinition.TextureProjLod(sampler1D, vec4, _float), ToLower },
+                { () => ShaderDefinition.TextureProjLod(isampler1D, vec4, _float), ToLower },
+                { () => ShaderDefinition.TextureProjLod(usampler1D, vec4, _float), ToLower },
+
+                { () => ShaderDefinition.TextureProjLod(sampler2D, vec3, _float), ToLower },
+                { () => ShaderDefinition.TextureProjLod(isampler2D, vec3, _float), ToLower },
+                { () => ShaderDefinition.TextureProjLod(usampler2D, vec3, _float), ToLower },
+
+                { () => ShaderDefinition.TextureProjLod(sampler2D, vec4, _float), ToLower },
+                { () => ShaderDefinition.TextureProjLod(isampler2D, vec4, _float), ToLower },
+                { () => ShaderDefinition.TextureProjLod(usampler2D, vec4, _float), ToLower },
+
+                { () => ShaderDefinition.TextureProjLod(sampler3D, vec4, _float), ToLower },
+                { () => ShaderDefinition.TextureProjLod(isampler3D, vec4, _float), ToLower },
+                { () => ShaderDefinition.TextureProjLod(usampler3D, vec4, _float), ToLower },
+
+                { () => ShaderDefinition.TextureProjLod(sampler1DShadow, vec4, _float), ToLower },
+                { () => ShaderDefinition.TextureProjLod(sampler2DShadow, vec4, _float), ToLower },
+
+                { () => ShaderDefinition.TextureProjLodOffset(sampler1D, vec2, _float, _int), ToLower },
+                { () => ShaderDefinition.TextureProjLodOffset(isampler1D, vec2, _float, _int), ToLower },
+                { () => ShaderDefinition.TextureProjLodOffset(usampler1D, vec2, _float, _int), ToLower },
+
+                { () => ShaderDefinition.TextureProjLodOffset(sampler1D, vec4, _float, _int), ToLower },
+                { () => ShaderDefinition.TextureProjLodOffset(isampler1D, vec4, _float, _int), ToLower },
+                { () => ShaderDefinition.TextureProjLodOffset(usampler1D, vec4, _float, _int), ToLower },
+
+                { () => ShaderDefinition.TextureProjLodOffset(sampler2D, vec3, _float, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjLodOffset(isampler2D, vec3, _float, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjLodOffset(usampler2D, vec3, _float, ivec2), ToLower },
+
+                { () => ShaderDefinition.TextureProjLodOffset(sampler2D, vec4, _float, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjLodOffset(isampler2D, vec4, _float, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjLodOffset(usampler2D, vec4, _float, ivec2), ToLower },
+
+                { () => ShaderDefinition.TextureProjLodOffset(sampler3D, vec4, _float, ivec3), ToLower },
+                { () => ShaderDefinition.TextureProjLodOffset(isampler3D, vec4, _float, ivec3), ToLower },
+                { () => ShaderDefinition.TextureProjLodOffset(usampler3D, vec4, _float, ivec3), ToLower },
+
+                { () => ShaderDefinition.TextureProjLodOffset(sampler1DShadow, vec4, _float, _int), ToLower },
+                { () => ShaderDefinition.TextureProjLodOffset(sampler2DShadow, vec4, _float, ivec2), ToLower },
+
+                { () => ShaderDefinition.TextureGrad(sampler1D, _float, _float, _float), ToLower },
+                { () => ShaderDefinition.TextureGrad(isampler1D, _float, _float, _float), ToLower },
+                { () => ShaderDefinition.TextureGrad(usampler1D, _float, _float, _float), ToLower },
+
+                { () => ShaderDefinition.TextureGrad(sampler2D, vec2, vec2, vec2), ToLower },
+                { () => ShaderDefinition.TextureGrad(isampler2D, vec2, vec2, vec2), ToLower },
+                { () => ShaderDefinition.TextureGrad(usampler2D, vec2, vec2, vec2), ToLower },
+
+                { () => ShaderDefinition.TextureGrad(sampler3D, vec3, vec3, vec3), ToLower },
+                { () => ShaderDefinition.TextureGrad(isampler3D, vec3, vec3, vec3), ToLower },
+                { () => ShaderDefinition.TextureGrad(usampler3D, vec3, vec3, vec3), ToLower },
+
+                { () => ShaderDefinition.TextureGrad(samplerCube, vec3, vec3, vec3), ToLower },
+                { () => ShaderDefinition.TextureGrad(isamplerCube, vec3, vec3, vec3), ToLower },
+                { () => ShaderDefinition.TextureGrad(usamplerCube, vec3, vec3, vec3), ToLower },
+
+                { () => ShaderDefinition.TextureGrad(sampler2DRect, vec2, vec2, vec2), ToLower },
+                { () => ShaderDefinition.TextureGrad(isampler2DRect, vec2, vec2, vec2), ToLower },
+                { () => ShaderDefinition.TextureGrad(usampler2DRect, vec2, vec2, vec2), ToLower },
+
+                { () => ShaderDefinition.TextureGrad(sampler2DRectShadow, vec3, vec2, vec2), ToLower },
+                { () => ShaderDefinition.TextureGrad(sampler1DShadow, vec3, _float, _float), ToLower },
+                { () => ShaderDefinition.TextureGrad(sampler2DShadow, vec3, vec2, vec2), ToLower },
+                { () => ShaderDefinition.TextureGrad(samplerCubeShadow, vec4, vec3, vec3), ToLower },
+
+                { () => ShaderDefinition.TextureGradOffset(sampler1D, _float, _float, _float, _int), ToLower },
+                { () => ShaderDefinition.TextureGradOffset(isampler1D, _float, _float, _float, _int), ToLower },
+                { () => ShaderDefinition.TextureGradOffset(usampler1D, _float, _float, _float, _int), ToLower },
+
+                { () => ShaderDefinition.TextureGradOffset(sampler2D, vec2, vec2, vec2, ivec2), ToLower },
+                { () => ShaderDefinition.TextureGradOffset(isampler2D, vec2, vec2, vec2, ivec2), ToLower },
+                { () => ShaderDefinition.TextureGradOffset(usampler2D, vec2, vec2, vec2, ivec2), ToLower },
+
+                { () => ShaderDefinition.TextureGradOffset(sampler3D, vec3, vec3, vec3, ivec3), ToLower },
+                { () => ShaderDefinition.TextureGradOffset(isampler3D, vec3, vec3, vec3, ivec3), ToLower },
+                { () => ShaderDefinition.TextureGradOffset(usampler3D, vec3, vec3, vec3, ivec3), ToLower },
+
+                { () => ShaderDefinition.TextureGradOffset(sampler2DRect, vec2, vec2, vec2, ivec2), ToLower },
+                { () => ShaderDefinition.TextureGradOffset(isampler2DRect, vec2, vec2, vec2, ivec2), ToLower },
+                { () => ShaderDefinition.TextureGradOffset(usampler2DRect, vec2, vec2, vec2, ivec2), ToLower },
+
+                { () => ShaderDefinition.TextureGradOffset(sampler2DRectShadow, vec3, vec2, vec2, ivec2), ToLower },
+                { () => ShaderDefinition.TextureGradOffset(sampler1DShadow, vec3, _float, _float, _int), ToLower },
+                { () => ShaderDefinition.TextureGradOffset(sampler2DShadow, vec3, vec2, vec2, ivec2), ToLower },
+
+                { () => ShaderDefinition.TextureProjGrad(sampler1D, vec2, _float, _float), ToLower },
+                { () => ShaderDefinition.TextureProjGrad(isampler1D, vec2, _float, _float), ToLower },
+                { () => ShaderDefinition.TextureProjGrad(usampler1D, vec2, _float, _float), ToLower },
+
+                { () => ShaderDefinition.TextureProjGrad(sampler1D, vec4, _float, _float), ToLower },
+                { () => ShaderDefinition.TextureProjGrad(isampler1D, vec4, _float, _float), ToLower },
+                { () => ShaderDefinition.TextureProjGrad(usampler1D, vec4, _float, _float), ToLower },
+
+                { () => ShaderDefinition.TextureProjGrad(sampler2D, vec3, vec2, vec2), ToLower },
+                { () => ShaderDefinition.TextureProjGrad(isampler2D, vec3, vec2, vec2), ToLower },
+                { () => ShaderDefinition.TextureProjGrad(usampler2D, vec3, vec2, vec2), ToLower },
+
+                { () => ShaderDefinition.TextureProjGrad(sampler2D, vec4, vec2, vec2), ToLower },
+                { () => ShaderDefinition.TextureProjGrad(isampler2D, vec4, vec2, vec2), ToLower },
+                { () => ShaderDefinition.TextureProjGrad(usampler2D, vec4, vec2, vec2), ToLower },
+
+                { () => ShaderDefinition.TextureProjGrad(sampler3D, vec4, vec3, vec3), ToLower },
+                { () => ShaderDefinition.TextureProjGrad(isampler3D, vec4, vec3, vec3), ToLower },
+                { () => ShaderDefinition.TextureProjGrad(usampler3D, vec4, vec3, vec3), ToLower },
+
+                { () => ShaderDefinition.TextureProjGrad(sampler2DRect, vec3, vec2, vec2), ToLower },
+                { () => ShaderDefinition.TextureProjGrad(isampler2DRect, vec3, vec2, vec2), ToLower },
+                { () => ShaderDefinition.TextureProjGrad(usampler2DRect, vec3, vec2, vec2), ToLower },
+
+                { () => ShaderDefinition.TextureProjGrad(sampler2DRect, vec4, vec2, vec2), ToLower },
+                { () => ShaderDefinition.TextureProjGrad(isampler2DRect, vec4, vec2, vec2), ToLower },
+                { () => ShaderDefinition.TextureProjGrad(usampler2DRect, vec4, vec2, vec2), ToLower },
+
+                { () => ShaderDefinition.TextureProjGrad(sampler2DRectShadow, vec4, vec2, vec2), ToLower },
+                { () => ShaderDefinition.TextureProjGrad(sampler1DShadow, vec4, _float, _float), ToLower },
+                { () => ShaderDefinition.TextureProjGrad(sampler2DShadow, vec4, vec2, vec2), ToLower },
+
+                { () => ShaderDefinition.TextureProjGradOffset(sampler1D, vec2, _float, _float, _int), ToLower },
+                { () => ShaderDefinition.TextureProjGradOffset(isampler1D, vec2, _float, _float, _int), ToLower },
+                { () => ShaderDefinition.TextureProjGradOffset(usampler1D, vec2, _float, _float, _int), ToLower },
+
+                { () => ShaderDefinition.TextureProjGradOffset(sampler1D, vec4, _float, _float, _int), ToLower },
+                { () => ShaderDefinition.TextureProjGradOffset(isampler1D, vec4, _float, _float, _int), ToLower },
+                { () => ShaderDefinition.TextureProjGradOffset(usampler1D, vec4, _float, _float, _int), ToLower },
+
+                { () => ShaderDefinition.TextureProjGradOffset(sampler2D, vec3, vec2, vec2, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjGradOffset(isampler2D, vec3, vec2, vec2, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjGradOffset(usampler2D, vec3, vec2, vec2, ivec2), ToLower },
+
+                { () => ShaderDefinition.TextureProjGradOffset(sampler2D, vec4, vec2, vec2, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjGradOffset(isampler2D, vec4, vec2, vec2, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjGradOffset(usampler2D, vec4, vec2, vec2, ivec2), ToLower },
+
+                { () => ShaderDefinition.TextureProjGradOffset(sampler3D, vec4, vec3, vec3, ivec3), ToLower },
+                { () => ShaderDefinition.TextureProjGradOffset(isampler3D, vec4, vec3, vec3, ivec3), ToLower },
+                { () => ShaderDefinition.TextureProjGradOffset(usampler3D, vec4, vec3, vec3, ivec3), ToLower },
+
+                { () => ShaderDefinition.TextureProjGradOffset(sampler2DRect, vec3, vec2, vec2, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjGradOffset(isampler2DRect, vec3, vec2, vec2, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjGradOffset(usampler2DRect, vec3, vec2, vec2, ivec2), ToLower },
+
+                { () => ShaderDefinition.TextureProjGradOffset(sampler2DRect, vec4, vec2, vec2, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjGradOffset(isampler2DRect, vec4, vec2, vec2, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjGradOffset(usampler2DRect, vec4, vec2, vec2, ivec2), ToLower },
+
+                { () => ShaderDefinition.TextureProjGradOffset(sampler2DRectShadow, vec4, vec2, vec2, ivec2), ToLower },
+                { () => ShaderDefinition.TextureProjGradOffset(sampler1DShadow, vec4, _float, _float, _int), ToLower },
+                { () => ShaderDefinition.TextureProjGradOffset(sampler2DShadow, vec4, vec2, vec2, ivec2), ToLower },
+
+                #endregion
             };
         }
 
