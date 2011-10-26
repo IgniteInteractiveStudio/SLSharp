@@ -78,63 +78,63 @@ namespace IIS.SLSharp.Shaders
 
         #endregion
 
-        #region genType sign(genType x)
+        #region genType Sign(genType x)
 
         /// <summary>Returns 1.0 if x &gt; 0, 0.0 if x = 0, or –1.0 if x &lt; 0.</summary>
         /// <returns>The sign of x</returns>
-        protected static float sign(float x) { throw _invalidAccess; }
+        protected internal static float Sign(float x) { throw _invalidAccess; }
 
         /// <summary>Returns 1.0 if x &gt; 0, 0.0 if x = 0, or –1.0 if x &lt; 0.</summary>
         /// <returns>The sign of x</returns>
-        protected static vec2 sign(vec2 x) { throw _invalidAccess; }
+        protected internal static vec2 Sign(vec2 x) { throw _invalidAccess; }
 
         /// <summary>Returns 1.0 if x &gt; 0, 0.0 if x = 0, or –1.0 if x &lt; 0.</summary>
         /// <returns>The sign of x</returns>
-        protected static vec3 sign(vec3 x) { throw _invalidAccess; }
+        protected internal static vec3 Sign(vec3 x) { throw _invalidAccess; }
 
         /// <summary>Returns 1.0 if x &gt; 0, 0.0 if x = 0, or –1.0 if x &lt; 0.</summary>
         /// <returns>The sign of x</returns>
-        protected static vec4 sign(vec4 x) { throw _invalidAccess; }
+        protected internal static vec4 Sign(vec4 x) { throw _invalidAccess; }
 
         #endregion
 
-        #region genIType sign(genIType x)
+        #region genIType Sign(genIType x)
 
         /// <summary>Returns 1.0 if x &gt; 0, 0.0 if x = 0, or –1.0 if x &lt; 0.</summary>
         /// <returns>The sign of x</returns>
-        protected static int sign(int x) { throw _invalidAccess; }
+        protected internal static int Sign(int x) { throw _invalidAccess; }
 
         /// <summary>Returns 1.0 if x &gt; 0, 0.0 if x = 0, or –1.0 if x &lt; 0.</summary>
         /// <returns>The sign of x</returns>
-        protected static ivec2 sign(ivec2 x) { throw _invalidAccess; }
+        protected internal static ivec2 Sign(ivec2 x) { throw _invalidAccess; }
 
         /// <summary>Returns 1.0 if x &gt; 0, 0.0 if x = 0, or –1.0 if x &lt; 0.</summary>
         /// <returns>The sign of x</returns>
-        protected static ivec3 sign(ivec3 x) { throw _invalidAccess; }
+        protected internal static ivec3 Sign(ivec3 x) { throw _invalidAccess; }
 
         /// <summary>Returns 1.0 if x &gt; 0, 0.0 if x = 0, or –1.0 if x &lt; 0.</summary>
         /// <returns>The sign of x</returns>
-        protected static ivec4 sign(ivec4 x) { throw _invalidAccess; }
+        protected internal static ivec4 Sign(ivec4 x) { throw _invalidAccess; }
 
         #endregion
 
-        #region genDType sign(genType x)
+        #region genDType Sign(genType x)
 
         /// <summary>Returns 1.0 if x &gt; 0, 0.0 if x = 0, or –1.0 if x &lt; 0.</summary>
         /// <returns>The sign of x</returns>
-        protected static double sign(double x) { throw _invalidAccess; }
+        protected internal static double Sign(double x) { throw _invalidAccess; }
 
         /// <summary>Returns 1.0 if x &gt; 0, 0.0 if x = 0, or –1.0 if x &lt; 0.</summary>
         /// <returns>The sign of x</returns>
-        protected static dvec2 sign(dvec2 x) { throw _invalidAccess; }
+        protected internal static dvec2 Sign(dvec2 x) { throw _invalidAccess; }
 
         /// <summary>Returns 1.0 if x &gt; 0, 0.0 if x = 0, or –1.0 if x &lt; 0.</summary>
         /// <returns>The sign of x</returns>
-        protected static dvec3 sign(dvec3 x) { throw _invalidAccess; }
+        protected internal static dvec3 Sign(dvec3 x) { throw _invalidAccess; }
 
         /// <summary>Returns 1.0 if x &gt; 0, 0.0 if x = 0, or –1.0 if x &lt; 0.</summary>
         /// <returns>The sign of x</returns>
-        protected static dvec4 sign(dvec4 x) { throw _invalidAccess; }
+        protected internal static dvec4 Sign(dvec4 x) { throw _invalidAccess; }
 
         #endregion
 

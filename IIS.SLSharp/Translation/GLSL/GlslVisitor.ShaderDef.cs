@@ -254,6 +254,21 @@ namespace IIS.SLSharp.Translation.GLSL
                 { () => ShaderDefinition.Abs(dvec3), ToLower },
                 { () => ShaderDefinition.Abs(dvec4), ToLower },
 
+                { () => ShaderDefinition.Sign(_float), ToLower },
+                { () => ShaderDefinition.Sign(vec2), ToLower },
+                { () => ShaderDefinition.Sign(vec3), ToLower },
+                { () => ShaderDefinition.Sign(vec4), ToLower },
+
+                { () => ShaderDefinition.Sign(_int), ToLower },
+                { () => ShaderDefinition.Sign(ivec2), ToLower },
+                { () => ShaderDefinition.Sign(ivec3), ToLower },
+                { () => ShaderDefinition.Sign(ivec4), ToLower },
+
+                { () => ShaderDefinition.Sign(_double), ToLower },
+                { () => ShaderDefinition.Sign(dvec2), ToLower },
+                { () => ShaderDefinition.Sign(dvec3), ToLower },
+                { () => ShaderDefinition.Sign(dvec4), ToLower },
+
                 { () => ShaderDefinition.Floor(_float), ToLower },
                 { () => ShaderDefinition.Floor(vec2), ToLower },
                 { () => ShaderDefinition.Floor(vec3), ToLower },
@@ -992,6 +1007,25 @@ namespace IIS.SLSharp.Translation.GLSL
                 { () => ShaderDefinition.TextureProjGradOffset(sampler2DRectShadow, vec4, vec2, vec2, ivec2), ToLower },
                 { () => ShaderDefinition.TextureProjGradOffset(sampler1DShadow, vec4, _float, _float, _int), ToLower },
                 { () => ShaderDefinition.TextureProjGradOffset(sampler2DShadow, vec4, vec2, vec2, ivec2), ToLower },
+
+                #endregion
+
+                #region Interpolation
+
+                { () => ShaderDefinition.InterpolateAtCentroid(_float), ToLower },
+                { () => ShaderDefinition.InterpolateAtCentroid(vec2), ToLower },
+                { () => ShaderDefinition.InterpolateAtCentroid(vec3), ToLower },
+                { () => ShaderDefinition.InterpolateAtCentroid(vec4), ToLower },
+
+                { () => ShaderDefinition.InterpolateAtSample(_float, _int), ToLower },
+                { () => ShaderDefinition.InterpolateAtSample(vec2, _int), ToLower },
+                { () => ShaderDefinition.InterpolateAtSample(vec3, _int), ToLower },
+                { () => ShaderDefinition.InterpolateAtSample(vec4, _int), ToLower },
+                
+                { () => ShaderDefinition.InterpolateAtOffset(_float, vec2), ToLower },
+                { () => ShaderDefinition.InterpolateAtOffset(vec2, vec2), ToLower },
+                { () => ShaderDefinition.InterpolateAtOffset(vec3, vec2), ToLower },
+                { () => ShaderDefinition.InterpolateAtOffset(vec4, vec2), ToLower },
 
                 #endregion
             };
