@@ -52,6 +52,8 @@ namespace IIS.SLSharp.Shaders
 
             private readonly TypeDefinition _shader;
 
+            private readonly Type _shaderType;
+
             private TypeDefinition LoadReflection(Type t)
             {
                 var resolver = new DefaultAssemblyResolver();
@@ -187,13 +189,16 @@ namespace IIS.SLSharp.Shaders
                 }
 
                 var forwardDecl = trans.ForwardDeclare(DebugMode);
-                return new UnitContext(desc, forwardDecl, trans.Dependencies.ToList());
+                var deps = trans.Dependencies.Except(new [] { _shaderType }).ToList();
+
+                return new UnitContext(desc, forwardDecl, deps);
             }
 
             // shaderType = GetShaderType()
             public ShaderContext(Type shaderType)
             {
                 _shader = LoadReflection(shaderType);
+                _shaderType = shaderType;
 
                 Varyings = CollectVaryings();
                 Uniforms = CollectUniforms();
