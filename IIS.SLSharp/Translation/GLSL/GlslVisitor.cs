@@ -262,8 +262,13 @@ namespace IIS.SLSharp.Translation.GLSL
 
         public override StringBuilder VisitCastExpression(CastExpression castExpression, int data)
         {
-            // TODO: implement
-            throw new NotImplementedException();
+            // TODO: validate the cast operation, this unfortunateley needs a way to evalulate
+            // the cast expressions type, which we still cant do properly with IC#..
+
+            // unlike c/c++ GLSL uses constructor syntax as float(intExpression) rather than
+            // a cast like expression as (float)intExpression.
+            var s = castExpression.Type.AcceptVisitor(this, data);
+            return s.Append("(").Append(castExpression.Expression.AcceptVisitor(this, data)).Append(")");
         }
 
         public override StringBuilder VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, int data)
