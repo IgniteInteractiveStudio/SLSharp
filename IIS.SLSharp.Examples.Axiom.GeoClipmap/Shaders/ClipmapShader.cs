@@ -116,21 +116,11 @@ namespace IIS.SLSharp.Examples.Axiom.GeoClipmap.Shaders
             FragColor = /*Color **/ new vec4(i);
         }
 
-        private int _heightmap;
-
         protected ClipmapShader()
         {
             Link();
         }
 
-
-        public override void Begin()
-        {
-            base.Begin();
-
-            //_heightmap = AllocateSamplerSlot();
-            //Heightmap = _heightmap.ToSampler();
-        }
 
         public override void Dispose()
         {

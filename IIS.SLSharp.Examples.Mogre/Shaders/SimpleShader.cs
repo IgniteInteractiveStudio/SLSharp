@@ -18,9 +18,6 @@ namespace IIS.SLSharp.Examples.MOGRE.Shaders
         [Uniform]
         public abstract mat4 ModelviewProjection { set; get; }
 
-        [Uniform]
-        public abstract sampler2D Texture { set; get; }
-
         [Varying]
         private vec2 _uv;
 
