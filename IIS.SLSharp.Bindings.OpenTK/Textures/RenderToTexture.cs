@@ -42,6 +42,25 @@ namespace IIS.SLSharp.Bindings.OpenTK.Textures
         /// <param name="format">The data format the Texture(s) shall use, default is 16bit Half</param>
         /// <param name="buffers">The number of Textures to use.</param>
         public RenderToTexture(int width, int height, bool depth, int components = 3, Type format = null, int buffers = 1)
+            : this(width, height, depth, buffers, () => new Texture2D(width, height, components, format ?? typeof(Half)))
+        {
+        }
+
+
+        /// <summary>
+        /// Creates new (set of) renderable Texture(s)
+        /// </summary>
+        /// <param name="width">The width in pixels of the Texture(s)</param>
+        /// <param name="height">The height in pixels of the Texture(s)</param>
+        /// <param name="depth">True if depthbuffer is required when rendering to the Texture(s)</param>
+        /// <param name="format">Explicit format to be used</param>
+        /// <param name="buffers">The number of Textures to use.</param>
+        public RenderToTexture(int width, int height, bool depth, PixelInternalFormat format, int buffers = 1)
+            : this(width, height, depth, buffers, () => new Texture2D(width, height, format))
+        {
+        }
+
+        private RenderToTexture(int width, int height, bool depth, int buffers, Func<Texture2D> createTexture )
         {
             _fbo = new FramebufferObject();
             _textures = new Texture2D[buffers];
@@ -60,7 +79,7 @@ namespace IIS.SLSharp.Bindings.OpenTK.Textures
 
             for (var i = 0; i < buffers; i++)
             {
-                _textures[i] = new Texture2D(width, height, components, format ?? typeof(Half));
+                _textures[i] = createTexture();
                 _fbo.SetTexture(_textures[i], i);
             }
 
